@@ -1,0 +1,168 @@
+@prefix : <http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@base <http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory/> .
+
+<http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory> rdf:type owl:Ontology .
+
+#################################################################
+#    Classes
+#################################################################
+
+###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory#DivisionOfLabour
+:DivisionOfLabour rdf:type owl:Class ;
+                 rdfs:comment "Who is responsible for what, when carrying out this activity and how the roles are organised."@en .
+
+
+###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory#Object
+:Object rdf:type owl:Class ;
+        rdfs:comment "The reason why thsi activity takes place."@en .
+
+
+###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory#Subject
+:Subject rdf:type owl:Class ;
+         rdfs:comment "The person who is carrying out this activity."@en .
+
+
+###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory/Community
+:Community rdf:type owl:Class ;
+           rdfs:comment "The environment in which the activity is carried out."@en .
+
+
+###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory/Instruments
+:Tools rdf:type owl:Class ;
+             rdfs:comment "The means by which the subjects carry out the activity."@en .
+
+
+###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory/Rules
+:Rules rdf:type owl:Class ;
+       rdfs:comment "Cultural norms, rules and regulations governing the performance of this activity."@en .
+
+#################################################################
+#    Object Properties
+#################################################################
+
+###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory#HasToFollow
+:HasToFollow rdf:type owl:ObjectProperty ;
+             rdfs:domain :Subject ;
+             rdfs:range :Rules .
+
+###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory#InteractsIn
+:InteractsIn  rdf:type owl:ObjectProperty ;
+              rdfs:domain :Subject;
+              rdfs:range :Community .
+
+###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory#IsDefinedBy
+:IsDefinedBy rdf:type owl:ObjectProperty ;
+             rdfs:domain :Subject ;
+             rdfs:range :DivisionOfLabour .
+
+###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory#OperatesOn
+:OperatesOn rdf:type owl:ObjectProperty ;
+            rdfs:domain :Subject ;
+            rdfs:range :Object .
+
+###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory/Uses
+:Uses rdf:type owl:ObjectProperty ;
+      rdfs:domain :Subject  ;
+      rdfs:range :Tools .
+
+###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory#DefinesTheApproachOf
+:DefinesTheApproachOf rdf:type owl:ObjectProperty ;
+                      rdfs:domain :Object ;
+                      rdfs:range :Subject .
+
+###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory#Determines
+:Determines rdf:type owl:ObjectProperty ;
+            rdfs:domain :Object ;
+            rdfs:range :DivisionOfLabour .
+
+###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory#IsInfluencedBy
+:IsInfluencedBy rdf:type owl:ObjectProperty ;
+                rdfs:domain :Object ;
+                rdfs:range :Rules .
+
+###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory/InfluencesTheChoiceOf
+:InfluencesTheChoiceOf  rdf:type owl:ObjectProperty ;
+                        rdfs:domain :Object  ;
+                        rdfs:range :Tools .
+
+###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory#ShallBeAchievedBy
+:ShallBeAchievedby rdf:type owl:ObjectProperty ;
+                   rdfs:domain :Object ;
+                   rdfs:range :Community .
+
+###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory#CreatesAndIsRegulatedBy
+:CreatesAndIsRegulatedBy  rdf:type owl:ObjectProperty ;
+                          rdfs:domain :Community ;
+                           rdfs:range :Rules .
+
+###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory#DevelopsAndUses
+:DevelopsAndUses  rdf:type owl:ObjectProperty ;
+                  rdfs:domain :Community ;
+                  rdfs:range :Tools .
+
+###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory#InteractsWith
+:InteractsWith  rdf:type owl:ObjectProperty ;
+                rdfs:domain :Community ;
+                rdfs:range :Subject .
+
+###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory#IsOrganisedBy
+:IsOrganisedBy  rdf:type owl:ObjectProperty ;
+                rdfs:domain :Community ;
+                rdfs:range :DivisionOfLabour .
+
+###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory/Shares
+:Shares rdf:type owl:ObjectProperty ;
+        rdfs:domain :Community  ;
+        rdfs:range :Object .
+
+###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory#Influences
+:Influences rdf:type owl:ObjectProperty ;
+            rdfs:domain :Rules ;
+            rdfs:range :Object.
+
+###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory#RegulatesActionOf
+:RegulatesActionOf rdf:type owl:ObjectProperty ;
+                   rdfs:domain :Rules ;
+                   rdfs:range :Subject .
+
+###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory#RegulatesAndAreCreatedBy
+:RegulatesAndAreCreatedBy rdf:type owl:ObjectProperty ;
+                          rdfs:domain :Rules ;
+                          rdfs:range :Community .
+
+###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory#AreUsedBy
+:AreUsedBy rdf:type owl:ObjectProperty ;
+           rdfs:domain :Tools ;
+           rdfs:range :Subject .
+
+###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory#AreUsedOn
+:AreUsedOn rdf:type owl:ObjectProperty ;
+           rdfs:domain :Tools ;
+           rdfs:range :Object .
+
+###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory#AreDevelopedAndUsedBy
+:AreDevelopedAndUsedBy rdf:type owl:ObjectProperty ;
+                       rdfs:domain :Tools ;
+                       rdfs:range :Community .
+
+###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory#DefinesRoleOf
+:DefinesRoleOf rdf:type owl:ObjectProperty ;
+               rdfs:domain :DivisionOfLabour ;
+               rdfs:range :Subject .
+
+###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory#IsAppliedToAchieve
+:IsAppliedToAchieve rdf:type owl:ObjectProperty ;
+                    rdfs:domain :DivisionOfLabour ;
+                    rdfs:range :Object .
+
+###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory#Organises
+:Organises rdf:type owl:ObjectProperty ;
+           rdfs:domain :DivisionOfLabour ;
+           rdfs:range :Community .
+
+###  Generated by the OWL API (version 4.5.29.2024-05-13T12:11:03Z) https://github.com/owlcs/owlapi

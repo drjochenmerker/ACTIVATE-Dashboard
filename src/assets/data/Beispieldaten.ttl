@@ -1,0 +1,346 @@
+@prefix : <http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@base <http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory/> .
+
+### Beispieldatensatz ohne gegebenes Szenario von der KI erstellt
+
+### Aktivität: "Arztbesuch"
+:Arztbesuch rdf:type :Activity ;
+ rdfs:label "Arztbesuch"@en ;
+ rdfs:label "Arztbesuch"@de ;
+ rdfs:label "Läkarbesök"@sv ;
+ :hasSubject :Arzt ;
+ :hasObject :Patient ;
+ :hasCommunity :Krankenhaus ;
+ :hasTools :Stethoskop ;
+ :hasRules :HygieneVorschriften ;
+ :isDefinedBy :DivisionOfLabour ;
+ :operatesOn :Patient ;
+ :uses :Stethoskop ;
+ :definesTheApproachOf :Arzt ;
+ :determines :Diagnose ;
+ :isInfluencedBy :Patient ;
+ :influencesTheChoiceOf :Behandlung ;
+ :shallBeAchievedBy :Krankenhaus ;
+ :createsAndIsRegulatedBy :Regeln ;
+ :developsAndUses :Stethoskop ;
+ :interactsWith :Patient ;
+ :isOrganisedBy :DivisionOfLabour ;
+ :shares :Patient ;
+ :influences :Regeln ;
+ :regulatesActionOf :Arzt ;
+ :regulatesAndAreCreatedBy :Krankenhaus ;
+ :areUsedBy :Arzt ;
+ :areUsedOn :Patient ;
+ :areDevelopedAndUsedBy :Krankenhaus ;
+ :definesRoleOf :Arzt ;
+ :isAppliedToAchieve :Diagnose ;
+ :organises :Krankenhaus .
+
+### Subjekt: "Arzt"
+:Arzt rdf:type :Subject ;
+ rdfs:label "Arzt"@en ;
+ rdfs:label "Arzt"@de ;
+ rdfs:label "Läkare"@sv ;
+ :hasName "Dr. Müller"@en ;
+ :hasName "Dr. Müller"@de ;
+ :hasName "Dr. Müller"@sv ;
+ :hasDivisionOfLabour :DivisionOfLabour ;
+ :hasRules :HygieneVorschriften ;
+ :hasTools :Stethoskop ;
+ :hasCommunity :Krankenhaus ;
+ :hasObject :Patient ;
+ :hasActivity :Arztbesuch .
+
+### Objekt: "Patient"
+:Patient rdf:type :Object ;
+ rdfs:label "Patient"@en ;
+ rdfs:label "Patient"@de ;
+ rdfs:label "Patient"@sv ;
+ :hasName "Herr Müller"@en ;
+ :hasName "Herr Müller"@de ;
+ :hasName "Herr Müller"@sv ;
+ :hasDivisionOfLabour :DivisionOfLabour ;
+ :hasRules :HygieneVorschriften ;
+ :hasTools :Stethoskop ;
+ :hasCommunity :Krankenhaus ;
+ :hasSubject :Arzt ;
+ :hasActivity :Arztbesuch .
+
+### Community: "Krankenhaus"
+:Krankenhaus rdf:type :Community ;
+ rdfs:label "Krankenhaus"@en ;
+ rdfs:label "Krankenhaus"@de ;
+ rdfs:label "Sjukhus"@sv ;
+ :hasName "Krankenhaus X"@en ;
+ :hasName "Krankenhaus X"@de ;
+ :hasName "Sjukhus X"@sv ;
+ :hasDivisionOfLabour :DivisionOfLabour ;
+ :hasRules :HygieneVorschriften ;
+ :hasTools :Stethoskop ;
+ :hasObject :Patient ;
+ :hasSubject :Arzt ;
+ :hasActivity :Arztbesuch .
+
+### Tools: "Stethoskop"
+:Stethoskop rdf:type :Tools ;
+ rdfs:label "Stethoskop"@en ;
+ rdfs:label "Stethoskop"@de ;
+ rdfs:label "Stetoskop"@sv ;
+ :hasName "Stethoskop"@en ;
+ :hasName "Stethoskop"@de ;
+ :hasName "Stetoskop"@sv ;
+ :hasDivisionOfLabour :DivisionOfLabour ;
+ :hasRules :HygieneVorschriften ;
+ :hasCommunity :Krankenhaus ;
+ :hasObject :Patient ;
+ :hasSubject :Arzt ;
+ :hasActivity :Arztbesuch .
+
+### Regeln: "HygieneVorschriften"
+:HygieneVorschriften rdf:type :Regeln ;
+ rdfs:label "HygieneVorschriften"@en ;
+ rdfs:label "HygieneVorschriften"@de ;
+ rdfs:label "Hygieneregler"@sv ;
+ :hasName "HygieneVorschriften"@en ;
+ :hasName "HygieneVorschriften"@de ;
+ :hasName "Hygieneregler"@sv ;
+ :hasDivisionOfLabour :DivisionOfLabour ;
+ :hasRules :HygieneVorschriften ;
+ :hasCommunity :Krankenhaus ;
+ :hasObject :Patient ;
+ :hasSubject :Arzt ;
+ :hasActivity :Arztbesuch .
+
+
+
+
+### Datensatz von KI für folgendes gegebenes Szenario erstellt: A palliative care team discusses a patient’s end-of-life plan, but the physician uses medical terminology that the social worker and nurse aren’t familiar with. This lack of clarity causes the nurse to misunderstand the timeline for medication changes and delays initiating pain management Adjustments.
+
+### Aktivität: "Palliativ-Team-Diskussion"
+:PalliativTeamDiskussion rdf:type :Activity ;
+ rdfs:label "Palliativ-Team-Diskussion"@en ;
+ rdfs:label "Palliativ-Team-Diskussion"@de ;
+ rdfs:label "Palliativteamdiskussion"@sv ;
+ :hasSubject :Arzt ;
+ :hasObject :Patient ;
+ :hasCommunity :PalliativTeam ;
+ :hasTools :MedizinischeTerminologie ;
+ :hasRules :Klärungsbedarf ;
+ :isDefinedBy :DivisionOfLabour ;
+ :operatesOn :Patient ;
+ :uses :MedizinischeTerminologie ;
+ :definesTheApproachOf :Arzt ;
+ :determines :Schmerzmanagement ;
+ :isInfluencedBy :Patient ;
+ :influencesTheChoiceOf :Behandlung ;
+ :shallBeAchievedBy :PalliativTeam ;
+ :createsAndIsRegulatedBy :Regeln ;
+ :developsAndUses :MedizinischeTerminologie ;
+ :interactsWith :Patient ;
+ :isOrganisedBy :DivisionOfLabour ;
+ :shares :Patient ;
+ :influences :Regeln ;
+ :regulatesActionOf :Arzt ;
+ :regulatesAndAreCreatedBy :PalliativTeam ;
+ :areUsedBy :Arzt ;
+ :areUsedOn :Patient ;
+ :areDevelopedAndUsedBy :PalliativTeam ;
+ :definesRoleOf :Arzt ;
+ :isAppliedToAchieve :Schmerzmanagement ;
+ :organises :PalliativTeam .
+
+### Subjekt: "Arzt"
+:Arzt rdf:type :Subject ;
+ rdfs:label "Arzt"@en ;
+ rdfs:label "Arzt"@de ;
+ rdfs:label "Läkare"@sv ;
+ :hasName "Dr. Müller"@en ;
+ :hasName "Dr. Müller"@de ;
+ :hasName "Dr. Müller"@sv ;
+ :hasDivisionOfLabour :DivisionOfLabour ;
+ :hasRules :Klärungsbedarf ;
+ :hasTools :MedizinischeTerminologie ;
+ :hasCommunity :PalliativTeam ;
+ :hasObject :Patient ;
+ :hasActivity :PalliativTeamDiskussion .
+
+### Objekt: "Patient"
+:Patient rdf:type :Object ;
+ rdfs:label "Patient"@en ;
+ rdfs:label "Patient"@de ;
+ rdfs:label "Patient"@sv ;
+ :hasName "Herr Müller"@en ;
+ :hasName "Herr Müller"@de ;
+ :hasName "Herr Müller"@sv ;
+ :hasDivisionOfLabour :DivisionOfLabour ;
+ :hasRules :Klärungsbedarf ;
+ :hasTools :MedizinischeTerminologie ;
+ :hasCommunity :PalliativTeam ;
+ :hasSubject :Arzt ;
+ :hasActivity :PalliativTeamDiskussion .
+
+### Community: "PalliativTeam"
+:PalliativTeam rdf:type :Community ;
+ rdfs:label "PalliativTeam"@en ;
+ rdfs:label "PalliativTeam"@de ;
+ rdfs:label "Palliativteam"@sv ;
+ :hasName "PalliativTeam X"@en ;
+ :hasName "PalliativTeam X"@de ;
+ :hasName "Palliativteam X"@sv ;
+ :hasDivisionOfLabour :DivisionOfLabour ;
+ :hasRules :Klärungsbedarf ;
+ :hasTools :MedizinischeTerminologie ;
+ :hasObject :Patient ;
+ :hasSubject :Arzt ;
+ :hasActivity :PalliativTeamDiskussion .
+
+### Tools: "MedizinischeTerminologie"
+:MedizinischeTerminologie rdf:type :Tools ;
+ rdfs:label "MedizinischeTerminologie"@en ;
+ rdfs:label "MedizinischeTerminologie"@de ;
+ rdfs:label "Medicinska terminologi"@sv ;
+ :hasName "MedizinischeTerminologie"@en ;
+ :hasName "MedizinischeTerminologie"@de ;
+ :hasName "Medicinska terminologi"@sv ;
+ :hasDivisionOfLabour :DivisionOfLabour ;
+ :hasRules :Klärungsbedarf ;
+ :hasCommunity :PalliativTeam ;
+ :hasObject :Patient ;
+ :hasSubject :Arzt ;
+ :hasActivity :PalliativTeamDiskussion .
+
+### Regeln: "Klärungsbedarf"
+:Klärungsbedarf rdf:type :Regeln ;
+ rdfs:label "Klärungsbedarf"@en ;
+ rdfs:label "Klärungsbedarf"@de ;
+ rdfs:label "Klärningsbehov"@sv ;
+ :hasName "Klärungsbedarf"@en ;
+ :hasName "Klärungsbedarf"@de ;
+ :hasName "Klärningsbehov"@sv ;
+ :hasDivisionOfLabour :DivisionOfLabour ;
+ :hasRules :Klärungsbedarf ;
+ :hasCommunity :PalliativTeam ;
+ :hasObject :Patient ;
+ :hasSubject :Arzt ;
+ :hasActivity :PalliativTeamDiskussion .
+
+
+
+
+
+
+
+### Datensatz von KI für folgendes gegebenes Szenario erstellt:  In a home-based palliative care setting, a patient’s family contacts the social worker with concerns about increasing pain. The social worker assumes the nurse will follow up on the pain management, while the nurse believes it’s the physician’s role to adjust medications. 
+
+### Aktivität: "Patientenbeschwerde"
+:Patientenbeschwerde rdf:type :Activity ;
+ rdfs:label "Patientenbeschwerde"@en ;
+ rdfs:label "Patientenbeschwerde"@de ;
+ rdfs:label "Patientklagan"@sv ;
+ :hasSubject :Patient ;
+ :hasObject :Schmerzen ;
+ :hasCommunity :Familie ;
+ :hasTools :Sozialarbeiter ;
+ :hasRules :Klärungsbedarf ;
+ :isDefinedBy :DivisionOfLabour ;
+ :operatesOn :Patient ;
+ :uses :Sozialarbeiter ;
+ :definesTheApproachOf :Sozialarbeiter ;
+ :determines :Schmerzmanagement ;
+ :isInfluencedBy :Familie ;
+ :influencesTheChoiceOf :Behandlung ;
+ :shallBeAchievedBy :Sozialarbeiter ;
+ :createsAndIsRegulatedBy :Regeln ;
+ :developsAndUses :Sozialarbeiter ;
+ :interactsWith :Patient ;
+ :isOrganisedBy :DivisionOfLabour ;
+ :shares :Patient ;
+ :influences :Regeln ;
+ :regulatesActionOf :Sozialarbeiter ;
+ :regulatesAndAreCreatedBy :Familie ;
+ :areUsedBy :Sozialarbeiter ;
+ :areUsedOn :Patient ;
+ :areDevelopedAndUsedBy :Familie ;
+ :definesRoleOf :Sozialarbeiter ;
+ :isAppliedToAchieve :Schmerzmanagement ;
+ :organises :Familie .
+
+### Subjekt: "Patient"
+:Patient rdf:type :Subject ;
+ rdfs:label "Patient"@en ;
+ rdfs:label "Patient"@de ;
+ rdfs:label "Patient"@sv ;
+ :hasName "Herr Müller"@en ;
+ :hasName "Herr Müller"@de ;
+ :hasName "Herr Müller"@sv ;
+ :hasDivisionOfLabour :DivisionOfLabour ;
+ :hasRules :Klärungsbedarf ;
+ :hasTools :Sozialarbeiter ;
+ :hasCommunity :Familie ;
+ :hasObject :Schmerzen ;
+ :hasActivity :Patientenbeschwerde .
+
+### Objekt: "Schmerzen"
+:Schmerzen rdf:type :Object ;
+ rdfs:label "Schmerzen"@en ;
+ rdfs:label "Schmerzen"@de ;
+ rdfs:label "Smärta"@sv ;
+ :hasName "Schmerzen"@en ;
+ :hasName "Schmerzen"@de ;
+ :hasName "Smärta"@sv ;
+ :hasDivisionOfLabour :DivisionOfLabour ;
+ :hasRules :Klärungsbedarf ;
+ :hasTools :Sozialarbeiter ;
+ :hasCommunity :Familie ;
+ :hasSubject :Patient ;
+ :hasActivity :Patientenbeschwerde .
+
+### Community: "Familie"
+:Familie rdf:type :Community ;
+ rdfs:label "Familie"@en ;
+ rdfs:label "Familie"@de ;
+ rdfs:label "Familj"@sv ;
+ :hasName "Familie Müller"@en ;
+ :hasName "Familie Müller"@de ;
+ :hasName "Familj Müller"@sv ;
+ :hasDivisionOfLabour :DivisionOfLabour ;
+ :hasRules :Klärungsbedarf ;
+ :hasTools :Sozialarbeiter ;
+ :hasObject :Schmerzen ;
+ :hasSubject :Patient ;
+ :hasActivity :Patientenbeschwerde .
+
+### Tools: "Sozialarbeiter"
+:Sozialarbeiter rdf:type :Tools ;
+ rdfs:label "Sozialarbeiter"@en ;
+ rdfs:label "Sozialarbeiter"@de ;
+ rdfs:label "Socialarbetare"@sv ;
+ :hasName "Sozialarbeiter Müller"@en ;
+ :hasName "Sozialarbeiter Müller"@de ;
+ :hasName "Socialarbetare Müller"@sv ;
+ :hasDivisionOfLabour :DivisionOfLabour ;
+ :hasRules :Klärungsbedarf ;
+ :hasCommunity :Familie ;
+ :hasObject :Schmerzen ;
+ :hasSubject :Patient ;
+ :hasActivity :Patientenbeschwerde .
+
+### Regeln: "Klärungsbedarf"
+:Klärungsbedarf rdf:type :Regeln ;
+ rdfs:label "Klärungsbedarf"@en ;
+ rdfs:label "Klärungsbedarf"@de ;
+ rdfs:label "Klärningsbehov"@sv ;
+ :hasName "Klärungsbedarf"@en ;
+ :hasName "Klärungsbedarf"@de ;
+ :hasName "Klärningsbehov"@sv ;
+ :hasDivisionOfLabour :DivisionOfLabour ;
+ :hasRules :Klärungsbedarf ;
+ :hasCommunity :Familie ;
+ :hasObject :Schmerzen ;
+ :hasSubject :Patient ;
+ :hasActivity :Patientenbeschwerde .
