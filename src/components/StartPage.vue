@@ -1,5 +1,6 @@
-<script setup lang="ts">
+<script lang="ts">
 import { ref } from 'vue'
+import ActivityDiagram from './ActivityDiagram.vue';
 
 defineProps<{ msg: string }>()
 
@@ -13,9 +14,7 @@ const count = ref(0)
     <div>
       <button type="button" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" @click="count++">count is {{ count }}</button>
     </div>
-
+    <ActivityDiagram/>
   </div>
 </template>
 
-<style scoped>
-</style>
