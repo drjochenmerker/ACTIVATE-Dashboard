@@ -16,8 +16,6 @@ build:
   artifacts:
     paths:
       - dist/
-  only:
-    - main
   when: manual
 
 pages:
