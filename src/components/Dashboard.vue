@@ -9,6 +9,8 @@ import { CircleUser, Menu, Package2, Search } from 'lucide-vue-next'
 import ThemeSwitchButton from './ThemeSwitchButton.vue'
 </script>
 
+<!-- Nur ein Test -->
+
 <template>
   <div class="flex min-h-screen w-full flex-col">
     <header class="sticky top-0 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
