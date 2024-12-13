@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/button'
-import { Icon } from '@iconify/vue'
 import { Sun, Moon } from 'lucide-vue-next'
 import { useColorMode } from '@vueuse/core'
 

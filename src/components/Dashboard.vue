@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/button'
-
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
@@ -17,27 +16,33 @@ import ThemeSwitchButton from './ThemeSwitchButton.vue'
         class="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
         <a href="#" class="flex items-center gap-2 text-lg font-semibold md:text-base">
           <Package2 class="h-6 w-6" />
-          <span class="sr-only">Acme Inc</span>
+          <span class="sr-only">Activate</span>
         </a>
         <span>ACTIVATE</span>
 
         <a href="#" class="text-muted-foreground transition-colors hover:text-foreground">
-          Dashboard
+          Tools
         </a>
         <a href="#" class="text-muted-foreground transition-colors hover:text-foreground">
-          Orders
+          Subject
         </a>
         <a href="#" class="text-muted-foreground transition-colors hover:text-foreground">
-          Products
+          Object
         </a>
         <a href="#" class="text-muted-foreground transition-colors hover:text-foreground">
-          Customers
+          Rules
+        </a>
+        <a href="#" class="text-muted-foreground transition-colors hover:text-foreground">
+          Community
+        </a>
+        <a href="#" class="whitespace-nowrap text-muted-foreground transition-colors hover:text-foreground">
+          Division Of Labor
         </a>
         <a href="#" class="text-foreground transition-colors hover:text-foreground">
-          Settings
+          Miscellaneous
         </a>
-      </nav>
-      <Sheet>
+            </nav>
+            <Sheet>
         <SheetTrigger as-child>
           <Button variant="outline" size="icon" class="shrink-0 md:hidden">
             <Menu class="h-5 w-5" />
@@ -48,22 +53,28 @@ import ThemeSwitchButton from './ThemeSwitchButton.vue'
           <nav class="grid gap-6 text-lg font-medium">
             <a href="#" class="flex items-center gap-2 text-lg font-semibold">
               <Package2 class="h-6 w-6" />
-              <span class="sr-only">Acme Inc</span>
+              <span class="sr-only">Activate</span>
             </a>
             <a href="#" class="text-muted-foreground hover:text-foreground">
-              Dashboard
+              Tools
             </a>
             <a href="#" class="text-muted-foreground hover:text-foreground">
-              Orders
+              Subject
             </a>
             <a href="#" class="text-muted-foreground hover:text-foreground">
-              Products
+              Object
             </a>
             <a href="#" class="text-muted-foreground hover:text-foreground">
-              Customers
+              Rules
             </a>
-            <a href="#" class="hover:text-foreground">
-              Settings
+            <a href="#" class="text-muted-foreground hover:text-foreground">
+              Community
+            </a>
+            <a href="#" class="whitespace-nowrap text-muted-foreground hover:text-foreground">
+              Division Of Labor
+            </a>
+            <a href="#" class="text-foreground hover:text-foreground">
+              Miscellaneous
             </a>
           </nav>
         </SheetContent>
