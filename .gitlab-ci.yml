@@ -1,31 +1,33 @@
-image: node:20
-
 stages:
   - build
   - deploy
 
-variables:
-  NODE_ENV: production
-
 cache:
+  key: ${CI_COMMIT_REF_SLUG}
   paths:
     - node_modules/
 
 build:
   stage: build
+  image: node:lts-bookworm-slim
   script:
     - npm ci
     - npm run build
   artifacts:
     paths:
-      - dist
+      - dist/
+  only:
+    - main
+  when: manual
 
 pages:
   stage: deploy
   script:
-    - mv dist public
+    - mkdir -p public
+    - cp -r dist/* public
   artifacts:
     paths:
       - public
   only:
-    - "app-layout"
+    - main
+  when: manual
