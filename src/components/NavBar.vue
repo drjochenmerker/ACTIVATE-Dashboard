@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { contentData } from '@/data/contentData'
-import ThemeSwitchButton from './ThemeSwitchButton.vue'
+import { contentData } from '@/data/contentData';
+import ThemeSwitchButton from './ThemeSwitchButton.vue';
 </script>
 
 <template>

@@ -27,4 +27,4 @@ export const contentData = [
         id: 'misc',
         title: 'Miscellaneous',
     },
-]
+];

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui/button';
 import {
     Dialog,
     DialogContent,
@@ -9,9 +9,9 @@ import {
     DialogTrigger,
     DialogDescription,
     DialogClose,
-} from '@/components/ui/dialog'
-import { Skeleton } from '@/components/ui/skeleton'
-import { CirclePlus } from 'lucide-vue-next'
+} from '@/components/ui/dialog';
+import { Skeleton } from '@/components/ui/skeleton';
+import { CirclePlus } from 'lucide-vue-next';
 </script>
 
 <template>

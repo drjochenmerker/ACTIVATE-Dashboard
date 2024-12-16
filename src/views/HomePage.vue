@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import NewItemDialog from '@/components/dialogs/NewItemDialog.vue'
+import NewItemDialog from '@/components/dialogs/NewItemDialog.vue';
 </script>
 
 <template>

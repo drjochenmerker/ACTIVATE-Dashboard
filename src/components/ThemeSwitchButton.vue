@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { Button } from '@/components/ui/button'
-import { Sun, Moon } from 'lucide-vue-next'
-import { useColorMode } from '@vueuse/core'
+import { Button } from '@/components/ui/button';
+import { Sun, Moon } from 'lucide-vue-next';
+import { useColorMode } from '@vueuse/core';
 
-const mode = useColorMode()
+const mode = useColorMode();
 
 const toggleMode = () => {
-    mode.value = mode.value === 'dark' ? 'light' : 'dark'
-}
+    mode.value = mode.value === 'dark' ? 'light' : 'dark';
+};
 </script>
 
 <template>

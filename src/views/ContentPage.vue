@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import { useRoute } from 'vue-router'
-import { contentData } from '@/data/contentData'
-import ContentTemplate from '@/components/ContentTemplate.vue'
+import { useRoute } from 'vue-router';
+import { contentData } from '@/data/contentData';
+import ContentTemplate from '@/components/ContentTemplate.vue';
 
-const route = useRoute()
-const pageData = contentData.find((item) => item.id === route.params.id)
+const route = useRoute();
+const pageData = contentData.find((item) => item.id === route.params.id);
 </script>
 
 <template>
