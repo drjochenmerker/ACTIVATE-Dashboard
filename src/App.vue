@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import StartPage from './components/StartPage.vue'
+import NavBar from './components/NavBar.vue'
 </script>
 
 <template>
-  <div>
-    <StartPage msg="Activate Dashboard Test" />
-  </div>
-  
+    <div class="flex flex-col h-screen">
+        <NavBar />
+        <main class="flex-grow h-full p-6">
+            <router-view :key="$route.path" />
+        </main>
+    </div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

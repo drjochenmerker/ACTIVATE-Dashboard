@@ -6,14 +6,13 @@ import { useColorMode } from '@vueuse/core'
 const mode = useColorMode()
 
 const toggleMode = () => {
-  mode.value = mode.value === 'dark' ? 'light' : 'dark'
+    mode.value = mode.value === 'dark' ? 'light' : 'dark'
 }
 </script>
 
 <template>
-  <Button variant="secondary" size="icon" class="rounded-full" @click="toggleMode">
-    <Sun class="h-5 w-5" v-if="mode === 'dark'" />
-    <Moon class="h-5 w-5" v-else />
-    <span class="sr-only">Toggle theme</span>
-  </Button>
+    <Button size="icon" class="rounded-full" @click="toggleMode">
+        <Sun v-if="mode === 'dark'" />
+        <Moon v-else />
+    </Button>
 </template>
