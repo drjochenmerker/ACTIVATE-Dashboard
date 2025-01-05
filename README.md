@@ -17,6 +17,13 @@ cd activate-dashboard
 npm install
 ```
 
+3. Add a ```.env``` File containing the environment variables
+
+The File should look like this
+```
+SPARQL_PORT=<PORT>
+```
+
 ## Development
 
 Start the local development server
@@ -25,14 +32,26 @@ Start the local development server
 npm run dev
 ```
 
+Run the development server with a SPARQL Endpoint on Port 8000
+
+```
+npm run dev-sparql
+```
+
 The application will be available at http://localhost:5173 by default.
 
 ## SPARQL Setup for local testing
 
-#### Method 1 - Python
+Method 1 and 2 will run the sparql endpoint on http://localhost:8000
+
+#### Method 1 - NPM
+```npm run sparql```
+
+#### Method 2 - Python
 ```pip install rdflib-endpoint uvicorn``` and ```rdflib-endpoint serve /path/to/ttl```
 
-#### Method 2 - Podman
+
+#### Method 3 - Podman
 ```podman run -p 3030:3030 docker.io/secoresearch/fuseki```
 
 **Example:**

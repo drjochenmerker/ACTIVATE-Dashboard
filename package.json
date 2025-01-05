@@ -5,15 +5,18 @@
     "type": "module",
     "scripts": {
         "dev": "vite",
+        "dev-sparql": "concurrently --kill-others \"npm run sparql\" \"vite\"",
         "build": "vue-tsc -b && vite build",
         "preview": "vite preview",
         "format": "prettier --write .",
-        "format-check": "prettier --check ."
+        "format-check": "prettier --check .",
+        "sparql": "pip install rdflib-endpoint uvicorn && rdflib-endpoint serve ./src/assets/data/Beispieldaten.ttl ./src/assets/data/vocabulary.ttl"
     },
     "dependencies": {
         "@vueuse/core": "^12.0.0",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
+        "concurrently": "^9.1.2",
         "lucide-vue-next": "^0.468.0",
         "radix-vue": "^1.9.11",
         "tailwind-merge": "^2.5.5",
