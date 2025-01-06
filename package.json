@@ -10,7 +10,10 @@
         "preview": "vite preview",
         "format": "prettier --write .",
         "format-check": "prettier --check .",
-        "sparql": "pip install rdflib-endpoint uvicorn && rdflib-endpoint serve ./src/assets/data/Beispieldaten.ttl ./src/assets/data/vocabulary.ttl"
+        "sparql": "npm run sparql:env && npm run sparql:setup && npm run sparql:serve",
+        "sparql:env": "python -m venv ./activate_env && source ./activate_env/bin/activate",
+        "sparql:setup": "pip install --upgrade pip && pip install rdflib-endpoint uvicorn",
+        "sparql:serve": "rdflib-endpoint serve ./src/assets/data/Beispieldaten.ttl ./src/assets/data/vocabulary.ttl"
     },
     "dependencies": {
         "@vueuse/core": "^12.0.0",

@@ -27,3 +27,6 @@ parsed-data
 # ENV
 *.env*
 !.env.template
+
+# Python Virtual Environment
+activate_env
