@@ -211,8 +211,9 @@ export default defineComponent({
     <div class="container">
         <canvas ref="canvas" :width="triangleWidth" :height="triangleHeight" @click="handleClick" />
         <div class="editor-placeholder">
-            <h2>Notiz hinzufügen</h2>
-            <Editor v-if="showEditor" @transfer="handleTransfer" />
+            <h2 v-if="showEditor">Notiz hinzufügen</h2>
+            <Editor v-if="showEditor" @transfer="handleTransfer">
+            </Editor>
         </div>
     </div>
 </template>
@@ -230,11 +231,8 @@ export default defineComponent({
     
     }
     .editor-placeholder {
-        width: 200px; /* Feste Breite für den Editor */
-        transition: opacity 0.3s ease-in-out; /* Glatter Übergang */
-        /*display: flex;*/
+        transition: opacity 0.3s ease-in-out;
         flex: 3;
     }
-   
 
 </style>
