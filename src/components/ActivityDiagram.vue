@@ -1,5 +1,6 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted } from "vue";
+import Editor from "./Editor.vue";
 
 /** 
  * Activity-Diagram-Component
@@ -7,6 +8,9 @@ import { defineComponent, ref, onMounted } from "vue";
  */
 export default defineComponent({
     name: "ActivityDiagramCanvas",
+    components:{ /** Add Editor to this component */
+        Editor,
+    },
     /**
      * Setup-Function
      * Sets up the canvas of the component with the given Height and Width
@@ -17,6 +21,7 @@ export default defineComponent({
         const canvas = ref<HTMLCanvasElement | null>(null);
         const triangleWidth = 800;
         const triangleHeight = 800;
+        const showEditor = ref(false); // sets the visibility of the editor to false
 
         /**
          * Points of the activity diagram
@@ -58,7 +63,7 @@ export default defineComponent({
             { x1: (triangleWidth / 16) * 5, y1: triangleHeight / 2, x2: triangleWidth / 2, y2: (triangleHeight / 8) * 7, color: "black", active: false }, // Rules -> Community
             { x1: (triangleWidth / 16) * 11, y1: triangleHeight / 2, x2: triangleWidth / 2, y2: (triangleHeight / 8) * 7, color: "black", active: false }, // Division of Labour -> Community
         ];
-
+        
         // Array of all points that are currently selected
         const selectedPoints = ref<number[]>([]);
 
@@ -119,7 +124,11 @@ export default defineComponent({
             const mouseX = event.clientX - rect.left;
             const mouseY = event.clientY - rect.top;
 
+            // TEST Logs the selected points
+            console.log("point" + selectedPoints.value); 
+
             points.value.forEach((point, index) => {
+
                 const distance = Math.sqrt((mouseX - point.x) ** 2 + (mouseY - point.y) ** 2);
                 if (distance < triangleHeight / 40) {
                     if (!selectedPoints.value.includes(index)) {
@@ -154,9 +163,32 @@ export default defineComponent({
                         lines.forEach((line) => (line.color = "black"));
                     }
 
+                    // Sets editor to true if at least one point is selected
+                    if (selectedPoints.value.length > 0) {
+                        showEditor.value = true;
+                    } else {
+                        showEditor.value = false;
+                    }
+
+                    
+
                     draw();
                 }
             });
+        };
+
+        // Handles logic when the editors button is pressed
+        const handleTransfer = (content: any) => {
+            if (selectedPoints.value.length === 2) {
+                console.log("Received content from Editor with 2 selected:", content);
+                showEditor.value = false; 
+            } else if (selectedPoints.value.length === 1) {
+                console.log("Received content from Editor with 1 selected:", content);
+                showEditor.value = false;
+            } else if (selectedPoints.value.length === 3) {
+                console.log("Received content from Editor with 3 selected:", content);
+                showEditor.value = false;
+            }
         };
 
         onMounted(() => {
@@ -168,18 +200,41 @@ export default defineComponent({
             triangleWidth,
             triangleHeight,
             handleClick,
+            showEditor,
+            handleTransfer,
         };
     },
 });
 </script>
 
 <template>
-    <canvas ref="canvas" :width="triangleWidth" :height="triangleHeight" @click="handleClick"></canvas>
+    <div class="container">
+        <canvas ref="canvas" :width="triangleWidth" :height="triangleHeight" @click="handleClick" />
+        <div class="editor-placeholder">
+            <h2>Notiz hinzufügen</h2>
+            <Editor v-if="showEditor" @transfer="handleTransfer" />
+        </div>
+    </div>
 </template>
 
 <style scoped>
-canvas {
-    display: block;
-    margin: auto;
-}
+    canvas {
+        display: block;
+        margin: 0;
+        flex: 2;
+    }
+    .container {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    
+    }
+    .editor-placeholder {
+        width: 200px; /* Feste Breite für den Editor */
+        transition: opacity 0.3s ease-in-out; /* Glatter Übergang */
+        /*display: flex;*/
+        flex: 3;
+    }
+   
+
 </style>
