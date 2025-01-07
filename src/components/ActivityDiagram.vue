@@ -1,5 +1,6 @@
 <script lang="ts">
-import { defineComponent, ref, onMounted } from "vue";
+import { defineComponent, ref, onMounted, watch} from "vue";
+import { useColorMode } from "@vueuse/core";
 
 /** 
  * Activity-Diagram-Component
@@ -18,6 +19,12 @@ export default defineComponent({
         const triangleWidth = 800;
         const triangleHeight = 800;
 
+        const mode = useColorMode();
+
+        // Changes Point-Colors based on current Theme
+        const getPointColor = () => (mode.value === "dark" ? "lightgray" : "white");
+        const getLineColor = () => (mode.value === "dark" ? "gray" : "black");
+
         /**
          * Points of the activity diagram
          * @property {number} x: x-coordinate of the point
@@ -27,12 +34,12 @@ export default defineComponent({
          * @property {string} selected: Specifies if the point is selected at the moment. Accepts "false" and "true"
          */
         const points = ref([
-            { x: triangleWidth / 2, y: triangleHeight / 8, label: "Instruments", color: "white", selected: "false" }, // Ecke oben
-            { x: triangleWidth / 8, y: (triangleHeight / 8) * 7, label: "Rules", color: "white", selected: "false" }, // Ecke Links Unten
-            { x: (triangleWidth / 8) * 7, y: (triangleHeight / 8) * 7, label: "Division of Labour", color: "white", selected: "false" }, // Ecke Rechts Unten
-            { x: (triangleWidth / 16) * 5, y: triangleHeight / 2, label: "Subject", color: "white", selected: "false" }, // Links Mitte
-            { x: (triangleWidth / 16) * 11, y: triangleHeight / 2, label: "Object", color: "white", selected: "false" }, // Rechts Mitte
-            { x: triangleWidth / 2, y: (triangleHeight / 8) * 7, label: "Community", color: "white", selected: "false" }, // Unten Mitte
+            { x: triangleWidth / 2, y: triangleHeight / 8, label: "Instruments", color: getPointColor(), selected: "false" }, // Ecke oben
+            { x: triangleWidth / 8, y: (triangleHeight / 8) * 7, label: "Rules", color: getPointColor(), selected: "false" }, // Ecke Links Unten
+            { x: (triangleWidth / 8) * 7, y: (triangleHeight / 8) * 7, label: "Division of Labour", color: getPointColor(), selected: "false" }, // Ecke Rechts Unten
+            { x: (triangleWidth / 16) * 5, y: triangleHeight / 2, label: "Subject", color: getPointColor(), selected: "false" }, // Links Mitte
+            { x: (triangleWidth / 16) * 11, y: triangleHeight / 2, label: "Object", color: getPointColor(), selected: "false" }, // Rechts Mitte
+            { x: triangleWidth / 2, y: (triangleHeight / 8) * 7, label: "Community", color: getPointColor(), selected: "false" }, // Unten Mitte
         ]);
 
         /**
@@ -45,22 +52,45 @@ export default defineComponent({
          * @property {bool} active: Specifies if the line is active at the moment
          */
         const lines = [
-            { x1: triangleWidth / 2, y1: triangleHeight / 8, x2: triangleWidth / 8, y2: (triangleHeight / 8) * 7, color: "black", active: false }, // Instruments -> Subject
-            { x1: triangleWidth / 2, y1: triangleHeight / 8, x2: (triangleWidth / 8) * 7, y2: (triangleHeight / 8) * 7, color: "black", active: false }, // Instruments -> Object
-            { x1: triangleWidth / 8, y1: (triangleHeight / 8) * 7, x2: (triangleWidth / 8) * 7, y2: (triangleHeight / 8) * 7, color: "black", active: false }, // Subject -> Object
-            { x1: triangleWidth / 2, y1: triangleHeight / 8, x2: (triangleWidth / 16) * 5, y2: triangleHeight / 2, color: "black", active: false }, // Instruments -> Rules
-            { x1: triangleWidth / 2, y1: triangleHeight / 8, x2: (triangleWidth / 16) * 11, y2: triangleHeight / 2, color: "black", active: false }, // Instruments -> Division of Labour
-            { x1: triangleWidth / 8, y1: (triangleHeight / 8) * 7, x2: triangleWidth / 2, y2: (triangleHeight / 8) * 7, color: "black", active: false }, // Subject -> Community
-            { x1: (triangleWidth / 8) * 7, y1: (triangleHeight / 8) * 7, x2: triangleWidth / 2, y2: (triangleHeight / 8) * 7, color: "black", active: false }, // Object -> Community
-            { x1: triangleWidth / 8, y1: (triangleHeight / 8) * 7, x2: (triangleWidth / 16) * 5, y2: triangleHeight / 2, color: "black", active: false }, // Subject -> Rules
-            { x1: (triangleWidth / 8) * 7, y1: (triangleHeight / 8) * 7, x2: (triangleWidth / 16) * 11, y2: triangleHeight / 2, color: "black", active: false }, // Object -> Division of Labour
-            { x1: (triangleWidth / 16) * 5, y1: triangleHeight / 2, x2: (triangleWidth / 16) * 11, y2: triangleHeight / 2, color: "black", active: false }, // Rules -> Division of Labour
-            { x1: (triangleWidth / 16) * 5, y1: triangleHeight / 2, x2: triangleWidth / 2, y2: (triangleHeight / 8) * 7, color: "black", active: false }, // Rules -> Community
-            { x1: (triangleWidth / 16) * 11, y1: triangleHeight / 2, x2: triangleWidth / 2, y2: (triangleHeight / 8) * 7, color: "black", active: false }, // Division of Labour -> Community
+            { x1: triangleWidth / 2, y1: triangleHeight / 8, x2: triangleWidth / 8, y2: (triangleHeight / 8) * 7, color: getLineColor(), active: false }, // Instruments -> Subject
+            { x1: triangleWidth / 2, y1: triangleHeight / 8, x2: (triangleWidth / 8) * 7, y2: (triangleHeight / 8) * 7, color: getLineColor(), active: false }, // Instruments -> Object
+            { x1: triangleWidth / 8, y1: (triangleHeight / 8) * 7, x2: (triangleWidth / 8) * 7, y2: (triangleHeight / 8) * 7, color: getLineColor(), active: false }, // Subject -> Object
+            { x1: triangleWidth / 2, y1: triangleHeight / 8, x2: (triangleWidth / 16) * 5, y2: triangleHeight / 2, color: getLineColor(), active: false }, // Instruments -> Rules
+            { x1: triangleWidth / 2, y1: triangleHeight / 8, x2: (triangleWidth / 16) * 11, y2: triangleHeight / 2, color: getLineColor(), active: false }, // Instruments -> Division of Labour
+            { x1: triangleWidth / 8, y1: (triangleHeight / 8) * 7, x2: triangleWidth / 2, y2: (triangleHeight / 8) * 7, color: getLineColor(), active: false }, // Subject -> Community
+            { x1: (triangleWidth / 8) * 7, y1: (triangleHeight / 8) * 7, x2: triangleWidth / 2, y2: (triangleHeight / 8) * 7, color: getLineColor(), active: false }, // Object -> Community
+            { x1: triangleWidth / 8, y1: (triangleHeight / 8) * 7, x2: (triangleWidth / 16) * 5, y2: triangleHeight / 2, color: getLineColor(), active: false }, // Subject -> Rules
+            { x1: (triangleWidth / 8) * 7, y1: (triangleHeight / 8) * 7, x2: (triangleWidth / 16) * 11, y2: triangleHeight / 2, color: getLineColor(), active: false }, // Object -> Division of Labour
+            { x1: (triangleWidth / 16) * 5, y1: triangleHeight / 2, x2: (triangleWidth / 16) * 11, y2: triangleHeight / 2, color: getLineColor(), active: false }, // Rules -> Division of Labour
+            { x1: (triangleWidth / 16) * 5, y1: triangleHeight / 2, x2: triangleWidth / 2, y2: (triangleHeight / 8) * 7, color: getLineColor(), active: false }, // Rules -> Community
+            { x1: (triangleWidth / 16) * 11, y1: triangleHeight / 2, x2: triangleWidth / 2, y2: (triangleHeight / 8) * 7, color: getLineColor(), active: false }, // Division of Labour -> Community
         ];
 
         // Array of all points that are currently selected
         const selectedPoints = ref<number[]>([]);
+
+        // Applies Point-Colors based on current Theme
+        const updateColors = () => {
+            points.value.forEach((point) => {
+                if(point.selected === "true") {
+                    point.color = "red";
+                } else {
+                    point.color = getPointColor();
+                }
+                
+            });
+
+            lines.forEach((line) => {
+                if(line.active === true) {
+                    line.color = "red";
+                } else {
+                    line.color = getLineColor();
+                }
+                
+            });
+
+            draw(); // Redraw the canvas to apply the new colors
+        };
 
         /**
          * Draw-Function of the canvas
@@ -85,6 +115,7 @@ export default defineComponent({
 
             // draw circles where points are
             points.value.forEach((point) => {
+                console.log(`Point Selected: ${point.selected} ; Point-Color: ${point.color}`)
                 ctx.beginPath();
                 ctx.arc(point.x, point.y, triangleHeight / 40, 0, 2 * Math.PI);
                 ctx.fillStyle = point.color;
@@ -93,7 +124,7 @@ export default defineComponent({
                 ctx.stroke();
 
                 // draw labels for each point
-                ctx.fillStyle = "black";
+                ctx.fillStyle = mode.value === "dark" ? "white" : "black";
                 ctx.font = `${triangleHeight / 40}px Arial`;
                 ctx.textAlign = "center";
                 ctx.fillText(point.label, point.x, point.y - triangleHeight / 30);
@@ -124,16 +155,18 @@ export default defineComponent({
                 if (distance < triangleHeight / 40) {
                     if (!selectedPoints.value.includes(index)) {
                         selectedPoints.value.push(index);
+                        point.selected = "true";
                         point.color = "red";
                     } else {
                         selectedPoints.value = selectedPoints.value.filter((i) => i !== index);
-                        point.color = "white";
+                        point.selected = "false";
+                        point.color = getPointColor();
                     }
 
                     // reset line color and activeness too few or too many points are selected
                     if (selectedPoints.value.length < 2 || selectedPoints.value.length === 3) {
                         lines.forEach((line) => {
-                            line.color = "black";
+                            line.color = getLineColor();
                             line.active = false;
                         });
                     }
@@ -146,14 +179,13 @@ export default defineComponent({
                                 (line.x1 === p1.x && line.y1 === p1.y && line.x2 === p2.x && line.y2 === p2.y) ||
                                 (line.x1 === p2.x && line.y1 === p2.y && line.x2 === p1.x && line.y2 === p1.y)
                             ) {
-                                line.color = "rgba(255, 0, 0, 1)";
+                                line.color = "red";
                                 line.active = true;
                             }
                         });
                     } else if (selectedPoints.value.length > 2) {
-                        lines.forEach((line) => (line.color = "black"));
+                        lines.forEach((line) => (line.color = getLineColor()));
                     }
-
                     draw();
                 }
             });
@@ -162,6 +194,10 @@ export default defineComponent({
         onMounted(() => {
             draw();
         });
+
+        watch(mode, () => {
+            updateColors();
+        })
 
         return {
             canvas,
