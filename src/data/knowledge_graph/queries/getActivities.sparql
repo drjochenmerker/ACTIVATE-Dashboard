@@ -6,6 +6,6 @@ SELECT ?activity ?label
 WHERE {
   ?activity rdf:type :Activity .
   ?activity rdfs:label ?label .
-  FILTER(LANG(?label) = {{lang}})
+  FILTER(LANG(?label) = "{{lang}}")
 }
 ORDER BY ?activity

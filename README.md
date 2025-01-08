@@ -21,8 +21,8 @@ npm install
 
 The File should look like this
 ```
-KNOWLEDGE_GRAPH_URL=<URL>
-KNOWLEDGE_GRAPH_PORT=<PORT>
+VITE_KNOWLEDGE_GRAPH_URL=<URL>
+VITE_KNOWLEDGE_GRAPH_PORT=<PORT>
 ```
 
 ## Development
