@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import NavBar from './components/NavBar.vue';
+import { getActivities } from './knowledge_graph/knowledge_graph';
+getActivities("en");
 </script>
 
 <template>
