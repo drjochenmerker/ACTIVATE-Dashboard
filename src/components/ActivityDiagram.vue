@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, ref, onMounted, watch} from "vue";
+import { defineComponent, ref, onMounted, watch } from "vue";
 import { useColorMode } from "@vueuse/core";
 
 /** 
@@ -69,27 +69,39 @@ export default defineComponent({
         // Array of all points that are currently selected
         const selectedPoints = ref<number[]>([]);
 
-        // Applies Point-Colors based on current Theme
+
+        // applies point-colors based on current theme
         const updateColors = () => {
+            // Update point colors
             points.value.forEach((point) => {
-                if(point.selected === "true") {
-                    point.color = "red";
-                } else {
-                    point.color = getPointColor();
-                }
-                
+                point.color = point.selected === "true" ? "red" : getPointColor();
             });
 
-            lines.forEach((line) => {
-                if(line.active === true) {
-                    line.color = "red";
-                } else {
+            // Update line colors and active status
+            if (selectedPoints.value.length === 2 || selectedPoints.value.length === 3) {
+                const selectedCoords = selectedPoints.value.map((i) => points.value[i]);
+                lines.forEach((line) => {
+                    const isConnecting =
+                        selectedCoords.some((p) => p.x === line.x1 && p.y === line.y1) &&
+                        selectedCoords.some((p) => p.x === line.x2 && p.y === line.y2);
+
+                    if (isConnecting) {
+                        line.color = "red";
+                        line.active = true;
+                    } else {
+                        line.color = getLineColor();
+                        line.active = false;
+                    }
+                });
+            } else {
+                // Reset all lines if selection is invalid
+                lines.forEach((line) => {
                     line.color = getLineColor();
-                }
-                
-            });
+                    line.active = false;
+                });
+            }
 
-            draw(); // Redraw the canvas to apply the new colors
+            draw();
         };
 
         /**
@@ -109,7 +121,7 @@ export default defineComponent({
                 ctx.moveTo(line.x1, line.y1);
                 ctx.lineTo(line.x2, line.y2);
                 ctx.strokeStyle = line.color;
-                line.active == true ? ctx.lineWidth = 4 : ctx.lineWidth = 2;
+                ctx.lineWidth = line.active ? 4 : 2;
                 ctx.stroke();
             });
 
@@ -121,6 +133,7 @@ export default defineComponent({
                 ctx.fillStyle = point.color;
                 ctx.fill();
                 ctx.strokeStyle = "black";
+                ctx.lineWidth = 2;
                 ctx.stroke();
 
                 // draw labels for each point
@@ -138,7 +151,9 @@ export default defineComponent({
                 ctx.lineTo(p2.x, p2.y);
                 ctx.lineTo(p3.x, p3.y);
                 ctx.closePath();
+                ctx.strokeStyle = "red";
                 ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
+                ctx.stroke();
                 ctx.fill();
             }
         };
@@ -156,37 +171,12 @@ export default defineComponent({
                     if (!selectedPoints.value.includes(index)) {
                         selectedPoints.value.push(index);
                         point.selected = "true";
-                        point.color = "red";
                     } else {
                         selectedPoints.value = selectedPoints.value.filter((i) => i !== index);
                         point.selected = "false";
-                        point.color = getPointColor();
                     }
 
-                    // reset line color and activeness too few or too many points are selected
-                    if (selectedPoints.value.length < 2 || selectedPoints.value.length === 3) {
-                        lines.forEach((line) => {
-                            line.color = getLineColor();
-                            line.active = false;
-                        });
-                    }
-
-                    // checks if a line should be active at the moment, toggles the boolean and gives active lines a color
-                    if (selectedPoints.value.length === 2) {
-                        const [p1, p2] = selectedPoints.value.map((i) => points.value[i]);
-                        lines.forEach((line) => {
-                            if (
-                                (line.x1 === p1.x && line.y1 === p1.y && line.x2 === p2.x && line.y2 === p2.y) ||
-                                (line.x1 === p2.x && line.y1 === p2.y && line.x2 === p1.x && line.y2 === p1.y)
-                            ) {
-                                line.color = "red";
-                                line.active = true;
-                            }
-                        });
-                    } else if (selectedPoints.value.length > 2) {
-                        lines.forEach((line) => (line.color = getLineColor()));
-                    }
-                    draw();
+                    updateColors();
                 }
             });
         };
