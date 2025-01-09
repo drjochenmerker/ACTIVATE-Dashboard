@@ -124,9 +124,6 @@ export default defineComponent({
             const mouseX = event.clientX - rect.left;
             const mouseY = event.clientY - rect.top;
 
-            // TEST Logs the selected points
-            console.log("point" + selectedPoints.value); 
-
             points.value.forEach((point, index) => {
 
                 const distance = Math.sqrt((mouseX - point.x) ** 2 + (mouseY - point.y) ** 2);
@@ -177,8 +174,14 @@ export default defineComponent({
             });
         };
 
-        // Handles logic when the editors button is pressed
+        // handles logic when the save-button is pressed
         const handleTransfer = (content: any) => {
+            // Gets the selected points and sends them with the content to the backend
+            selectedPoints._value.forEach(value => {
+                console.log("Value:", points.value); // TODO ??? 
+            });
+
+            // checks how many points are selected 
             if (selectedPoints.value.length === 2) {
                 console.log("Received content from Editor with 2 selected:", content);
                 showEditor.value = false; 
@@ -211,7 +214,7 @@ export default defineComponent({
     <div class="container">
         <canvas ref="canvas" :width="triangleWidth" :height="triangleHeight" @click="handleClick" />
         <div class="editor-placeholder">
-            <h2 v-if="showEditor">Notiz hinzufügen</h2>
+            <h2 v-if="showEditor" style="font-weight: bold;">Add note:</h2>
             <Editor v-if="showEditor" @transfer="handleTransfer">
             </Editor>
         </div>
