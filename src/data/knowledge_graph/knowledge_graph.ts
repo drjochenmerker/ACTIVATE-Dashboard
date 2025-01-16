@@ -31,18 +31,23 @@ async function fetchSparql(query: string): Promise<KnowledgeGraphData> {
 
 /**
  * Fetches all activities from the knowledge graph
- * @param lang Language to fetch the activities in
- * @returns A list of Activity objects
+ * @returns A list of Activity objects which can be accessed through
+ *          corresponding language string. Example: "de"
  */
-export async function getActivities(lang: string = "de"): Promise<Activity[]> {
+export async function getActivities(): Promise<Record<string, Activity[]>> {
   let query = await getSparqlTemplate(sparqlTemplate.getActivities);
-  query = query.replace("{{language}}", lang);
   const data = await fetchSparql(query);
-  const parsedData = data.map((triple: KnowledgeGraphData) => {
-    return {
-      uri: triple.activity.value,
-      label: triple.label.value,
-    } as Activity
+  let parsedData: KnowledgeGraphData = {};
+  data.forEach((triple: KnowledgeGraphData) => {
+    if (triple.language.value in parsedData === false) {
+      parsedData[triple.language.value] = [] as Activity[];
+    }
+    parsedData[triple.language.value].push(
+      {
+        uri: triple.activity.value,
+        label: triple.label.value
+      }
+    )
   });
   return parsedData;
 }
