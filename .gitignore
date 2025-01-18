@@ -23,3 +23,7 @@ parsed-data
 *.njsproj
 *.sln
 *.sw?
+
+# ENV
+*.env*
+!.env.template
