@@ -3,11 +3,17 @@ PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 
-SELECT ?predicate ?object ?label
+SELECT ?predicate ?object ?label ?detail1 ?detail2 (LANG(?detail2) as ?detail2language)
 WHERE {
   ?s ?predicate ?object .
   FILTER(?s = :{{activity}})
-  FILTER(isURI(?object) || LANG(?object) = "{{language}}")
-  ?object rdf:type ?label
+  ?object rdf:type ?label .
+  {
+	SELECT *
+ 	WHERE {
+      ?object ?detail1 ?detail2 .
+  	}
+    ORDER BY ?detail1
+  }
 }
 ORDER BY ?predicate

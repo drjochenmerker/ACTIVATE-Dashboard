@@ -12,8 +12,7 @@ export type StringAccessObject = {
 
 export enum sparqlTemplate {
     getActivities = "getActivities",
-    getActivityDetail = "getActivityDetail",
-    getActivityDetailWithInfo = "getActivityDetailWithInfo",
+    getActivityDetail = "getActivityDetail"
 }
 
 /**
@@ -29,7 +28,7 @@ export interface Activity {
  */
 export interface Action {
     action: string;
-    object: string;
+    object: string | StringAccessObject;
 }
 
 /**
@@ -38,7 +37,7 @@ export interface Action {
 export interface Object {
     label: string;
     type: string;
-    actions: Action[];
+    actions: Set<string>;
     properties: Action[];
 }
 
@@ -46,5 +45,5 @@ export interface Object {
  * Detail of an activity in the knowledge graph
  */
 export class ActivityDetail {
-    [key: string]: Object[] | Action[] | boolean;
+    [key: string]: Object[] | boolean;
 }
