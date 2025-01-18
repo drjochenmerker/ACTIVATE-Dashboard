@@ -10,7 +10,7 @@
         "preview": "vite preview",
         "format": "prettier --write .",
         "format-check": "prettier --check .",
-        "sparql": "pip install rdflib-endpoint uvicorn && rdflib-endpoint serve ./src/assets/data/Beispieldaten.ttl ./src/assets/data/vocabulary.ttl"
+        "sparql": "bash scripts/sparql_setup.sh"
     },
     "dependencies": {
         "@vueuse/core": "^12.0.0",

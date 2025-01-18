@@ -21,7 +21,8 @@ npm install
 
 The File should look like this
 ```
-SPARQL_PORT=<PORT>
+VITE_KNOWLEDGE_GRAPH_URL=<URL>
+VITE_KNOWLEDGE_GRAPH_PORT=<PORT>
 ```
 
 ## Development
