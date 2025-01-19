@@ -8,7 +8,8 @@ import Editor from "./Editor.vue";
  */
 export default defineComponent({
     name: "ActivityDiagramCanvas",
-    components:{ /** Add Editor to this component */
+    components:{ 
+        // EDITOR: Adds Editor to this component
         Editor,
     },
     /**
@@ -21,7 +22,7 @@ export default defineComponent({
         const canvas = ref<HTMLCanvasElement | null>(null);
         const triangleWidth = 800;
         const triangleHeight = 800;
-        const showEditor = ref(false); // sets the visibility of the editor to false
+        const showEditor = ref(false); // EDITOR: sets the visibility of the editor to false
 
         /**
          * Points of the activity diagram
@@ -160,38 +161,48 @@ export default defineComponent({
                         lines.forEach((line) => (line.color = "black"));
                     }
 
-                    // Sets editor to true if at least one point is selected
+                    // EDITOR: Sets editor to true if at least one point is selected
                     if (selectedPoints.value.length > 0) {
                         showEditor.value = true;
                     } else {
                         showEditor.value = false;
                     }
 
-                    
-
                     draw();
                 }
             });
         };
 
-        // handles logic when the save-button is pressed
+        // EDITOR: handles logic when the "done"-button of the editor is pressed
         const handleTransfer = (content: any) => {
-            // Gets the selected points and sends them with the content to the backend
-            selectedPoints._value.forEach(value => {
-                console.log("Value:", points.value); // TODO ??? 
+            // Temporary variable to store the selected points from the note
+            const selectedPointsFromNote = selectedPoints.value.slice();
+
+            // Logs the selected points from the note and the content from the editor
+            // TODO: Do something with the provided data
+            console.log("Participating points:", selectedPointsFromNote);
+            console.log("Number of participating points:", selectedPointsFromNote.length);
+            console.log("Text from the Editor:", content);
+
+
+            // Reset points and lines
+            points.value.forEach((point) => {
+                point.selected = "false";
+                point.color = "white";
+            });
+            lines.forEach((line) => {
+                line.active = false;
+                line.color = "black";
             });
 
-            // checks how many points are selected 
-            if (selectedPoints.value.length === 2) {
-                console.log("Received content from Editor with 2 selected:", content);
-                showEditor.value = false; 
-            } else if (selectedPoints.value.length === 1) {
-                console.log("Received content from Editor with 1 selected:", content);
-                showEditor.value = false;
-            } else if (selectedPoints.value.length === 3) {
-                console.log("Received content from Editor with 3 selected:", content);
-                showEditor.value = false;
-            }
+            // Clear the selected points array
+            selectedPoints.value = [];
+            // Redraw the canvas
+            draw();
+            // Hides the editor
+            showEditor.value = false;
+
+            // TODO: Handle the data as needed
         };
 
         onMounted(() => {
@@ -203,6 +214,8 @@ export default defineComponent({
             triangleWidth,
             triangleHeight,
             handleClick,
+            
+            // EDITOR
             showEditor,
             handleTransfer,
         };
