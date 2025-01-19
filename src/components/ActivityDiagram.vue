@@ -175,14 +175,24 @@ export default defineComponent({
 
         // EDITOR: handles logic when the "done"-button of the editor is pressed
         const handleTransfer = (content: any) => {
-            // Temporary variable to store the selected points from the note
-            const selectedPointsFromNote = selectedPoints.value.slice();
+            // Note Object
+            const note = {
+                content: content.content,
+                isAnonymous: content.isAnonymous,
+                participatingPoints: selectedPoints.value.slice(),
+            };
 
             // Logs the selected points from the note and the content from the editor
             // TODO: Do something with the provided data
-            console.log("Participating points:", selectedPointsFromNote);
-            console.log("Number of participating points:", selectedPointsFromNote.length);
-            console.log("Text from the Editor:", content);
+            console.log("Participating points:", note.participatingPoints);
+            console.log("Number of participating points:", note.participatingPoints.length);
+            console.log("Anonymous Status:", note.isAnonymous);
+            console.log("Text from the Editor:", note.content);
+
+            // Speicher die Notiz im sessionStorage oder localStorage
+            let notes = JSON.parse(sessionStorage.getItem('notes')) || []; // Fallback auf leeres Array
+            notes.push(note); // Füge die neue Notiz hinzu
+            sessionStorage.setItem('notes', JSON.stringify(notes)); // Speichere im sessionStorage
 
 
             // Reset points and lines
@@ -202,7 +212,6 @@ export default defineComponent({
             // Hides the editor
             showEditor.value = false;
 
-            // TODO: Handle the data as needed
         };
 
         onMounted(() => {

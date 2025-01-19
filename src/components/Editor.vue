@@ -1,22 +1,38 @@
 <template>
   <div class="editor-container">
     <div ref="editorContainer" class="quill-editor"></div>
+
+    <!-- Checkbox for anonymous submission -->
+    <label class="anonymous-checkbox">
+      <input 
+        type="checkbox" 
+        v-model="isAnonymous" 
+      />
+      Send anonymously
+    </label>
+
     <!-- Button to transfer text -->
-    <button
+    <Button
+      variant="primary"
+      size="large"
       class="transfer-button"
       @click="transferText"
     >
       Done
-    </button>
+    </Button>
   </div>
 </template>
 
 <script>
 import Quill from 'quill';
 import 'quill/dist/quill.snow.css';
+import Button from '@/components/ui/button/Button.vue';
 
 export default {
   name: 'QuillEditor',
+  components: {
+    Button // import the Button component
+  },
   props: {
     value: {
       type: String,
@@ -26,7 +42,8 @@ export default {
   emits: ['input', 'transfer'],
   data() {
     return {
-      quill: null
+      quill: null,
+      isAnonymous: false, // State for anonymous submission
     };
   },
   mounted() {
@@ -56,8 +73,13 @@ export default {
       });
     },
     transferText() {
-      const content = this.quill.root.innerHTML;
-      this.$emit('transfer', content); // Emit the 'transfer' event with editor content
+      const payload = {
+        content: this.quill.root.innerHTML, // Include the text-content
+        isAnonymous: this.isAnonymous, // Include the anonymous state
+      };
+
+      // Emit the 'transfer' event with content and anonymous status
+      this.$emit('transfer', payload);
     }
   },
   watch: {
@@ -91,6 +113,17 @@ export default {
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   background-color: #f9f9f9;
+}
+
+.anonymous-checkbox {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+}
+
+.anonymous-checkbox input {
+  margin-right: 8px;
 }
 
 .transfer-button {
