@@ -60,27 +60,26 @@ export default defineComponent({
             { pointIds: ["community", "object"], color: getLineColor(), active: false },
         ]);
 
-         /**
-         * Triangles of the activity diagram
-         * @property {Array} pointIds: Array of the corner point IDs
-         * @property {bool} active: Specifies if the triangle is active at the moment
-         */
+        /**
+        * Triangles of the activity diagram
+        * @property {Array} pointIds: Array of the corner point IDs
+        */
         const triangles = ref([
-            { pointIds: ["instruments", "subject", "object"], active: false },
-            { pointIds: ["subject", "rules", "community"], active: false },
-            { pointIds: ["subject", "community", "object"], active: false },
-            { pointIds: ["object", "community", "division_of_labour"], active: false },
+            { pointIds: ["instruments", "subject", "object"] },
+            { pointIds: ["subject", "rules", "community"] },
+            { pointIds: ["subject", "community", "object"] },
+            { pointIds: ["object", "community", "division_of_labour"] },
         ])
 
         // Array of all points that are currently selected
-        const selectedPoints = ref<number[]>([]);
+        const selectedPoints = ref<string[]>([]);
 
 
-         /**
-         * Checks if a defined triangle is clicked by checking rates of the areas
-         * @param {number} mouseX: x-coordinate of the clicked point
-         * @param {number} mouseY: y-coordinate of the clicked point
-         */
+        /**
+        * Checks if a defined triangle is clicked by checking rates of the areas
+        * @param {number} mouseX: x-coordinate of the clicked point
+        * @param {number} mouseY: y-coordinate of the clicked point
+        */
         const checkIfTriangleIsClicked = (mouseX: number, mouseY: number) => {
             triangles.value.forEach((triangle) => {
                 const [point1, point2, point3] = triangle.pointIds.map((id) => points.value.find((p) => p.id === id));
@@ -95,11 +94,56 @@ export default defineComponent({
 
 
                     if (triangleArea === area1 + area2 + area3) {
-                        console.log(triangle)
+                        toggleTriangle(triangle);
                     }
                 }
             })
         }
+
+        const toggleTriangle = (triangle: { pointIds: string[] }) => {
+            const triangleIsActive = triangle.pointIds.every((id) => {
+                return selectedPoints.value.includes(id);
+            });
+
+            deselectEverything()
+
+            // Select all points of the triangle
+            triangle.pointIds.forEach((id) => {
+                const point = points.value.find((p) => p.id === id);
+                if (point && !selectedPoints.value.includes(id)) {
+                    selectedPoints.value.push(id);
+                    point.selected = triangleIsActive ? "false" : "true";
+                }
+            });
+
+            // Activate all lines connected to the triangle's points
+            lines.value.forEach((line) => {
+                const isConnected = line.pointIds.every((id) => triangle.pointIds.includes(id));
+                if (isConnected) {
+                    line.active = triangleIsActive ? false : true;
+                    line.color = triangleIsActive ? getLineColor() : "red";
+                }
+            });
+
+            updateColors();
+        };
+
+        const deselectEverything = () => {
+            points.value.forEach((point) => {
+                point.selected = "false";
+            });
+
+            lines.value.forEach((line) => {
+                line.active = false;
+                line.color = getLineColor();
+            });
+
+            selectedPoints.value = [];
+        }
+
+        const updatePoints = () => {
+
+            }
 
         // applies point-colors based on current theme
         const updateColors = () => {
@@ -110,7 +154,7 @@ export default defineComponent({
 
             // Update line colors and active status
             if (selectedPoints.value.length === 2 || selectedPoints.value.length === 3) {
-                const selectedIds = selectedPoints.value.map((i) => points.value[i].id);
+                const selectedIds = selectedPoints.value;
 
                 lines.value.forEach((line) => {
                     const isConnecting = line.pointIds.every((id) => selectedIds.includes(id));
@@ -177,16 +221,18 @@ export default defineComponent({
 
             // draw red triangle between 3 points if 3 points are currently selected
             if (selectedPoints.value.length === 3) {
-                const [p1, p2, p3] = selectedPoints.value.map((i) => points.value[i]);
-                ctx.beginPath();
-                ctx.moveTo(p1.x, p1.y);
-                ctx.lineTo(p2.x, p2.y);
-                ctx.lineTo(p3.x, p3.y);
-                ctx.closePath();
-                ctx.strokeStyle = "red";
-                ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
-                ctx.stroke();
-                ctx.fill();
+                const [p1, p2, p3] = selectedPoints.value.map((id) => points.value.find((p) => p.id === id));
+                if (p1 && p2 && p3) {
+                    ctx.beginPath();
+                    ctx.moveTo(p1.x, p1.y);
+                    ctx.lineTo(p2.x, p2.y);
+                    ctx.lineTo(p3.x, p3.y);
+                    ctx.closePath();
+                    ctx.strokeStyle = "red";
+                    ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
+                    ctx.stroke();
+                    ctx.fill();
+                }
             }
         };
 
@@ -198,15 +244,15 @@ export default defineComponent({
             const mouseY = event.clientY - rect.top;
             let pointWasClicked = false;
 
-            points.value.forEach((point, index) => {
+            points.value.forEach((point) => {
                 const distance = Math.sqrt((mouseX - point.x) ** 2 + (mouseY - point.y) ** 2);
                 if (distance < triangleHeight / 40) {
                     pointWasClicked = true;
-                    if (!selectedPoints.value.includes(index)) {
-                        selectedPoints.value.push(index);
+                    if (!selectedPoints.value.includes(point.id)) {
+                        selectedPoints.value.push(point.id);
                         point.selected = "true";
                     } else {
-                        selectedPoints.value = selectedPoints.value.filter((i) => i !== index);
+                        selectedPoints.value = selectedPoints.value.filter((id) => id !== point.id);
                         point.selected = "false";
                     }
 
