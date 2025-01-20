@@ -12,7 +12,9 @@ export type StringAccessObject = {
 
 export enum sparqlTemplate {
     getActivities = "getActivities",
-    getActivityDetail = "getActivityDetail"
+    // getActivities = "getActivities.tmp",
+    getActivityDetail = "getActivityDetail",
+    getExampleActivity = "getExampleActivity"
 }
 
 /**
