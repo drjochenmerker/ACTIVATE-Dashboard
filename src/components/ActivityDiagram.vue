@@ -60,8 +60,46 @@ export default defineComponent({
             { pointIds: ["community", "object"], color: getLineColor(), active: false },
         ]);
 
+         /**
+         * Triangles of the activity diagram
+         * @property {Array} pointIds: Array of the corner point IDs
+         * @property {bool} active: Specifies if the triangle is active at the moment
+         */
+        const triangles = ref([
+            { pointIds: ["instruments", "subject", "object"], active: false },
+            { pointIds: ["subject", "rules", "community"], active: false },
+            { pointIds: ["subject", "community", "object"], active: false },
+            { pointIds: ["object", "community", "division_of_labour"], active: false },
+        ])
+
         // Array of all points that are currently selected
         const selectedPoints = ref<number[]>([]);
+
+
+         /**
+         * Checks if a defined triangle is clicked by checking rates of the areas
+         * @param {number} mouseX: x-coordinate of the clicked point
+         * @param {number} mouseY: y-coordinate of the clicked point
+         */
+        const checkIfTriangleIsClicked = (mouseX: number, mouseY: number) => {
+            triangles.value.forEach((triangle) => {
+                const [point1, point2, point3] = triangle.pointIds.map((id) => points.value.find((p) => p.id === id));
+                if (point1 && point2 && point3) {
+                    // Calculate the area of the whole triangle
+                    const triangleArea = Math.abs((point1.x * (point2.y - point3.y) + point2.x * (point3.y - point1.y) + point3.x * (point1.y - point2.y)) / 2);
+
+                    // Calculate the area of the triangle formed by the clicked point and two vertices of the triangle
+                    const area1 = Math.abs((mouseX * (point2.y - point3.y) + point2.x * (point3.y - mouseY) + point3.x * (mouseY - point2.y)) / 2);
+                    const area2 = Math.abs((point1.x * (mouseY - point3.y) + mouseX * (point3.y - point1.y) + point3.x * (point1.y - mouseY)) / 2);
+                    const area3 = Math.abs((point1.x * (point2.y - mouseY) + point2.x * (mouseY - point1.y) + mouseX * (point1.y - point2.y)) / 2);
+
+
+                    if (triangleArea === area1 + area2 + area3) {
+                        console.log(triangle)
+                    }
+                }
+            })
+        }
 
         // applies point-colors based on current theme
         const updateColors = () => {
@@ -158,10 +196,12 @@ export default defineComponent({
             const rect = canvas.value.getBoundingClientRect();
             const mouseX = event.clientX - rect.left;
             const mouseY = event.clientY - rect.top;
+            let pointWasClicked = false;
 
             points.value.forEach((point, index) => {
                 const distance = Math.sqrt((mouseX - point.x) ** 2 + (mouseY - point.y) ** 2);
                 if (distance < triangleHeight / 40) {
+                    pointWasClicked = true;
                     if (!selectedPoints.value.includes(index)) {
                         selectedPoints.value.push(index);
                         point.selected = "true";
@@ -173,6 +213,8 @@ export default defineComponent({
                     updateColors();
                 }
             });
+
+            if (!pointWasClicked) { checkIfTriangleIsClicked(mouseX, mouseY) }
         };
 
         onMounted(() => {
