@@ -1,6 +1,7 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted, watch } from "vue";
 import { useColorMode } from "@vueuse/core";
+import { getActivities, getActivityDetail } from "@/data/knowledge_graph/knowledge_graph";
 
 /** 
  * Activity-Diagram-Component
@@ -34,12 +35,12 @@ export default defineComponent({
          * @property {string} selected: Specifies if the point is selected at the moment. Accepts "false" and "true"
          */
         const points = ref([
-            { x: triangleWidth / 2, y: triangleHeight / 8, label: "Instruments", color: getPointColor(), selected: "false" }, // Ecke oben
-            { x: triangleWidth / 8, y: (triangleHeight / 8) * 7, label: "Rules", color: getPointColor(), selected: "false" }, // Ecke Links Unten
-            { x: (triangleWidth / 8) * 7, y: (triangleHeight / 8) * 7, label: "Division of Labour", color: getPointColor(), selected: "false" }, // Ecke Rechts Unten
-            { x: (triangleWidth / 16) * 5, y: triangleHeight / 2, label: "Subject", color: getPointColor(), selected: "false" }, // Links Mitte
-            { x: (triangleWidth / 16) * 11, y: triangleHeight / 2, label: "Object", color: getPointColor(), selected: "false" }, // Rechts Mitte
-            { x: triangleWidth / 2, y: (triangleHeight / 8) * 7, label: "Community", color: getPointColor(), selected: "false" }, // Unten Mitte
+            { x: triangleWidth / 2, y: triangleHeight / 8, id: "instruments", label: "Instruments", color: getPointColor(), selected: "false" }, // Ecke oben
+            { x: triangleWidth / 8, y: (triangleHeight / 8) * 7, id: "rules", label: "Rules", color: getPointColor(), selected: "false" }, // Ecke Links Unten
+            { x: (triangleWidth / 8) * 7, y: (triangleHeight / 8) * 7, id: "division_of_labour", label: "Division of Labour", color: getPointColor(), selected: "false" }, // Ecke Rechts Unten
+            { x: (triangleWidth / 16) * 5, y: triangleHeight / 2, id: "subject", label: "Subject", color: getPointColor(), selected: "false" }, // Links Mitte
+            { x: (triangleWidth / 16) * 11, y: triangleHeight / 2, id: "object", label: "Object", color: getPointColor(), selected: "false" }, // Rechts Mitte
+            { x: triangleWidth / 2, y: (triangleHeight / 8) * 7, id: "community", label: "Community", color: getPointColor(), selected: "false" }, // Unten Mitte
         ]);
 
         /**
@@ -63,8 +64,25 @@ export default defineComponent({
             { x1: (triangleWidth / 8) * 7, y1: (triangleHeight / 8) * 7, x2: (triangleWidth / 16) * 11, y2: triangleHeight / 2, color: getLineColor(), active: false }, // Object -> Division of Labour
             { x1: (triangleWidth / 16) * 5, y1: triangleHeight / 2, x2: (triangleWidth / 16) * 11, y2: triangleHeight / 2, color: getLineColor(), active: false }, // Rules -> Division of Labour
             { x1: (triangleWidth / 16) * 5, y1: triangleHeight / 2, x2: triangleWidth / 2, y2: (triangleHeight / 8) * 7, color: getLineColor(), active: false }, // Rules -> Community
-            { x1: (triangleWidth / 16) * 11, y1: triangleHeight / 2, x2: triangleWidth / 2, y2: (triangleHeight / 8) * 7, color: getLineColor(), active: false }, // Division of Labour -> Community
+            { x1: (triangleWidth / 16) * 11, y1: triangleHeight / 2, x2: triangleWidth / 2, y2: (triangleHeight / 8) * 7, color: getLineColor(), active: true }, // Division of Labour -> Community
         ];
+
+        // Refactoring-Attempt, maybe continue later
+        // const newLines = [
+        //     //{ pointIds: ["instruments", "rules"], color: getLineColor(), active: true },
+        //     //{ pointIds: ["instruments", "division_of_labour"], color: getLineColor(), active: false },
+        //     //{ pointIds: ["rules", "division_of_labour"], color: getLineColor(), active: false }, 
+        //     { pointIds: ["instruments", "subject"], color: getLineColor(), active: false }, 
+        //     { pointIds: ["instruments", "object"], color: getLineColor(), active: false }, 
+        //     { pointIds: ["rules", "community"], color: getLineColor(), active: false },
+        //     { pointIds: ["community", "division_of_labour"], color: getLineColor(), active: false }, 
+        //     { pointIds: ["subject", "rules"], color: getLineColor(), active: false }, 
+        //     { pointIds: ["object", "division_of_labour"], color: getLineColor(), active: false }, 
+        //     { pointIds: ["subject", "object"], color: getLineColor(), active: false }, 
+        //     { pointIds: ["subject", "community"], color: getLineColor(), active: false }, 
+        //     { pointIds: ["community", "object"], color: getLineColor(), active: false }, 
+        // ]
+        //  const pointWithId = (id: string) => points.value.find(point => point.id === id);
 
         // Array of all points that are currently selected
         const selectedPoints = ref<number[]>([]);
@@ -77,9 +95,14 @@ export default defineComponent({
                 point.color = point.selected === "true" ? "red" : getPointColor();
             });
 
+            // lines.forEach((line) => {
+            //     line.color = line.active === true ? "red" : getLineColor()
+            // })
+
             // Update line colors and active status
             if (selectedPoints.value.length === 2 || selectedPoints.value.length === 3) {
                 const selectedCoords = selectedPoints.value.map((i) => points.value[i]);
+
                 lines.forEach((line) => {
                     const isConnecting =
                         selectedCoords.some((p) => p.x === line.x1 && p.y === line.y1) &&
@@ -127,7 +150,7 @@ export default defineComponent({
 
             // draw circles where points are
             points.value.forEach((point) => {
-                console.log(`Point Selected: ${point.selected} ; Point-Color: ${point.color}`)
+                //console.log(`Point Selected: ${point.selected} ; Point-Color: ${point.color}`)
                 ctx.beginPath();
                 ctx.arc(point.x, point.y, triangleHeight / 40, 0, 2 * Math.PI);
                 ctx.fillStyle = point.color;
@@ -158,12 +181,47 @@ export default defineComponent({
             }
         };
 
+        const triangles = [
+            [0, 3, 4],
+            [3, 1, 5],
+            [4, 2, 5],
+            [3, 4, 5],
+        ]
+
+        const isPointInTriangle = (px, py, ax, ay, bx, by, cx, cy) => {
+            const area = (ax * (by - cy) + bx * (cy - ay) + cx * (ay - by)) / 2;
+            const area1 = (px * (by - cy) + bx * (cy - py) + cx * (py - by)) / 2;
+            const area2 = (ax * (py - cy) + px * (cy - ay) + cx * (ay - py)) / 2;
+            const area3 = (ax * (by - py) + bx * (py - ay) + px * (ay - by)) / 2;
+
+            return Math.abs(area - (area1 + area2 + area3)) < 0.01;
+        };
+
+
+
+
         // Handles logic when a point is clicked
         const handleClick = (event: MouseEvent) => {
             if (!canvas.value) return;
             const rect = canvas.value.getBoundingClientRect();
             const mouseX = event.clientX - rect.left;
             const mouseY = event.clientY - rect.top;
+            console.log(mouseX, mouseY);
+
+            // for (const triangle of triangles) {
+            //     const [a, b, c] = triangle.map((i) => points.value[i]);
+            //     if (isPointInTriangle(mouseX, mouseY, a.x, a.y, b.x, b.y, c.x, c.y)) {
+            //         // Wähle alle Punkte dieses Dreiecks aus
+            //         triangle.forEach((index) => {
+            //             if (!selectedPoints.value.includes(index)) {
+            //                 selectedPoints.value.push(index);
+            //                 points.value[index].selected = "true";
+            //             }
+            //         });
+            //         updateColors();
+            //         return;
+            //     }
+            // }
 
             points.value.forEach((point, index) => {
                 const distance = Math.sqrt((mouseX - point.x) ** 2 + (mouseY - point.y) ** 2);
@@ -182,7 +240,10 @@ export default defineComponent({
         };
 
         onMounted(() => {
+            //console.log(getActivities());
+
             draw();
+
         });
 
         watch(mode, () => {
