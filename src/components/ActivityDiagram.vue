@@ -1,6 +1,7 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted } from "vue";
 import Editor from "./Editor.vue";
+import { noteStatus } from "@/assets/constants/noteStatus";
 
 /** 
  * Activity-Diagram-Component
@@ -179,6 +180,9 @@ export default defineComponent({
             const note = {
                 content: content.content,
                 isAnonymous: content.isAnonymous,
+                // TODO: Add creator to the note object
+                // creator: content.creator,
+                noteStatus: noteStatus.RED,
                 participatingPoints: selectedPoints.value.slice(),
             };
 
@@ -188,8 +192,10 @@ export default defineComponent({
             console.log("Number of participating points:", note.participatingPoints.length);
             console.log("Anonymous Status:", note.isAnonymous);
             console.log("Text from the Editor:", note.content);
+            console.log("Note Status:", note.noteStatus);
 
-            // Speicher die Notiz im sessionStorage oder localStorage
+            // save the note in sessionStorage
+            // TODO: sparql query to save the note
             let notes = JSON.parse(sessionStorage.getItem('notes')) || []; // Fallback auf leeres Array
             notes.push(note); // Füge die neue Notiz hinzu
             sessionStorage.setItem('notes', JSON.stringify(notes)); // Speichere im sessionStorage
@@ -237,8 +243,7 @@ export default defineComponent({
         <canvas ref="canvas" :width="triangleWidth" :height="triangleHeight" @click="handleClick" />
         <div class="editor-placeholder">
             <h2 v-if="showEditor" style="font-weight: bold;">Add note:</h2>
-            <Editor v-if="showEditor" @transfer="handleTransfer">
-            </Editor>
+            <Editor v-if="showEditor" @transfer="handleTransfer" />
         </div>
     </div>
 </template>
