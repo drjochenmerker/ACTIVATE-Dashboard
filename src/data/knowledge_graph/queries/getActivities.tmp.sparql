@@ -1,4 +1,5 @@
-# Query for the changed onthology
+# Query for the updated onthology
+
 PREFIX : <http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory/>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>

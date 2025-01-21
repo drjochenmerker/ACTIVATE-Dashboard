@@ -14,7 +14,13 @@ export enum sparqlTemplate {
     getActivities = "getActivities",
     // getActivities = "getActivities.tmp",
     getActivityDetail = "getActivityDetail",
-    getExampleActivity = "getExampleActivity"
+    getExampleActivity = "getExampleActivity",
+    insertConflict = "insertConflict",
+    deleteConflict = "deleteConflict",
+    updateConflict = "updateConflict",
+    insertComment = "insertComment",
+    deleteComment = "deleteComment",
+    updateComment = "updateComment"
 }
 
 /**
@@ -48,4 +54,9 @@ export interface Object {
  */
 export class ActivityDetail {
     [key: string]: Object[] | boolean;
+}
+
+export interface writeResponse {
+    code: number,
+    status: string
 }

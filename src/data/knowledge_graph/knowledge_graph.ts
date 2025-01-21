@@ -1,33 +1,5 @@
 import { Action, Activity, ActivityDetail, KnowledgeGraphData, Object, sparqlTemplate, StringAccessObject } from "./interfaces";
-
-/**
- * Internal function that allows to load a SPARQL query template from the filesystem
- * @param template sparqlTemplate enum value
- * @returns A Query template as a string
- */
-async function getSparqlTemplate(template: sparqlTemplate): Promise<string> {
-  const queries = import.meta.glob("./queries/*.sparql", { query: "?raw", import: "default" });
-  const filepath = `./queries/${template}.sparql`;
-  try {
-    return await queries[filepath]() as string;
-  }
-  catch (e) {
-    throw new Error(`Query Template ${template} not found`);
-  }
-}
-
-async function fetchSparql(query: string): Promise<KnowledgeGraphData> {
-  const res = await fetch(`${import.meta.env.VITE_KNOWLEDGE_GRAPH_URL}:${import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/sparql-query",
-      "Accept": "application/json",
-    },
-    body: query,
-  });
-  const json = await res.json() as KnowledgeGraphData;
-  return json.results.bindings;
-}
+import { fetchSparql, getSparqlTemplate } from "./utils";
 
 /**
  * Fetches all activities from the knowledge graph
@@ -53,7 +25,6 @@ export async function getActivities(): Promise<Record<string, Activity[]>> {
 }
 
 /**
- * WORK IN PROGESS
  * Fetches all Details for a given activity and
  * returns them as a ActivityDetail object WITH further
  * information about the objects of the actions
@@ -138,6 +109,11 @@ export async function getActivityDetail(activity: Activity): Promise<ActivityDet
   return activityDetail;
 }
 
+/**
+ * Fetches an example object. Only works with the current state of our database and will
+ * be redundant later
+ * @returns object containing entities objects for each found label (Instruments etc.)
+ */
 export async function getExampleActivity() {
   let query = await getSparqlTemplate(sparqlTemplate.getExampleActivity);
   const data = await fetchSparql(query);
