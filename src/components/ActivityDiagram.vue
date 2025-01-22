@@ -262,9 +262,13 @@ export default defineComponent({
 
                 // draw labels for each point
                 ctx.fillStyle = mode.value === "dark" ? "white" : "black";
-                ctx.font = `${triangleHeight / 40}px Arial`;
+                point.active ? ctx.font = `bold ${triangleHeight / 40}px Arial` : ctx.font = `${triangleHeight / 40}px Arial`;
                 ctx.textAlign = "center";
-                ctx.fillText(point.label, point.x, point.y - triangleHeight / 30);
+                if(point.id === "rules" || point.id === "community" || point.id === "division_of_labour") ctx.fillText(point.label, point.x, point.y + triangleHeight / 20);
+                if(point.id === "instruments") ctx.fillText(point.label, point.x, point.y - triangleHeight / 30);
+                if(point.id === "subject") ctx.fillText(point.label, point.x - triangleWidth / 30, point.y - triangleHeight / 30);
+                if(point.id === "object") ctx.fillText(point.label, point.x + triangleWidth / 30, point.y - triangleHeight / 30);
+                
             });
 
             // draw red triangle between 3 points if 3 points are currently selected
