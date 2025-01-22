@@ -16,7 +16,7 @@ export default defineComponent({
      */
     setup() {
         const canvas = ref<HTMLCanvasElement | null>(null);
-        const triangleWidth = 800;
+        const triangleWidth = 900;
         const triangleHeight = 800;
 
         const mode = useColorMode();
@@ -74,9 +74,31 @@ export default defineComponent({
         // Array of all points that are currently selected
         const selectedPoints = ref<string[]>([]);
 
+        const hoveredPoint = ref<string | null>(null);
+        const hoveredTriangle = ref<{ pointIds: string[] } | null>(null);
+
         const updatePoints = () => {
             selectedPoints.value = points.value.filter((point) => point.active).map((point) => point.id);
         };
+
+        const isPointInTriangle = (x: number, y: number, triangle: { pointIds: string[] }) => {
+            const [point1, point2, point3] = triangle.pointIds.map((id) => points.value.find((p) => p.id === id));
+            if (point1 && point2 && point3) {
+                // Calculate the area of the whole triangle
+                const triangleArea = Math.abs((point1.x * (point2.y - point3.y) + point2.x * (point3.y - point1.y) + point3.x * (point1.y - point2.y)) / 2);
+
+                // Calculate the area of the triangle formed by the clicked point and two vertices of the triangle
+                const area1 = Math.abs((x * (point2.y - point3.y) + point2.x * (point3.y - y) + point3.x * (y - point2.y)) / 2);
+                const area2 = Math.abs((point1.x * (y - point3.y) + x * (point3.y - point1.y) + point3.x * (point1.y - y)) / 2);
+                const area3 = Math.abs((point1.x * (point2.y - y) + point2.x * (y - point1.y) + x * (point1.y - point2.y)) / 2);
+
+                if (triangleArea === area1 + area2 + area3) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        }
 
         /**
         * Checks if a defined triangle is clicked by checking rates of the areas
@@ -85,19 +107,8 @@ export default defineComponent({
         */
         const checkIfTriangleIsClicked = (mouseX: number, mouseY: number) => {
             triangles.value.forEach((triangle) => {
-                const [point1, point2, point3] = triangle.pointIds.map((id) => points.value.find((p) => p.id === id));
-                if (point1 && point2 && point3) {
-                    // Calculate the area of the whole triangle
-                    const triangleArea = Math.abs((point1.x * (point2.y - point3.y) + point2.x * (point3.y - point1.y) + point3.x * (point1.y - point2.y)) / 2);
-
-                    // Calculate the area of the triangle formed by the clicked point and two vertices of the triangle
-                    const area1 = Math.abs((mouseX * (point2.y - point3.y) + point2.x * (point3.y - mouseY) + point3.x * (mouseY - point2.y)) / 2);
-                    const area2 = Math.abs((point1.x * (mouseY - point3.y) + mouseX * (point3.y - point1.y) + point3.x * (point1.y - mouseY)) / 2);
-                    const area3 = Math.abs((point1.x * (point2.y - mouseY) + point2.x * (mouseY - point1.y) + mouseX * (point1.y - point2.y)) / 2);
-
-                    if (triangleArea === area1 + area2 + area3) {
-                        toggleTriangle(triangle);
-                    }
+                if (isPointInTriangle(mouseX, mouseY, triangle)) {
+                    toggleTriangle(triangle);
                 }
             });
         };
@@ -142,13 +153,37 @@ export default defineComponent({
             updatePoints();
         };
 
+        const updateHoverState = (mouseX: number, mouseY: number) => {
+            hoveredPoint.value = null;
+            hoveredTriangle.value = null;
+
+            points.value.forEach((point) => {
+                const distance = Math.sqrt((mouseX - point.x) ** 2 + (mouseY - point.y) ** 2);
+                if (distance < triangleHeight / 40) {
+                    hoveredPoint.value = point.id;
+                }
+            });
+
+            if (!hoveredPoint.value) {
+                triangles.value.forEach((triangle) => {
+                    if(isPointInTriangle(mouseX, mouseY, triangle)){
+                        hoveredTriangle.value = triangle;
+                    }
+                });
+            }
+        };
+
         // applies point-colors based on current theme
         const updateColors = () => {
             updatePoints();
 
             // Update point colors
             points.value.forEach((point) => {
-                point.color = point.active ? "red" : getPointColor();
+                if (hoveredPoint.value === point.id && !point.active) {
+                    point.color = "#ff9999";
+                } else {
+                    point.color = point.active ? "red" : getPointColor();
+                }
             });
 
             // Update line colors and active status
@@ -187,6 +222,20 @@ export default defineComponent({
 
             // reset canvas
             ctx.clearRect(0, 0, triangleWidth, triangleHeight);
+
+            if (hoveredTriangle.value) {
+                const [p1, p2, p3] = hoveredTriangle.value.pointIds.map((id) => points.value.find((p) => p.id === id));
+                if (p1 && p2 && p3) {
+                    ctx.beginPath();
+                    ctx.moveTo(p1.x, p1.y);
+                    ctx.lineTo(p2.x, p2.y);
+                    ctx.lineTo(p3.x, p3.y);
+                    ctx.closePath();
+                    ctx.fillStyle = "rgba(255, 153, 153, 0.5)";
+                    ctx.stroke();
+                    ctx.fill();
+                }
+            }
 
             // draw lines
             lines.value.forEach((line) => {
@@ -235,6 +284,15 @@ export default defineComponent({
             }
         };
 
+        const handleHover = (event: MouseEvent) => {
+            if (!canvas.value) return;
+            const rect = canvas.value.getBoundingClientRect();
+            const mouseX = event.clientX - rect.left;
+            const mouseY = event.clientY - rect.top;
+            updateHoverState(mouseX, mouseY);
+            updateColors();
+        };
+
         // Handles logic when a point is clicked
         const handleClick = (event: MouseEvent) => {
             if (!canvas.value) return;
@@ -271,13 +329,14 @@ export default defineComponent({
             triangleWidth,
             triangleHeight,
             handleClick,
+            handleHover
         };
     },
 });
 </script>
 
 <template>
-    <canvas ref="canvas" :width="triangleWidth" :height="triangleHeight" @click="handleClick"></canvas>
+    <canvas ref="canvas" :width="triangleWidth" :height="triangleHeight" @mousemove="handleHover" @click="handleClick"></canvas>
 </template>
 
 <style scoped>
