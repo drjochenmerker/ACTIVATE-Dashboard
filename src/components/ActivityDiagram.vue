@@ -74,6 +74,9 @@ export default defineComponent({
         // Array of all points that are currently selected
         const selectedPoints = ref<string[]>([]);
 
+        const updatePoints = () => {
+            selectedPoints.value = points.value.filter((point) => point.active).map((point) => point.id);
+        };
 
         /**
         * Checks if a defined triangle is clicked by checking rates of the areas
@@ -92,26 +95,24 @@ export default defineComponent({
                     const area2 = Math.abs((point1.x * (mouseY - point3.y) + mouseX * (point3.y - point1.y) + point3.x * (point1.y - mouseY)) / 2);
                     const area3 = Math.abs((point1.x * (point2.y - mouseY) + point2.x * (mouseY - point1.y) + mouseX * (point1.y - point2.y)) / 2);
 
-
                     if (triangleArea === area1 + area2 + area3) {
                         toggleTriangle(triangle);
                     }
                 }
-            })
-        }
+            });
+        };
 
         const toggleTriangle = (triangle: { pointIds: string[] }) => {
             const triangleIsActive = triangle.pointIds.every((id) => {
                 return selectedPoints.value.includes(id);
             });
 
-            deselectEverything()
+            deselectEverything();
 
             // Select all points of the triangle
             triangle.pointIds.forEach((id) => {
                 const point = points.value.find((p) => p.id === id);
-                if (point && !selectedPoints.value.includes(id)) {
-                    selectedPoints.value.push(id);
+                if (point) {
                     point.active = !triangleIsActive;
                 }
             });
@@ -138,11 +139,13 @@ export default defineComponent({
                 line.color = getLineColor();
             });
 
-            selectedPoints.value = [];
-        }
+            updatePoints();
+        };
 
         // applies point-colors based on current theme
         const updateColors = () => {
+            updatePoints();
+
             // Update point colors
             points.value.forEach((point) => {
                 point.color = point.active ? "red" : getPointColor();
@@ -244,19 +247,15 @@ export default defineComponent({
                 const distance = Math.sqrt((mouseX - point.x) ** 2 + (mouseY - point.y) ** 2);
                 if (distance < triangleHeight / 40) {
                     pointWasClicked = true;
-                    if (!selectedPoints.value.includes(point.id)) {
-                        selectedPoints.value.push(point.id);
-                        point.active = true;
-                    } else {
-                        selectedPoints.value = selectedPoints.value.filter((id) => id !== point.id);
-                        point.active = false;
-                    }
+                    point.active = !point.active;
 
                     updateColors();
                 }
             });
 
-            if (!pointWasClicked) { checkIfTriangleIsClicked(mouseX, mouseY) }
+            if (!pointWasClicked) {
+                checkIfTriangleIsClicked(mouseX, mouseY);
+            }
         };
 
         onMounted(() => {
