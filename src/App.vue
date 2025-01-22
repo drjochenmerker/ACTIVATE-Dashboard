@@ -1,14 +1,12 @@
 <script setup lang="ts">
 import NavBar from './components/NavBar.vue';
-// TODO Delete this code block after implementing the use of the API in the components
-// import { getActivities, getActivityDetail } from './data/knowledge_graph/knowledge_graph';
-// getActivities().then((data) => {
-    // console.log("Verfügbare Sprachen: ", Object.keys(data))
-    // console.log("getActivities - ", data["de"]);
-    // getActivityDetail(data[0],"de").then((data_inner) => {
-    //     console.log("getActivityDetail for", data[0].label, data_inner);
-    // });
-// });
+// Comment/Conflict examples
+// import { addComment, addConflict } from './data/knowledge_graph/write_operations';
+// import { conflictStatus } from './data/knowledge_graph/interfaces';
+// addConflict("Arztbesuch", ["Arzt", "Patient"], "Anonym", conflictStatus.open).then(res => {
+//     console.log(res)
+//     addComment(res.added, "Anonym", "Wieso ist hier ein Konflikt? Sehe ich nicht so").then(res => console.log(res))
+// })
 </script>
 
 <template>

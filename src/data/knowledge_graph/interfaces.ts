@@ -12,8 +12,15 @@ export type StringAccessObject = {
 
 export enum sparqlTemplate {
     getActivities = "getActivities",
+    // getActivities = "getActivities.tmp",
     getActivityDetail = "getActivityDetail",
-    getActivityDetailWithInfo = "getActivityDetailWithInfo",
+    getExampleActivity = "getExampleActivity",
+    insertConflict = "insertConflict",
+    deleteConflict = "deleteConflict",
+    updateConflict = "updateConflict",
+    insertComment = "insertComment",
+    deleteComment = "deleteComment",
+    updateComment = "updateComment"
 }
 
 /**
@@ -29,7 +36,7 @@ export interface Activity {
  */
 export interface Action {
     action: string;
-    object: string;
+    object: string | StringAccessObject;
 }
 
 /**
@@ -38,7 +45,7 @@ export interface Action {
 export interface Object {
     label: string;
     type: string;
-    actions: Action[];
+    actions: Set<string>;
     properties: Action[];
 }
 
@@ -46,5 +53,23 @@ export interface Object {
  * Detail of an activity in the knowledge graph
  */
 export class ActivityDetail {
-    [key: string]: Object[] | Action[] | boolean;
+    [key: string]: Object[] | boolean;
+}
+
+/**
+ * Response object of a write operation on sparql
+ */
+export interface writeResponse {
+    code: number,
+    status: string,
+    added: string
+}
+
+/**
+ * Enum for conflict status management
+ */
+export enum conflictStatus {
+    open = "Open",
+    inDiscussion = "InDiscussion",
+    resolved = "Resolved"
 }
