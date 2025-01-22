@@ -1,6 +1,8 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted, watch } from "vue";
 import { useColorMode } from "@vueuse/core";
+import { getExampleActivity } from "@/data/knowledge_graph/knowledge_graph";
+import { Button } from '@/components/ui/button';
 
 /** 
  * Activity-Diagram-Component
@@ -8,6 +10,9 @@ import { useColorMode } from "@vueuse/core";
  */
 export default defineComponent({
     name: "ActivityDiagramCanvas",
+    components: {
+        Button
+    },
     /**
      * Setup-Function
      * Sets up the canvas of the component with the given Height and Width
@@ -166,7 +171,7 @@ export default defineComponent({
 
             if (!hoveredPoint.value) {
                 triangles.value.forEach((triangle) => {
-                    if(isPointInTriangle(mouseX, mouseY, triangle)){
+                    if (isPointInTriangle(mouseX, mouseY, triangle)) {
                         hoveredTriangle.value = triangle;
                     }
                 });
@@ -264,11 +269,11 @@ export default defineComponent({
                 ctx.fillStyle = mode.value === "dark" ? "white" : "black";
                 point.active ? ctx.font = `bold ${triangleHeight / 40}px Arial` : ctx.font = `${triangleHeight / 40}px Arial`;
                 ctx.textAlign = "center";
-                if(point.id === "rules" || point.id === "community" || point.id === "division_of_labour") ctx.fillText(point.label, point.x, point.y + triangleHeight / 20);
-                if(point.id === "instruments") ctx.fillText(point.label, point.x, point.y - triangleHeight / 30);
-                if(point.id === "subject") ctx.fillText(point.label, point.x - triangleWidth / 30, point.y - triangleHeight / 30);
-                if(point.id === "object") ctx.fillText(point.label, point.x + triangleWidth / 30, point.y - triangleHeight / 30);
-                
+                if (point.id === "rules" || point.id === "community" || point.id === "division_of_labour") ctx.fillText(point.label, point.x, point.y + triangleHeight / 20);
+                if (point.id === "instruments") ctx.fillText(point.label, point.x, point.y - triangleHeight / 30);
+                if (point.id === "subject") ctx.fillText(point.label, point.x - triangleWidth / 30, point.y - triangleHeight / 30);
+                if (point.id === "object") ctx.fillText(point.label, point.x + triangleWidth / 30, point.y - triangleHeight / 30);
+
             });
 
             // draw red triangle between 3 points if 3 points are currently selected
@@ -320,6 +325,31 @@ export default defineComponent({
             }
         };
 
+        const loadActivity = () => {
+            getExampleActivity().then((activity) => {
+                points.value.forEach((point) => {
+                    switch (point.id) {
+                        case "instruments": if(Array.isArray(activity.Instrument))  point.label = activity.Instrument[0].label;
+                        break;
+                        case "subject": if(Array.isArray(activity.Subject)) point.label = activity.Subject[0].label;
+                        break;
+                        case "object": if(Array.isArray(activity.Object)) point.label = activity.Object[0].label;
+                        break;
+                        case "rules": if(Array.isArray(activity.Rule)) point.label = activity.Rule[0].label;
+                        break;
+                        case "community": if(Array.isArray(activity.Community)) point.label = activity.Community[0].label;
+                        break;
+                        case "division_of_labour": point.label = activity.DivisionOfLabour ? "Arbeitsteilung" : "keine Arbeitsteilung";
+                        break;
+                    }
+                })
+
+                console.log(activity);
+
+                draw();
+            });
+        }
+
         onMounted(() => {
             draw();
         });
@@ -333,14 +363,20 @@ export default defineComponent({
             triangleWidth,
             triangleHeight,
             handleClick,
-            handleHover
+            handleHover,
+            loadActivity
         };
     },
 });
 </script>
 
 <template>
-    <canvas ref="canvas" :width="triangleWidth" :height="triangleHeight" @mousemove="handleHover" @click="handleClick"></canvas>
+    <div>
+        <Button @click="loadActivity" type="submit"> Load Example Activity </Button>
+    </div>
+    
+    <canvas ref="canvas" :width="triangleWidth" :height="triangleHeight" @mousemove="handleHover"
+        @click="handleClick"></canvas>
 </template>
 
 <style scoped>
