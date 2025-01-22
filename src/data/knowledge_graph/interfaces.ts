@@ -56,7 +56,20 @@ export class ActivityDetail {
     [key: string]: Object[] | boolean;
 }
 
+/**
+ * Response object of a write operation on sparql
+ */
 export interface writeResponse {
     code: number,
-    status: string
+    status: string,
+    added: string
+}
+
+/**
+ * Enum for conflict status management
+ */
+export enum conflictStatus {
+    open = "Open",
+    inDiscussion = "InDiscussion",
+    resolved = "Resolved"
 }
