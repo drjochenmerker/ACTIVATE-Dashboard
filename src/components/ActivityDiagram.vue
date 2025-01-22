@@ -31,15 +31,15 @@ export default defineComponent({
          * @property {number} y: y-coordinate of the point
          * @property {string} label: Label of the point
          * @property {color} color: Fill Color of the point
-         * @property {string} selected: Specifies if the point is selected at the moment. Accepts "false" and "true"
+         * @property {boolean} active: Specifies if the point is active at the moment.
          */
         const points = ref([
-            { x: triangleWidth / 2, y: triangleHeight / 8, id: "instruments", label: "Instruments", color: getPointColor(), selected: "false" }, // Ecke oben
-            { x: triangleWidth / 8, y: (triangleHeight / 8) * 7, id: "rules", label: "Rules", color: getPointColor(), selected: "false" }, // Ecke Links Unten
-            { x: (triangleWidth / 8) * 7, y: (triangleHeight / 8) * 7, id: "division_of_labour", label: "Division of Labour", color: getPointColor(), selected: "false" }, // Ecke Rechts Unten
-            { x: (triangleWidth / 16) * 5, y: triangleHeight / 2, id: "subject", label: "Subject", color: getPointColor(), selected: "false" }, // Links Mitte
-            { x: (triangleWidth / 16) * 11, y: triangleHeight / 2, id: "object", label: "Object", color: getPointColor(), selected: "false" }, // Rechts Mitte
-            { x: triangleWidth / 2, y: (triangleHeight / 8) * 7, id: "community", label: "Community", color: getPointColor(), selected: "false" }, // Unten Mitte
+            { x: triangleWidth / 2, y: triangleHeight / 8, id: "instruments", label: "Instruments", color: getPointColor(), active: false }, // Ecke oben
+            { x: triangleWidth / 8, y: (triangleHeight / 8) * 7, id: "rules", label: "Rules", color: getPointColor(), active: false }, // Ecke Links Unten
+            { x: (triangleWidth / 8) * 7, y: (triangleHeight / 8) * 7, id: "division_of_labour", label: "Division of Labour", color: getPointColor(), active: false }, // Ecke Rechts Unten
+            { x: (triangleWidth / 16) * 5, y: triangleHeight / 2, id: "subject", label: "Subject", color: getPointColor(), active: false }, // Links Mitte
+            { x: (triangleWidth / 16) * 11, y: triangleHeight / 2, id: "object", label: "Object", color: getPointColor(), active: false }, // Rechts Mitte
+            { x: triangleWidth / 2, y: (triangleHeight / 8) * 7, id: "community", label: "Community", color: getPointColor(), active: false }, // Unten Mitte
         ]);
 
         /**
@@ -112,7 +112,7 @@ export default defineComponent({
                 const point = points.value.find((p) => p.id === id);
                 if (point && !selectedPoints.value.includes(id)) {
                     selectedPoints.value.push(id);
-                    point.selected = triangleIsActive ? "false" : "true";
+                    point.active = !triangleIsActive;
                 }
             });
 
@@ -120,7 +120,7 @@ export default defineComponent({
             lines.value.forEach((line) => {
                 const isConnected = line.pointIds.every((id) => triangle.pointIds.includes(id));
                 if (isConnected) {
-                    line.active = triangleIsActive ? false : true;
+                    line.active = !triangleIsActive;
                     line.color = triangleIsActive ? getLineColor() : "red";
                 }
             });
@@ -130,7 +130,7 @@ export default defineComponent({
 
         const deselectEverything = () => {
             points.value.forEach((point) => {
-                point.selected = "false";
+                point.active = false;
             });
 
             lines.value.forEach((line) => {
@@ -141,15 +141,11 @@ export default defineComponent({
             selectedPoints.value = [];
         }
 
-        const updatePoints = () => {
-
-            }
-
         // applies point-colors based on current theme
         const updateColors = () => {
             // Update point colors
             points.value.forEach((point) => {
-                point.color = point.selected === "true" ? "red" : getPointColor();
+                point.color = point.active ? "red" : getPointColor();
             });
 
             // Update line colors and active status
@@ -250,10 +246,10 @@ export default defineComponent({
                     pointWasClicked = true;
                     if (!selectedPoints.value.includes(point.id)) {
                         selectedPoints.value.push(point.id);
-                        point.selected = "true";
+                        point.active = true;
                     } else {
                         selectedPoints.value = selectedPoints.value.filter((id) => id !== point.id);
-                        point.selected = "false";
+                        point.active = false;
                     }
 
                     updateColors();
