@@ -63,7 +63,5 @@ export async function addComment(parentId: string, author: string, comment: stri
     query = query.replaceMultiple(mapObj);
     // Exeucte Query in update mode
     const data = await fetchSparql(query, true);
-    // Now reference the new comment in the parent component
-    // TODO
     return { code: data.status, status: data.status == 204 ? "OK" : "Error", added: commentId } as writeResponse
 }
