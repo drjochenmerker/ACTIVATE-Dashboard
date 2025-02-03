@@ -16,6 +16,12 @@ export async function getSparqlTemplate(template: sparqlTemplate): Promise<strin
     }
 }
 
+/**
+ * Internal function that fetches data from a SPARQL endpoint and handles potential errors
+ * @param query SPARQL template filled already filled with values
+ * @param update Flag that defines whether the query is an update or a select query
+ * @returns Response from the server (update == true) or the data (update == false)
+ */
 export async function fetchSparql(query: string, update: boolean = false): Promise<KnowledgeGraphData> {
     const res = await fetch(`${import.meta.env.VITE_KNOWLEDGE_GRAPH_URL}:${import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT}`, {
         method: "POST",

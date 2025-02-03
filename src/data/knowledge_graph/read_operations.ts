@@ -1,4 +1,4 @@
-import { Action, Activity, ActivityDetail, KnowledgeGraphData, Object, sparqlTemplate, StringAccessObject } from "./interfaces";
+import { Action, Activity, ActivityDetail, Conflict, KnowledgeGraphData, Object, sparqlTemplate, StringAccessObject } from "./interfaces";
 import { fetchSparql, getSparqlTemplate } from "./utils";
 
 /**
@@ -174,4 +174,46 @@ export async function getExampleActivity() {
     }
   })
   return activityDetail
+}
+
+export async function getConflictDetail(conflictIdentifier: string) {
+  let query = await getSparqlTemplate(sparqlTemplate.getConflictDetail);
+  query = query.replaceAll("{{conflict}}", conflictIdentifier);
+  const data = await fetchSparql(query);
+  let parsedConflict = {} as Conflict;
+  data.map((item: KnowledgeGraphData) => {
+    switch (item.conflict_p.value.split("/").pop()) {
+      case "hasAuthor":
+        parsedConflict.author = item.conflict_o.value;
+        break;
+      case "hasDescription":
+        parsedConflict.description = item.conflict_o.value;
+        break;
+      case "hasTitle":
+        parsedConflict.title = item.conflict_o.value;
+        break;
+      case "wasCreated":
+        parsedConflict.timestamp = new Date(item.conflict_o.value);
+        break;
+      case "hasActivity":
+        parsedConflict.activity = item.conflict_o.value;
+        break;
+      case "hasStatus":
+        parsedConflict.status = item.conflict_o.value;
+        break;
+      case "hasComment":
+        if (parsedConflict.replies === undefined) { parsedConflict.replies = [] }
+        parsedConflict.replies.push({
+          id: item.conflict_o.value
+        })
+        break;
+      default:
+        if (item.conflict_p !== undefined) {
+          console.error("Unknown Property", item.conflict_p.value)
+        }
+        break;
+    }
+    // TOTO fill Comment Details
+  })
+  return data
 }

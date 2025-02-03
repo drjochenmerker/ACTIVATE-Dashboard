@@ -8,7 +8,10 @@ PREFIX owl: <http://www.w3.org/2002/07/owl#>
 INSERT DATA {
 	:{{conflictId}} rdf:type :Conflict ;
 {{participants}}
+    :hasDescription "{{description}}" ;
+	:hasTitle "{{title}}" ;
 	:hasAuthor "{{author}}" ;
 	:hasStatus :{{status}} ;
+	:hasActivity :{{activity}} ;
 	:wasCreated "{{created}}" .
 }

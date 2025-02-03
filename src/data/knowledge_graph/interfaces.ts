@@ -6,21 +6,30 @@ export type KnowledgeGraphData = {
     [key: string]: any;
 };
 
+/**
+ * TS Workaround for SPARQL responses
+ * This is a dirty fix which prevent TS form comlaining about dynamic keys
+ */
 export type StringAccessObject = {
     [key: string]: any;
 }
 
+/**
+ * Enum containing all available SPARQL templates
+ */
 export enum sparqlTemplate {
     getActivities = "getActivities",
-    // getActivities = "getActivities.tmp",
     getActivityDetail = "getActivityDetail",
     getExampleActivity = "getExampleActivity",
+    getConflictDetail = "getConflictDetail",
     insertConflict = "insertConflict",
     deleteConflict = "deleteConflict",
     updateConflict = "updateConflict",
     insertComment = "insertComment",
     deleteComment = "deleteComment",
-    updateComment = "updateComment"
+    updateComment = "updateComment",
+    insertTriple = "insertTriple",
+    removeTriple = "removeTriple"
 }
 
 /**
@@ -57,12 +66,38 @@ export class ActivityDetail {
 }
 
 /**
- * Response object of a write operation on sparql
+ * Response object of a update operation on sparql
  */
-export interface writeResponse {
+export interface updateResponse {
     code: number,
     status: string,
-    added: string
+    modified: string,
+    action: RDFOperation
+}
+
+/**
+ * Conflict in the knowledge graph
+ */
+export interface Conflict {
+    activity: string,
+    title: string,
+    participants: string[],
+    author: string,
+    status: conflictStatus,
+    description?: string,
+    timestamp?: Date,
+    replies?: Comment[]
+}
+
+/**
+ * Comment in the knowledge graph
+ */
+export interface Comment {
+    id: string,
+    author?: string,
+    comment?: string,
+    timestamp?: Date,
+    replies?: Comment[]
 }
 
 /**
@@ -72,4 +107,22 @@ export enum conflictStatus {
     open = "Open",
     inDiscussion = "InDiscussion",
     resolved = "Resolved"
+}
+
+/**
+ * Interface for a subject, predicate, object triple
+ * Note: The used terms refer to the RDF terminology, not the Activity diagram terminology
+ */
+export interface RDFTriple {
+    subject: string,
+    predicate: string,
+    object: string
+}
+
+/**
+ * Enum for RDF operations
+ */
+export enum RDFOperation {
+    insert = "insert",
+    delete = "delete"
 }
