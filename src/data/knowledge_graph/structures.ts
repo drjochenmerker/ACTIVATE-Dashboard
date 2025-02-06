@@ -35,7 +35,7 @@ export enum sparqlTemplate {
 /**
  * Activity in the knowledge graph
  */
-export interface Activity {
+export type Activity = {
     uri: string;
     label: string;
 }
@@ -43,7 +43,7 @@ export interface Activity {
 /**
  * Action in the knowledge graph
  */
-export interface Action {
+export type Action = {
     action: string;
     object: string | StringAccessObject;
 }
@@ -51,7 +51,7 @@ export interface Action {
 /**
  * Object in the knowledge graph
  */
-export interface Object {
+export type Object = {
     label: string;
     type: string;
     actions: Set<string>;
@@ -78,7 +78,7 @@ export interface updateResponse {
 /**
  * Conflict in the knowledge graph
  */
-export interface Conflict {
+export type Conflict = {
     activity: string,
     title: string,
     participants: string[],
@@ -86,13 +86,14 @@ export interface Conflict {
     status: conflictStatus,
     description?: string,
     timestamp?: Date,
-    replies?: Comment[]
+    replies?: Comment[],
+    id?: string
 }
 
 /**
  * Comment in the knowledge graph
  */
-export interface Comment {
+export type Comment = {
     id: string,
     author?: string,
     comment?: string,
@@ -113,7 +114,7 @@ export enum conflictStatus {
  * Interface for a subject, predicate, object triple
  * Note: The used terms refer to the RDF terminology, not the Activity diagram terminology
  */
-export interface RDFTriple {
+export type RDFTriple = {
     subject: string,
     predicate: string,
     object: string

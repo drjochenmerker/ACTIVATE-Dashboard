@@ -1,4 +1,4 @@
-import { KnowledgeGraphData, sparqlTemplate } from "./interfaces";
+import { Comment, Conflict, KnowledgeGraphData, sparqlTemplate } from "./structures";
 
 /**
  * Internal function that allows to load a SPARQL query template from the filesystem
@@ -35,4 +35,30 @@ export async function fetchSparql(query: string, update: boolean = false): Promi
     });
     const response = update ? res : (await res.json() as KnowledgeGraphData).results.bindings
     return response
+}
+
+export function findNestedComment(commentId: string, conflict: Conflict): Comment | undefined {
+    for (const reply of conflict.replies ?? []) {
+        // console.log("Nested Search on", conflict, "for", commentId);
+        const nestedReply = findNestedCommentR(commentId, reply);
+        if (nestedReply) {
+            return nestedReply;
+        }
+    }
+    return undefined
+}
+
+function findNestedCommentR(commentId: string, comment: Comment): Comment | undefined {
+    const replyIndex = comment.replies?.find(reply => reply.id == commentId);
+    // console.log("Nested Search for", commentId, "in", comment.replies, "found", replyIndex);
+    if (replyIndex) {
+        return replyIndex;
+    }
+    for (const reply of comment.replies ?? []) {
+        const nestedReply = findNestedCommentR(commentId, reply);
+        if (nestedReply) {
+            return nestedReply;
+        }
+    }
+    return undefined;
 }

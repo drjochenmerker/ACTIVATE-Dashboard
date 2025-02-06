@@ -9,6 +9,6 @@ INSERT DATA {
 	:{{commentId}} rdf:type :Comment ;
     :hasAuthor "{{author}}" ;
     :wasCreated "{{created}}" ;
-	:hasComment "{{comment}}" .
+	:hasContent "{{comment}}" .
     :{{parentId}} :hasComment :{{commentId}}
 }

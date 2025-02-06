@@ -10,6 +10,7 @@ SELECT * WHERE {
     SELECT ?conflict_p ?conflict_o
     WHERE {
         :{{conflict}} ?conflict_p ?conflict_o .
+        FILTER (?conflict_p != rdf:type) .
     }
   }
   UNION
@@ -19,8 +20,8 @@ SELECT * WHERE {
       :{{conflict}} (<>|!<>)* ?s .
       ?s rdf:type :Comment .
       ?s ?p ?o .
+      FILTER (?p != rdf:type) .
     }
     ORDER BY ?s
   }
 }
-

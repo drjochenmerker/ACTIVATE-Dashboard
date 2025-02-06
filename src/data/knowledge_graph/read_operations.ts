@@ -1,5 +1,5 @@
-import { Action, Activity, ActivityDetail, Conflict, KnowledgeGraphData, Object, sparqlTemplate, StringAccessObject } from "./interfaces";
-import { fetchSparql, getSparqlTemplate } from "./utils";
+import { Action, Activity, ActivityDetail, Conflict, KnowledgeGraphData, Object, sparqlTemplate, StringAccessObject } from "./structures";
+import { fetchSparql, findNestedComment, getSparqlTemplate } from "./utils";
 
 /**
  * Fetches all activities from the knowledge graph
@@ -181,39 +181,126 @@ export async function getConflictDetail(conflictIdentifier: string) {
   query = query.replaceAll("{{conflict}}", conflictIdentifier);
   const data = await fetchSparql(query);
   let parsedConflict = {} as Conflict;
+  // Round 1: Build references
   data.map((item: KnowledgeGraphData) => {
-    switch (item.conflict_p.value.split("/").pop()) {
-      case "hasAuthor":
-        parsedConflict.author = item.conflict_o.value;
-        break;
-      case "hasDescription":
-        parsedConflict.description = item.conflict_o.value;
-        break;
-      case "hasTitle":
-        parsedConflict.title = item.conflict_o.value;
-        break;
-      case "wasCreated":
-        parsedConflict.timestamp = new Date(item.conflict_o.value);
-        break;
-      case "hasActivity":
-        parsedConflict.activity = item.conflict_o.value;
-        break;
-      case "hasStatus":
-        parsedConflict.status = item.conflict_o.value;
-        break;
-      case "hasComment":
-        if (parsedConflict.replies === undefined) { parsedConflict.replies = [] }
-        parsedConflict.replies.push({
-          id: item.conflict_o.value
-        })
-        break;
-      default:
-        if (item.conflict_p !== undefined) {
-          console.error("Unknown Property", item.conflict_p.value)
-        }
-        break;
+    // Conlict Data
+    if (item.conflict_p && item.conflict_p.value.split("/").pop() == "hasComment") {
+      if (parsedConflict.replies === undefined) { parsedConflict.replies = [] }
+      parsedConflict.replies.push({
+        id: item.conflict_o.value.split("/").pop()
+      })
     }
-    // TOTO fill Comment Details
+    // Comment Data
+    else if (item.p && item.p.value.split("/").pop() == "hasComment") {
+      const replyIndex = parsedConflict.replies?.find(reply => reply.id == item.s.value.split("/").pop())
+      if (replyIndex) {
+        // Add empty list if first comment
+        if (replyIndex.replies === undefined) { replyIndex.replies = [] }
+        replyIndex.replies.push({
+          id: item.o.value.split("/").pop()
+        })
+      }
+      // Comment nested in another comment
+      else {
+        const nestedComment = findNestedComment(item.s.value.split("/").pop(), parsedConflict)
+        if (nestedComment) {
+          // Add empty list if first nested comment
+          if (nestedComment.replies === undefined) { nestedComment.replies = [] }
+          nestedComment.replies.push({
+            id: item.o.value.split("/").pop()
+          })
+        }
+      }
+    }
+  });
+  // Round 2: Fill in the details
+  data.map((item: KnowledgeGraphData) => {
+    // Conlict Data
+    if (item.conflict_p) {
+      switch (item.conflict_p.value.split("/").pop()) {
+        case "hasAuthor":
+          parsedConflict.author = item.conflict_o.value;
+          break;
+        case "hasDescription":
+          parsedConflict.description = item.conflict_o.value;
+          break;
+        case "hasTitle":
+          parsedConflict.title = item.conflict_o.value;
+          break;
+        case "wasCreated":
+          parsedConflict.timestamp = new Date(item.conflict_o.value);
+          break;
+        case "hasActivity":
+          parsedConflict.activity = item.conflict_o.value.split("/").pop();
+          break;
+        case "hasParticipant":
+          if (parsedConflict.participants === undefined) { parsedConflict.participants = [] }
+          parsedConflict.participants.push(item.conflict_o.value.split("/").pop())
+          break;
+        case "hasStatus":
+          parsedConflict.status = item.conflict_o.value.split("/").pop()
+          break;
+        case "hasComment":
+          break;
+        default:
+          if (item.conflict_p !== undefined) {
+            console.error("Unknown Property", item.conflict_p.value)
+          }
+          break;
+      }
+    }
+    // Comment Data
+    else {
+      let replyIndex;
+      switch (item.p.value.split("/").pop()) {
+        case "hasAuthor":
+          replyIndex = parsedConflict.replies?.find(reply => reply.id == item.s.value.split("/").pop())
+          // console.log("Looking for", item.s.value.split("/").pop(), "in", parsedConflict.replies, "found", replyIndex);
+          if (replyIndex) {
+            replyIndex.author = item.o.value;
+          }
+          else {
+            const nestedComment = findNestedComment(item.s.value.split("/").pop(), parsedConflict)
+            if (nestedComment) {
+              nestedComment.author = item.o.value;
+            }
+          }
+          break;
+        case "hasContent":
+          replyIndex = parsedConflict.replies?.find(reply => reply.id == item.s.value.split("/").pop())
+          // console.log("Looking for", item.s.value.split("/").pop(), "in", parsedConflict.replies, "found", replyIndex);
+          if (replyIndex) {
+            replyIndex.comment = item.o.value;
+          }
+          else {
+            const nestedComment = findNestedComment(item.s.value.split("/").pop(), parsedConflict)
+            if (nestedComment) {
+              nestedComment.comment = item.o.value;
+            }
+          }
+          break;
+        case "wasCreated":
+          replyIndex = parsedConflict.replies?.find(reply => reply.id == item.s.value.split("/").pop())
+          // console.log("Looking for", item.s.value.split("/").pop(), "in", parsedConflict.replies, "found", replyIndex);
+          if (replyIndex) {
+            replyIndex.timestamp = new Date(item.o.value);
+          }
+          else {
+            const nestedComment = findNestedComment(item.s.value.split("/").pop(), parsedConflict)
+            if (nestedComment) {
+              nestedComment.timestamp = new Date(item.o.value);
+            }
+          }
+          break;
+        case "hasComment":
+          break;
+        default:
+          if (item.p !== undefined) {
+            console.error("Unknown Property", item.p.value)
+          }
+          break;
+      }
+    }
   })
-  return data
+  return parsedConflict
 }

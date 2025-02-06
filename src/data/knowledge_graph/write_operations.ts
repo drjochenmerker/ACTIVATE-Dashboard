@@ -1,6 +1,6 @@
 import hash from "object-hash";
 import { fetchSparql, getSparqlTemplate } from "./utils";
-import { Conflict, RDFOperation, RDFTriple, sparqlTemplate, updateResponse } from "./interfaces";
+import { Conflict, RDFOperation, RDFTriple, sparqlTemplate, updateResponse } from "./structures";
 
 /**
  * Adds a new conflict to the sparql database
@@ -31,7 +31,8 @@ export async function addConflict(conflict: Conflict): Promise<updateResponse> {
         "{{activity}}": conflict.activity,
         "{{author}}": conflict.author,
         "{{status}}": conflict.status,
-        "{{created}}": timestamp
+        "{{created}}": timestamp,
+        "{{title}}": conflict.title
     };
     query = query.replaceMultiple(mapObj);
     // Exeucte Query in update mode
@@ -61,6 +62,7 @@ export async function addComment(parentId: string, author: string, comment: stri
     });
     let query = await getSparqlTemplate(sparqlTemplate.insertComment);
     const mapObj = {
+        "{{author}}": author,
         "{{commentId}}": commentId,
         "{{comment}}": comment,
         "{{created}}": timestamp,

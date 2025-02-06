@@ -5,7 +5,7 @@
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "dev-sparql": "concurrently --kill-others \"npm run sparql\" \"vite\"",
+        "dev-sparql": "concurrently --kill-others \"npm run sparql\" \"sleep 5 && vite\"",
         "build": "vue-tsc -b && vite build",
         "preview": "vite preview",
         "format": "prettier --write .",
