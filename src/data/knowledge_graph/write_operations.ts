@@ -93,6 +93,13 @@ export async function addComment(parentId: string, author: string, comment: stri
     return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: commentId, action: RDFOperation.insert } as updateResponse
 }
 
+/**
+ * Deletes a comment from the knowledge graph. If the comment is a nested comment, the author and the content of
+ * the original comment will be overwritten to prevent nested comments from being orphaned
+ * @param commentId 
+ * @param isNestedComment 
+ * @returns updateResponse Object
+ */
 export async function deleteComment(commentId: string, isNestedComment: boolean): Promise<updateResponse> {
     let query = "";
     if (isNestedComment) {
