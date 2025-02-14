@@ -1,4 +1,4 @@
-import { Action, Activity, ActivityDetail, Conflict, KnowledgeGraphData, Object, sparqlTemplate, StringAccessObject } from "./structures";
+import { Action, Activity, ActivityDetail, Conflict, StringAccessObject, Object, sparqlTemplate } from "./structures";
 import { fetchSparql, findNestedComment, getSparqlTemplate } from "./utils";
 
 /**
@@ -9,8 +9,8 @@ import { fetchSparql, findNestedComment, getSparqlTemplate } from "./utils";
 export async function getActivities(): Promise<Record<string, Activity[]>> {
   let query = await getSparqlTemplate(sparqlTemplate.getActivities);
   const data = await fetchSparql(query);
-  let parsedData: KnowledgeGraphData = {};
-  data.forEach((triple: KnowledgeGraphData) => {
+  let parsedData: StringAccessObject = {};
+  data.forEach((triple: StringAccessObject) => {
     if (triple.language.value in parsedData === false) {
       parsedData[triple.language.value] = [] as Activity[];
     }
@@ -41,7 +41,7 @@ export async function getActivityDetail(activity: Activity): Promise<ActivityDet
   // Init Division of Labour as false
   activityDetail["DivisionOfLabour"] = false;
 
-  data.map((item: KnowledgeGraphData) => {
+  data.map((item: StringAccessObject) => {
     let label = item.label.value.split("/").pop();
     // Init Label Subject, Community, etc. if it doesn't exist yet
     if (label in activityDetail === false) {
@@ -120,7 +120,7 @@ export async function getExampleActivity() {
   let activityDetail = {} as ActivityDetail;
   // Init Division of Labour as false
   activityDetail["DivisionOfLabour"] = false;
-  data.map((item: KnowledgeGraphData) => {
+  data.map((item: StringAccessObject) => {
     let label = item.type.value.split("/").pop();
     // Init Label Subject, Community, etc. if it doesn't exist yet
     if (label in activityDetail === false) {
@@ -176,13 +176,13 @@ export async function getExampleActivity() {
   return activityDetail
 }
 
-export async function getConflictDetail(conflictIdentifier: string) {
+export async function getConflictDetail(conflictId: string) {
   let query = await getSparqlTemplate(sparqlTemplate.getConflictDetail);
-  query = query.replaceAll("{{conflict}}", conflictIdentifier);
+  query = query.replaceAll("{{conflict}}", conflictId);
   const data = await fetchSparql(query);
-  let parsedConflict = {} as Conflict;
+  let parsedConflict = { id: conflictId } as Conflict;
   // Round 1: Build references
-  data.map((item: KnowledgeGraphData) => {
+  data.map((item: StringAccessObject) => {
     // Conlict Data
     if (item.conflict_p && item.conflict_p.value.split("/").pop() == "hasComment") {
       if (parsedConflict.replies === undefined) { parsedConflict.replies = [] }
@@ -214,7 +214,7 @@ export async function getConflictDetail(conflictIdentifier: string) {
     }
   });
   // Round 2: Fill in the details
-  data.map((item: KnowledgeGraphData) => {
+  data.map((item: StringAccessObject) => {
     // Conlict Data
     if (item.conflict_p) {
       switch (item.conflict_p.value.split("/").pop()) {

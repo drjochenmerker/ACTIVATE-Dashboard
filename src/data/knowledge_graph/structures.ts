@@ -1,12 +1,4 @@
 /**
- * Type for data returned by the knowledge graph
- * in order to prevent VSCode from complaining about dynamic keys
- */
-export type KnowledgeGraphData = {
-    [key: string]: any;
-};
-
-/**
  * TS Workaround for SPARQL responses
  * This is a dirty fix which prevent TS form comlaining about dynamic keys
  */
@@ -22,14 +14,16 @@ export enum sparqlTemplate {
     getActivityDetail = "getActivityDetail",
     getExampleActivity = "getExampleActivity",
     getConflictDetail = "getConflictDetail",
-    insertConflict = "insertConflict",
-    deleteConflict = "deleteConflict",
+    getNestedCommentIds = "getNestedCommentIds",
+    addConflict = "addConflict",
     updateConflict = "updateConflict",
-    insertComment = "insertComment",
+    addComment = "addComment",
     deleteComment = "deleteComment",
+    deleteNestedComment = "deleteNestedComment",
     updateComment = "updateComment",
-    insertTriple = "insertTriple",
-    removeTriple = "removeTriple"
+    addTriple = "addTriple",
+    deleteTriple = "deleteTriple",
+    deleteTriples = "deleteTriples"
 }
 
 /**

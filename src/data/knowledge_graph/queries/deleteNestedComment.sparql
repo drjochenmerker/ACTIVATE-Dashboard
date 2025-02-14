@@ -1,0 +1,17 @@
+PREFIX : <http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+
+DELETE { 
+    :{{commentId}} :hasAuthor ?o1 .
+    :{{commentId}} :hasContent ?o2 .
+}
+INSERT {
+    :{{commentId}} :hasAuthor "Anonym" ;
+    :hasContent "Kommentar wurde gelöscht" .
+}
+WHERE {
+    :{{commentId}} :hasAuthor ?o1 .
+    :{{commentId}} :hasContent ?o2 .
+}

@@ -1,4 +1,4 @@
-import { Comment, Conflict, KnowledgeGraphData, sparqlTemplate } from "./structures";
+import { Comment, Conflict, sparqlTemplate, StringAccessObject } from "./structures";
 
 /**
  * Internal function that allows to load a SPARQL query template from the filesystem
@@ -22,7 +22,7 @@ export async function getSparqlTemplate(template: sparqlTemplate): Promise<strin
  * @param update Flag that defines whether the query is an update or a select query
  * @returns Response from the server (update == true) or the data (update == false)
  */
-export async function fetchSparql(query: string, update: boolean = false): Promise<KnowledgeGraphData> {
+export async function fetchSparql(query: string, update: boolean = false): Promise<StringAccessObject> {
     const res = await fetch(`${import.meta.env.VITE_KNOWLEDGE_GRAPH_URL}:${import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT}`, {
         method: "POST",
         headers: {
@@ -33,7 +33,7 @@ export async function fetchSparql(query: string, update: boolean = false): Promi
             "update": query
         }) : query
     });
-    const response = update ? res : (await res.json() as KnowledgeGraphData).results.bindings
+    const response = update ? res : (await res.json() as StringAccessObject).results.bindings
     return response
 }
 
