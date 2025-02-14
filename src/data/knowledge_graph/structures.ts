@@ -16,11 +16,10 @@ export enum sparqlTemplate {
     getConflictDetail = "getConflictDetail",
     getNestedCommentIds = "getNestedCommentIds",
     addConflict = "addConflict",
-    updateConflict = "updateConflict",
+    updateConflictStatus = "updateConflictStatus",
     addComment = "addComment",
     deleteComment = "deleteComment",
     deleteNestedComment = "deleteNestedComment",
-    updateComment = "updateComment",
     addTriple = "addTriple",
     deleteTriple = "deleteTriple",
     deleteTriples = "deleteTriples"

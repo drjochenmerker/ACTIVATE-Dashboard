@@ -1,6 +1,6 @@
 import hash from "object-hash";
 import { fetchSparql, getSparqlTemplate } from "./utils";
-import { Conflict, RDFOperation, RDFTriple, sparqlTemplate, updateResponse } from "./structures";
+import { Conflict, conflictStatus, RDFOperation, RDFTriple, sparqlTemplate, updateResponse } from "./structures";
 
 /**
  * Adds a new conflict to the sparql database
@@ -41,7 +41,7 @@ export async function addConflict(conflict: Conflict): Promise<updateResponse> {
 }
 
 /**
- * Function that deletes a conflict and all nested comments. Currently doesn't work
+ * Deletes a conflict and all nested comments. Currently doesn't work
  * properly due to the testing sparql solution being a piece of shit that doesn't accept
  * any solution I tried and me refusing to delete everything triple by triple. Nested comments
  * will remain in the RDF-Triple-Store as of now without any references to them wasting memory
@@ -61,6 +61,25 @@ export async function deleteConflict(conflictId: string): Promise<updateResponse
     // }
     // query = query.replace("{{tripleString}}", tripleString.slice(0, -2));
     return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: conflictId, action: RDFOperation.delete } as updateResponse
+}
+
+/**
+ * Updates the current status of an existing conflict
+ * Warning: Does not check whether a conflict ID exists. Could be used to fill the database
+ * with irrelevant data
+ * @param conflictId 
+ * @param status 
+ * @returns updateResponse Object
+ */
+export async function updateConflictStatus(conflictId: string, status: conflictStatus): Promise<updateResponse> {
+    let query = await getSparqlTemplate(sparqlTemplate.updateConflictStatus);
+    const mapObj = {
+        "{{conflictId}}": conflictId,
+        "{{newStatus}}": status
+    };
+    query = query.replaceMultiple(mapObj);
+    const data = await fetchSparql(query, true);
+    return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: conflictId, action: RDFOperation.insert } as updateResponse
 }
 
 /**
