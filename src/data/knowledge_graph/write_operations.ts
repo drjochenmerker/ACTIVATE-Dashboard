@@ -10,25 +10,24 @@ import { Conflict, conflictStatus, RDFOperation, RDFTriple, sparqlTemplate, upda
  * @param status Status of the new conflict
  * @returns updateResponse Object
  */
-export async function addConflict(conflict: Conflict): Promise<updateResponse> {
+export async function addConflict(graph: string, conflict: Conflict): Promise<updateResponse> {
     // Create unique hash as a conflict ID
     const timestamp = new Date().toISOString();
     const conflictId = hash({
-        activity: conflict.activity,
         participants: conflict.participants,
         author: conflict.author,
         created: timestamp
     });
     // Build query dynamically using participants
     const participantString = conflict.participants.map(participant => {
-        return `\t:hasParticipant :${participant} ;`;
+        return `\t\t:HasParticipant :${participant} ;`;
     }).join("\n")
     let query = await getSparqlTemplate(sparqlTemplate.addConflict);
     const mapObj = {
+        "{{graph}}": graph,
         "{{conflictId}}": conflictId,
         "{{participants}}": participantString,
         "{{description}}": conflict.description ? conflict.description : "",
-        "{{activity}}": conflict.activity,
         "{{author}}": conflict.author,
         "{{status}}": conflict.status,
         "{{created}}": timestamp,
@@ -48,12 +47,16 @@ export async function addConflict(conflict: Conflict): Promise<updateResponse> {
  * @param conflictId 
  * @returns 
  */
-export async function deleteConflict(conflictId: string): Promise<updateResponse> {
+export async function deleteConflict(graph: string, conflictId: string): Promise<updateResponse> {
     // let query = await getSparqlTemplate(sparqlTemplate.getNestedCommentIds);
     // query = query.replace("{{conflict}}", conflictId);
     // const commentIds = await fetchSparql(query, false);
     let query = await getSparqlTemplate(sparqlTemplate.deleteTriples);
-    query = query.replace("{{subject}}", conflictId)
+    const mapObj = {
+        "{{graph}}": graph,
+        "{{subject}}": conflictId
+    };
+    query = query.replaceMultiple(mapObj);
     const data = await fetchSparql(query, true)
     // let tripleString = `\t"${conflictId}",`;
     // for (let id in commentIds) {
@@ -71,9 +74,10 @@ export async function deleteConflict(conflictId: string): Promise<updateResponse
  * @param status 
  * @returns updateResponse Object
  */
-export async function updateConflictStatus(conflictId: string, status: conflictStatus): Promise<updateResponse> {
+export async function updateConflictStatus(graph: string, conflictId: string, status: conflictStatus): Promise<updateResponse> {
     let query = await getSparqlTemplate(sparqlTemplate.updateConflictStatus);
     const mapObj = {
+        "{{graph}}": graph,
         "{{conflictId}}": conflictId,
         "{{newStatus}}": status
     };
@@ -89,7 +93,7 @@ export async function updateConflictStatus(conflictId: string, status: conflictS
  * @param comment Comment as string
  * @returns 
  */
-export async function addComment(parentId: string, author: string, comment: string): Promise<updateResponse> {
+export async function addComment(graph: string, parentId: string, author: string, comment: string): Promise<updateResponse> {
     // Create unique hash as a conflict ID
     const timestamp = new Date().toISOString();
     const commentId = hash({
@@ -100,6 +104,7 @@ export async function addComment(parentId: string, author: string, comment: stri
     });
     let query = await getSparqlTemplate(sparqlTemplate.addComment);
     const mapObj = {
+        "{{graph}}": graph,
         "{{author}}": author,
         "{{commentId}}": commentId,
         "{{comment}}": comment,
@@ -119,7 +124,7 @@ export async function addComment(parentId: string, author: string, comment: stri
  * @param isNestedComment 
  * @returns updateResponse Object
  */
-export async function deleteComment(commentId: string, isNestedComment: boolean): Promise<updateResponse> {
+export async function deleteComment(graph: string, commentId: string, isNestedComment: boolean): Promise<updateResponse> {
     let query = "";
     if (isNestedComment) {
         query = await getSparqlTemplate(sparqlTemplate.deleteNestedComment);
@@ -127,7 +132,11 @@ export async function deleteComment(commentId: string, isNestedComment: boolean)
     else {
         query = await getSparqlTemplate(sparqlTemplate.deleteComment);
     }
-    query = query.replaceAll("{{commentId}}", commentId);
+    const mapObj = {
+        "{{graph}}": graph,
+        "{{commentId}}": commentId
+    };
+    query = query.replaceMultiple(mapObj);
     const data = await fetchSparql(query, true);
     return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: commentId, action: RDFOperation.delete } as updateResponse
 }
@@ -137,11 +146,12 @@ export async function deleteComment(commentId: string, isNestedComment: boolean)
  * @param triple 
  * @returns updateResponse Object
  */
-export async function updateTriple(triple: RDFTriple, operation: RDFOperation): Promise<updateResponse> {
+export async function updateTriple(graph: string, triple: RDFTriple, operation: RDFOperation): Promise<updateResponse> {
     let query = operation === "insert"
         ? await getSparqlTemplate(sparqlTemplate.addTriple)
         : await getSparqlTemplate(sparqlTemplate.deleteTriple);
     const mapObj = {
+        "{{graph}}": graph,
         "{{subject}}": triple.subject,
         "{{predicate}}": triple.predicate,
         "{{object}}": triple.object

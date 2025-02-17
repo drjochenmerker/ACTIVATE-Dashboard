@@ -29,8 +29,8 @@ export enum sparqlTemplate {
  * Activity in the knowledge graph
  */
 export type Activity = {
-    uri: string;
-    label: string;
+    graph: string;
+    name: string;
 }
 
 /**
@@ -98,9 +98,9 @@ export type Comment = {
  * Enum for conflict status management
  */
 export enum conflictStatus {
-    open = "Open",
-    inDiscussion = "InDiscussion",
-    resolved = "Resolved"
+    open = "offen",
+    inDiscussion = "in Besprechung",
+    resolved = "gelöst"
 }
 
 /**

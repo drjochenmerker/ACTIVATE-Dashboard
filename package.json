@@ -10,7 +10,7 @@
         "preview": "vite preview",
         "format": "prettier --write .",
         "format-check": "prettier --check .",
-        "sparql": "bash scripts/sparql_setup.sh"
+        "sparql": "bash rdflib/scripts/sparql_setup.sh"
     },
     "dependencies": {
         "@vueuse/core": "^12.0.0",

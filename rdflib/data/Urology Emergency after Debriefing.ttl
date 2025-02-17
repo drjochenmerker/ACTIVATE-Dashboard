@@ -1,0 +1,161 @@
+@prefix : <http://activate.htwk-leipzig.de/model#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@base <http://activate.htwk-leipzig.de/model#> .
+
+<http://www.semanticweb.org/tobia/ontologies/2025/1/Vocabulary_2025_03_13> rdf:type owl:Ontology .
+:UrologyEmergency rdf:type owl:NamedIndividual ;
+                  :ActivityDescription "CIRS Case number: 270499		Description: An inpatient received emergency medical intervention in a specialised outpatient clinic during the night. The patient was then transferred to a monitoring ward and later brought back to the original peripheral ward by a nurse. On the ward, the nurse discovered that the extension set of the intravenous catheter (IVC) still contained residues of a cloudy-coloured medication (sedative). In addition, the intravenous catheter was covered by a gauze bandage. As a result, there was a risk that someone could rinse the IVC without checking the contents and inadvertently administer the remaining medication in the bolus to the patient." ;
+                  :ActivityName "After Debriefing Compliance with the specifications for handling intravenous catheters" .
+
+#################################################################
+#    Individuals
+#################################################################
+
+###  http://activate.htwk-leipzig.de/model#ApplyGauzeBandage
+:ApplyGauzeBandage rdf:type owl:NamedIndividual ,
+                            :Instrument ;
+                   :IsUsedOn :Patient1Helath .
+
+
+###  http://activate.htwk-leipzig.de/model#76c5927235efe9d651c1267109c2e995a63b0459
+:76c5927235efe9d651c1267109c2e995a63b0459 rdf:type owl:NamedIndividual ,
+                             :Comment ;
+                    :WrittenBy "Nutzer 1" ;
+                    :CommentDescription "VVK war mit trüber Flüssigkeit verunreinigt"@de ;
+                    :CreationDate "2011-10-06T14:55:00.000Z" ;
+                    :HasComment :51952e5c5c8a0d0b107889a02c746ec415f4a512 ;
+                    :HasComment :76c5927235efe9d651c1267109c2e995a63b0459 .
+
+###  http://activate.htwk-leipzig.de/model#51952e5c5c8a0d0b107889a02c746ec415f4a512
+:51952e5c5c8a0d0b107889a02c746ec415f4a512 rdf:type owl:NamedIndividual ,
+                             :Comment ;
+                    :WrittenBy "Nutzer 3" ;
+                    :CommentDescription "Das könnte Blut sein!"@de ;
+                    :CreationDate "2011-10-06T14:57:00.000Z" .
+
+###  http://activate.htwk-leipzig.de/model#76c5927235efe9d651c1267109c2e995a63b0459
+:76c5927235efe9d651c1267109c2e995a63b0459 rdf:type owl:NamedIndividual ,
+                             :Comment ;
+                    :WrittenBy "Nutzer 1" ;
+                    :CommentDescription "VVK war mit trüber Flüssigkeit verunreinigt, wir haben herausgefunden durch wen (Arzt1) und warum (Verletzung von Rule for Handling Of VVK)."@de ;
+                    :CreationDate "2011-10-06T15:57:00.000Z" .
+
+###  http://activate.htwk-leipzig.de/model#6011717f8793006aa7ea1db7007032e633afd467
+:6011717f8793006aa7ea1db7007032e633afd467 rdf:type owl:NamedIndividual ,
+                             :Comment ;
+                    :WrittenBy "Nutzer 2" ;
+                    :CommentDescription "VVK war unter Mullbinde versteckt."@de ;
+                    :CreationDate "2011-10-06T15:03:00.000Z" ;
+                    :HasComment :b2867afed290ed7b29c17e2f3d7a9a9cce0248c5 .
+
+###  http://activate.htwk-leipzig.de/model#b2867afed290ed7b29c17e2f3d7a9a9cce0248c5
+:b2867afed290ed7b29c17e2f3d7a9a9cce0248c5 rdf:type owl:NamedIndividual ,
+                             :Comment ;
+                    :WrittenBy "Nutzer 2" ;
+                    :CommentDescription "VVK war unter Mullbinde versteckt, wir haben herausgefunden durch wen (Arzt2) und warum (Verletzung von \"Regel: Sichtkontrolle bei Verbandanlegen)."@de ;
+                    :CreationDate "2011-10-06T17:03:00.000Z" .
+
+
+###  http://activate.htwk-leipzig.de/model#Doctor1
+:Doctor1 rdf:type owl:NamedIndividual ,
+                  :Subject ;
+         :IsDefinedBy :SpecializedOutpatientClinic ;
+         :OperatesOn :Patient1Helath ;
+         :Uses :PlaceVVK .
+
+
+###  http://activate.htwk-leipzig.de/model#Doctor2
+:Doctor2 rdf:type owl:NamedIndividual ,
+                  :Subject ;
+         :IsDefinedBy :MonitoringStation ;
+         :OperatesOn :Patient1Helath ;
+         :Uses :ApplyGauzeBandage .
+
+
+###  http://activate.htwk-leipzig.de/model#HandlingOfVVK
+:HandlingOfVVK rdf:type owl:NamedIndividual ,
+                        :Rule ;
+               :RegulatesActionOf :Doctor1 .
+
+
+###  http://activate.htwk-leipzig.de/model#Hospital
+:Hospital rdf:type owl:NamedIndividual ,
+                   :Community ;
+          :IsOrganisedBy :MonitoringStation ,
+                         :PeripheralStation ,
+                         :SpecializedOutpatientClinic .
+
+
+###  http://activate.htwk-leipzig.de/model#MonitoringStation
+:MonitoringStation rdf:type owl:NamedIndividual ,
+                            :DivisionOfLabour .
+
+
+###  http://activate.htwk-leipzig.de/model#NursingSpecialist1
+:NursingSpecialist1 rdf:type owl:NamedIndividual ,
+                             :Subject ;
+                    :OperatesOn :Patient1Helath ;
+                    :Uses :Recording .
+
+
+###  http://activate.htwk-leipzig.de/model#Patient1
+:Patient1 rdf:type owl:NamedIndividual ,
+                   :Subject ;
+          :OperatesOn :Patient1Helath .
+
+
+###  http://activate.htwk-leipzig.de/model#Patient1Helath
+:Patient1Helath rdf:type owl:NamedIndividual ,
+                         :Object ;
+                :DefinesTheApproachOf :NursingSpecialist1 .
+
+
+###  http://activate.htwk-leipzig.de/model#PeripheralStation
+:PeripheralStation rdf:type owl:NamedIndividual ,
+                            :DivisionOfLabour .
+
+
+###  http://activate.htwk-leipzig.de/model#PlaceVVK
+:PlaceVVK rdf:type owl:NamedIndividual ,
+                   :Instrument ;
+          :IsUsedOn :Patient1Helath .
+
+
+###  http://activate.htwk-leipzig.de/model#Recording
+:Recording rdf:type owl:NamedIndividual ,
+                    :Instrument ;
+           :IsUsedOn :Patient1Helath .
+
+
+###  http://activate.htwk-leipzig.de/model#SpecializedOutpatientClinic
+:SpecializedOutpatientClinic rdf:type owl:NamedIndividual ,
+                                      :DivisionOfLabour .
+
+
+###  http://activate.htwk-leipzig.de/model#f5d8d05f0f1fcf5c2b1867561aa4b5201e9d3734
+:f5d8d05f0f1fcf5c2b1867561aa4b5201e9d3734 rdf:type owl:NamedIndividual ,
+                     :Conflict ;
+            :HasComment :76c5927235efe9d651c1267109c2e995a63b0459 ,
+                 :6011717f8793006aa7ea1db7007032e633afd467 ;
+            :ConflictState "gelöst" ;
+            :ConflictName "VVK Problem" ;
+            :ConflictDescription "Es gibt mehrere Probleme mit der Venenverweilkanüle." ;
+            :WrittenBy "Anonym" ;
+            :CreationDate "2011-10-05T14:48:00.000Z" ;
+            :HasParticipant :NursingSpecialist1 ,
+                            :Patient1 ,
+                            :PlaceVVK ,
+                            :Recording .
+
+
+###  http://activate.htwk-leipzig.de/model#VisualInspection
+:VisualInspection rdf:type owl:NamedIndividual ,
+                           :Rule ;
+                  :RegulatesActionOf :Doctor2 .
+
+
+###  Generated by the OWL API (version 4.5.29.2024-05-13T12:11:03Z) https://github.com/owlcs/owlapi

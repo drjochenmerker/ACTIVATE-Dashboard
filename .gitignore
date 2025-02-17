@@ -31,3 +31,8 @@ parsed-data
 
 # Python Virtual Environment
 activate_env
+__pycache__
+rdflib/data/*
+!Vocabulary.ttl
+!Urology Emergency after Debriefing.ttl
+!Urology Emergency before Debriefing.ttl
