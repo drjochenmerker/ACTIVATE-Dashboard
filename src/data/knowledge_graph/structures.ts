@@ -55,7 +55,7 @@ export type Object = {
  * Detail of an activity in the knowledge graph
  */
 export class ActivityDetail {
-    [key: string]: Object[] | boolean;
+    [key: string]: Object[];
 }
 
 /**
