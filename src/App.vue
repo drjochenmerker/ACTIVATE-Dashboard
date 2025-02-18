@@ -10,7 +10,6 @@ getActivities().then((activities) => {
     console.log('Activities', activities);
     addExampleConflictData(activities[0].graph).then(async (conflictIds) => {
         // Add example data and print to console
-        return
         console.log('Example conflict data added', conflictIds);
         let conflictDetail = [];
         for (const conflictId of conflictIds) { 
@@ -30,22 +29,21 @@ getActivities().then((activities) => {
         console.log("Fecthing details again", await getConflictDetail(activities[0].graph, conflictIds[0]));
     }).finally(async () => {
         for (const activity of activities) {
-            getActivityDetail(activity).then(res => console.log(`Fetching activity detail from graph ${activity.graph}`,res))
+            getActivityDetail(activity).then(activity => {
+                console.log(`Fetching activity detail from graph ${activity.graph}`, activity)
+                updateTriple(activities[0].graph,{
+                    subject: "NursingSpecialist1",
+                    predicate: "Uses",
+                    object: "Sedatives",
+                } as RDFTriple, RDFOperation.insert).then((result) => {
+                    console.log('Triple updated', result);
+                    getActivityDetail(activities[0]).then((activityUpdate) => {
+                        console.log('Example activity after update', activityUpdate);
+                });
+            });
+            })
         }
     });
-    // getExampleActivity().then((activity) => {
-    //     console.log('Example activity', activity);
-    //     updateTriple(activities[0].graph,{
-    //         subject: "NursingSpecialist1",
-    //         predicate: "Uses",
-    //         object: "Sedatives",
-    //     } as RDFTriple, RDFOperation.insert).then((result) => {
-    //         console.log('Triple updated', result);
-    //         getExampleActivity().then((activityUpdate) => {
-    //             console.log('Example activity after update', activityUpdate);
-    //         });
-    //     });
-    // });
 });
 // Tests end here
 
