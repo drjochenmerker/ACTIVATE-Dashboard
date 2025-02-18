@@ -13,6 +13,7 @@ export enum sparqlTemplate {
     getActivities = "getActivities",
     getActivityDetail = "getActivityDetail",
     getExampleActivity = "getExampleActivity",
+    getConflictIds = "getConflictIds",
     getConflictDetail = "getConflictDetail",
     getNestedCommentIds = "getNestedCommentIds",
     addConflict = "addConflict",
@@ -47,7 +48,6 @@ export type Action = {
 export type Object = {
     label: string;
     type: string;
-    actions: Set<string>;
     properties: Action[];
 }
 
@@ -72,7 +72,6 @@ export interface updateResponse {
  * Conflict in the knowledge graph
  */
 export type Conflict = {
-    activity: string,
     title: string,
     participants: string[],
     author: string,

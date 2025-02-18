@@ -2,16 +2,15 @@
 import NavBar from './components/NavBar.vue';
 // Backend Tests
 import { addExampleConflictData } from './data/examples';
-import { getActivities, getActivityDetail, getConflictDetail } from './data/knowledge_graph/read_operations';
+import { getActivities, getActivityDetail, getAllConflictsWithDetail, getConflictDetail, getConflictIds } from './data/knowledge_graph/read_operations';
 import { conflictStatus, RDFOperation, RDFTriple } from './data/knowledge_graph/structures';
 import { deleteComment, deleteConflict, updateConflictStatus, updateTriple } from './data/knowledge_graph/write_operations';
 // Example Data must be added every time since the current backend solution does not retain data
 getActivities().then((activities) => {
-    console.log('Activities', activities);
+    console.log("Activities", activities);
     addExampleConflictData(activities[0].graph).then(async (conflictIds) => {
         // Add example data and print to console
-        return
-        console.log('Example conflict data added', conflictIds);
+        console.log("Example conflict data added", conflictIds);
         let conflictDetail = [];
         for (const conflictId of conflictIds) { 
             const detail = await getConflictDetail(activities[0].graph, conflictId);
@@ -30,25 +29,27 @@ getActivities().then((activities) => {
         console.log("Fecthing details again", await getConflictDetail(activities[0].graph, conflictIds[0]));
     }).finally(async () => {
         for (const activity of activities) {
-            getActivityDetail(activity).then(res => console.log(`Fetching activity detail from graph ${activity.graph}`,res))
+            console.log("Fetching all conflict ids for", activity.name)
+            getConflictIds(activity.graph).then(res => console.log("Result",res))
+            getActivityDetail(activity).then(activity => {
+                console.log(`Fetching activity detail from graph ${activity.graph}`, activity)
+                updateTriple(activities[0].graph,{
+                    subject: "NursingSpecialist1",
+                    predicate: "Uses",
+                    object: "Sedatives",
+                } as RDFTriple, RDFOperation.insert).then((result) => {
+                    console.log("Triple updated", result);
+                    getActivityDetail(activities[0]).then((activityUpdate) => {
+                        console.log("Example activity after update", activityUpdate);
+                });
+            });
+            })
+            console.log("Fetching all conflicts in detail for", activity.name)
+            console.log("Result:", await getAllConflictsWithDetail(activity.graph))
         }
     });
-    // getExampleActivity().then((activity) => {
-    //     console.log('Example activity', activity);
-    //     updateTriple(activities[0].graph,{
-    //         subject: "NursingSpecialist1",
-    //         predicate: "Uses",
-    //         object: "Sedatives",
-    //     } as RDFTriple, RDFOperation.insert).then((result) => {
-    //         console.log('Triple updated', result);
-    //         getExampleActivity().then((activityUpdate) => {
-    //             console.log('Example activity after update', activityUpdate);
-    //         });
-    //     });
-    // });
 });
 // Tests end here
-
 </script>
 
 <template>

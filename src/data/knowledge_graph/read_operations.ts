@@ -1,5 +1,5 @@
 import { Action, Activity, ActivityDetail, Conflict, StringAccessObject, Object, sparqlTemplate } from "./structures";
-import { fetchSparql, findNestedComment, getSparqlTemplate } from "./utils";
+import { fetchSparql, findNestedComment, getSparqlTemplate, camelToSnakeCase } from "./utils";
 
 /**
  * Fetches all activities from the knowledge graph
@@ -43,7 +43,10 @@ export async function getActivityDetail(activity: Activity): Promise<ActivityDet
   let activityDetail = {} as ActivityDetail;
   // Init Division of Labour as false
   data.map((item: StringAccessObject) => {
-    let label = item.type.value.split("#").pop();
+    let label = camelToSnakeCase(item.type.value.split("#").pop());
+    if (label === "rule" || label === "instrument") {
+      label += "s"
+    }
     // Init Label Subject, Community, etc. if it doesn't exist yet
     if (label in activityDetail === false) {
       activityDetail[label] = []
@@ -52,19 +55,32 @@ export async function getActivityDetail(activity: Activity): Promise<ActivityDet
     const objectIndexInList = (activityDetail[label] as Object[]).findIndex((obj: Object) => obj.label == item.entity.value.split("#").pop());
     // Object not in list yet
     if (objectIndexInList < 0) {
-      activityDetail[label].push({
-        label: item.entity.value.split("#").pop(),
-        actions: new Set(),
-        properties: [{
-          action: item.property.value.split("#").pop(),
-          object: item.language ? {
-            [item.language.value]: item.target.value.split("#").pop()
-          } as StringAccessObject : item.target.value.split("#").pop()
-        } as Action]
-      } as Object)
+      if (item.target.value.split("#").pop() === "DivisionOfLabour") {
+        activityDetail[label].push({
+          label: item.entity.value.split("#").pop(),
+          properties: [] as Action[]
+        } as Object)
+      }
+      else if (item.property.value.split("#").pop() === "type") {
+        return
+      }
+      else {
+        activityDetail[label].push({
+          label: item.entity.value.split("#").pop(),
+          properties: [{
+            action: item.property.value.split("#").pop(),
+            object: item.language ? {
+              [item.language.value]: item.target.value.split("#").pop()
+            } as StringAccessObject : item.target.value.split("#").pop()
+          } as Action]
+        } as Object)
+      }
     }
     // Object already in list
     else {
+      if (item.property.value.split("#").pop() === "type") {
+        return
+      }
       if (item.language) {
         const propertyActionIndex = activityDetail[label][objectIndexInList].properties.findIndex((action: Action) => action.action == item.action.value.split("#").pop());
         // If no language version has been created yet
@@ -94,8 +110,32 @@ export async function getActivityDetail(activity: Activity): Promise<ActivityDet
   return activityDetail
 }
 
-export async function getConflictDetail(graph: string, conflictId: string) {
-  console.log(`Fetching ${conflictId} detail from ${graph}`)
+/**
+ * Fetches all conflict Ids for the current activity. 
+ * @param graph 
+ * @returns List of conflicts with their title and id
+ */
+export async function getConflictIds(graph: string): Promise<{ title: string; id: string }[]> {
+  let query = await getSparqlTemplate(sparqlTemplate.getConflictIds);
+  query = query.replace("{{graph}}", graph);
+  const data = await fetchSparql(query);
+  let conflicts = [] as { title: string; id: string }[];
+  data.map((conflict: StringAccessObject) => {
+    conflicts.push({
+      title: conflict.conflict_title.value,
+      id: conflict.conflict_id.value.split("#").pop()
+    })
+  })
+  return conflicts;
+}
+
+/**
+ * Fetches all details regarding a specific conflict
+ * @param graph Graph that the conflict detail should be read from
+ * @param conflictId Id of the conflict
+ * @returns Conflict
+ */
+export async function getConflictDetail(graph: string, conflictId: string): Promise<Conflict> {
   let query = await getSparqlTemplate(sparqlTemplate.getConflictDetail);
   const mapObj = {
     "{{graph}}": graph,
@@ -223,4 +263,19 @@ export async function getConflictDetail(graph: string, conflictId: string) {
     }
   })
   return parsedConflict
+}
+
+/**
+ * Fetches all conflicts in detail for a given activtiy graph
+ * @param graph activity graph
+ * @returns List of Conflicts
+ */
+export async function getAllConflictsWithDetail(graph: string): Promise<Conflict[]> {
+  const conflicts = await getConflictIds(graph);
+  let detailedConflicts = [] as Conflict[];
+  for (const conflict of conflicts) {
+    const detail = await getConflictDetail(graph, conflict.id)
+    detailedConflicts.push(detail)
+  }
+  return detailedConflicts
 }
