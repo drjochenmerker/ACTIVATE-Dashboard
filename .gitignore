@@ -8,6 +8,7 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
+package-lock.json
 dist
 dist-ssr
 *.local
@@ -23,3 +24,10 @@ parsed-data
 *.njsproj
 *.sln
 *.sw?
+
+# ENV
+*.env*
+!.env.template
+
+# Python Virtual Environment
+activate_env

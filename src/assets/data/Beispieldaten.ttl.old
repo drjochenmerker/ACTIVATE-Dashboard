@@ -16,8 +16,8 @@
  :hasSubject :Arzt ;
  :hasObject :Patient ;
  :hasCommunity :Krankenhaus ;
- :hasTools :Stethoskop ;
- :hasRules :HygieneVorschriften ;
+ :hasInstrument :Stethoskop ;
+ :hasRule :HygieneVorschriften ;
  :isDefinedBy :DivisionOfLabour ;
  :operatesOn :Patient ;
  :uses :Stethoskop ;
@@ -26,12 +26,12 @@
  :isInfluencedBy :Patient ;
  :influencesTheChoiceOf :Behandlung ;
  :shallBeAchievedBy :Krankenhaus ;
- :createsAndIsRegulatedBy :Regeln ;
+ :createsAndIsRegulatedBy :Rule ;
  :developsAndUses :Stethoskop ;
  :interactsWith :Patient ;
  :isOrganisedBy :DivisionOfLabour ;
  :shares :Patient ;
- :influences :Regeln ;
+ :influences :Rule ;
  :regulatesActionOf :Arzt ;
  :regulatesAndAreCreatedBy :Krankenhaus ;
  :areUsedBy :Arzt ;
@@ -50,8 +50,8 @@
  :hasName "Dr. Müller"@de ;
  :hasName "Dr. Müller"@sv ;
  :hasDivisionOfLabour :DivisionOfLabour ;
- :hasRules :HygieneVorschriften ;
- :hasTools :Stethoskop ;
+ :hasRule :HygieneVorschriften ;
+ :hasInstrument :Stethoskop ;
  :hasCommunity :Krankenhaus ;
  :hasObject :Patient ;
  :hasActivity :Arztbesuch .
@@ -65,8 +65,8 @@
  :hasName "Herr Müller"@de ;
  :hasName "Herr Müller"@sv ;
  :hasDivisionOfLabour :DivisionOfLabour ;
- :hasRules :HygieneVorschriften ;
- :hasTools :Stethoskop ;
+ :hasRule :HygieneVorschriften ;
+ :hasInstrument :Stethoskop ;
  :hasCommunity :Krankenhaus ;
  :hasSubject :Arzt ;
  :hasActivity :Arztbesuch .
@@ -80,14 +80,14 @@
  :hasName "Krankenhaus X"@de ;
  :hasName "Sjukhus X"@sv ;
  :hasDivisionOfLabour :DivisionOfLabour ;
- :hasRules :HygieneVorschriften ;
- :hasTools :Stethoskop ;
+ :hasRule :HygieneVorschriften ;
+ :hasInstrument :Stethoskop ;
  :hasObject :Patient ;
  :hasSubject :Arzt ;
  :hasActivity :Arztbesuch .
 
-### Tools: "Stethoskop"
-:Stethoskop rdf:type :Tools ;
+### Instrument: "Stethoskop"
+:Stethoskop rdf:type :Instrument ;
  rdfs:label "Stethoskop"@en ;
  rdfs:label "Stethoskop"@de ;
  rdfs:label "Stetoskop"@sv ;
@@ -95,14 +95,14 @@
  :hasName "Stethoskop"@de ;
  :hasName "Stetoskop"@sv ;
  :hasDivisionOfLabour :DivisionOfLabour ;
- :hasRules :HygieneVorschriften ;
+ :hasRule :HygieneVorschriften ;
  :hasCommunity :Krankenhaus ;
  :hasObject :Patient ;
  :hasSubject :Arzt ;
  :hasActivity :Arztbesuch .
 
-### Regeln: "HygieneVorschriften"
-:HygieneVorschriften rdf:type :Regeln ;
+### Rule: "HygieneVorschriften"
+:HygieneVorschriften rdf:type :Rule ;
  rdfs:label "HygieneVorschriften"@en ;
  rdfs:label "HygieneVorschriften"@de ;
  rdfs:label "Hygieneregler"@sv ;
@@ -110,7 +110,7 @@
  :hasName "HygieneVorschriften"@de ;
  :hasName "Hygieneregler"@sv ;
  :hasDivisionOfLabour :DivisionOfLabour ;
- :hasRules :HygieneVorschriften ;
+ :hasRule :HygieneVorschriften ;
  :hasCommunity :Krankenhaus ;
  :hasObject :Patient ;
  :hasSubject :Arzt ;
@@ -129,8 +129,8 @@
  :hasSubject :Arzt ;
  :hasObject :Patient ;
  :hasCommunity :PalliativTeam ;
- :hasTools :MedizinischeTerminologie ;
- :hasRules :Klärungsbedarf ;
+ :hasInstrument :MedizinischeTerminologie ;
+ :hasRule :Klärungsbedarf ;
  :isDefinedBy :DivisionOfLabour ;
  :operatesOn :Patient ;
  :uses :MedizinischeTerminologie ;
@@ -139,12 +139,12 @@
  :isInfluencedBy :Patient ;
  :influencesTheChoiceOf :Behandlung ;
  :shallBeAchievedBy :PalliativTeam ;
- :createsAndIsRegulatedBy :Regeln ;
+ :createsAndIsRegulatedBy :Rule ;
  :developsAndUses :MedizinischeTerminologie ;
  :interactsWith :Patient ;
  :isOrganisedBy :DivisionOfLabour ;
  :shares :Patient ;
- :influences :Regeln ;
+ :influences :Rule ;
  :regulatesActionOf :Arzt ;
  :regulatesAndAreCreatedBy :PalliativTeam ;
  :areUsedBy :Arzt ;
@@ -163,8 +163,8 @@
  :hasName "Dr. Müller"@de ;
  :hasName "Dr. Müller"@sv ;
  :hasDivisionOfLabour :DivisionOfLabour ;
- :hasRules :Klärungsbedarf ;
- :hasTools :MedizinischeTerminologie ;
+ :hasRule :Klärungsbedarf ;
+ :hasInstrument :MedizinischeTerminologie ;
  :hasCommunity :PalliativTeam ;
  :hasObject :Patient ;
  :hasActivity :PalliativTeamDiskussion .
@@ -178,8 +178,8 @@
  :hasName "Herr Müller"@de ;
  :hasName "Herr Müller"@sv ;
  :hasDivisionOfLabour :DivisionOfLabour ;
- :hasRules :Klärungsbedarf ;
- :hasTools :MedizinischeTerminologie ;
+ :hasRule :Klärungsbedarf ;
+ :hasInstrument :MedizinischeTerminologie ;
  :hasCommunity :PalliativTeam ;
  :hasSubject :Arzt ;
  :hasActivity :PalliativTeamDiskussion .
@@ -193,14 +193,14 @@
  :hasName "PalliativTeam X"@de ;
  :hasName "Palliativteam X"@sv ;
  :hasDivisionOfLabour :DivisionOfLabour ;
- :hasRules :Klärungsbedarf ;
- :hasTools :MedizinischeTerminologie ;
+ :hasRule :Klärungsbedarf ;
+ :hasInstrument :MedizinischeTerminologie ;
  :hasObject :Patient ;
  :hasSubject :Arzt ;
  :hasActivity :PalliativTeamDiskussion .
 
-### Tools: "MedizinischeTerminologie"
-:MedizinischeTerminologie rdf:type :Tools ;
+### Instrument: "MedizinischeTerminologie"
+:MedizinischeTerminologie rdf:type :Instrument ;
  rdfs:label "MedizinischeTerminologie"@en ;
  rdfs:label "MedizinischeTerminologie"@de ;
  rdfs:label "Medicinska terminologi"@sv ;
@@ -208,14 +208,14 @@
  :hasName "MedizinischeTerminologie"@de ;
  :hasName "Medicinska terminologi"@sv ;
  :hasDivisionOfLabour :DivisionOfLabour ;
- :hasRules :Klärungsbedarf ;
+ :hasRule :Klärungsbedarf ;
  :hasCommunity :PalliativTeam ;
  :hasObject :Patient ;
  :hasSubject :Arzt ;
  :hasActivity :PalliativTeamDiskussion .
 
-### Regeln: "Klärungsbedarf"
-:Klärungsbedarf rdf:type :Regeln ;
+### Rule: "Klärungsbedarf"
+:Klärungsbedarf rdf:type :Rule ;
  rdfs:label "Klärungsbedarf"@en ;
  rdfs:label "Klärungsbedarf"@de ;
  rdfs:label "Klärningsbehov"@sv ;
@@ -223,7 +223,7 @@
  :hasName "Klärungsbedarf"@de ;
  :hasName "Klärningsbehov"@sv ;
  :hasDivisionOfLabour :DivisionOfLabour ;
- :hasRules :Klärungsbedarf ;
+ :hasRule :Klärungsbedarf ;
  :hasCommunity :PalliativTeam ;
  :hasObject :Patient ;
  :hasSubject :Arzt ;
@@ -245,8 +245,8 @@
  :hasSubject :Patient ;
  :hasObject :Schmerzen ;
  :hasCommunity :Familie ;
- :hasTools :Sozialarbeiter ;
- :hasRules :Klärungsbedarf ;
+ :hasInstrument :Sozialarbeiter ;
+ :hasRule :Klärungsbedarf ;
  :isDefinedBy :DivisionOfLabour ;
  :operatesOn :Patient ;
  :uses :Sozialarbeiter ;
@@ -255,12 +255,12 @@
  :isInfluencedBy :Familie ;
  :influencesTheChoiceOf :Behandlung ;
  :shallBeAchievedBy :Sozialarbeiter ;
- :createsAndIsRegulatedBy :Regeln ;
+ :createsAndIsRegulatedBy :Rule ;
  :developsAndUses :Sozialarbeiter ;
  :interactsWith :Patient ;
  :isOrganisedBy :DivisionOfLabour ;
  :shares :Patient ;
- :influences :Regeln ;
+ :influences :Rule ;
  :regulatesActionOf :Sozialarbeiter ;
  :regulatesAndAreCreatedBy :Familie ;
  :areUsedBy :Sozialarbeiter ;
@@ -279,8 +279,8 @@
  :hasName "Herr Müller"@de ;
  :hasName "Herr Müller"@sv ;
  :hasDivisionOfLabour :DivisionOfLabour ;
- :hasRules :Klärungsbedarf ;
- :hasTools :Sozialarbeiter ;
+ :hasRule :Klärungsbedarf ;
+ :hasInstrument :Sozialarbeiter ;
  :hasCommunity :Familie ;
  :hasObject :Schmerzen ;
  :hasActivity :Patientenbeschwerde .
@@ -294,8 +294,8 @@
  :hasName "Schmerzen"@de ;
  :hasName "Smärta"@sv ;
  :hasDivisionOfLabour :DivisionOfLabour ;
- :hasRules :Klärungsbedarf ;
- :hasTools :Sozialarbeiter ;
+ :hasRule :Klärungsbedarf ;
+ :hasInstrument :Sozialarbeiter ;
  :hasCommunity :Familie ;
  :hasSubject :Patient ;
  :hasActivity :Patientenbeschwerde .
@@ -309,14 +309,14 @@
  :hasName "Familie Müller"@de ;
  :hasName "Familj Müller"@sv ;
  :hasDivisionOfLabour :DivisionOfLabour ;
- :hasRules :Klärungsbedarf ;
- :hasTools :Sozialarbeiter ;
+ :hasRule :Klärungsbedarf ;
+ :hasInstrument :Sozialarbeiter ;
  :hasObject :Schmerzen ;
  :hasSubject :Patient ;
  :hasActivity :Patientenbeschwerde .
 
-### Tools: "Sozialarbeiter"
-:Sozialarbeiter rdf:type :Tools ;
+### Instrument: "Sozialarbeiter"
+:Sozialarbeiter rdf:type :Instrument ;
  rdfs:label "Sozialarbeiter"@en ;
  rdfs:label "Sozialarbeiter"@de ;
  rdfs:label "Socialarbetare"@sv ;
@@ -324,14 +324,14 @@
  :hasName "Sozialarbeiter Müller"@de ;
  :hasName "Socialarbetare Müller"@sv ;
  :hasDivisionOfLabour :DivisionOfLabour ;
- :hasRules :Klärungsbedarf ;
+ :hasRule :Klärungsbedarf ;
  :hasCommunity :Familie ;
  :hasObject :Schmerzen ;
  :hasSubject :Patient ;
  :hasActivity :Patientenbeschwerde .
 
-### Regeln: "Klärungsbedarf"
-:Klärungsbedarf rdf:type :Regeln ;
+### Rule: "Klärungsbedarf"
+:Klärungsbedarf rdf:type :Rule ;
  rdfs:label "Klärungsbedarf"@en ;
  rdfs:label "Klärungsbedarf"@de ;
  rdfs:label "Klärningsbehov"@sv ;
@@ -339,7 +339,7 @@
  :hasName "Klärungsbedarf"@de ;
  :hasName "Klärningsbehov"@sv ;
  :hasDivisionOfLabour :DivisionOfLabour ;
- :hasRules :Klärungsbedarf ;
+ :hasRule :Klärungsbedarf ;
  :hasCommunity :Familie ;
  :hasObject :Schmerzen ;
  :hasSubject :Patient ;

@@ -14,32 +14,77 @@
 
 ###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory#DivisionOfLabour
 :DivisionOfLabour rdf:type owl:Class ;
-                 rdfs:comment "Who is responsible for what, when carrying out this activity and how the roles are organised."@en .
-
+        rdfs:label "Division of Labour"@en ;
+        rdfs:label "Arbeitsteilung"@de ;
+        rdfs:label "Arbetsfördelning"@sv ;
+        rdfs:comment "Who is responsible for what, when carrying out this activity and how the roles are organised."@en ;
+        rdfs:comment "Wer ist für was verantwortlich, wenn man diese Aktivität durchführt und wie sind die Rollen organisiert."@de ;
+        rdfs:comment "Vem är ansvarig för vad, när man utför denna aktivitet och hur är roller organiserade."@sv .
 
 ###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory#Object
 :Object rdf:type owl:Class ;
-        rdfs:comment "The reason why thsi activity takes place."@en .
-
+        rdfs:label "Object"@en ;
+        rdfs:label "Objekt"@de ;
+        rdfs:label "Objekt"@sv ;
+        rdfs:comment "The reason why thsi activity takes place."@en ;
+        rdfs:comment "Der Grund, warum diese Aktivität stattfindet."@de ;
+        rdfs:comment "Orsaken till att denna aktivitet sker."@sv .
 
 ###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory#Subject
 :Subject rdf:type owl:Class ;
-         rdfs:comment "The person who is carrying out this activity."@en .
-
+        rdfs:label "Subject"@en ;
+        rdfs:label "Subjekt"@de ;
+        rdfs:label "Subjekt"@sv ;
+        rdfs:comment "The person who is carrying out this activity."@en ;
+        rdfs:comment "Die Person, die diese Aktivität durchführt."@de ;
+        rdfs:comment "Den person som utför denna aktivitet."@sv .
 
 ###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory/Community
 :Community rdf:type owl:Class ;
-           rdfs:comment "The environment in which the activity is carried out."@en .
-
+        rdfs:label "Community"@en ;
+        rdfs:label "Gemeinschaft"@de ;
+        rdfs:label "Samhälle"@sv ;
+        rdfs:comment "The environment in which the activity is carried out."@en ;
+        rdfs:comment "Die Umgebung, in der die Aktivität stattfindet."@de ;
+        rdfs:comment "Miljön där aktivitet sker."@sv .
 
 ###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory/Instruments
-:Tools rdf:type owl:Class ;
-             rdfs:comment "The means by which the subjects carry out the activity."@en .
-
+:Instrument rdf:type owl:Class ;
+        rdfs:label "Instrument"@en ;
+        rdfs:label "Instrument"@de ;
+        rdfs:label "Instrument"@sv ;
+        rdfs:comment "The means by which the subject carries out the activity."@en ;
+        rdfs:comment "Die Mittel, mit denen das Subjekt die Aktivität durchführt."@de ;
+        rdfs:comment "De medel som används av försökspersonen för att utföra aktiviteten."@sv .
 
 ###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory/Rules
-:Rules rdf:type owl:Class ;
-       rdfs:comment "Cultural norms, rules and regulations governing the performance of this activity."@en .
+:Rule rdf:type owl:Class ;
+        rdfs:label "Rules"@en ;
+        rdfs:label "Regeln"@de ;
+        rdfs:label "Regler"@sv ;
+        rdfs:comment "Cultural norms, rules and regulations governing the performance of this activity."@en ;
+        rdfs:comment "Kulturelle Normen, Regeln und Vorschriften, die die Durchführung der Aktivität regeln."@de ;
+        rdfs:comment "Kulturella normer, regler och bestämmelser som reglerar utförandet av denna aktivitet."@sv .
+
+
+### http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory#Comment
+:Comment rdf:type owl:Class ;
+    rdfs:label "Comment"@en ;
+    rdfs:label "Kommentar"@de ;
+    rdfs:label "Kommentar"@sv ;
+    rdfs:comment "A comment related to a conflict."@en ;
+    rdfs:comment "Ein Kommentar zu einem Konflikt."@de ;
+    rdfs:comment "En kommentar relaterad till en konflikt."@sv .
+
+### http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory#Conflict
+:Conflict rdf:type owl:Class ;
+    rdfs:label "Conflict"@en ;
+    rdfs:label "Konflikt"@de ;
+    rdfs:label "Konflikt"@sv ;
+    rdfs:comment "A conflict between up to three elements of the activity theory model."@en ;
+    rdfs:comment "Ein Konflikt zwischen bis zu drei Elementen des Aktivitätstheorie-Modells."@de ;
+    rdfs:comment "En konflikt mellan upp till tre element från aktivitets teori modellen."@sv .
+
 
 #################################################################
 #    Object Properties
@@ -47,122 +92,366 @@
 
 ###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory#HasToFollow
 :HasToFollow rdf:type owl:ObjectProperty ;
-             rdfs:domain :Subject ;
-             rdfs:range :Rules .
+        rdfs:label "Has to follow"@en ;
+        rdfs:label "Muss folgen"@de ;
+        rdfs:label "Måste följa"@sv ;
+        rdfs:domain :Subject ;
+        rdfs:range :Rule .
 
 ###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory#InteractsIn
 :InteractsIn  rdf:type owl:ObjectProperty ;
-              rdfs:domain :Subject;
-              rdfs:range :Community .
+        rdfs:label "Interacts in"@en ;
+        rdfs:label "Interagiert in"@de ;
+        rdfs:label "Interagerar i"@sv ;
+        rdfs:domain :Subject;
+        rdfs:range :Community .
 
 ###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory#IsDefinedBy
 :IsDefinedBy rdf:type owl:ObjectProperty ;
-             rdfs:domain :Subject ;
-             rdfs:range :DivisionOfLabour .
+        rdfs:label "Is defined by"@en ;
+        rdfs:label "Ist definiert durch"@de ;
+        rdfs:label "Är definierad av"@sv ;
+        rdfs:domain :Subject ;
+        rdfs:range :DivisionOfLabour .
 
 ###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory#OperatesOn
 :OperatesOn rdf:type owl:ObjectProperty ;
-            rdfs:domain :Subject ;
-            rdfs:range :Object .
+        rdfs:label "Operates on"@en ;
+        rdfs:label "Operiert auf"@de ;
+        rdfs:label "Fungerar på"@sv ;
+        rdfs:domain :Subject ;
+        rdfs:range :Object .
 
 ###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory/Uses
 :Uses rdf:type owl:ObjectProperty ;
-      rdfs:domain :Subject  ;
-      rdfs:range :Tools .
+        rdfs:label "Uses"@en ;
+        rdfs:label "Benutzt"@de ;
+        rdfs:label "Använder"@sv ;
+        rdfs:domain :Subject  ;
+        rdfs:range :Instrument .
 
 ###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory#DefinesTheApproachOf
 :DefinesTheApproachOf rdf:type owl:ObjectProperty ;
-                      rdfs:domain :Object ;
-                      rdfs:range :Subject .
+        rdfs:label "Defines the approach of"@en ;
+        rdfs:label "Definiert den Ansatz von"@de ;
+        rdfs:label "Definierar tillvägagångssättet för"@sv ;
+        rdfs:domain :Object ;
+        rdfs:range :Subject .
 
 ###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory#Determines
 :Determines rdf:type owl:ObjectProperty ;
-            rdfs:domain :Object ;
-            rdfs:range :DivisionOfLabour .
+        rdfs:label "Determines"@en ;
+        rdfs:label "Bestimmt"@de ;
+        rdfs:label "Bestämmer"@sv ;
+        rdfs:domain :Object ;
+        rdfs:range :DivisionOfLabour .
 
 ###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory#IsInfluencedBy
 :IsInfluencedBy rdf:type owl:ObjectProperty ;
-                rdfs:domain :Object ;
-                rdfs:range :Rules .
+        rdfs:label "Is influenced by"@en ;
+        rdfs:label "Wird von beeinflusst"@de ;
+        rdfs:label "Påverkas av"@sv ;
+        rdfs:domain :Object ;
+        rdfs:range :Rule .
 
 ###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory/InfluencesTheChoiceOf
 :InfluencesTheChoiceOf  rdf:type owl:ObjectProperty ;
-                        rdfs:domain :Object  ;
-                        rdfs:range :Tools .
+        rdfs:label "Influences the choice of"@en ;
+        rdfs:label "Beeinflusst die Wahl von"@de ;
+        rdfs:label "Påverkar valet av"@sv ;
+        rdfs:domain :Object  ;
+        rdfs:range :Instrument .
 
 ###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory#ShallBeAchievedBy
 :ShallBeAchievedby rdf:type owl:ObjectProperty ;
-                   rdfs:domain :Object ;
-                   rdfs:range :Community .
+        rdfs:label "Shall be achieved by"@en ;
+        rdfs:label "Soll erreicht werden durch"@de ;
+        rdfs:label "Skall uppnås genom"@sv ;
+        rdfs:domain :Object ;
+        rdfs:range :Community .
 
 ###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory#CreatesAndIsRegulatedBy
 :CreatesAndIsRegulatedBy  rdf:type owl:ObjectProperty ;
-                          rdfs:domain :Community ;
-                           rdfs:range :Rules .
+        rdfs:label "Creates and is regulated by"@en ;
+        rdfs:label "Erstellt und wird durch Regeln geregelt"@de ;
+        rdfs:label "Skapar och regleras av"@sv ;
+        rdfs:domain :Community ;
+        rdfs:range :Rule .
 
 ###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory#DevelopsAndUses
 :DevelopsAndUses  rdf:type owl:ObjectProperty ;
-                  rdfs:domain :Community ;
-                  rdfs:range :Tools .
+        rdfs:label "Develops and uses"@en ;
+        rdfs:label "Entwickelt und benutzt"@de ;
+        rdfs:label "Utvecklar och använder"@sv ;
+        rdfs:domain :Community ;
+        rdfs:range :Instrument .
 
 ###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory#InteractsWith
 :InteractsWith  rdf:type owl:ObjectProperty ;
-                rdfs:domain :Community ;
-                rdfs:range :Subject .
+        rdfs:label "Interacts with"@en ;
+        rdfs:label "Interagiert mit"@de ;
+        rdfs:label "Interagerar med"@sv ;
+        rdfs:domain :Community ;
+        rdfs:range :Subject .
 
 ###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory#IsOrganisedBy
 :IsOrganisedBy  rdf:type owl:ObjectProperty ;
-                rdfs:domain :Community ;
-                rdfs:range :DivisionOfLabour .
+        rdfs:label "Is organised by"@en ;
+        rdfs:label "Ist organisiert durch"@de ;
+        rdfs:label "Är organiserad av"@sv ;
+        rdfs:domain :Community ;
+        rdfs:range :DivisionOfLabour .
 
 ###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory/Shares
 :Shares rdf:type owl:ObjectProperty ;
+        rdfs:label "Shares"@en ;
+        rdfs:label "Teilt"@de ;
+        rdfs:label "Delar"@sv ;
         rdfs:domain :Community  ;
         rdfs:range :Object .
 
 ###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory#Influences
 :Influences rdf:type owl:ObjectProperty ;
-            rdfs:domain :Rules ;
-            rdfs:range :Object.
+        rdfs:label "Influences"@en ;
+        rdfs:label "Beeinflusst"@de ;
+        rdfs:label "Påverkar"@sv ;
+        rdfs:domain :Rule ;
+        rdfs:range :Object.
 
 ###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory#RegulatesActionOf
 :RegulatesActionOf rdf:type owl:ObjectProperty ;
-                   rdfs:domain :Rules ;
-                   rdfs:range :Subject .
+        rdfs:label "Regulates action of"@en ;
+        rdfs:label "Regelt die Handlungen von"@de ;
+        rdfs:label "Reglerar handlingen av"@sv ;
+        rdfs:domain :Rule ;
+        rdfs:range :Subject .
 
 ###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory#RegulatesAndAreCreatedBy
 :RegulatesAndAreCreatedBy rdf:type owl:ObjectProperty ;
-                          rdfs:domain :Rules ;
-                          rdfs:range :Community .
+        rdfs:label "Regulates and are created by"@en ;
+        rdfs:label "Regelt und wird durch Gemeinschaft erstellt"@de ;
+        rdfs:label "Reglerar och skapas av"@sv ;
+        rdfs:domain :Rule ;
+        rdfs:range :Community .
 
 ###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory#AreUsedBy
 :AreUsedBy rdf:type owl:ObjectProperty ;
-           rdfs:domain :Tools ;
-           rdfs:range :Subject .
+        rdfs:label "Are used by"@en ;
+        rdfs:label "Wird vom Subject verwendet"@de ;
+        rdfs:label "Används av"@sv ;
+        rdfs:domain :Instrument ;
+        rdfs:range :Subject .
 
 ###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory#AreUsedOn
 :AreUsedOn rdf:type owl:ObjectProperty ;
-           rdfs:domain :Tools ;
-           rdfs:range :Object .
+        rdfs:label "Are used on"@en ;
+        rdfs:label "Wird auf Objekt verwendet"@de ;
+        rdfs:label "Används på"@sv ;
+        rdfs:domain :Instrument ;
+        rdfs:range :Object .
 
 ###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory#AreDevelopedAndUsedBy
 :AreDevelopedAndUsedBy rdf:type owl:ObjectProperty ;
-                       rdfs:domain :Tools ;
-                       rdfs:range :Community .
+        rdfs:label "Are developed and used by"@en ;
+        rdfs:label "Wird entwickelt und benutzt durch"@de ;
+        rdfs:label "Utvecklas och används av"@sv ;
+        rdfs:domain :Instrument ;
+        rdfs:range :Community .
 
 ###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory#DefinesRoleOf
 :DefinesRoleOf rdf:type owl:ObjectProperty ;
-               rdfs:domain :DivisionOfLabour ;
-               rdfs:range :Subject .
+        rdfs:label "Defines role of"@en ;
+        rdfs:label "Definiert die Rolle vom"@de ;
+        rdfs:label "Definierar rollen av"@sv ;
+        rdfs:domain :DivisionOfLabour ;
+        rdfs:range :Subject .
 
 ###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory#IsAppliedToAchieve
 :IsAppliedToAchieve rdf:type owl:ObjectProperty ;
-                    rdfs:domain :DivisionOfLabour ;
-                    rdfs:range :Object .
+        rdfs:label "Is applied to achieve"@en ;
+        rdfs:label "Wird angewendet um das Objekt zu erreichen"@de ;
+        rdfs:label "Används för att uppnå"@sv ;
+        rdfs:domain :DivisionOfLabour ;
+        rdfs:range :Object .
 
 ###  http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory#Organises
 :Organises rdf:type owl:ObjectProperty ;
-           rdfs:domain :DivisionOfLabour ;
-           rdfs:range :Community .
+        rdfs:label "Organises"@en ;
+        rdfs:label "Organisiert"@de ;
+        rdfs:label "Organiserar"@sv ;
+        rdfs:domain :DivisionOfLabour ;
+        rdfs:range :Community .
+
+
+### http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory#hasParticipant
+:hasParticipant rdf:type owl:ObjectProperty ;
+    rdfs:label "has participant"@en ;
+    rdfs:label "hat Teilnehmer"@de ;
+    rdfs:label "har deltagare"@sv ;
+    rdfs:domain :Conflict ;
+    rdfs:range  :Subject , :Object , :Community , :DivisionOfLabour , :Instrument , :Rule  ;
+    rdfs:comment "Relates a conflict to one of its participants."@en ;
+    rdfs:comment "Verbindet einen Konflikt mit einem seiner Teilnehmer."@de ;
+    rdfs:comment "Relaterar en konflikt till en av dess deltagare."@sv .
+
+### http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory#hasComment
+:hasComment rdf:type owl:ObjectProperty ;
+    rdfs:label "has comment"@en ;
+    rdfs:label "hat Kommentar"@de ;
+    rdfs:label "har kommentar"@sv ;
+    rdfs:domain :Conflict ;
+    rdfs:range :Comment ;
+    rdfs:comment "Relates a conflict to a comment about it."@en ;
+    rdfs:comment "Verbindet einen Konflikt mit einem Kommentar darüber."@de ;
+    rdfs:comment "Relaterar en konflikt till en kommentar om det."@sv .
+
+
+
+#################################################################
+#    Data properties
+#################################################################
+
+###  http://www.semanticweb.org/tobia/ontologies/2025/0/activity_theory/ActivityDescription
+:ActivityDescription rdf:type owl:DatatypeProperty ;
+                     rdfs:domain owl:Thing ;
+                     rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/tobia/ontologies/2025/0/activity_theory/ActivityName
+:ActivityName rdf:type owl:DatatypeProperty ;
+              rdfs:domain owl:Thing ;
+              rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/tobia/ontologies/2025/0/activity_theory/CommunityName
+:CommunityName rdf:type owl:DatatypeProperty ;
+               rdfs:domain :Community ;
+               rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/tobia/ontologies/2025/0/activity_theory/InstrumentDescription
+:InstrumentDescription rdf:type owl:DatatypeProperty ;
+                       rdfs:domain :Instrument ;
+                       rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/tobia/ontologies/2025/0/activity_theory/InstrumentName
+:InstrumentName rdf:type owl:DatatypeProperty ;
+                rdfs:domain :Instrument ;
+                rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/tobia/ontologies/2025/0/activity_theory/InstrumentType
+:InstrumentType rdf:type owl:DatatypeProperty ;
+                rdfs:domain :Instrument ;
+                rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/tobia/ontologies/2025/0/activity_theory/ObjectAge
+:ObjectAge rdf:type owl:DatatypeProperty ;
+           rdfs:domain :Object ;
+           rdfs:range xsd:string ;
+           rdfs:comment "Can be an age, a range or \"Unknown\"" .
+
+
+###  http://www.semanticweb.org/tobia/ontologies/2025/0/activity_theory/ObjectName
+:ObjectName rdf:type owl:DatatypeProperty ;
+            rdfs:domain :Object ;
+            rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/tobia/ontologies/2025/0/activity_theory/ObjectSex
+:ObjectSex rdf:type owl:DatatypeProperty ;
+           rdfs:domain :Object ;
+           rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/tobia/ontologies/2025/0/activity_theory/RuleName
+:RuleName rdf:type owl:DatatypeProperty ;
+          rdfs:domain :Rule ;
+          rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/tobia/ontologies/2025/0/activity_theory/RuleViolation
+:RuleViolation rdf:type owl:DatatypeProperty ;
+               rdfs:domain :Rule ;
+               rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/tobia/ontologies/2025/0/activity_theory/SubjectName
+:SubjectName rdf:type owl:DatatypeProperty ;
+             rdfs:domain :Subject ;
+             rdfs:range xsd:string .
+#################################################################
+#    Individuals
+#################################################################
+
+###  http://www.semanticweb.org/tobia/ontologies/2025/0/activity_theory#NursingStaff
+:NursingStaff rdf:type owl:NamedIndividual ,
+                       :Community ;
+              :InteractsWith :NursingSpecialist1 ;
+              :Shares :Patient1 ;
+              :CommunityName "Nursing Staff" .
+
+
+###  http://www.semanticweb.org/tobia/ontologies/2025/0/activity_theory/ExtensionSet
+:ExtensionSet rdf:type owl:NamedIndividual ,
+                       :Instrument ;
+              :AreUsedOn :Patient1 ;
+              :InstrumentName "Extension set for the intravenous catheter" ;
+              :InstrumentType "Medical Instrument" .
+
+
+###  http://www.semanticweb.org/tobia/ontologies/2025/0/activity_theory/GauzeBandage
+:GauzeBandage rdf:type owl:NamedIndividual ,
+                       :Instrument ;
+              :AreUsedOn :Patient1 ;
+              :InstrumentName "Gauze Bandage" ;
+              :InstrumentType "Bandages" .
+
+
+###  http://www.semanticweb.org/tobia/ontologies/2025/0/activity_theory/HandlingOfIntravenousCatheters
+:HandlingOfIntravenousCatheters rdf:type owl:NamedIndividual ,
+                                         :Rule ;
+                                :RegulatesActionOf :NursingSpecialist1 ;
+                                :RuleName "Handling Of Intravenous Catheters" ;
+                                :RuleViolation "Process gaps (guidelines for handling intravenous catheters were not trained)" .
+
+
+###  http://www.semanticweb.org/tobia/ontologies/2025/0/activity_theory/NursingSpecialist1
+:NursingSpecialist1 rdf:type owl:NamedIndividual ,
+                             :Subject ;
+                    :HasToFollow :HandlingOfIntravenousCatheters ;
+                    :OperatesOn :Patient1 ;
+                    :SubjectName "Nursing specialist 1" .
+
+
+###  http://www.semanticweb.org/tobia/ontologies/2025/0/activity_theory/Patient1
+:Patient1 rdf:type owl:NamedIndividual ,
+                   :Object ;
+          :DefinesTheApproachOf :NursingSpecialist1 ;
+          :InfluencesTheChoiceOf :ExtensionSet ,
+                                 :GauzeBandage ,
+                                 :Sedatives ;
+          :ObjectAge "unknown" ;
+          :ObjectName "Patient1" ;
+          :ObjectSex "unknown" .
+
+
+###  http://www.semanticweb.org/tobia/ontologies/2025/0/activity_theory/Sedatives
+:Sedatives rdf:type owl:NamedIndividual ,
+                    :Instrument ;
+           :AreUsedOn :Patient1 ;
+           :InstrumentDescription "Remains of a cloudy coloured medication (sedative)" ;
+           :InstrumentName "Sedatives" ;
+           :InstrumentType "Medication" .
+
+
+###  http://www.semanticweb.org/tobia/ontologies/2025/0/activity_theory/UrologyEmergency
+:UrologyEmergency rdf:type owl:NamedIndividual ;
+                  :ActivityDescription "CIRS Case number: 270499		Description: An inpatient received emergency medical intervention in a specialised outpatient clinic during the night. The patient was then transferred to a monitoring ward and later brought back to the original peripheral ward by a nurse. On the ward, the nurse discovered that the extension set of the intravenous catheter (IVC) still contained residues of a cloudy-coloured medication (sedative). In addition, the intravenous catheter was covered by a gauze bandage. As a result, there was a risk that someone could rinse the IVC without checking the contents and inadvertently administer the remaining medication in the bolus to the patient." ;
+                  :ActivityName "Compliance with the specifications for handling intravenous catheters" .
+
+
 
 ###  Generated by the OWL API (version 4.5.29.2024-05-13T12:11:03Z) https://github.com/owlcs/owlapi

@@ -1,0 +1,75 @@
+/**
+ * Type for data returned by the knowledge graph
+ * in order to prevent VSCode from complaining about dynamic keys
+ */
+export type KnowledgeGraphData = {
+    [key: string]: any;
+};
+
+export type StringAccessObject = {
+    [key: string]: any;
+}
+
+export enum sparqlTemplate {
+    getActivities = "getActivities",
+    // getActivities = "getActivities.tmp",
+    getActivityDetail = "getActivityDetail",
+    getExampleActivity = "getExampleActivity",
+    insertConflict = "insertConflict",
+    deleteConflict = "deleteConflict",
+    updateConflict = "updateConflict",
+    insertComment = "insertComment",
+    deleteComment = "deleteComment",
+    updateComment = "updateComment"
+}
+
+/**
+ * Activity in the knowledge graph
+ */
+export interface Activity {
+    uri: string;
+    label: string;
+}
+
+/**
+ * Action in the knowledge graph
+ */
+export interface Action {
+    action: string;
+    object: string | StringAccessObject;
+}
+
+/**
+ * Object in the knowledge graph
+ */
+export interface Object {
+    label: string;
+    type: string;
+    actions: Set<string>;
+    properties: Action[];
+}
+
+/**
+ * Detail of an activity in the knowledge graph
+ */
+export class ActivityDetail {
+    [key: string]: Object[] | boolean;
+}
+
+/**
+ * Response object of a write operation on sparql
+ */
+export interface writeResponse {
+    code: number,
+    status: string,
+    added: string
+}
+
+/**
+ * Enum for conflict status management
+ */
+export enum conflictStatus {
+    open = "Open",
+    inDiscussion = "InDiscussion",
+    resolved = "Resolved"
+}

@@ -1,0 +1,12 @@
+# Get Activities compatible with old AI generated Data
+
+PREFIX : <http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?activity ?label (LANG(?label) as ?language)
+WHERE {
+  ?activity rdf:type :Activity .
+  ?activity rdfs:label ?label .
+}
+ORDER BY LANG(?label) ?activity

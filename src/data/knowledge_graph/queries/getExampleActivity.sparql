@@ -1,0 +1,20 @@
+# Fetches example activity details for the one and only case
+# we have right now
+
+PREFIX : <http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+
+SELECT ?entity ?type ?property ?target
+WHERE {
+  ?entity rdf:type ?type .
+  VALUES ?type { :Subject :Community :Instrument :Rule :Object}
+  {
+  	SELECT *
+    WHERE {
+    	?entity ?property ?target .
+    }
+  }
+}
+ORDER BY ?entity

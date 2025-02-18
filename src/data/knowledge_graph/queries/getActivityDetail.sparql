@@ -1,0 +1,22 @@
+# Get Actvity Detail with further information about each result
+# Broken since AI generated data is broken
+
+PREFIX : <http://www.semanticweb.org/tobia/ontologies/2024/10/Activity_Theory/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+
+SELECT ?predicate ?object ?label ?detail1 ?detail2 (LANG(?detail2) as ?detail2language)
+WHERE {
+  ?s ?predicate ?object .
+  FILTER(?s = :{{activity}})
+  ?object rdf:type ?label .
+  {
+	SELECT *
+ 	WHERE {
+      ?object ?detail1 ?detail2 .
+  	}
+    ORDER BY ?detail1
+  }
+}
+ORDER BY ?predicate
