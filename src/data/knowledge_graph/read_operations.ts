@@ -31,10 +31,8 @@ export async function getActivities(): Promise<Activity[]> {
 }
 
 /**
- * Fetches all Details for a given activity and
- * returns them as a ActivityDetail object WITH further
- * information about the objects of the actions
- * Might be very slow on a full knowledge graph
+ * Fetches all Details for a given activity and returns them as a ActivityDetail object WITH further
+ * information about the objects of the actions. Might be very slow on a full knowledge graph
  * @param activity Activity to fetch the details for
  * @returns Activity details as an object
  */
