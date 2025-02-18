@@ -3,7 +3,7 @@ import { defineComponent, ref, onMounted, watch } from "vue";
 import { useColorMode } from "@vueuse/core";
 import { getExampleActivity } from "@/data/knowledge_graph/knowledge_graph";
 import { Button } from '@/components/ui/button';
-import Editor from "./Editor.vue";
+import Editor from '@/components/Editor.vue';
 import { noteStatus } from "@/assets/constants/noteStatus";
 
 /** 
@@ -27,6 +27,14 @@ export default defineComponent({
         const canvas = ref<HTMLCanvasElement | null>(null);
         const triangleWidth = 900;
         const triangleHeight = 800;
+        const showEditor = ref(false);
+
+        const mode = useColorMode();
+
+        // Changes Point-Colors based on current Theme
+        const getPointColor = () => (mode.value === "dark" ? "lightgray" : "white");
+        const getLineColor = () => (mode.value === "dark" ? "gray" : "black");
+
 
         /**
          * Points of the activity diagram
@@ -321,6 +329,13 @@ export default defineComponent({
             if (!pointWasClicked) {
                 checkIfTriangleIsClicked(mouseX, mouseY);
             }
+
+            if (selectedPoints.value.length > 0) {
+                        showEditor.value = true;
+                    } else {
+                        showEditor.value = false;
+                    }
+
         };
 
         const loadActivity = () => {
@@ -376,14 +391,14 @@ export default defineComponent({
 
 
             // Reset points and lines
-            points.value.forEach((point) => {
-                point.selected = "false";
-                point.color = "white";
-            });
-            lines.forEach((line) => {
-                line.active = false;
-                line.color = "black";
-            });
+            // points.value.forEach((point) => {
+            //     point.selected = "false";
+            //     point.color = "white";
+            // });
+            // lines.forEach((line) => {
+            //     line.active = false;
+            //     line.color = "black";
+            // });
 
             // Clear the selected points array
             selectedPoints.value = [];
@@ -407,8 +422,8 @@ export default defineComponent({
             triangleWidth,
             triangleHeight,
             handleClick,
-            
-            // EDITOR
+            loadActivity,
+            handleHover,
             showEditor,
             handleTransfer,
         };
