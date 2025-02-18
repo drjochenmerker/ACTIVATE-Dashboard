@@ -110,8 +110,32 @@ export async function getActivityDetail(activity: Activity): Promise<ActivityDet
   return activityDetail
 }
 
-export async function getConflictDetail(graph: string, conflictId: string) {
-  console.log(`Fetching ${conflictId} detail from ${graph}`)
+/**
+ * Fetches all conflict Ids for the current activity. 
+ * @param graph 
+ * @returns List of conflicts with their title and id
+ */
+export async function getConflictIds(graph: string): Promise<{ title: string; id: string }[]> {
+  let query = await getSparqlTemplate(sparqlTemplate.getConflictIds);
+  query = query.replace("{{graph}}", graph);
+  const data = await fetchSparql(query);
+  let conflicts = [] as { title: string; id: string }[];
+  data.map((conflict: StringAccessObject) => {
+    conflicts.push({
+      title: conflict.conflict_title.value,
+      id: conflict.conflict_id.value.split("#").pop()
+    })
+  })
+  return conflicts;
+}
+
+/**
+ * Fetches all details regarding a specific conflict
+ * @param graph Graph that the conflict detail should be read from
+ * @param conflictId Id of the conflict
+ * @returns Conflict
+ */
+export async function getConflictDetail(graph: string, conflictId: string): Promise<Conflict> {
   let query = await getSparqlTemplate(sparqlTemplate.getConflictDetail);
   const mapObj = {
     "{{graph}}": graph,
@@ -239,4 +263,19 @@ export async function getConflictDetail(graph: string, conflictId: string) {
     }
   })
   return parsedConflict
+}
+
+/**
+ * Fetches all conflicts in detail for a given activtiy graph
+ * @param graph activity graph
+ * @returns List of Conflicts
+ */
+export async function getAllConflictsWithDetail(graph: string): Promise<Conflict[]> {
+  const conflicts = await getConflictIds(graph);
+  let detailedConflicts = [] as Conflict[];
+  for (const conflict of conflicts) {
+    const detail = await getConflictDetail(graph, conflict.id)
+    detailedConflicts.push(detail)
+  }
+  return detailedConflicts
 }
