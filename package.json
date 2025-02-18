@@ -19,6 +19,7 @@
         "concurrently": "^9.1.2",
         "lucide-vue-next": "^0.468.0",
         "object-hash": "^3.0.0",
+        "quill": "^2.0.3",
         "radix-vue": "^1.9.11",
         "tailwind-merge": "^2.5.5",
         "tailwindcss-animate": "^1.0.7",

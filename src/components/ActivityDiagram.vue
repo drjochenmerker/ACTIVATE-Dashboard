@@ -3,6 +3,8 @@ import { defineComponent, ref, onMounted, watch } from "vue";
 import { useColorMode } from "@vueuse/core";
 import { getExampleActivity } from "@/data/knowledge_graph/knowledge_graph";
 import { Button } from '@/components/ui/button';
+import Editor from "./Editor.vue";
+import { noteStatus } from "@/assets/constants/noteStatus";
 
 /** 
  * Activity-Diagram-Component
@@ -11,8 +13,10 @@ import { Button } from '@/components/ui/button';
 export default defineComponent({
     name: "ActivityDiagramCanvas",
     components: {
-        Button
+        Button,
+        Editor
     },
+
     /**
      * Setup-Function
      * Sets up the canvas of the component with the given Height and Width
@@ -23,12 +27,6 @@ export default defineComponent({
         const canvas = ref<HTMLCanvasElement | null>(null);
         const triangleWidth = 900;
         const triangleHeight = 800;
-
-        const mode = useColorMode();
-
-        // Changes Point-Colors based on current Theme
-        const getPointColor = () => (mode.value === "dark" ? "lightgray" : "white");
-        const getLineColor = () => (mode.value === "dark" ? "gray" : "black");
 
         /**
          * Points of the activity diagram
@@ -348,7 +346,53 @@ export default defineComponent({
 
                 draw();
             });
-        }
+        };
+
+        // EDITOR: handles logic when the "done"-button of the editor is pressed
+        const handleTransfer = (content: any) => {
+            // Note Object
+            const note = {
+                content: content.content,
+                isAnonymous: content.isAnonymous,
+                // TODO: Add creator to the note object
+                // creator: content.creator,
+                noteStatus: noteStatus.RED,
+                participatingPoints: selectedPoints.value.slice(),
+            };
+
+            // Logs the selected points from the note and the content from the editor
+            // TODO: Do something with the provided data
+            console.log("Participating points:", note.participatingPoints);
+            console.log("Number of participating points:", note.participatingPoints.length);
+            console.log("Anonymous Status:", note.isAnonymous);
+            console.log("Text from the Editor:", note.content);
+            console.log("Note Status:", note.noteStatus);
+
+            // save the note in sessionStorage
+            // TODO: sparql query to save the note
+            let notes = JSON.parse(sessionStorage.getItem('notes')) || []; // Fallback auf leeres Array
+            notes.push(note); // Füge die neue Notiz hinzu
+            sessionStorage.setItem('notes', JSON.stringify(notes)); // Speichere im sessionStorage
+
+
+            // Reset points and lines
+            points.value.forEach((point) => {
+                point.selected = "false";
+                point.color = "white";
+            });
+            lines.forEach((line) => {
+                line.active = false;
+                line.color = "black";
+            });
+
+            // Clear the selected points array
+            selectedPoints.value = [];
+            // Redraw the canvas
+            draw();
+            // Hides the editor
+            showEditor.value = false;
+
+        };
 
         onMounted(() => {
             draw();
@@ -363,8 +407,10 @@ export default defineComponent({
             triangleWidth,
             triangleHeight,
             handleClick,
-            handleHover,
-            loadActivity
+            
+            // EDITOR
+            showEditor,
+            handleTransfer,
         };
     },
 });
@@ -375,13 +421,31 @@ export default defineComponent({
         <Button @click="loadActivity" type="submit"> Load Example Activity </Button>
     </div>
     
-    <canvas ref="canvas" :width="triangleWidth" :height="triangleHeight" @mousemove="handleHover"
-        @click="handleClick"></canvas>
+    <div class="container">
+        <canvas ref="canvas" :width="triangleWidth" :height="triangleHeight" @mousemove="handleHover"
+        @click="handleClick" />
+        <div class="editor-placeholder">
+            <h2 v-if="showEditor" style="font-weight: bold;">Add note:</h2>
+            <Editor v-if="showEditor" @transfer="handleTransfer" />
+        </div>
+    </div>
 </template>
 
 <style scoped>
-canvas {
-    display: block;
-    margin: auto;
-}
+    canvas {
+        display: block;
+        margin: 0;
+        flex: 2;
+    }
+    .container {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    
+    }
+    .editor-placeholder {
+        transition: opacity 0.3s ease-in-out;
+        flex: 3;
+    }
+
 </style>

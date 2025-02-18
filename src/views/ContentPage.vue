@@ -9,5 +9,5 @@ const pageData = contentData.find((item) => item.id === route.params.id);
 
 <template>
     <h1 class="text-2xl font-semibold mb-4">{{ pageData?.title }}</h1>
-    <ContentTemplate />
+    <ContentTemplate :pageData="pageData" />
 </template>
