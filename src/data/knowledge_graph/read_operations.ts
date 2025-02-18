@@ -1,5 +1,5 @@
 import { Action, Activity, ActivityDetail, Conflict, StringAccessObject, Object, sparqlTemplate } from "./structures";
-import { fetchSparql, findNestedComment, getSparqlTemplate } from "./utils";
+import { fetchSparql, findNestedComment, getSparqlTemplate, camelToSnakeCase } from "./utils";
 
 /**
  * Fetches all activities from the knowledge graph
@@ -43,7 +43,10 @@ export async function getActivityDetail(activity: Activity): Promise<ActivityDet
   let activityDetail = {} as ActivityDetail;
   // Init Division of Labour as false
   data.map((item: StringAccessObject) => {
-    let label = item.type.value.split("#").pop();
+    let label = camelToSnakeCase(item.type.value.split("#").pop());
+    if (label === "rule" || label === "instrument") {
+      label += "s"
+    }
     // Init Label Subject, Community, etc. if it doesn't exist yet
     if (label in activityDetail === false) {
       activityDetail[label] = []
@@ -52,19 +55,32 @@ export async function getActivityDetail(activity: Activity): Promise<ActivityDet
     const objectIndexInList = (activityDetail[label] as Object[]).findIndex((obj: Object) => obj.label == item.entity.value.split("#").pop());
     // Object not in list yet
     if (objectIndexInList < 0) {
-      activityDetail[label].push({
-        label: item.entity.value.split("#").pop(),
-        actions: new Set(),
-        properties: [{
-          action: item.property.value.split("#").pop(),
-          object: item.language ? {
-            [item.language.value]: item.target.value.split("#").pop()
-          } as StringAccessObject : item.target.value.split("#").pop()
-        } as Action]
-      } as Object)
+      if (item.target.value.split("#").pop() === "DivisionOfLabour") {
+        activityDetail[label].push({
+          label: item.entity.value.split("#").pop(),
+          properties: [] as Action[]
+        } as Object)
+      }
+      else if (item.property.value.split("#").pop() === "type") {
+        return
+      }
+      else {
+        activityDetail[label].push({
+          label: item.entity.value.split("#").pop(),
+          properties: [{
+            action: item.property.value.split("#").pop(),
+            object: item.language ? {
+              [item.language.value]: item.target.value.split("#").pop()
+            } as StringAccessObject : item.target.value.split("#").pop()
+          } as Action]
+        } as Object)
+      }
     }
     // Object already in list
     else {
+      if (item.property.value.split("#").pop() === "type") {
+        return
+      }
       if (item.language) {
         const propertyActionIndex = activityDetail[label][objectIndexInList].properties.findIndex((action: Action) => action.action == item.action.value.split("#").pop());
         // If no language version has been created yet

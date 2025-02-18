@@ -47,7 +47,6 @@ export type Action = {
 export type Object = {
     label: string;
     type: string;
-    actions: Set<string>;
     properties: Action[];
 }
 
