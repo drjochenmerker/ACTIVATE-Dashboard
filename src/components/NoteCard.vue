@@ -2,6 +2,7 @@
 import { defineProps, ref, defineEmits, onMounted } from 'vue';
 import { noteStatus } from '@/assets/constants/noteStatus';
 import { Button } from '@/components/ui/button';
+import { conflictStatus } from '@/data/knowledge_graph/structures';
 
 const props = defineProps({
   content: {
@@ -17,9 +18,10 @@ const props = defineProps({
     required: true,
   },
 });
+
 const emit = defineEmits(['updateStatus']);
 
-// Initialize the status with a default value: noteStatus.RED
+
 const selectedStatus = ref<typeof noteStatus.RED | typeof noteStatus.YELLOW | typeof noteStatus.GREEN>(noteStatus.RED);
 
 // Function to save the status in sessionStorage
@@ -56,15 +58,13 @@ function setStatus(color: typeof noteStatus.RED | typeof noteStatus.YELLOW | typ
           {{ props.isAnonymous ? 'Anonymous' : 'Not Anonymous' }}
         </span>
         <div class="status-selector">
-          <button
-          v-for="color in [noteStatus.RED, noteStatus.YELLOW, noteStatus.GREEN]"
-          :key="color"
-          :class="['status-dot', color, { selected: selectedStatus === color }]"
-          @click="setStatus(color)"
-          aria-label="Status auswählen"
-          ></button>
+          <!-- Dropdown für Statusauswahl -->
+          <select v-model="selectedStatus" @change="setStatus(selectedStatus)" aria-label="Status auswählen">
+            <option :value="noteStatus.RED">{{conflictStatus.open}}</option>
+            <option :value="noteStatus.YELLOW">{{conflictStatus.inDiscussion}}</option>
+            <option :value="noteStatus.GREEN">{{ conflictStatus.resolved }}</option>
+          </select>
         </div>
-
     </div>
     <div class="note-card-content">
       <div v-html="props.content"></div>
@@ -76,7 +76,7 @@ function setStatus(color: typeof noteStatus.RED | typeof noteStatus.YELLOW | typ
 </template>
 
 <style scoped>
-/* General styling */
+/* Allgemeines Styling */
 .note-card {
   background-color: #f9f9f9;
   border: 1px solid #ddd;
@@ -88,29 +88,28 @@ function setStatus(color: typeof noteStatus.RED | typeof noteStatus.YELLOW | typ
   transition: box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
-/* Dynamic shadow colors based on the selected status */
+/* Dynamische Schatten basierend auf dem ausgewählten Status */
 .note-card.red {
-  box-shadow: 0 2px 8px rgba(255, 182, 193, 0.5); /* Pastel Pink */
+  box-shadow: 0 2px 8px rgba(255, 182, 193, 0.5); /* Pastellrosa */
   border-color: rgba(255, 182, 193, 0.7);
 }
 
 .note-card.yellow {
-  box-shadow: 0 2px 8px rgba(253, 253, 150, 0.5); /* Pastel Yellow */
+  box-shadow: 0 2px 8px rgba(253, 253, 150, 0.5); /* Pastellgelb */
   border-color: rgba(253, 253, 150, 0.7);
 }
 
 .note-card.green {
-  box-shadow: 0 2px 8px rgba(152, 251, 152, 0.5); /* Pastel Green */
+  box-shadow: 0 2px 8px rgba(152, 251, 152, 0.5); /* Pastellgrün */
   border-color: rgba(152, 251, 152, 0.7);
 }
 
-/* Header styling */
+/* Header Styling */
 .note-card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
-  align-items: center;
   gap: 10px;
 }
 
@@ -131,43 +130,22 @@ function setStatus(color: typeof noteStatus.RED | typeof noteStatus.YELLOW | typ
   
 }
 
-/* Status point selector */
-.status-selector {
-  display: flex;
-  gap: 8px;
-}
-
-.status-dot {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  border: 1px solid #ccc;
+/* Dropdown Styling */
+.status-selector select {
+  padding: 5px;
+  font-size: 14px;
   cursor: pointer;
-  transition: transform 0.2s ease;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  transition: background-color 0.2s ease;
 }
 
-.status-dot:hover {
-  transform: scale(1.2);
-}
-
-.status-dot.red {
-  background-color: #ffb6c1; /* Pastel Pink */
-}
-
-.status-dot.yellow {
-  background-color: #fdfd96; /* Pastel Yellow */
-}
-
-.status-dot.green {
-  background-color: #98fb98; /* Pastel Green */
-}
-
-.status-dot.selected {
-  border: 2px solid black;
+.status-selector select:focus {
+  outline: none;
+  background-color: #f1f1f1;
 }
 
 .note-card-content {
   margin-bottom: 10px;
-  /*background-color: #ffffff2f;*/
 }
 </style>
