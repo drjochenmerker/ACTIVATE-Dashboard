@@ -2,7 +2,7 @@
 import NavBar from './components/NavBar.vue';
 // Backend Tests
 import { addExampleConflictData } from './data/examples';
-import { getActivities, getActivityDetail, getConflictDetail, getExampleActivity } from './data/knowledge_graph/read_operations';
+import { getActivities, getActivityDetail, getConflictDetail } from './data/knowledge_graph/read_operations';
 import { conflictStatus, RDFOperation, RDFTriple } from './data/knowledge_graph/structures';
 import { deleteComment, deleteConflict, updateConflictStatus, updateTriple } from './data/knowledge_graph/write_operations';
 // Example Data must be added every time since the current backend solution does not retain data
