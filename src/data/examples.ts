@@ -6,9 +6,8 @@ import { addComment, addConflict } from "./knowledge_graph/write_operations";
 // Add some conflicts with comments
 export async function addExampleConflictData(graph: string): Promise<string[]> {
     const conflict1Res = await addConflict(graph, {
-        activity: "UrologyEmergency",
         title: "Personal lacht über den Patient",
-        participants: ["NursingStaff", "Patient1"],
+        participants: [{ id: "NursingSpecialist1", type: "Subject" }, { id: "Patient1", type: "Subject" }],
         author: "HR",
         status: conflictStatus.inDiscussion,
         description: "Der Patient fühlte sich nicht ernst genommen."
@@ -19,9 +18,8 @@ export async function addExampleConflictData(graph: string): Promise<string[]> {
     await addComment(graph, commentResInner.modified, "Christin", "Okay");
     await addComment(graph, conflict1Res.modified, "Kenn", "Frech!");
     const conflict2Res = await addConflict(graph, {
-        activity: "UrologyEmergency",
         title: "Patient verträgt Verband nicht",
-        participants: ["Patient1", "GauzeBandage"],
+        participants: [{ id: "Patient1", type: "Subject" }, { id: "Patient1Health", type: "Object" }],
         author: "Prof. Asklepios",
         status: conflictStatus.open,
     });
