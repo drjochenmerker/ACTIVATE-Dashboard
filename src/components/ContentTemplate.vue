@@ -1,10 +1,15 @@
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue';
 import NoteCard from './NoteCard.vue';
-import { noteStatus } from '@/assets/constants/noteStatus';
+import ReplyCard from './ReplyCard.vue';
+import { Button } from '@/components/ui/button';
 
 const props = defineProps({
   pageData: {
+    type: Object,
+    required: true,
+  },
+  conflicts: {
     type: Object,
     required: true,
   },
@@ -13,46 +18,96 @@ const props = defineProps({
 const notes = ref<any[]>([]);
 const filteredNotes = ref<any[]>([]);
 
-onMounted(() => {
+/*onMounted(() => {
   notes.value = JSON.parse(sessionStorage.getItem('notes') || '[]');
   filterNotesBySelectedPoint();
 });
+*/
 
-const filterNotesBySelectedPoint = () => {
+
+
+/*const filterNotesBySelectedPoint = () => {
   // Filter nach dem `participatingPoints`
   filteredNotes.value = notes.value.filter(note =>
     Array.isArray(note.participatingPoints) &&
     note.participatingPoints.includes(props.pageData.number)
   );
-  
-  // sort "filteredNOtes" by the status 
-  // TODO: not working correctly yet...
-  sortNotesByStatus();
-};
-
-const sortNotesByStatus = () => {
-    // sort the filtered notes by status
-    // TODO: not working correctly yet...
-  filteredNotes.value = filteredNotes.value.sort((a, b) => {
-    const statusOrder = [noteStatus.RED, noteStatus.YELLOW, noteStatus.GREEN];
-    return statusOrder.indexOf(a.noteStatus) - statusOrder.indexOf(b.noteStatus);
-  });
-};
+};*/
 
 </script>
 
 <template>
-  <div>
-    <div v-if="filteredNotes.length > 0">
-      <div v-for="(note, index) in filteredNotes" :key="note.content">
-        <NoteCard :content="note.content" :isAnonymous="note.isAnonymous" :status="note.noteStatus" />
+
+  <div v-if="props.conflicts.length > 0">
+    <div v-for="(conflict, index) in conflicts" :key="conflict.id">
+      <div class="conflict-container">
+        <div class="note-container">
+          <NoteCard :conflict="conflict" :title="conflict.title" :content="conflict.description"
+            :author="conflict.author" :status="conflict.status" />
+          <div class="note-comment-section">
+            <Button> Add comment </Button>
+          </div>
+        </div>
+        <div class="reply-container">
+          <ReplyCard :conflictReply="conflict.replies" />
+        </div>
       </div>
     </div>
-    <div v-else>
-      <p>Es gibt keine Notizen für diese Seite.</p>
-    </div>
   </div>
+
+  <div v-else>
+    <p>Es gibt keine Notizen für diese Seite.</p>
+  </div>
+
 </template>
 
 <style scoped>
+.conflicts-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+}
+
+.conflict-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.note-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.note-comment-section {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.comment-button {
+  background-color: #007bff;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: background-color 0.3s;
+}
+
+.comment-button:hover {
+  background-color: #0056b3;
+}
+
+.reply-container {
+  background-color: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
 </style>

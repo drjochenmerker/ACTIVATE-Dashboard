@@ -5,8 +5,9 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 // Routen definieren
 const routes: Array<RouteRecordRaw> = [
     { path: '/', name: 'Home', component: HomePage },
-    { path: '/:id', name: 'Content', component: ContentPage },
+    { path: '/:id', name: 'Content', component: ContentPage, props: true }
 ];
+
 
 // Router erstellen
 const router = createRouter({

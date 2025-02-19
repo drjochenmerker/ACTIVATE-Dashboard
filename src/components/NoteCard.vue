@@ -1,52 +1,69 @@
 <script lang="ts" setup>
 import { defineProps, ref, defineEmits, onMounted } from 'vue';
 import { noteStatus } from '@/assets/constants/noteStatus';
-import { Button } from '@/components/ui/button';
 import { conflictStatus } from '@/data/knowledge_graph/structures';
 
 const props = defineProps({
+  conflict: {
+    type: Object,
+    required: true,
+  },
+  title: {
+    type: String,
+    required: true,
+  },
   content: {
     type: String,
     required: true,
   },
-  isAnonymous: {
-    type: Boolean,
+  author: {
+    type: String,
     required: true,
   },
   status: {
     type: String,
     required: true,
-  },
+  }
 });
 
 const emit = defineEmits(['updateStatus']);
 
+// Funktion zur Status-Zuordnung
+const mapConflictStatusToNoteStatus = (status: string) => {
+  switch (status) {
+    case conflictStatus.open:
+      return noteStatus.RED;
+    case conflictStatus.inDiscussion:
+      return noteStatus.YELLOW;
+    case conflictStatus.resolved:
+      return noteStatus.GREEN;
+    default:
+      return noteStatus.RED;
+  }
+};
 
-const selectedStatus = ref<typeof noteStatus.RED | typeof noteStatus.YELLOW | typeof noteStatus.GREEN>(noteStatus.RED);
+// Status aus den Props setzen
+const selectedStatus = ref(mapConflictStatusToNoteStatus(props.status));
 
-// Function to save the status in sessionStorage
+// Status in sessionStorage speichern
 function saveStatusToSessionStorage(color: typeof noteStatus.RED | typeof noteStatus.YELLOW | typeof noteStatus.GREEN) {
-  const noteKey = `noteStatus-${props.content}`; // Key of that note
-  sessionStorage.setItem(noteKey, color); // Save the status in sessionStorage
+  const noteKey = `noteStatus-${props.content}`;
+  sessionStorage.setItem(noteKey, color);
 }
 
+// Status aus sessionStorage abrufen oder Standardwert setzen
 onMounted(() => {
-  const noteKey = `noteStatus-${props.content}`; // Key of that note
+  const noteKey = `noteStatus-${props.content}`;
   const storedStatus = sessionStorage.getItem(noteKey);
   if (storedStatus && Object.values(noteStatus).includes(storedStatus)) {
     selectedStatus.value = storedStatus as typeof noteStatus.RED | typeof noteStatus.YELLOW | typeof noteStatus.GREEN;
-  } else {
-    // If there is no stored status, set the default value: noteStatus.RED
-    selectedStatus.value = noteStatus.RED;
   }
 });
 
-// Change status and pass it to the parent component
+// Status aktualisieren
 function setStatus(color: typeof noteStatus.RED | typeof noteStatus.YELLOW | typeof noteStatus.GREEN) {
   selectedStatus.value = color;
   emit('updateStatus', selectedStatus.value);
-  
-  // Save the status in sessionStorage
   saveStatusToSessionStorage(color);
 }
 </script>
@@ -54,29 +71,27 @@ function setStatus(color: typeof noteStatus.RED | typeof noteStatus.YELLOW | typ
 <template>
   <div class="note-card" :class="selectedStatus">
     <div class="note-card-header">
-        <span class="note-card-status" :class="{ 'anonymous': props.isAnonymous }">
-          {{ props.isAnonymous ? 'Anonymous' : 'Not Anonymous' }}
-        </span>
-        <div class="status-selector">
-          <!-- Dropdown für Statusauswahl -->
-          <select v-model="selectedStatus" @change="setStatus(selectedStatus)" aria-label="Status auswählen">
-            <option :value="noteStatus.RED">{{conflictStatus.open}}</option>
-            <option :value="noteStatus.YELLOW">{{conflictStatus.inDiscussion}}</option>
-            <option :value="noteStatus.GREEN">{{ conflictStatus.resolved }}</option>
-          </select>
-        </div>
+      <!-- Autor anzeigen -->
+      <span class="note-card-author">
+        {{ props.author }}
+      </span>
+      <div class="status-selector">
+        <!-- Dropdown für Statusauswahl -->
+        <select v-model="selectedStatus" @change="setStatus(selectedStatus)">
+          <option :value="noteStatus.RED">{{ conflictStatus.open }}</option>
+          <option :value="noteStatus.YELLOW">{{ conflictStatus.inDiscussion }}</option>
+          <option :value="noteStatus.GREEN">{{ conflictStatus.resolved }}</option>
+        </select>
+      </div>
     </div>
     <div class="note-card-content">
-      <div v-html="props.content"></div>
-    </div>
-    <div class="note-comment-section">
-      <Button> Add comment </Button>
+      <div class="note-title" v-html="props.title"></div>
+      <div class="note-content" v-html="props.content"></div>
     </div>
   </div>
 </template>
 
 <style scoped>
-/* Allgemeines Styling */
 .note-card {
   background-color: #f9f9f9;
   border: 1px solid #ddd;
@@ -84,27 +99,28 @@ function setStatus(color: typeof noteStatus.RED | typeof noteStatus.YELLOW | typ
   padding: 16px;
   margin: 10px 0;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  max-width: 1000px;
+  max-width: 100%;
+  width: 100%;
   transition: box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
-/* Dynamische Schatten basierend auf dem ausgewählten Status */
+/* Dynamische Farben basierend auf Status */
 .note-card.red {
-  box-shadow: 0 2px 8px rgba(255, 182, 193, 0.5); /* Pastellrosa */
+  box-shadow: 0 2px 8px rgba(255, 182, 193, 0.5);
   border-color: rgba(255, 182, 193, 0.7);
 }
 
 .note-card.yellow {
-  box-shadow: 0 2px 8px rgba(253, 253, 150, 0.5); /* Pastellgelb */
+  box-shadow: 0 2px 8px rgba(253, 253, 150, 0.5);
   border-color: rgba(253, 253, 150, 0.7);
 }
 
 .note-card.green {
-  box-shadow: 0 2px 8px rgba(152, 251, 152, 0.5); /* Pastellgrün */
+  box-shadow: 0 2px 8px rgba(152, 251, 152, 0.5);
   border-color: rgba(152, 251, 152, 0.7);
 }
 
-/* Header Styling */
+/* Header */
 .note-card-header {
   display: flex;
   justify-content: space-between;
@@ -113,24 +129,14 @@ function setStatus(color: typeof noteStatus.RED | typeof noteStatus.YELLOW | typ
   gap: 10px;
 }
 
-.note-card-status {
-  font-size: 12px;
-  padding: 4px 8px;
-  border-radius: 4px;
-  color: white;
-  border-radius: 20px;
+/* Autor */
+.note-card-author {
+  font-size: 14px;
+  font-weight: bold;
+  color: #333;
 }
 
-.note-card-status.anonymous {
-  background-color: #c6c6c6;
-}
-
-.note-card-status:not(.anonymous) {
-  background-color: #0000009d;
-  
-}
-
-/* Dropdown Styling */
+/* Dropdown */
 .status-selector select {
   padding: 5px;
   font-size: 14px;
@@ -145,7 +151,16 @@ function setStatus(color: typeof noteStatus.RED | typeof noteStatus.YELLOW | typ
   background-color: #f1f1f1;
 }
 
+/* Inhalt */
 .note-card-content {
   margin-bottom: 10px;
+}
+
+.note-title {
+  font-weight: bold;
+}
+
+.note-content {
+  font-weight: normal;
 }
 </style>
