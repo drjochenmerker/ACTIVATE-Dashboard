@@ -9,10 +9,11 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 SELECT * WHERE {
   GRAPH graph:{{graph}} {
     {
-      SELECT ?conflict_p ?conflict_o
+      SELECT ?conflict_p ?conflict_o ?object_type
       WHERE {
           :{{conflict}} ?conflict_p ?conflict_o .
           FILTER (?conflict_p != rdf:type) .
+          OPTIONAL {?conflict_o rdf:type ?object_type . FILTER (?object_type != owl:NamedIndividual)}
       }
     }
     UNION

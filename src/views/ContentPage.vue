@@ -11,7 +11,7 @@ const route = useRoute();
 const pageData = contentData.find((item) => item.id === route.params.id);
 
 onMounted(() => {
-    //console.log('PAGEDATA: ', pageData);
+    //console.log('PROPPIS: ', props.conflicts);
 },);
 </script>
 

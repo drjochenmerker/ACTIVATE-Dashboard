@@ -20,7 +20,7 @@ export async function addConflict(graph: string, conflict: Conflict): Promise<up
     });
     // Build query dynamically using participants
     const participantString = conflict.participants.map(participant => {
-        return `\t\t:HasParticipant :${participant} ;`;
+        return `\t\t:HasParticipant :${participant.id} ;`;
     }).join("\n")
     let query = await getSparqlTemplate(sparqlTemplate.addConflict);
     const mapObj = {

@@ -1,4 +1,4 @@
-import { Action, Activity, ActivityDetail, Conflict, StringAccessObject, Object, sparqlTemplate } from "./structures";
+import { Action, Activity, ActivityDetail, Conflict, StringAccessObject, Object, sparqlTemplate, Participant } from "./structures";
 import { fetchSparql, findNestedComment, getSparqlTemplate, camelToSnakeCase } from "./utils";
 
 /**
@@ -194,8 +194,8 @@ export async function getConflictDetail(graph: string, conflictId: string): Prom
           parsedConflict.timestamp = new Date(item.conflict_o.value);
           break;
         case "HasParticipant":
-          if (parsedConflict.participants === undefined) { parsedConflict.participants = [] }
-          parsedConflict.participants.push(item.conflict_o.value.split("#").pop())
+          if (parsedConflict.participants === undefined) { parsedConflict.participants = [] as Participant[] }
+          parsedConflict.participants.push({ id: item.conflict_o.value.split("#").pop(), type: item.object_type.value.split("#").pop() })
           break;
         case "ConflictState":
           parsedConflict.status = item.conflict_o.value

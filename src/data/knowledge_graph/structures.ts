@@ -69,11 +69,19 @@ export interface updateResponse {
 }
 
 /**
+ * Object used to save a participant
+ */
+export interface Participant {
+    id: string,
+    type: string
+}
+
+/**
  * Conflict in the knowledge graph
  */
 export type Conflict = {
     title: string,
-    participants: string[],
+    participants: Participant[],
     author: string,
     status: conflictStatus,
     description?: string,

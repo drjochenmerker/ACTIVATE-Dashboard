@@ -19,9 +19,8 @@ getActivities().then((activities) => {
         for (const conflictId of conflictIds) {
             const detail = await getConflictDetail(activities[0].graph, conflictId);
             conflictDetail.push(detail);
-            console.log('Example conflict detail', detail);
+            console.log('Example conflict detail for ID', conflictId, detail);
         }
-        conflictDetails.value = conflictDetail; // Konfliktdaten in ref speichern, damit Vue sie aktualisiert
 
         // Delete Conflict
         console.log("Trying to delete a conflict. ID:", conflictIds[1], "Result", (await deleteConflict(activities[0].graph, conflictIds[1])).status);
@@ -37,8 +36,7 @@ getActivities().then((activities) => {
         console.log("Fetching details again", await getConflictDetail(activities[0].graph, conflictIds[0]));
     }).finally(async () => {
         for (const activity of activities) {
-            console.log("Fetching all conflict ids for", activity.name);
-            getConflictIds(activity.graph).then(res => console.log("Result", res));
+            console.log("Fetching all conflict ids for", activity.name, await getConflictIds(activity.graph))
             getActivityDetail(activity).then(activity => {
                 console.log(`Fetching activity detail from graph ${activity.graph}`, activity);
                 updateTriple(activities[0].graph, {
@@ -52,11 +50,16 @@ getActivities().then((activities) => {
                     });
                 });
             });
+
             console.log("Fetching all conflicts in detail for", activity.name);
             console.log("Result:", await getAllConflictsWithDetail(activity.graph));
+
+            // save conflict data in ref for vue to update
+            conflictDetails.value = await getAllConflictsWithDetail(activity.graph);
         }
     });
-});
+})
+// Tests end here
 </script>
 
 <template>

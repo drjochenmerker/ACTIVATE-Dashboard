@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, toRaw } from 'vue';
 import NoteCard from './NoteCard.vue';
 import ReplyCard from './ReplyCard.vue';
 import { Button } from '@/components/ui/button';
@@ -18,21 +18,23 @@ const props = defineProps({
 const notes = ref<any[]>([]);
 const filteredNotes = ref<any[]>([]);
 
-/*onMounted(() => {
-  notes.value = JSON.parse(sessionStorage.getItem('notes') || '[]');
-  filterNotesBySelectedPoint();
+onMounted(() => {
+  console.log('Participants: ', toRaw(props.conflicts).participants);
+  //notes.value = JSON.parse(sessionStorage.getItem('notes') || '[]');
+  //filterNotesBySelectedPoint();
 });
-*/
 
 
 
-/*const filterNotesBySelectedPoint = () => {
+
+const filterNotesBySelectedPoint = () => {
+  const participants = toRaw(props.conflicts).participants
   // Filter nach dem `participatingPoints`
   filteredNotes.value = notes.value.filter(note =>
     Array.isArray(note.participatingPoints) &&
     note.participatingPoints.includes(props.pageData.number)
   );
-};*/
+};
 
 </script>
 
