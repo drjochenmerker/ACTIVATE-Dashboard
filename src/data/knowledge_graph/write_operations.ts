@@ -1,6 +1,6 @@
 import hash from "object-hash";
 import { fetchSparql, getSparqlTemplate } from "./utils";
-import { Conflict, conflictStatus, RDFOperation, RDFTriple, sparqlTemplate, updateResponse } from "./structures";
+import { Conflict, conflictStatus, KnowledeGraphActivityClass, LanguageLabel, RDFOperation, RDFTriple, sparqlTemplate, updateResponse } from "./structures";
 
 /**
  * Adds a new conflict to the sparql database
@@ -36,7 +36,7 @@ export async function addConflict(graph: string, conflict: Conflict): Promise<up
     query = query.replaceMultiple(mapObj);
     // Exeucte Query in update mode
     const data = await fetchSparql(query, true);
-    return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: conflictId, action: RDFOperation.insert } as updateResponse
+    return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: conflictId, action: RDFOperation.insert } as updateResponse;
 }
 
 /**
@@ -57,13 +57,13 @@ export async function deleteConflict(graph: string, conflictId: string): Promise
         "{{subject}}": conflictId
     };
     query = query.replaceMultiple(mapObj);
-    const data = await fetchSparql(query, true)
+    const data = await fetchSparql(query, true);
     // let tripleString = `\t"${conflictId}",`;
     // for (let id in commentIds) {
     //     tripleString += `"${commentIds[id].s.value.split("/").pop()}",\n`;
     // }
     // query = query.replace("{{tripleString}}", tripleString.slice(0, -2));
-    return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: conflictId, action: RDFOperation.delete } as updateResponse
+    return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: conflictId, action: RDFOperation.delete } as updateResponse;
 }
 
 /**
@@ -83,7 +83,7 @@ export async function updateConflictStatus(graph: string, conflictId: string, st
     };
     query = query.replaceMultiple(mapObj);
     const data = await fetchSparql(query, true);
-    return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: conflictId, action: RDFOperation.insert } as updateResponse
+    return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: conflictId, action: RDFOperation.insert } as updateResponse;
 }
 
 /**
@@ -114,7 +114,7 @@ export async function addComment(graph: string, parentId: string, author: string
     query = query.replaceMultiple(mapObj);
     // Exeucte Query in update mode
     const data = await fetchSparql(query, true);
-    return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: commentId, action: RDFOperation.insert } as updateResponse
+    return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: commentId, action: RDFOperation.insert } as updateResponse;
 }
 
 /**
@@ -138,7 +138,7 @@ export async function deleteComment(graph: string, commentId: string, isNestedCo
     };
     query = query.replaceMultiple(mapObj);
     const data = await fetchSparql(query, true);
-    return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: commentId, action: RDFOperation.delete } as updateResponse
+    return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: commentId, action: RDFOperation.delete } as updateResponse;
 }
 
 /**
@@ -159,5 +159,22 @@ export async function updateTriple(graph: string, triple: RDFTriple, operation: 
     query = query.replaceMultiple(mapObj);
     // Exeucte Query in update mode
     const data = await fetchSparql(query, true);
-    return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: Object.values(triple).join(" "), action: operation } as updateResponse
+    return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: Object.values(triple).join(" "), action: operation } as updateResponse;
+}
+
+export async function vocabAddPredicate(predicate: string, domains: KnowledeGraphActivityClass[], ranges: KnowledeGraphActivityClass[], labels: LanguageLabel[]): Promise<updateResponse> {
+    let query = await getSparqlTemplate(sparqlTemplate.addPredicate);
+    const labelString = labels.map(label => {
+        return `"${label.label}"@${label.language}`;
+    }).join(", ")
+    const mapObj = {
+        "{{label}}": predicate,
+        "{{domains}}": domains.join(", "),
+        "{{ranges}}": ranges.join(", "),
+        "{{labels}}": labelString
+    }
+    query = query.replaceMultiple(mapObj);
+    console.log(query)
+    const data = await fetchSparql(query, true);
+    return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: predicate, action: RDFOperation.insert } as updateResponse;
 }

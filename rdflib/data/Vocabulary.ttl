@@ -343,16 +343,6 @@
                  "Uses"@en .
 
 
-###  http://activate.htwk-leipzig.de/model#WrittenBy
-:WrittenBy rdf:type owl:ObjectProperty ;
-           rdfs:domain :Comment ;
-           rdfs:domain :Conflict ;
-           rdfs:range xsd:string ;
-           rdfs:label "Skrevs av"@sv ,
-                      "Was written by"@en ,
-                      "Wurde geschrieben von"@de .
-
-
 #################################################################
 #    Data properties
 #################################################################
@@ -390,7 +380,7 @@
 
 
 ###  http://activate.htwk-leipzig.de/model#ConflictDescription
-:ConflictDescription rdf:type owl:ObjectProperty ;
+:ConflictDescription rdf:type owl:DatatypeProperty ;
                 rdfs:domain :Conflict ;
                 rdfs:range xsd:string .
 
@@ -408,8 +398,8 @@
               rdfs:range xsd:string .
 
 
-###  http://activate.htwk-leipzig.de/model#Author
-:Author rdf:type owl:DatatypeProperty ;
+###  http://activate.htwk-leipzig.de/model#WrittenBy
+:WrittenBy rdf:type owl:DatatypeProperty ;
               rdfs:domain :Conflict ,
                           :Comment  ;
               rdfs:range xsd:string .

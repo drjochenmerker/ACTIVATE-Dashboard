@@ -33,8 +33,8 @@ export async function fetchSparql(query: string, update: boolean = false): Promi
             "update": query
         }) : query
     });
-    const response = update ? res : (await res.json() as StringAccessObject).results.bindings
-    return response
+    const response = update ? res : (await res.json() as StringAccessObject).results.bindings;
+    return response;
 }
 
 export function findNestedComment(commentId: string, conflict: Conflict): Comment | undefined {
@@ -45,7 +45,7 @@ export function findNestedComment(commentId: string, conflict: Conflict): Commen
             return nestedReply;
         }
     }
-    return undefined
+    return undefined;
 }
 
 function findNestedCommentR(commentId: string, comment: Comment): Comment | undefined {

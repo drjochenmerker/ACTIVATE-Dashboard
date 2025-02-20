@@ -16,14 +16,16 @@ export enum sparqlTemplate {
     getConflictIds = "getConflictIds",
     getConflictDetail = "getConflictDetail",
     getNestedCommentIds = "getNestedCommentIds",
+    getPredicates = "getPredicates",
     addConflict = "addConflict",
-    updateConflictStatus = "updateConflictStatus",
     addComment = "addComment",
+    addTriple = "addTriple",
+    addPredicate = "addPredicate",
     deleteComment = "deleteComment",
     deleteNestedComment = "deleteNestedComment",
-    addTriple = "addTriple",
     deleteTriple = "deleteTriple",
-    deleteTriples = "deleteTriples"
+    deleteTriples = "deleteTriples",
+    updateConflictStatus = "updateConflictStatus"
 }
 
 /**
@@ -126,4 +128,81 @@ export type RDFTriple = {
 export enum RDFOperation {
     insert = "insert",
     delete = "delete"
+}
+
+/**
+ * Predicate type that holds all relevant information
+ */
+export type Predicate = {
+    predicate: string,
+    label: StringAccessObject,
+    lang?: string
+}
+
+/**
+ * Language Code enum to make sure this is very accessible
+ * WARNING: Should be replaced with a better solution later on
+ */
+export enum LanguageCode {
+    german = "de",
+    english = "en",
+    swedish = "sv"
+}
+
+/**
+ * Language Label that stores the language code to a label
+ * so they can easily be accessed and saved to the Vocabulary
+ */
+export type LanguageLabel = {
+    label: string,
+    language: LanguageCode
+}
+
+/**
+ * Knowledge Graph Activity Classes that allow the usage of 
+ * frontend access terms without messing up the backend
+ */
+export enum KnowledeGraphActivityClass {
+    subject = ":Subject",
+    object = ":Object",
+    rules = ":Rule",
+    instruments = ":Instrument",
+    divison_of_labour = ":DivisonOfLabour",
+    community = ":Community"
+}
+
+/**
+ * Predicate Dictionary that allows fetching all predicates
+ * for a given tuple of activity diagram classes
+ */
+export class PredicateDict {
+    private dict: Record<string, Predicate[]> = {};
+
+    add(tuple: [string, string], obj: Predicate): void {
+        if (this.dict[tuple.join("#")] === undefined) {
+            this.dict[tuple.join("#")] = [];
+        }
+        const existingInnerObj = this.dict[tuple.join("#")].find(innerObj => innerObj.predicate == obj.predicate);
+        const langString = obj.lang || "default";
+        if (existingInnerObj == undefined) {
+            this.dict[tuple.join("#")].push({
+                predicate: obj.predicate,
+                label: { [langString]: obj.label }
+            });
+        }
+        else {
+            existingInnerObj.label[langString] = obj.label;
+        }
+    }
+
+    get(tuple: [string, string]): {}[] {
+        return this.dict[tuple.join("#")].sort((a, b) => a.predicate.localeCompare(b.predicate)) || [];
+    }
+
+    getBidirectional(tuple: [string, string]): {} {
+        return {
+            given: this.dict[tuple.join("#")].sort((a, b) => a.predicate.localeCompare(b.predicate)) || [],
+            reversed: this.dict[tuple.reverse().join("#")].sort((a, b) => a.predicate.localeCompare(b.predicate)) || []
+        }
+    }
 }
