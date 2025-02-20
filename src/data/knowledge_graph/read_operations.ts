@@ -1,4 +1,4 @@
-import { Action, Activity, ActivityDetail, Conflict, StringAccessObject, Object, sparqlTemplate, Participant } from "./structures";
+import { Action, Activity, ActivityDetail, Conflict, StringAccessObject, Object, sparqlTemplate, Participant, PredicateDict } from "./structures";
 import { fetchSparql, findNestedComment, getSparqlTemplate, camelToSnakeCase } from "./utils";
 
 /**
@@ -25,7 +25,7 @@ export async function getActivities(): Promise<Activity[]> {
     parsedData.push({
       graph: triple.graph.value.split("/").pop(),
       name: triple.name.value,
-    })
+    });
   });
   return parsedData;
 }
@@ -38,18 +38,19 @@ export async function getActivities(): Promise<Activity[]> {
  */
 export async function getActivityDetail(activity: Activity): Promise<ActivityDetail> {
   let query = await getSparqlTemplate(sparqlTemplate.getActivityDetail);
-  query = query.replace("{{graph}}", activity.graph)
+  query = query.replace("{{graph}}", activity.graph);
   const data = await fetchSparql(query);
   let activityDetail = {} as ActivityDetail;
   // Init Division of Labour as false
   data.map((item: StringAccessObject) => {
+    // Parse label to make it easier for frontend
     let label = camelToSnakeCase(item.type.value.split("#").pop());
     if (label === "rule" || label === "instrument") {
-      label += "s"
+      label += "s";
     }
     // Init Label Subject, Community, etc. if it doesn't exist yet
     if (label in activityDetail === false) {
-      activityDetail[label] = []
+      activityDetail[label] = [];
     }
     // Check if entity is already in the list
     const objectIndexInList = (activityDetail[label] as Object[]).findIndex((obj: Object) => obj.label == item.entity.value.split("#").pop());
@@ -59,10 +60,10 @@ export async function getActivityDetail(activity: Activity): Promise<ActivityDet
         activityDetail[label].push({
           label: item.entity.value.split("#").pop(),
           properties: [] as Action[]
-        } as Object)
+        } as Object);
       }
       else if (item.property.value.split("#").pop() === "type") {
-        return
+        return;
       }
       else {
         activityDetail[label].push({
@@ -73,13 +74,13 @@ export async function getActivityDetail(activity: Activity): Promise<ActivityDet
               [item.language.value]: item.target.value.split("#").pop()
             } as StringAccessObject : item.target.value.split("#").pop()
           } as Action]
-        } as Object)
+        } as Object);
       }
     }
     // Object already in list
     else {
       if (item.property.value.split("#").pop() === "type") {
-        return
+        return;
       }
       if (item.language) {
         const propertyActionIndex = activityDetail[label][objectIndexInList].properties.findIndex((action: Action) => action.action == item.action.value.split("#").pop());
@@ -90,7 +91,7 @@ export async function getActivityDetail(activity: Activity): Promise<ActivityDet
             object: item.language ? {
               [item.language.value]: item.target.value.split("#").pop()
             } as StringAccessObject : item.target.value.split("#").pop()
-          } as Action)
+          } as Action);
         }
         // Some language has been added already
         else {
@@ -103,11 +104,11 @@ export async function getActivityDetail(activity: Activity): Promise<ActivityDet
           object: item.language ? {
             [item.language.value]: item.target.value.split("#").pop()
           } as StringAccessObject : item.target.value.split("#").pop()
-        } as Action)
+        } as Action);
       }
     }
   })
-  return activityDetail
+  return activityDetail;
 }
 
 /**
@@ -124,7 +125,7 @@ export async function getConflictIds(graph: string): Promise<{ title: string; id
     conflicts.push({
       title: conflict.conflict_title.value,
       id: conflict.conflict_id.value.split("#").pop()
-    })
+    });
   })
   return conflicts;
 }
@@ -148,30 +149,30 @@ export async function getConflictDetail(graph: string, conflictId: string): Prom
   data.map((item: StringAccessObject) => {
     // Conflict Data
     if (item.conflict_p && item.conflict_p.value.split("#").pop() == "HasComment") {
-      if (parsedConflict.replies === undefined) { parsedConflict.replies = [] }
+      if (parsedConflict.replies === undefined) { parsedConflict.replies = [] };
       parsedConflict.replies.push({
         id: item.conflict_o.value.split("#").pop()
-      })
+      });
     }
     // Comment Data
     else if (item.p && item.p.value.split("#").pop() == "HasComment") {
-      const replyIndex = parsedConflict.replies?.find(reply => reply.id == item.s.value.split("#").pop())
+      const replyIndex = parsedConflict.replies?.find(reply => reply.id == item.s.value.split("#").pop());
       if (replyIndex) {
         // Add empty list if first comment
-        if (replyIndex.replies === undefined) { replyIndex.replies = [] }
+        if (replyIndex.replies === undefined) { replyIndex.replies = [] };
         replyIndex.replies.push({
           id: item.o.value.split("#").pop()
-        })
+        });
       }
       // Comment nested in another comment
       else {
-        const nestedComment = findNestedComment(item.s.value.split("#").pop(), parsedConflict)
+        const nestedComment = findNestedComment(item.s.value.split("#").pop(), parsedConflict);
         if (nestedComment) {
           // Add empty list if first nested comment
-          if (nestedComment.replies === undefined) { nestedComment.replies = [] }
+          if (nestedComment.replies === undefined) { nestedComment.replies = [] };
           nestedComment.replies.push({
             id: item.o.value.split("#").pop()
-          })
+          });
         }
       }
     }
@@ -194,17 +195,22 @@ export async function getConflictDetail(graph: string, conflictId: string): Prom
           parsedConflict.timestamp = new Date(item.conflict_o.value);
           break;
         case "HasParticipant":
-          if (parsedConflict.participants === undefined) { parsedConflict.participants = [] as Participant[] }
-          parsedConflict.participants.push({ id: item.conflict_o.value.split("#").pop(), type: item.object_type.value.split("#").pop() })
+          if (parsedConflict.participants === undefined) { parsedConflict.participants = [] as Participant[] };
+          //HERE
+          let type = camelToSnakeCase(item.object_type.value.split("#").pop());
+          if (type === "rule" || type === "instrument") {
+            type += "s";
+          }
+          parsedConflict.participants.push({ id: item.conflict_o.value.split("#").pop(), type: type });
           break;
         case "ConflictState":
-          parsedConflict.status = item.conflict_o.value
+          parsedConflict.status = item.conflict_o.value;
           break;
         case "HasComment":
           break;
         default:
           if (item.conflict_p !== undefined) {
-            console.error("Unknown Property in Conflict Parsing", item.conflict_p.value)
+            console.error("Unknown Property in Conflict Parsing", item.conflict_p.value);
           }
           break;
       }
@@ -214,39 +220,39 @@ export async function getConflictDetail(graph: string, conflictId: string): Prom
       let replyIndex;
       switch (item.p.value.split("#").pop()) {
         case "WrittenBy":
-          replyIndex = parsedConflict.replies?.find(reply => reply.id == item.s.value.split("#").pop())
+          replyIndex = parsedConflict.replies?.find(reply => reply.id == item.s.value.split("#").pop());
           // console.log("Looking for", item.s.value.split("/").pop(), "in", parsedConflict.replies, "found", replyIndex);
           if (replyIndex) {
             replyIndex.author = item.o.value;
           }
           else {
-            const nestedComment = findNestedComment(item.s.value.split("#").pop(), parsedConflict)
+            const nestedComment = findNestedComment(item.s.value.split("#").pop(), parsedConflict);
             if (nestedComment) {
               nestedComment.author = item.o.value;
             }
           }
           break;
         case "CommentDescription":
-          replyIndex = parsedConflict.replies?.find(reply => reply.id == item.s.value.split("#").pop())
+          replyIndex = parsedConflict.replies?.find(reply => reply.id == item.s.value.split("#").pop());
           // console.log("Looking for", item.s.value.split("/").pop(), "in", parsedConflict.replies, "found", replyIndex);
           if (replyIndex) {
             replyIndex.comment = item.o.value;
           }
           else {
-            const nestedComment = findNestedComment(item.s.value.split("#").pop(), parsedConflict)
+            const nestedComment = findNestedComment(item.s.value.split("#").pop(), parsedConflict);
             if (nestedComment) {
               nestedComment.comment = item.o.value;
             }
           }
           break;
         case "CreationDate":
-          replyIndex = parsedConflict.replies?.find(reply => reply.id == item.s.value.split("#").pop())
+          replyIndex = parsedConflict.replies?.find(reply => reply.id == item.s.value.split("#").pop());
           // console.log("Looking for", item.s.value.split("/").pop(), "in", parsedConflict.replies, "found", replyIndex);
           if (replyIndex) {
             replyIndex.timestamp = new Date(item.o.value);
           }
           else {
-            const nestedComment = findNestedComment(item.s.value.split("#").pop(), parsedConflict)
+            const nestedComment = findNestedComment(item.s.value.split("#").pop(), parsedConflict);
             if (nestedComment) {
               nestedComment.timestamp = new Date(item.o.value);
             }
@@ -256,13 +262,13 @@ export async function getConflictDetail(graph: string, conflictId: string): Prom
           break;
         default:
           if (item.p !== undefined) {
-            console.error("Unknown Property in Comment Parsing", item.p.value)
+            console.error("Unknown Property in Comment Parsing", item.p.value);
           }
           break;
       }
     }
   })
-  return parsedConflict
+  return parsedConflict;
 }
 
 /**
@@ -274,8 +280,33 @@ export async function getAllConflictsWithDetail(graph: string): Promise<Conflict
   const conflicts = await getConflictIds(graph);
   let detailedConflicts = [] as Conflict[];
   for (const conflict of conflicts) {
-    const detail = await getConflictDetail(graph, conflict.id)
-    detailedConflicts.push(detail)
+    const detail = await getConflictDetail(graph, conflict.id);
+    detailedConflicts.push(detail);
   }
-  return detailedConflicts
+  return detailedConflicts;
+}
+
+/**
+ * Fetches an object that allows to list the available predicates
+ * for each Class relation
+ * Example: (Subject,Rule) = HasToFollow
+ */
+export async function getPredicateObject(): Promise<PredicateDict> {
+  const query = await getSparqlTemplate(sparqlTemplate.getPredicates);
+  const data = await fetchSparql(query);
+  const predDict = new PredicateDict;
+  data.map((item: StringAccessObject) => {
+    let tuple: [string, string] = [camelToSnakeCase(item.domain.value.split("#").pop()), camelToSnakeCase(item.range.value.split("#").pop())];
+    for (let i in tuple) {
+      if (tuple[i] === "rule" || tuple[i] === "instrument") {
+        tuple[i] += "s";
+      }
+    }
+    predDict.add(tuple, {
+      predicate: item.s.value.split("#").pop(),
+      label: item.label.value,
+      lang: item.label["xml:lang"]
+    })
+  })
+  return predDict;
 }

@@ -24,7 +24,7 @@ const filteredConflicts = computed(() => {
   return toRaw(props.conflicts).filter((conflict: { participants: any[]; }) => {
     if (!Array.isArray(conflict.participants)) return false;
 
-    return conflict.participants.some(participant => participant.type === props.pageData.title);
+    return conflict.participants.some(participant => participant.type === props.pageData.id);
   });
 });
 onMounted(() => {
@@ -81,14 +81,16 @@ const filterNotesBySelectedPoint = () => {
           </div>
         </div>
         <div class="reply-container">
-          <ReplyCard :conflictReply="conflict.replies" />
+          <div v-for="(reply, replyIndex) in conflict.replies" :key="reply.id">
+            <ReplyCard :conflictReply="reply" />
+          </div>
         </div>
       </div>
     </div>
   </div>
 
   <div v-else>
-    <p>Es gibt keine passenden Konflikte für diese Seite.</p>
+    <p>There are no conflicts.</p>
   </div>
 </template>
 

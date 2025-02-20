@@ -18,7 +18,7 @@ onMounted(() => {
 
 <template>
     <div class="replies-section">
-        <div v-html="props.conflictReply[0].comment"></div>
+        <div v-html="props.conflictReply.comment"></div>
     </div>
 </template>
 
@@ -35,6 +35,7 @@ onMounted(() => {
     max-width: 100%;
     width: 100%;
     transition: box-shadow 0.3s ease, border-color 0.3s ease;
+    text-align: end;
 }
 
 /* Dynamische Schatten basierend auf dem ausgewählten Status */
