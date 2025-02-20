@@ -1,8 +1,10 @@
 <script lang="ts" setup>
-import { ref, onMounted, toRaw } from 'vue';
+import { ref, onMounted, toRaw, computed } from 'vue';
 import NoteCard from './NoteCard.vue';
 import ReplyCard from './ReplyCard.vue';
 import { Button } from '@/components/ui/button';
+import { contentData } from '@/data/contentData';
+import { types } from 'util';
 
 const props = defineProps({
   pageData: {
@@ -18,30 +20,58 @@ const props = defineProps({
 const notes = ref<any[]>([]);
 const filteredNotes = ref<any[]>([]);
 
+const filteredConflicts = computed(() => {
+  return toRaw(props.conflicts).filter((conflict: { participants: any[]; }) => {
+    if (!Array.isArray(conflict.participants)) return false;
+
+    return conflict.participants.some(participant => participant.type === props.pageData.title);
+  });
+});
 onMounted(() => {
-  //console.log('Participants: ', toRaw(props.conflicts).participants);
-  //notes.value = JSON.parse(sessionStorage.getItem('notes') || '[]');
-  //filterNotesBySelectedPoint();
+  /*const conflicts = toRaw(props.conflicts);
+
+  console.log('Page Title: ', props.pageData.title);
+  console.log('filtered conflicts: ', filteredConflicts);
+*/
+
+  filterNotesBySelectedPoint();
 });
 
 
 
 
 const filterNotesBySelectedPoint = () => {
-  const participants = toRaw(props.conflicts).participants
-  // Filter nach dem `participatingPoints`
-  filteredNotes.value = notes.value.filter(note =>
-    Array.isArray(note.participatingPoints) &&
-    note.participatingPoints.includes(props.pageData.number)
-  );
+  const conflicts = toRaw(props.conflicts);
+
+  console.log('Page Title: ', props.pageData.title);
+
+  if (Array.isArray(conflicts)) {
+    conflicts.forEach(conflict => {
+      if (Array.isArray(conflict.participants)) {
+        const participants = conflict.participants.map((participant: { type: any; }) => participant.type);
+        console.log(`Types for conflict ${conflict.id}:`, participants);
+        if (participants.some((type: any) => type === props.pageData.title)) {
+          console.log("TRUUUEEEtrue");
+        }
+
+      } else {
+        console.log(`No participants found for conflict ${conflict.id}`);
+      }
+    });
+  } else {
+    console.log('conflicts is not an array');
+  }
+  // Filtern und nur diejenigen angeben die mit dem props.pageData.title übereinstimmt
+  // ...
+
+
 };
 
 </script>
 
 <template>
-
-  <div v-if="props.conflicts.length > 0">
-    <div v-for="(conflict, index) in conflicts" :key="conflict.id">
+  <div v-if="filteredConflicts.length > 0">
+    <div v-for="(conflict, index) in filteredConflicts" :key="conflict.id">
       <div class="conflict-container">
         <div class="note-container">
           <NoteCard :conflict="conflict" :title="conflict.title" :content="conflict.description"
@@ -58,9 +88,8 @@ const filterNotesBySelectedPoint = () => {
   </div>
 
   <div v-else>
-    <p>Es gibt keine Notizen für diese Seite.</p>
+    <p>Es gibt keine passenden Konflikte für diese Seite.</p>
   </div>
-
 </template>
 
 <style scoped>
