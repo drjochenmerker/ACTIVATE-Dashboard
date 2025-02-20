@@ -71,12 +71,12 @@ function setStatus(color: typeof noteStatus.RED | typeof noteStatus.YELLOW | typ
 <template>
   <div class="note-card" :class="selectedStatus">
     <div class="note-card-header">
-      <!-- Autor anzeigen -->
+      <!-- show author -->
       <span class="note-card-author">
         {{ props.author }}
       </span>
       <div class="status-selector">
-        <!-- Dropdown für Statusauswahl -->
+        <!-- drop down for status selection -->
         <select v-model="selectedStatus" @change="setStatus(selectedStatus)">
           <option :value="noteStatus.RED">{{ conflictStatus.open }}</option>
           <option :value="noteStatus.YELLOW">{{ conflictStatus.inDiscussion }}</option>
@@ -84,6 +84,11 @@ function setStatus(color: typeof noteStatus.RED | typeof noteStatus.YELLOW | typ
         </select>
       </div>
     </div>
+
+    <!-- line break -->
+    <hr class="note-divider" />
+
+    <!-- content -->
     <div class="note-card-content">
       <div class="note-title" v-html="props.title"></div>
       <div class="note-content" v-html="props.content"></div>
@@ -149,6 +154,12 @@ function setStatus(color: typeof noteStatus.RED | typeof noteStatus.YELLOW | typ
 .status-selector select:focus {
   outline: none;
   background-color: #f1f1f1;
+}
+
+.note-divider {
+  border: none;
+  border-top: 1px solid #ddd;
+  margin: 10px 0;
 }
 
 /* Inhalt */

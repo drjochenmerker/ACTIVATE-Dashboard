@@ -11,17 +11,18 @@ const conflictDetails = ref<any[]>([]);
 provide("conflicts", conflictDetails);
 
 // Example Data must be added every time since the current backend solution does not retain data
-getActivities().then((activities) => {
-    console.log("Activities", activities);
+getActivities().then(async (activities) => {
+    //console.log("Activities", activities);
+
     addExampleConflictData(activities[0].graph).then(async (conflictIds) => {
-        console.log("Example conflict data added", conflictIds);
+        //console.log("Example conflict data added", conflictIds);
         let conflictDetail = [];
         for (const conflictId of conflictIds) {
             const detail = await getConflictDetail(activities[0].graph, conflictId);
             conflictDetail.push(detail);
-            console.log('Example conflict detail for ID', conflictId, detail);
+            //console.log('Example conflict detail for ID', conflictId, detail);
         }
-
+        /*
         // Delete Conflict
         console.log("Trying to delete a conflict. ID:", conflictIds[1], "Result", (await deleteConflict(activities[0].graph, conflictIds[1])).status);
         console.log("Trying to fetch detail again", (await getConflictDetail(activities[0].graph, conflictIds[1])).status);
@@ -34,30 +35,33 @@ getActivities().then((activities) => {
         console.log("Trying to delete a nested comment within the first conflict. ID:", (conflictDetail[0].replies || [])[1]?.id, "Result", (await deleteComment(activities[0].graph, (conflictDetail[0].replies || [])[1]?.id, true)).status);
         console.log("Trying to delete a non-nested comment within the first conflict. ID:", (conflictDetail[0].replies || [])[0]?.id, "Result", (await deleteComment(activities[0].graph, (conflictDetail[0].replies || [])[0]?.id, false)).status);
         console.log("Fetching details again", await getConflictDetail(activities[0].graph, conflictIds[0]));
+        */
     }).finally(async () => {
         for (const activity of activities) {
-            console.log("Fetching all conflict ids for", activity.name, await getConflictIds(activity.graph))
+            //console.log("Fetching all conflict ids for", activity.name, await getConflictIds(activity.graph))
             getActivityDetail(activity).then(activity => {
-                console.log(`Fetching activity detail from graph ${activity.graph}`, activity);
+                //console.log('Fetching activity detail from graph', `${activity.graph}`, activity);
                 updateTriple(activities[0].graph, {
                     subject: "NursingSpecialist1",
                     predicate: "Uses",
                     object: "Sedatives",
                 } as RDFTriple, RDFOperation.insert).then((result) => {
-                    console.log("Triple updated", result);
+                    //console.log("Triple updated", result);
                     getActivityDetail(activities[0]).then((activityUpdate) => {
-                        console.log("Example activity after update", activityUpdate);
+                        //console.log("Example activity after update", activityUpdate);
                     });
                 });
             });
 
-            console.log("Fetching all conflicts in detail for", activity.name);
-            console.log("Result:", await getAllConflictsWithDetail(activity.graph));
+            //console.log("Fetching all conflicts in detail for", activity.name);
+            //console.log("Result:", await getAllConflictsWithDetail(activity.graph),);
 
-            // save conflict data in ref for vue to update
-            conflictDetails.value = await getAllConflictsWithDetail(activity.graph);
+            // 
+            //conflictDetails.value = await getAllConflictsWithDetail(activity.graph);
         }
     });
+    conflictDetails.value = await getAllConflictsWithDetail(activities[1].graph);
+    console.log("Conflict details for specific graph", activities[1].name, conflictDetails.value);
 })
 // Tests end here
 </script>

@@ -19,7 +19,7 @@ const notes = ref<any[]>([]);
 const filteredNotes = ref<any[]>([]);
 
 onMounted(() => {
-  console.log('Participants: ', toRaw(props.conflicts).participants);
+  //console.log('Participants: ', toRaw(props.conflicts).participants);
   //notes.value = JSON.parse(sessionStorage.getItem('notes') || '[]');
   //filterNotesBySelectedPoint();
 });
