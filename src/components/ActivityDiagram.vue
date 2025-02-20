@@ -3,7 +3,6 @@ import { defineComponent, ref, onMounted, watch, computed } from "vue";
 import { useColorMode } from "@vueuse/core";
 import { getExampleActivity } from "@/data/knowledge_graph/knowledge_graph";
 import { Button } from '@/components/ui/button';
-import { noteStatus } from "@/assets/constants/noteStatus";
 import { useActivityPointsStore } from "@/stores/activityPointsStore";
 
 /** 
@@ -28,6 +27,8 @@ export default defineComponent({
         const triangleHeight = 800;
         const mode = useColorMode();
         const activityPointStore = useActivityPointsStore();
+
+        let hasToBeCleared = computed(() => activityPointStore.getActivePoints.length === 0);
 
         // Changes Point-Colors based on current Theme
         const getPointColor = () => (mode.value === "dark" ? "lightgray" : "white");
@@ -360,44 +361,20 @@ export default defineComponent({
             });
         };
 
-        // EDITOR: handles logic when the "done"-button of the editor is pressed
-        const handleTransfer = (content: any) => {
-            // Note Object
-            const note = {
-                content: content.content,
-                isAnonymous: content.isAnonymous,
-                // TODO: Add creator to the note object
-                // creator: content.creator,
-                noteStatus: noteStatus.RED,
-                participatingPoints: selectedPoints.value.slice(),
-            };
-
-            // Logs the selected points from the note and the content from the editor
-            // TODO: Do something with the provided data
-            console.log("Participating points:", note.participatingPoints);
-            console.log("Number of participating points:", note.participatingPoints.length);
-            console.log("Anonymous Status:", note.isAnonymous);
-            console.log("Text from the Editor:", note.content);
-            console.log("Note Status:", note.noteStatus);
-
-            // save the note in sessionStorage
-            // TODO: sparql query to save the note
-            let notes = JSON.parse(sessionStorage.getItem('notes')) || []; // Fallback auf leeres Array
-            notes.push(note); // Füge die neue Notiz hinzu
-            sessionStorage.setItem('notes', JSON.stringify(notes)); // Speichere im sessionStorage
-
-            // Clear the selected points array
-            selectedPoints.value = [];
-            // Redraw the canvas
-            draw();
-        };
-
         onMounted(() => {
             draw();
         });
 
         watch(mode, () => {
             updateColors();
+        });
+
+        watch(hasToBeCleared, () => {
+            if (hasToBeCleared.value) {
+                deselectEverything();
+                updateColors();
+                draw();
+            }
         });
 
         return {
@@ -407,7 +384,6 @@ export default defineComponent({
             handleClick,
             loadActivity,
             handleHover,
-            handleTransfer,
         };
     },
 });

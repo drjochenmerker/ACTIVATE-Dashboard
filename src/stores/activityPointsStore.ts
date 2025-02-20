@@ -13,5 +13,9 @@ export const useActivityPointsStore = defineStore('activityPoints', () => {
         return activePoints.value;
     });
 
-    return { setActivePoints, getActivePoints };
+    const deactivateAllPoints = () => {
+        activePoints.value = [];
+    };
+
+    return { setActivePoints, getActivePoints, deactivateAllPoints };
 });

@@ -4,10 +4,12 @@ import ActivityDiagram from '@/components/ActivityDiagram.vue';
 import Editor from '@/components/Editor.vue';
 import { useActivityPointsStore } from "@/stores/activityPointsStore";
 import { computed } from 'vue';
+import { storeToRefs } from 'pinia';
 
 
 const activityPointStore = useActivityPointsStore();
 
+const { getActivePoints } = storeToRefs(activityPointStore);
 const hasActivePoints = computed(() => activityPointStore.getActivePoints.length > 0);
 
 </script>
@@ -22,7 +24,7 @@ const hasActivePoints = computed(() => activityPointStore.getActivePoints.length
 
         <!-- Editor oder Platzhalter anzeigen -->
         <div class="flex-1">
-            <Editor v-if="hasActivePoints" />
+            <Editor v-if="hasActivePoints" :activePoints="getActivePoints" />
         </div>
     </div>
 
