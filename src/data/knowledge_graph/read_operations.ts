@@ -290,7 +290,6 @@ export async function getPredicateObject(): Promise<PredicateDict> {
   const query = await getSparqlTemplate(sparqlTemplate.getPredicates);
   const data = await fetchSparql(query);
   const predDict = new PredicateDict;
-  console.log(query)
   data.map((item: StringAccessObject) => {
     let tuple: [string, string] = [camelToSnakeCase(item.domain.value.split("#").pop()), camelToSnakeCase(item.range.value.split("#").pop())];
     for (let i in tuple) {

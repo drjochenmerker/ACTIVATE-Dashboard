@@ -174,7 +174,6 @@ export async function vocabAddPredicate(predicate: string, domains: KnowledeGrap
         "{{labels}}": labelString
     }
     query = query.replaceMultiple(mapObj);
-    console.log(query)
     const data = await fetchSparql(query, true);
     return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: predicate, action: RDFOperation.insert } as updateResponse;
 }
