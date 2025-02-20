@@ -196,7 +196,12 @@ export async function getConflictDetail(graph: string, conflictId: string): Prom
           break;
         case "HasParticipant":
           if (parsedConflict.participants === undefined) { parsedConflict.participants = [] as Participant[] };
-          parsedConflict.participants.push({ id: item.conflict_o.value.split("#").pop(), type: item.object_type.value.split("#").pop() });
+          //HERE
+          let type = camelToSnakeCase(item.object_type.value.split("#").pop());
+          if (type === "rule" || type === "instrument") {
+            type += "s";
+          }
+          parsedConflict.participants.push({ id: item.conflict_o.value.split("#").pop(), type: type });
           break;
         case "ConflictState":
           parsedConflict.status = item.conflict_o.value;
