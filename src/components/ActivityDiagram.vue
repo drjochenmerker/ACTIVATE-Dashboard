@@ -1,10 +1,10 @@
 <script lang="ts">
-import { defineComponent, ref, onMounted, watch } from "vue";
+import { defineComponent, ref, onMounted, watch, computed } from "vue";
 import { useColorMode } from "@vueuse/core";
 import { getExampleActivity } from "@/data/knowledge_graph/knowledge_graph";
 import { Button } from '@/components/ui/button';
-import Editor from '@/components/Editor.vue';
 import { noteStatus } from "@/assets/constants/noteStatus";
+import { useActivityPointsStore } from "@/stores/activityPointsStore";
 
 /** 
  * Activity-Diagram-Component
@@ -13,8 +13,7 @@ import { noteStatus } from "@/assets/constants/noteStatus";
 export default defineComponent({
     name: "ActivityDiagramCanvas",
     components: {
-        Button,
-        Editor
+        Button
     },
 
     /**
@@ -27,14 +26,12 @@ export default defineComponent({
         const canvas = ref<HTMLCanvasElement | null>(null);
         const triangleWidth = 900;
         const triangleHeight = 800;
-        const showEditor = ref(false);
-
         const mode = useColorMode();
+        const activityPointStore = useActivityPointsStore();
 
         // Changes Point-Colors based on current Theme
         const getPointColor = () => (mode.value === "dark" ? "lightgray" : "white");
         const getLineColor = () => (mode.value === "dark" ? "gray" : "black");
-
 
         /**
          * Points of the activity diagram
@@ -53,6 +50,7 @@ export default defineComponent({
             { x: triangleWidth / 2, y: (triangleHeight / 8) * 7, id: "community", label: "Community", color: getPointColor(), active: false }, // Unten Mitte
         ]);
 
+
         /**
          * Lines of the activity diagram
          * @property {Array} pointIds: Array of point IDs that the line connects
@@ -69,6 +67,9 @@ export default defineComponent({
             { pointIds: ["subject", "object"], color: getLineColor(), active: false },
             { pointIds: ["subject", "community"], color: getLineColor(), active: false },
             { pointIds: ["community", "object"], color: getLineColor(), active: false },
+            { pointIds: ["subject", "division_of_labour"], color: getLineColor(), active: false },
+            { pointIds: ["rules", "object"], color: getLineColor(), active: false },
+            { pointIds: ["instruments", "community"], color: getLineColor(), active: false },
         ]);
 
         /**
@@ -90,6 +91,7 @@ export default defineComponent({
 
         const updatePoints = () => {
             selectedPoints.value = points.value.filter((point) => point.active).map((point) => point.id);
+            activityPointStore.setActivePoints(selectedPoints.value);
         };
 
         const isPointInTriangle = (x: number, y: number, triangle: { pointIds: string[] }) => {
@@ -330,30 +332,25 @@ export default defineComponent({
                 checkIfTriangleIsClicked(mouseX, mouseY);
             }
 
-            if (selectedPoints.value.length > 0) {
-                        showEditor.value = true;
-                    } else {
-                        showEditor.value = false;
-                    }
-
+            console.log(activityPointStore.getActivePoints);
         };
 
         const loadActivity = () => {
             getExampleActivity().then((activity) => {
                 points.value.forEach((point) => {
                     switch (point.id) {
-                        case "instruments": if(Array.isArray(activity.Instrument))  point.label = activity.Instrument[0].label;
-                        break;
-                        case "subject": if(Array.isArray(activity.Subject)) point.label = activity.Subject[0].label;
-                        break;
-                        case "object": if(Array.isArray(activity.Object)) point.label = activity.Object[0].label;
-                        break;
-                        case "rules": if(Array.isArray(activity.Rule)) point.label = activity.Rule[0].label;
-                        break;
-                        case "community": if(Array.isArray(activity.Community)) point.label = activity.Community[0].label;
-                        break;
+                        case "instruments": if (Array.isArray(activity.Instrument)) point.label = activity.Instrument[0].label;
+                            break;
+                        case "subject": if (Array.isArray(activity.Subject)) point.label = activity.Subject[0].label;
+                            break;
+                        case "object": if (Array.isArray(activity.Object)) point.label = activity.Object[0].label;
+                            break;
+                        case "rules": if (Array.isArray(activity.Rule)) point.label = activity.Rule[0].label;
+                            break;
+                        case "community": if (Array.isArray(activity.Community)) point.label = activity.Community[0].label;
+                            break;
                         case "division_of_labour": point.label = activity.DivisionOfLabour ? "Arbeitsteilung" : "keine Arbeitsteilung";
-                        break;
+                            break;
                     }
                 })
 
@@ -389,24 +386,10 @@ export default defineComponent({
             notes.push(note); // Füge die neue Notiz hinzu
             sessionStorage.setItem('notes', JSON.stringify(notes)); // Speichere im sessionStorage
 
-
-            // Reset points and lines
-            // points.value.forEach((point) => {
-            //     point.selected = "false";
-            //     point.color = "white";
-            // });
-            // lines.forEach((line) => {
-            //     line.active = false;
-            //     line.color = "black";
-            // });
-
             // Clear the selected points array
             selectedPoints.value = [];
             // Redraw the canvas
             draw();
-            // Hides the editor
-            showEditor.value = false;
-
         };
 
         onMounted(() => {
@@ -424,7 +407,6 @@ export default defineComponent({
             handleClick,
             loadActivity,
             handleHover,
-            showEditor,
             handleTransfer,
         };
     },
@@ -435,32 +417,29 @@ export default defineComponent({
     <div>
         <Button @click="loadActivity" type="submit"> Load Example Activity </Button>
     </div>
-    
+
     <div class="container">
         <canvas ref="canvas" :width="triangleWidth" :height="triangleHeight" @mousemove="handleHover"
-        @click="handleClick" />
-        <div class="editor-placeholder">
-            <h2 v-if="showEditor" style="font-weight: bold;">Add note:</h2>
-            <Editor v-if="showEditor" @transfer="handleTransfer" />
-        </div>
+            @click="handleClick" />
     </div>
 </template>
 
 <style scoped>
-    canvas {
-        display: block;
-        margin: 0;
-        flex: 2;
-    }
-    .container {
-        display: flex;
-        align-items: center;
-        gap: 20px;
-    
-    }
-    .editor-placeholder {
-        transition: opacity 0.3s ease-in-out;
-        flex: 3;
-    }
+canvas {
+    display: block;
+    margin: 0;
+    flex: 2;
+}
 
+.container {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+
+}
+
+.editor-placeholder {
+    transition: opacity 0.3s ease-in-out;
+    flex: 3;
+}
 </style>
