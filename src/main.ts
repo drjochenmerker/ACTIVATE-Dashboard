@@ -1,4 +1,5 @@
 import { createApp } from 'vue';
+import { createPinia } from 'pinia';
 import './style.css';
 import App from './App.vue';
 import router from './router';
@@ -10,6 +11,8 @@ declare global {
     }
 }
 
+const pinia = createPinia();
+
 String.prototype.replaceMultiple = function (mapObj) {
     var re = new RegExp(Object.keys(mapObj).join("|"), "gi");
 
@@ -20,5 +23,6 @@ String.prototype.replaceMultiple = function (mapObj) {
 
 // Create the app and mount it to the DOM
 const app = createApp(App);
+app.use(pinia);
 app.use(router);
 app.mount('#app');
