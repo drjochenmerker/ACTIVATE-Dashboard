@@ -338,6 +338,7 @@ export default defineComponent({
 
         const loadActivity = () => {
             getExampleActivity().then((activity) => {
+                console.log("activity", activity);
                 points.value.forEach((point) => {
                     switch (point.id) {
                         case "instruments": if (Array.isArray(activity.Instrument)) point.label = activity.Instrument[0].label;
