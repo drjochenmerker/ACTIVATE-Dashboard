@@ -4,6 +4,7 @@ import { useColorMode } from "@vueuse/core";
 import { getExampleActivity } from "@/data/knowledge_graph/knowledge_graph";
 import { Button } from '@/components/ui/button';
 import { useActivityPointsStore } from "@/stores/activityPointsStore";
+import { getActivities, getActivityDetail } from "@/data/knowledge_graph/read_operations";
 
 /** 
  * Activity-Diagram-Component
@@ -337,21 +338,23 @@ export default defineComponent({
         };
 
         const loadActivity = () => {
-            getExampleActivity().then((activity) => {
-                console.log("activity", activity);
-                points.value.forEach((point) => {
+            getActivities().then((activities) => {
+                getActivityDetail(activities[0]).then((activity) => {
+                    console.log("activity", activity);
+
+                    points.value.forEach((point) => {
                     switch (point.id) {
-                        case "instruments": if (Array.isArray(activity.Instrument)) point.label = activity.Instrument[0].label;
+                        case "instruments": if (Array.isArray(activity.instruments)) point.label = activity.instruments[0].label;
                             break;
-                        case "subject": if (Array.isArray(activity.Subject)) point.label = activity.Subject[0].label;
+                        case "subject": if (Array.isArray(activity.subject)) point.label = activity.subject[0].label;
                             break;
-                        case "object": if (Array.isArray(activity.Object)) point.label = activity.Object[0].label;
+                        case "object": if (Array.isArray(activity.object)) point.label = activity.object[0].label;
                             break;
-                        case "rules": if (Array.isArray(activity.Rule)) point.label = activity.Rule[0].label;
+                        case "rules": if (Array.isArray(activity.rules)) point.label = activity.rules[0].label;
                             break;
-                        case "community": if (Array.isArray(activity.Community)) point.label = activity.Community[0].label;
+                        case "community": if (Array.isArray(activity.community)) point.label = activity.community[0].label;
                             break;
-                        case "division_of_labour": point.label = activity.DivisionOfLabour ? "Arbeitsteilung" : "keine Arbeitsteilung";
+                        case "division_of_labour": point.label = activity.division_of_labour ? "Arbeitsteilung" : "keine Arbeitsteilung";
                             break;
                     }
                 })
@@ -359,10 +362,18 @@ export default defineComponent({
                 console.log(activity);
 
                 draw();
+                });
             });
         };
 
         onMounted(() => {
+            getActivities().then((activities) => {
+                getActivityDetail(activities[0]).then((activity) => {
+                    console.log(activity);
+                });
+                //console.log(activities);
+            });
+            console.log(getActivities())
             draw();
         });
 
