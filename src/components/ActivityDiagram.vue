@@ -1,10 +1,8 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted, watch, computed } from "vue";
 import { useColorMode } from "@vueuse/core";
-import { getExampleActivity } from "@/data/knowledge_graph/knowledge_graph";
 import { Button } from '@/components/ui/button';
 import { useActivityPointsStore } from "@/stores/activityPointsStore";
-import { getActivities, getActivityDetail } from "@/data/knowledge_graph/read_operations";
 
 /** 
  * Activity-Diagram-Component
@@ -16,18 +14,27 @@ export default defineComponent({
         Button
     },
 
+    props: {
+        activity: {
+            type: Object,
+            default: () => ({})
+        }
+    },
+
     /**
      * Setup-Function
      * Sets up the canvas of the component with the given Height and Width
      * Adds every point with its label to the canvas
      * Adds every needed line between points to the canvas
      */
-    setup() {
+    setup(props) {
         const canvas = ref<HTMLCanvasElement | null>(null);
         const triangleWidth = 900;
         const triangleHeight = 800;
         const mode = useColorMode();
         const activityPointStore = useActivityPointsStore();
+
+        const activityData = props.activity;
 
         let hasToBeCleared = computed(() => activityPointStore.getActivePoints.length === 0);
 
@@ -333,47 +340,9 @@ export default defineComponent({
             if (!pointWasClicked) {
                 checkIfTriangleIsClicked(mouseX, mouseY);
             }
-
-            console.log(activityPointStore.getActivePoints);
-        };
-
-        const loadActivity = () => {
-            getActivities().then((activities) => {
-                getActivityDetail(activities[0]).then((activity) => {
-                    console.log("activity", activity);
-
-                    points.value.forEach((point) => {
-                    switch (point.id) {
-                        case "instruments": if (Array.isArray(activity.instruments)) point.label = activity.instruments[0].label;
-                            break;
-                        case "subject": if (Array.isArray(activity.subject)) point.label = activity.subject[0].label;
-                            break;
-                        case "object": if (Array.isArray(activity.object)) point.label = activity.object[0].label;
-                            break;
-                        case "rules": if (Array.isArray(activity.rules)) point.label = activity.rules[0].label;
-                            break;
-                        case "community": if (Array.isArray(activity.community)) point.label = activity.community[0].label;
-                            break;
-                        case "division_of_labour": point.label = activity.division_of_labour ? "Arbeitsteilung" : "keine Arbeitsteilung";
-                            break;
-                    }
-                })
-
-                console.log(activity);
-
-                draw();
-                });
-            });
         };
 
         onMounted(() => {
-            getActivities().then((activities) => {
-                getActivityDetail(activities[0]).then((activity) => {
-                    console.log(activity);
-                });
-                //console.log(activities);
-            });
-            console.log(getActivities())
             draw();
         });
 
@@ -394,7 +363,6 @@ export default defineComponent({
             triangleWidth,
             triangleHeight,
             handleClick,
-            loadActivity,
             handleHover,
         };
     },
@@ -402,13 +370,8 @@ export default defineComponent({
 </script>
 
 <template>
-    <div>
-        <Button @click="loadActivity" type="submit"> Load Example Activity </Button>
-    </div>
-
     <div class="container">
-        <canvas ref="canvas" :width="triangleWidth" :height="triangleHeight" @mousemove="handleHover"
-            @click="handleClick" />
+        <canvas ref="canvas" :width="triangleWidth" :height="triangleHeight" @mousemove="handleHover" @click="handleClick"/>
     </div>
 </template>
 
