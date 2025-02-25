@@ -1,5 +1,6 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted, watch, computed } from "vue";
+import HoverPopUp from '@/components/HoverPopUp.vue';
 import { useColorMode } from "@vueuse/core";
 import { Button } from '@/components/ui/button';
 import { useActivityPointsStore } from "@/stores/activityPointsStore";
@@ -11,6 +12,7 @@ import { useActivityPointsStore } from "@/stores/activityPointsStore";
 export default defineComponent({
     name: "ActivityDiagramCanvas",
     components: {
+        HoverPopUp,
         Button
     },
 
@@ -33,6 +35,13 @@ export default defineComponent({
         const triangleHeight = 800;
         const mode = useColorMode();
         const activityPointStore = useActivityPointsStore();
+
+        const hoveredPointData = ref<null | {
+            label: string;
+            content: Array<string>;
+        }>(null);
+
+        const hoverPosition = ref<{ x: number; y: number }>({ x: 0, y: 0 });
 
         const activityData = props.activity;
 
@@ -315,6 +324,26 @@ export default defineComponent({
             const rect = canvas.value.getBoundingClientRect();
             const mouseX = event.clientX - rect.left;
             const mouseY = event.clientY - rect.top;
+
+            hoverPosition.value = { x: mouseX + 50, y: mouseY + 10 };
+
+            let foundPoint: { label: string; content: Array<string>; } | null = null;
+
+            points.value.forEach((point) => {
+                const distance = Math.sqrt((mouseX - point.x) ** 2 + (mouseY - point.y) ** 2);
+                if (distance < triangleHeight / 40) {
+                    foundPoint = { label: point.label, content: activityData[point.id] || [] };
+                    
+                    if (foundPoint.label === "Rules" || foundPoint.label === "Community" || foundPoint.label === "Division of Labour") {
+                        hoverPosition.value.y -= 100
+                    }
+                }
+            });
+
+
+
+            hoveredPointData.value = foundPoint ? { ...foundPoint } : null;
+
             updateHoverState(mouseX, mouseY);
             updateColors();
         };
@@ -364,6 +393,8 @@ export default defineComponent({
             triangleHeight,
             handleClick,
             handleHover,
+            hoveredPointData,
+            hoverPosition,
         };
     },
 });
@@ -371,7 +402,10 @@ export default defineComponent({
 
 <template>
     <div class="container">
-        <canvas ref="canvas" :width="triangleWidth" :height="triangleHeight" @mousemove="handleHover" @click="handleClick"/>
+        <canvas ref="canvas" :width="triangleWidth" :height="triangleHeight" @mousemove="handleHover"
+            @click="handleClick" />
+
+        <HoverPopUp v-if="hoveredPointData" :hoveredPoint="hoveredPointData" :position="hoverPosition" />
     </div>
 </template>
 
