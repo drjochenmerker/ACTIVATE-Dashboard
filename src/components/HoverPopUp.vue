@@ -1,10 +1,9 @@
 <script setup lang="ts">
 
-
 defineProps<{
     hoveredPoint: {
       label: string;
-      content: Array<string>;
+      content: Array<{label: string, value?: string}>;
     };
     position: {
       x: number;
@@ -17,9 +16,11 @@ defineProps<{
 
 <template>
     <div class="popup" :style="{ top: `${position.y}px`, left: `${position.x}px` }">
-      <h3>{{ hoveredPoint.label }}:</h3>
-      <ul>
-        <li v-for="(content, index) in hoveredPoint.content" :key="index">{{ content }}</li>
+      <b>{{ hoveredPoint.label }}:</b>
+      <ul class="custom-list">
+        <li v-for="(item, index) in hoveredPoint.content" :key="index">
+            {{ item.label }} <span v-if="item.value">- {{ item.value }}</span>
+        </li>
       </ul>
     </div>
   </template>
@@ -34,6 +35,12 @@ defineProps<{
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
     pointer-events: none; /* Verhindert unerwünschte Hover-Events */
     z-index: 10;
+  }
+
+  .custom-list {
+    list-style-type: disc;
+  padding-left: 20px;
+  margin: 0;
   }
   </style>
   

@@ -38,7 +38,7 @@ export default defineComponent({
 
         const hoveredPointData = ref<null | {
             label: string;
-            content: Array<string>;
+            content: Array<{label: string, value?: string}>;
         }>(null);
 
         const hoverPosition = ref<{ x: number; y: number }>({ x: 0, y: 0 });
