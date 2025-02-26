@@ -4,7 +4,7 @@ import HoverPopUp from '@/components/HoverPopUp.vue';
 import { useColorMode } from "@vueuse/core";
 import { Button } from '@/components/ui/button';
 import { useActivityPointsStore } from "@/stores/activityPointsStore";
-import { Conflict } from "@/data/knowledge_graph/structures";
+import { Conflict, conflictStatus } from "@/data/knowledge_graph/structures";
 
 /** 
  * Activity-Diagram-Component
@@ -40,6 +40,43 @@ export default defineComponent({
         const triangleHeight = 800;
         const mode = useColorMode();
         const activityPointStore = useActivityPointsStore();
+
+        const testConflict = {
+        author: "Clemens Berkenhoff",
+        description: "Dies ist ein Testkonflikt, um mögliche Konflikte in der Anwendung zu testen.",
+        id: "testConflict",
+        participants: [
+            { id: "NursingSpecialist1", type: "object" },
+            { id: "DoL", type: "division_of_labour" },
+            { id: "Community1", type: "community" },
+        ],
+        replies: [
+            {comment: "Das ist ein Kommentar", author: "Clemens Berkenhoff", id: "testComment"},
+            {comment: "Das ist ein weiterer Kommentar", author: "Clemens Berkenhoff", id: "testComment2"},
+            {comment: "Das ist ein letzter Kommentar", author: "Clemens Berkenhoff", id: "testComment3"},
+        ],
+        status: conflictStatus.open,
+        timestamp: new Date(),
+        title: "Test Konflikt"
+        }
+
+        const testConflict2 = {
+        author: "Clemens Berkenhoff",
+        description: "Dies ist ein Testkonflikt, um mögliche Konflikte in der Anwendung zu testen.",
+        id: "testConflict",
+        participants: [
+            { id: "Rule1", type: "rules" },
+            { id: "Community1", type: "community" }
+        ],
+        replies: [
+            {comment: "Das ist ein Kommentar", author: "Clemens Berkenhoff", id: "testComment"},
+            {comment: "Das ist ein weiterer Kommentar", author: "Clemens Berkenhoff", id: "testComment2"},
+            {comment: "Das ist ein letzter Kommentar", author: "Clemens Berkenhoff", id: "testComment3"},
+        ],
+        status: conflictStatus.inDiscussion,
+        timestamp: new Date(),
+        title: "Test Konflikt 2"
+        }
 
         // Data of the hovered point
         const hoveredPointData = ref<null | {
@@ -410,6 +447,8 @@ export default defineComponent({
 
         onMounted(() => {
             console.log(conflictData)
+            conflictData.push(testConflict);
+            conflictData.push(testConflict2);
             draw();
         });
 
