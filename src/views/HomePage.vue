@@ -18,7 +18,7 @@ onMounted(async () => {
     if (activities && activities.length > 0) {
       const activityDetail = await getActivityDetail(activities[0]);
       activity = activityDetail;
-      console.log("Aktivität geladen:", activity);
+      //console.log("Aktivität geladen:", activity);
     }
   } catch (error) {
     console.error("Fehler beim Laden der Aktivitäten:", error);

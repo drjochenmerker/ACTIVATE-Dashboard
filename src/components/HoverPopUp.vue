@@ -1,16 +1,6 @@
 <script setup lang="ts">
 import { defineProps } from 'vue';
 
-defineProps({
-  hoveredPoint: {
-    type: Object,
-    required: true,
-  },
-  position: {
-    type: Object,
-    required: true,
-  },
-});
 
 defineProps<{
   hoveredPoint: {
