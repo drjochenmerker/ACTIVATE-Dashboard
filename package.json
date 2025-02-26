@@ -25,7 +25,8 @@
         "tailwind-merge": "^2.5.5",
         "tailwindcss-animate": "^1.0.7",
         "vue": "^3.5.13",
-        "vue-router": "^4.5.0"
+        "vue-router": "^4.5.0",
+        "vue-select": "^2.6.4"
     },
     "devDependencies": {
         "@iconify-json/radix-icons": "^1.2.1",
