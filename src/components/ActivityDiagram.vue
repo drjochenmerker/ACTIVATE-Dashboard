@@ -40,16 +40,20 @@ export default defineComponent({
         const mode = useColorMode();
         const activityPointStore = useActivityPointsStore();
 
+        // Data of the hovered point
         const hoveredPointData = ref<null | {
             label: string;
             content: Array<{label: string, value?: string}>;
         }>(null);
 
+        // Position of the hover popup
         const hoverPosition = ref<{ x: number; y: number }>({ x: 0, y: 0 });
 
+        // Data from the props
         const activityData = props.activity;
         const conflictData = props.activityConflicts;
 
+        // Checks if the Activity-Diagram has to be cleared when a Comment is sent by the editor
         let hasToBeCleared = computed(() => activityPointStore.getActivePoints.length === 0);
 
         // Changes Point-Colors based on current Theme
