@@ -1,16 +1,16 @@
 <script setup lang="ts">
+import { defineProps} from 'vue';
 
-defineProps<{
-    hoveredPoint: {
-      label: string;
-      content: Array<{label: string, value?: string}>;
-    };
-    position: {
-      x: number;
-      y: number;
-    };
-
-}>();
+defineProps({
+  hoveredPoint: {
+    type: Object,
+    required: true,
+  },
+  position: {
+    type: Object,
+    required: true,
+  },
+});
 
 </script>
 
@@ -19,7 +19,7 @@ defineProps<{
       <b>{{ hoveredPoint.label }}:</b>
       <ul class="custom-list">
         <li v-for="(item, index) in hoveredPoint.content" :key="index">
-            {{ item.label }} <span v-if="item.value">- {{ item.value }}</span>
+            {{ item.label }}
         </li>
       </ul>
     </div>
@@ -42,5 +42,15 @@ defineProps<{
   padding-left: 20px;
   margin: 0;
   }
+
+  .custom-list li:hover {
+  background-color: #f0f0f0;
+}
+
+.custom-list li.selected {
+  background-color: #d1e7dd;
+  font-weight: bold;
+  color: #0f5132;
+}
   </style>
   

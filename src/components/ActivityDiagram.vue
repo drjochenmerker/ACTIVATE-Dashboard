@@ -20,6 +20,10 @@ export default defineComponent({
         activity: {
             type: Object,
             default: () => ({})
+        },
+        activityConflicts: {
+            type: Array,
+            default: () => []
         }
     },
 
@@ -44,6 +48,7 @@ export default defineComponent({
         const hoverPosition = ref<{ x: number; y: number }>({ x: 0, y: 0 });
 
         const activityData = props.activity;
+        const conflictData = props.activityConflicts;
 
         let hasToBeCleared = computed(() => activityPointStore.getActivePoints.length === 0);
 
@@ -340,9 +345,7 @@ export default defineComponent({
                 }
             });
 
-
-
-            hoveredPointData.value = foundPoint ? { ...foundPoint } : null;
+            hoveredPointData.value = foundPoint ? foundPoint : null;
 
             updateHoverState(mouseX, mouseY);
             updateColors();
@@ -372,6 +375,7 @@ export default defineComponent({
         };
 
         onMounted(() => {
+            console.log(conflictData)
             draw();
         });
 
@@ -401,7 +405,7 @@ export default defineComponent({
 </script>
 
 <template>
-    <div class="container">
+    <div class="container" @mouseleave="hoveredPointData = null">
         <canvas ref="canvas" :width="triangleWidth" :height="triangleHeight" @mousemove="handleHover"
             @click="handleClick" />
 
