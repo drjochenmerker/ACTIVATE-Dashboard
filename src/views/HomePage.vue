@@ -18,6 +18,7 @@ onMounted(async () => {
     if (activities && activities.length > 0) {
       const activityDetail = await getActivityDetail(activities[0]);
       activity = activityDetail;
+      console.log("Aktivität geladen:", activity);
     }
   } catch (error) {
     console.error("Fehler beim Laden der Aktivitäten:", error);
@@ -33,7 +34,7 @@ defineProps<{ conflicts: any[] }>();
   <div class="flex w-full h-2/3 relative mx-auto gap-4">
     <div class="flex-1 min-w-[900px]">
       <!-- ActivityDiagram nur rendern, wenn activity geladen ist -->
-      <ActivityDiagram v-if="activity" :activity="activity" />
+      <ActivityDiagram v-if="activity" :activity="activity" :activityConflicts="conflicts" />
     </div>
 
     <!-- Editor oder Platzhalter anzeigen -->

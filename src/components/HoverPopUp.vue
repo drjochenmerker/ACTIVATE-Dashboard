@@ -1,5 +1,16 @@
 <script setup lang="ts">
+import { defineProps } from 'vue';
 
+defineProps({
+  hoveredPoint: {
+    type: Object,
+    required: true,
+  },
+  position: {
+    type: Object,
+    required: true,
+  },
+});
 
 defineProps<{
   hoveredPoint: {
@@ -17,9 +28,11 @@ defineProps<{
 
 <template>
   <div class="popup" :style="{ top: `${position.y}px`, left: `${position.x}px` }">
-    <h3>{{ hoveredPoint.label }}:</h3>
-    <ul>
-      <li v-for="(content, index) in hoveredPoint.content" :key="index">{{ content }}</li>
+    <b>{{ hoveredPoint.label }}:</b>
+    <ul class="custom-list">
+      <li v-for="(item, index) in hoveredPoint.content" :key="index">
+        {{ item.label }}
+      </li>
     </ul>
   </div>
 </template>
@@ -35,5 +48,21 @@ defineProps<{
   pointer-events: none;
   /* Verhindert unerwünschte Hover-Events */
   z-index: 10;
+}
+
+.custom-list {
+  list-style-type: disc;
+  padding-left: 20px;
+  margin: 0;
+}
+
+.custom-list li:hover {
+  background-color: #f0f0f0;
+}
+
+.custom-list li.selected {
+  background-color: #d1e7dd;
+  font-weight: bold;
+  color: #0f5132;
 }
 </style>
