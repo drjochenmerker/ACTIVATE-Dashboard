@@ -4,6 +4,7 @@ import HoverPopUp from '@/components/HoverPopUp.vue';
 import { useColorMode } from "@vueuse/core";
 import { Button } from '@/components/ui/button';
 import { useActivityPointsStore } from "@/stores/activityPointsStore";
+import { Conflict } from "@/data/knowledge_graph/structures";
 
 /** 
  * Activity-Diagram-Component
@@ -43,7 +44,7 @@ export default defineComponent({
         // Data of the hovered point
         const hoveredPointData = ref<null | {
             label: string;
-            content: Array<{label: string, value?: string}>;
+            content: Array<{ label: string, value?: string }>;
         }>(null);
 
         // Position of the hover popup
@@ -51,7 +52,7 @@ export default defineComponent({
 
         // Data from the props
         const activityData = props.activity;
-        const conflictData = props.activityConflicts;
+        const conflictData = props.activityConflicts as Conflict[];
 
         // Checks if the Activity-Diagram has to be cleared when a Comment is sent by the editor
         let hasToBeCleared = computed(() => activityPointStore.getActivePoints.length === 0);
@@ -115,6 +116,22 @@ export default defineComponent({
 
         const hoveredPoint = ref<string | null>(null);
         const hoveredTriangle = ref<{ pointIds: string[] } | null>(null);
+
+        const conflictPositions = computed(() => {
+            return conflictData.map((conflict: Conflict) => {
+
+                const participantPoints = conflict.participants
+                    .map((participant) => points.value.find((p) => p.id === participant.type))
+                    .filter((p): p is { x: number; y: number; id: string; label: string; color: string; active: boolean } => !!p);
+
+                if (participantPoints.length) {
+                    const avgX = participantPoints.reduce((sum, p) => sum + p.x, 0) / participantPoints.length;
+                    const avgY = participantPoints.reduce((sum, p) => sum + p.y, 0) / participantPoints.length;
+                    return { ...conflict, x: avgX, y: avgY };
+                }
+                return null;
+            }).filter((pos) => pos !== null);
+        });
 
         const updatePoints = () => {
             selectedPoints.value = points.value.filter((point) => point.active).map((point) => point.id);
@@ -326,6 +343,19 @@ export default defineComponent({
                     ctx.fill();
                 }
             }
+
+            if (conflictPositions.value.length > 0) {
+                conflictPositions.value.forEach((conflict: any) => {
+                    // Zeichne einen kleinen Kreis als Konfliktindikator
+                    ctx.beginPath();
+                    ctx.arc(conflict.x, conflict.y, triangleHeight / 80, 0, 2 * Math.PI);
+                    ctx.fillStyle = conflict.status == "gelöst" ? "green" : conflict.status == "in Besprechung" ? "yellow" : "red";
+                    ctx.fill();
+                    ctx.strokeStyle = "black";
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                });
+            }
         };
 
         const handleHover = (event: MouseEvent) => {
@@ -342,7 +372,7 @@ export default defineComponent({
                 const distance = Math.sqrt((mouseX - point.x) ** 2 + (mouseY - point.y) ** 2);
                 if (distance < triangleHeight / 40) {
                     foundPoint = { label: point.label, content: activityData[point.id] || [] };
-                    
+
                     if (foundPoint.label === "Rules" || foundPoint.label === "Community" || foundPoint.label === "Division of Labour") {
                         hoverPosition.value.y -= 100
                     }
