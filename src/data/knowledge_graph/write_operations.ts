@@ -1,6 +1,6 @@
 import hash from "object-hash";
 import { fetchSparql, getSparqlTemplate } from "./utils";
-import { Conflict, conflictStatus, KnowledeGraphActivityClass, LanguageLabel, RDFOperation, RDFTriple, sparqlTemplate, updateResponse } from "./structures";
+import { Conflict, conflictStatus, KnowledgeGraphActivityClass, LanguageLabel, RDFOperation, RDFTriple, sparqlTemplate, updateResponse } from "./structures";
 
 /**
  * Adds a new conflict to the sparql database
@@ -162,7 +162,15 @@ export async function updateTriple(graph: string, triple: RDFTriple, operation: 
     return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: Object.values(triple).join(" "), action: operation } as updateResponse;
 }
 
-export async function vocabAddPredicate(predicate: string, domains: KnowledeGraphActivityClass[], ranges: KnowledeGraphActivityClass[], labels: LanguageLabel[]): Promise<updateResponse> {
+/**
+ * Adds a new predicate to the knowledge graph vocabulary
+ * @param predicate Predicate label in CamelCase that all information will be accessed with. Example: Uses, ConnectsTo
+ * @param domains Activity Classes that are able to be the initiator of the
+ * @param ranges Activity Classes that are able to be the target of the predicate
+ * @param labels Description of the predicate in multiple languages used for sentence construction
+ * @returns Response Object
+ */
+export async function vocabAddPredicate(predicate: string, domains: KnowledgeGraphActivityClass[], ranges: KnowledgeGraphActivityClass[], labels: LanguageLabel[]): Promise<updateResponse> {
     let query = await getSparqlTemplate(sparqlTemplate.addPredicate);
     const labelString = labels.map(label => {
         return `"${label.label}"@${label.language}`;

@@ -162,7 +162,7 @@ export type LanguageLabel = {
  * Knowledge Graph Activity Classes that allow the usage of 
  * frontend access terms without messing up the backend
  */
-export enum KnowledeGraphActivityClass {
+export enum KnowledgeGraphActivityClass {
     subject = ":Subject",
     object = ":Object",
     rules = ":Rule",
