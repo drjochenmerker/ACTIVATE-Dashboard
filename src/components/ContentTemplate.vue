@@ -5,6 +5,7 @@ import ReplyCard from './ReplyCard.vue';
 import { Button } from '@/components/ui/button';
 import { contentData } from '@/data/contentData';
 import { types } from 'util';
+import { getConflictDetail, getConflictIds } from '@/data/knowledge_graph/read_operations';
 
 const props = defineProps({
   pageData: {
@@ -17,55 +18,17 @@ const props = defineProps({
   },
 });
 
-const notes = ref<any[]>([]);
-const filteredNotes = ref<any[]>([]);
 
 const filteredConflicts = computed(() => {
   return toRaw(props.conflicts).filter((conflict: { participants: any[]; }) => {
     if (!Array.isArray(conflict.participants)) return false;
-
     return conflict.participants.some(participant => participant.type === props.pageData.id);
   });
 });
 onMounted(() => {
-  /*const conflicts = toRaw(props.conflicts);
-
-  console.log('Page Title: ', props.pageData.title);
-  console.log('filtered conflicts: ', filteredConflicts);
-*/
-
-  filterNotesBySelectedPoint();
+  //filterNotesBySelectedPoint();
 });
 
-
-
-
-const filterNotesBySelectedPoint = () => {
-  const conflicts = toRaw(props.conflicts);
-
-  console.log('Page Title: ', props.pageData.title);
-
-  if (Array.isArray(conflicts)) {
-    conflicts.forEach(conflict => {
-      if (Array.isArray(conflict.participants)) {
-        const participants = conflict.participants.map((participant: { type: any; }) => participant.type);
-        console.log(`Types for conflict ${conflict.id}:`, participants);
-        if (participants.some((type: any) => type === props.pageData.title)) {
-          console.log("TRUUUEEEtrue");
-        }
-
-      } else {
-        console.log(`No participants found for conflict ${conflict.id}`);
-      }
-    });
-  } else {
-    console.log('conflicts is not an array');
-  }
-  // Filtern und nur diejenigen angeben die mit dem props.pageData.title übereinstimmt
-  // ...
-
-
-};
 
 </script>
 

@@ -9,7 +9,7 @@ import { getActivities, getActivityDetail } from '@/data/knowledge_graph/read_op
 const activityPointStore = useActivityPointsStore();
 const { getActivePoints } = storeToRefs(activityPointStore);
 const hasActivePoints = computed(() => activityPointStore.getActivePoints.length > 0);
-let activity : any = null;
+let activity: any = null;
 
 // Daten laden beim Mount
 onMounted(async () => {
@@ -18,7 +18,7 @@ onMounted(async () => {
     if (activities && activities.length > 0) {
       const activityDetail = await getActivityDetail(activities[0]);
       activity = activityDetail;
-      console.log("Aktivität geladen:", activity);
+      //console.log("Aktivität geladen:", activity);
     }
   } catch (error) {
     console.error("Fehler beim Laden der Aktivitäten:", error);

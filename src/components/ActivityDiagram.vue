@@ -57,7 +57,7 @@ export default defineComponent({
                 { comment: "Das ist ein weiterer Kommentar", author: "Clemens Berkenhoff", id: "testComment2" },
                 { comment: "Das ist ein letzter Kommentar", author: "Clemens Berkenhoff", id: "testComment3" },
             ],
-            status: conflictStatus.resolved,
+            status: conflictStatus.open,
             timestamp: new Date(),
             title: "Test Konflikt"
         }
@@ -460,7 +460,7 @@ export default defineComponent({
         };
 
         onMounted(() => {
-            console.log(conflictData)
+            // console.log(conflictData)
             conflictData.push(testConflict);
             conflictData.push(testConflict2);
             draw();

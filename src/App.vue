@@ -61,7 +61,7 @@ getActivities().then(async (activities) => {
         }
     });
     conflictDetails.value = await getAllConflictsWithDetail(activities[1].graph);
-    console.log("Conflict details for specific graph", activities[1].name, conflictDetails.value);
+    // console.log("Conflict details for specific graph", activities[1].name, conflictDetails.value);
 })
 // Tests end here
 </script>

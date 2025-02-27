@@ -1,49 +1,52 @@
 <script setup lang="ts">
-import { defineProps} from 'vue';
+import { defineProps } from 'vue';
 
-defineProps({
+
+defineProps<{
   hoveredPoint: {
-    type: Object,
-    required: true,
-  },
+    label: string;
+    content: Array<string>;
+  };
   position: {
-    type: Object,
-    required: true,
-  },
-});
+    x: number;
+    y: number;
+  };
+
+}>();
 
 </script>
 
 <template>
-    <div class="popup" :style="{ top: `${position.y}px`, left: `${position.x}px` }">
-      <b>{{ hoveredPoint.label }}:</b>
-      <ul class="custom-list">
-        <li v-for="(item, index) in hoveredPoint.content" :key="index">
-            {{ item.label }}
-        </li>
-      </ul>
-    </div>
-  </template>
-  
-  <style scoped>
-  .popup {
-    position: absolute;
-    background-color: white;
-    border: 1px solid black;
-    padding: 8px;
-    border-radius: 4px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-    pointer-events: none; /* Verhindert unerwünschte Hover-Events */
-    z-index: 10;
-  }
+  <div class="popup" :style="{ top: `${position.y}px`, left: `${position.x}px` }">
+    <b>{{ hoveredPoint.label }}:</b>
+    <ul class="custom-list">
+      <li v-for="(item, index) in hoveredPoint.content" :key="index">
+        {{ item.label }}
+      </li>
+    </ul>
+  </div>
+</template>
 
-  .custom-list {
-    list-style-type: disc;
+<style scoped>
+.popup {
+  position: absolute;
+  background-color: white;
+  border: 1px solid black;
+  padding: 8px;
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+  /* Verhindert unerwünschte Hover-Events */
+  z-index: 10;
+}
+
+.custom-list {
+  list-style-type: disc;
   padding-left: 20px;
   margin: 0;
-  }
+}
 
-  .custom-list li:hover {
+.custom-list li:hover {
   background-color: #f0f0f0;
 }
 
@@ -52,5 +55,4 @@ defineProps({
   font-weight: bold;
   color: #0f5132;
 }
-  </style>
-  
+</style>
