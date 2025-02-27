@@ -1,10 +1,11 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted, watch, computed } from "vue";
-import HoverPopUp from '@/components/HoverPopUp.vue';
+import PointHoverPopUp from '@/components/PointHoverPopUp.vue';
 import { useColorMode } from "@vueuse/core";
 import { Button } from '@/components/ui/button';
 import { useActivityPointsStore } from "@/stores/activityPointsStore";
 import { Conflict, conflictStatus } from "@/data/knowledge_graph/structures";
+import ConflictHoverPopUp from "./ConflictHoverPopUp.vue";
 
 /** 
  * Activity-Diagram-Component
@@ -13,7 +14,8 @@ import { Conflict, conflictStatus } from "@/data/knowledge_graph/structures";
 export default defineComponent({
     name: "ActivityDiagramCanvas",
     components: {
-        HoverPopUp,
+        ConflictHoverPopUp,
+        PointHoverPopUp,
         Button
     },
 
@@ -83,6 +85,8 @@ export default defineComponent({
             label: string;
             content: Array<{ label: string, value?: string }>;
         }>(null);
+
+        const hoveredConflictPointData = ref<null | Conflict>(null);
 
         // Position of the hover popup
         const hoverPosition = ref<{ x: number; y: number }>({ x: 0, y: 0 });
@@ -416,7 +420,17 @@ export default defineComponent({
                 }
             });
 
+            let foundConflictPoint: Conflict | null = null;
+
+            conflictPositions.value.forEach((conflict) => {
+                const distance = Math.sqrt((mouseX - conflict.x) ** 2 + (mouseY - conflict.y) ** 2);
+                if (distance < triangleHeight / 80) {
+                    foundConflictPoint = conflict;
+                }
+            });
+
             hoveredPointData.value = foundPoint ? foundPoint : null;
+            hoveredConflictPointData.value = foundConflictPoint ? foundConflictPoint : null;
 
             updateHoverState(mouseX, mouseY);
             updateColors();
@@ -471,6 +485,7 @@ export default defineComponent({
             handleClick,
             handleHover,
             hoveredPointData,
+            hoveredConflictPointData,
             hoverPosition,
         };
     },
@@ -482,7 +497,8 @@ export default defineComponent({
         <canvas ref="canvas" :width="triangleWidth" :height="triangleHeight" @mousemove="handleHover"
             @click="handleClick" />
 
-        <HoverPopUp v-if="hoveredPointData" :hoveredPoint="hoveredPointData" :position="hoverPosition" />
+        <PointHoverPopUp v-if="hoveredPointData" :hoveredPoint="hoveredPointData" :position="hoverPosition" />
+        <ConflictHoverPopUp v-if="hoveredConflictPointData" :hoveredConflictPoint="hoveredConflictPointData" :position="hoverPosition" />
     </div>
 </template>
 
