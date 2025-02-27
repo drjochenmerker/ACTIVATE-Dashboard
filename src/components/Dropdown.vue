@@ -51,7 +51,7 @@ export default {
             this.$emit('update:modelValue', option);
             this.search = option.label;
             this.showDropdown = false;
-            console.log("Selected in Dropdown:", option); // Log the selected option
+            //console.log("Selected in Dropdown:", option); // Log the selected option
         },
         // ... other methods
     },

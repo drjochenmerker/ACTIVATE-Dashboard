@@ -446,7 +446,7 @@ export default defineComponent({
         };
 
         onMounted(() => {
-            console.log(conflictData)
+            // console.log(conflictData)
             conflictData.push(testConflict);
             conflictData.push(testConflict2);
             draw();

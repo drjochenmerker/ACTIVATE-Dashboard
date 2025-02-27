@@ -135,8 +135,8 @@ export default {
         const label = selectedValue.label || 'N/A';
 
         // test log
-        console.log("selectedPoints:", this.selectedPoints);
-        console.log("activePoints:", this.activePoints);
+        //console.log("selectedPoints:", this.selectedPoints);
+        //console.log("activePoints:", this.activePoints);
 
 
         return {
@@ -155,26 +155,23 @@ export default {
         description: content,
       };
 
-      console.log("note object", note);
       const conflictDetail = null;
       // **ADD CONFLICT**
       try {
         // todo replace with actual graph name
         const graph = 'Urology_Emergency_after_Debriefing';
         const addConflictResponse = await addConflict(graph, note);
-        console.log("addConflictResponse", addConflictResponse);
 
         // **TEST: GET CONFLICT DETAIL**
         if (addConflictResponse.status === "OK") {
           const conflictId = addConflictResponse.modified;
-          // TODO conflictdetail an die content pages übergebn
           const conflictDetail = await getConflictDetail(graph, conflictId);
-          console.log("conflictDetail", conflictDetail);
+          // console.log("new conflictDetail", conflictDetail);
 
           // **VERIFY:** Check if conflictDetail has the correct properties
           if (conflictDetail && conflictDetail.title === note.title && conflictDetail.description === note.description) {
             console.log("Conflict added and retrieved successfully!");
-            console.log("Conflict Ids test log: ", getConflictIds(graph));
+            //console.log("Conflict Ids test log: ", getConflictIds(graph));
 
             //console.log("Conflict IDs:", getConflictDetail(graph, "973d26bf5902cf923ff792b64d533a3444d83b5c"));
 
