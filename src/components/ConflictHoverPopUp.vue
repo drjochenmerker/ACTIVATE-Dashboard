@@ -57,7 +57,6 @@ const adjustedPosition = computed(() => {
   const viewportHeight = window.innerHeight;
 
   if (top + 120 + popupHeight.value > viewportHeight) {
-    console.log(top);
     top = props.position.y - popupHeight.value - 10;
   }
 
