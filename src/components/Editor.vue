@@ -207,7 +207,7 @@ export default {
     <!-- dropdown: -->
     <div>
       <div v-for="point in activePoints" :key="point">
-        <Dropdown :label="point" :options="pointData[point]" v-model="selectedPoints[point]" />
+        <Dropdown :label="point" :options="pointData[point] || []" v-model="selectedPoints[point]" />
       </div>
 
     </div>
