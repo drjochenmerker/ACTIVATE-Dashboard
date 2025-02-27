@@ -5,7 +5,7 @@ import Button from '@/components/ui/button/Button.vue';
 import Dropdown from './Dropdown.vue';
 import { useActivityPointsStore } from '@/stores/activityPointsStore';
 import { conflictStatus } from '@/data/knowledge_graph/structures';
-import { getActivities, getActivityDetail, getConflictDetail } from '@/data/knowledge_graph/read_operations';
+import { getActivities, getActivityDetail, getConflictDetail, getConflictIds } from '@/data/knowledge_graph/read_operations';
 import { addConflict } from '@/data/knowledge_graph/write_operations';
 
 export default {
@@ -30,14 +30,14 @@ export default {
       quill: null,
       isAnonymous: false,
       title: '',
-      activityDetails: null, // Store activity details here
+      activityDetails: null,
       selectedPoints: {
         subject: null,
         instruments: null,
         object: null,
         community: null,
         rules: null,
-        divisionOfLabour: null
+        divisionoflabour: null
       },
     };
   },
@@ -129,10 +129,15 @@ export default {
       // Transform activePoints into the desired participants array
       const participants = this.activePoints.map(point => {
         // Access selected value from dropdown
-        const selectedValue = this.selectedPoints[point];
+        const selectedValue = this.selectedPoints[point] || {};;
 
         // Use a fallback label if selectedValue is null or undefined
-        const label = selectedValue ? selectedValue.label : 'N/A';
+        const label = selectedValue.label || 'N/A';
+
+        // test log
+        console.log("selectedPoints:", this.selectedPoints);
+        console.log("activePoints:", this.activePoints);
+
 
         return {
           id: label, // Use selected label, or 'N/A' if not selected
@@ -154,19 +159,25 @@ export default {
 
       // **ADD CONFLICT**
       try {
-        const graph = 'your_graph_uri'; // Replace with your graph URI
+        // todo replace with actual graph name
+        const graph = 'Urology_Emergency_after_Debriefing';
         const addConflictResponse = await addConflict(graph, note);
         console.log("addConflictResponse", addConflictResponse);
 
         // **TEST: GET CONFLICT DETAIL**
         if (addConflictResponse.status === "OK") {
           const conflictId = addConflictResponse.modified;
+          // TODO conflictdetail an die content pages übergebn
           const conflictDetail = await getConflictDetail(graph, conflictId);
           console.log("conflictDetail", conflictDetail);
 
           // **VERIFY:** Check if conflictDetail has the correct properties
           if (conflictDetail && conflictDetail.title === note.title && conflictDetail.description === note.description) {
             console.log("Conflict added and retrieved successfully!");
+            console.log("Conflict Ids test log: ", getConflictIds(graph));
+
+            //console.log("Conflict IDs:", getConflictDetail(graph, "973d26bf5902cf923ff792b64d533a3444d83b5c"));
+
           } else {
             console.warn("Conflict added, but getConflictDetail returned incorrect data.");
           }
