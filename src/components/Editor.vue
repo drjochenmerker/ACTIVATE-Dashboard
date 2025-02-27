@@ -156,7 +156,7 @@ export default {
       };
 
       console.log("note object", note);
-
+      const conflictDetail = null;
       // **ADD CONFLICT**
       try {
         // todo replace with actual graph name
@@ -190,7 +190,7 @@ export default {
         // Handle the error appropriately (e.g., display an error message)
       }
 
-      this.$emit('transfer', note);
+      this.$emit('transfer', conflictDetail);
 
       const activityPointStore = useActivityPointsStore();
       activityPointStore.deactivateAllPoints();
