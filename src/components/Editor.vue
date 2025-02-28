@@ -176,8 +176,10 @@ export default {
 
             //console.log("Conflict IDs:", getConflictDetail(graph, "973d26bf5902cf923ff792b64d533a3444d83b5c"));
             const conflictsStore = useConflictsStore();
-            console.log(conflictDetail);
+            
             conflictsStore.addConflict(conflictDetail);
+            console.log(conflictDetail);
+            console.log(conflictsStore.getConflicts);
           } else {
             console.warn("Conflict added, but getConflictDetail returned incorrect data.");
           }
@@ -189,9 +191,6 @@ export default {
         console.error("Error adding conflict:", error);
         // Handle the error appropriately (e.g., display an error message)
       }
-
-
-      //this.$emit('transfer', conflictDetail);
 
       const activityPointStore = useActivityPointsStore();
       activityPointStore.deactivateAllPoints();

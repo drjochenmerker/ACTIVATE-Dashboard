@@ -42,6 +42,7 @@ const updatePopupHeight = () => {
 };
 
 onMounted(() => {
+  props.hoveredConflictPoint.description = props.hoveredConflictPoint.description?.replace(/<\/?[^>]+(>|$)/g, "");
   updatePopupHeight();
 });
 

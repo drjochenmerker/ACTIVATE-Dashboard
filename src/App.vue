@@ -4,40 +4,36 @@ import NavBar from './components/NavBar.vue';
 // Backend Tests
 import { getActivities, getActivityDetail, getAllConflictsWithDetail } from './data/knowledge_graph/read_operations';
 import { useConflictsStore } from './stores/conflictsStore';
-import { storeToRefs } from 'pinia';
 
 
 const conflictsStore = useConflictsStore();
-const { getConflicts } = storeToRefs(conflictsStore);
 
 const conflictDetails = ref<any[]>([]);
-const activityDetails = ref<any>(null);
+const activity = ref<any>(null);
+const activityGraph = ref<any>(null);
 
 const loadActivity = async () => {
   const activities = await getActivities();
   if (activities && activities.length > 0) {
-    const activity = await getActivityDetail(activities[0]);
-    return activity;
+    activity.value = await getActivityDetail(activities[0]);
+    activityGraph.value = activities[0].graph;
   }
 };
 
-const activity = loadActivity();
-
-//provide("conflicts", conflictDetails);
+const loadConflicts = async () => {
+  if (activity.value && activityGraph.value) {
+    const conflicts = await getAllConflictsWithDetail(activityGraph.value);
+    conflictsStore.setConflicts(conflicts);
+    conflictDetails.value = conflictsStore.getConflicts;
+    console.log(conflictDetails.value);
+  }
+};
 
 onMounted(async () => {
   try {
-    const activities = await getActivities();
-    //activityDetails.value = activities[0];
+    await loadActivity();
+    await loadConflicts();
 
-    console.log(activity);
-
-    if (activities && activities.length > 0) {
-      getAllConflictsWithDetail(activities[0].graph).then((conflicts) => {
-        conflictsStore.setConflicts(conflicts);
-        conflictDetails.value = getConflicts.value;
-      });
-    }
   } catch (error) {
     console.error("Fehler beim Laden der Aktivitäten:", error);
   }
@@ -48,7 +44,7 @@ onMounted(async () => {
     <div class="flex flex-col h-screen">
         <NavBar />
         <main class="flex-grow h-full p-6">
-            <router-view :key="$route.path" :activity="activity" :conflicts="conflictDetails" />
+            <router-view v-if="activity && conflictDetails.length > 0" :key="$route.path" :activity="activity" :conflicts="conflictDetails" />
         </main>
     </div>
 </template>

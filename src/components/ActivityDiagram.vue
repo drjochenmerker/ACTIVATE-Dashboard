@@ -423,7 +423,6 @@ export default defineComponent({
         };
 
         onMounted(async () => {
-            console.log(props.activity);
             draw();
         });
 
