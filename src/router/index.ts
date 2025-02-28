@@ -4,8 +4,8 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 
 // Routen definieren
 const routes: Array<RouteRecordRaw> = [
-    { path: '/', name: 'Home', component: HomePage },
-    { path: '/:id', name: 'Content', component: ContentPage, props: true }
+    { path: '/', name: 'Home', component: HomePage, props: true },
+    { path: '/:id', name: 'Content', component: ContentPage, props: true },
 ];
 
 

@@ -4,6 +4,7 @@ import 'quill/dist/quill.snow.css';
 import Button from '@/components/ui/button/Button.vue';
 import Dropdown from './Dropdown.vue';
 import { useActivityPointsStore } from '@/stores/activityPointsStore';
+import { useConflictsStore } from '@/stores/conflictsStore';
 import { conflictStatus } from '@/data/knowledge_graph/structures';
 import { getActivities, getActivityDetail, getConflictDetail, getConflictIds } from '@/data/knowledge_graph/read_operations';
 import { addConflict } from '@/data/knowledge_graph/write_operations';
@@ -170,11 +171,13 @@ export default {
 
           // **VERIFY:** Check if conflictDetail has the correct properties
           if (conflictDetail && conflictDetail.title === note.title && conflictDetail.description === note.description) {
-            console.log("Conflict added and retrieved successfully!");
+            console.log("Conflict added and retrieved successfully!", conflictDetail);
             //console.log("Conflict Ids test log: ", getConflictIds(graph));
 
             //console.log("Conflict IDs:", getConflictDetail(graph, "973d26bf5902cf923ff792b64d533a3444d83b5c"));
-
+            const conflictsStore = useConflictsStore();
+            console.log(conflictDetail);
+            conflictsStore.addConflict(conflictDetail);
           } else {
             console.warn("Conflict added, but getConflictDetail returned incorrect data.");
           }
@@ -187,7 +190,8 @@ export default {
         // Handle the error appropriately (e.g., display an error message)
       }
 
-      this.$emit('transfer', conflictDetail);
+
+      //this.$emit('transfer', conflictDetail);
 
       const activityPointStore = useActivityPointsStore();
       activityPointStore.deactivateAllPoints();

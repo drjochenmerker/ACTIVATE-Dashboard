@@ -2,17 +2,13 @@
 import { useRoute } from 'vue-router';
 import { contentData } from '@/data/contentData';
 import ContentTemplate from '@/components/ContentTemplate.vue';
-import { onMounted } from 'vue';
 
 // Define props
-const props = defineProps<{ conflicts: any[] }>();
+const props = defineProps<{ conflicts: any[], activity: any }>();
 
 const route = useRoute();
 const pageData = contentData.find((item) => item.id === route.params.id);
 
-onMounted(() => {
-    //
-},);
 </script>
 
 <template>

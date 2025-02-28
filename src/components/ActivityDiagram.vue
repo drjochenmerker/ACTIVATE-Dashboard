@@ -4,8 +4,9 @@ import PointHoverPopUp from '@/components/PointHoverPopUp.vue';
 import { useColorMode } from "@vueuse/core";
 import { Button } from '@/components/ui/button';
 import { useActivityPointsStore } from "@/stores/activityPointsStore";
-import { Conflict, conflictStatus } from "@/data/knowledge_graph/structures";
+import { Conflict } from "@/data/knowledge_graph/structures";
 import ConflictHoverPopUp from "./ConflictHoverPopUp.vue";
+import { useConflictsStore } from "@/stores/conflictsStore";
 
 /** 
  * Activity-Diagram-Component
@@ -23,10 +24,6 @@ export default defineComponent({
         activity: {
             type: Object,
             default: () => ({})
-        },
-        activityConflicts: {
-            type: Array,
-            default: () => []
         }
     },
 
@@ -41,44 +38,9 @@ export default defineComponent({
         const triangleWidth = 900;
         const triangleHeight = 800;
         const mode = useColorMode();
+
         const activityPointStore = useActivityPointsStore();
-
-        const testConflict = {
-            author: "Clemens Berkenhoff",
-            description: "Dies ist ein Testkonflikt, um mögliche Konflikte in der Anwendung zu testen.",
-            id: "testConflict",
-            participants: [
-                { id: "NursingSpecialist1", type: "object" },
-                { id: "DoL", type: "division_of_labour" },
-                { id: "Community1", type: "community" },
-            ],
-            replies: [
-                { comment: "Das ist ein Kommentar", author: "Clemens Berkenhoff", id: "testComment" },
-                { comment: "Das ist ein weiterer Kommentar", author: "Clemens Berkenhoff", id: "testComment2" },
-                { comment: "Das ist ein letzter Kommentar", author: "Clemens Berkenhoff", id: "testComment3" },
-            ],
-            status: conflictStatus.open,
-            timestamp: new Date(),
-            title: "Test Konflikt"
-        }
-
-        const testConflict2 = {
-            author: "Clemens Berkenhoff",
-            description: "Dies ist ein Testkonflikt, um mögliche Konflikte in der Anwendung zu testen.",
-            id: "testConflict",
-            participants: [
-                { id: "Rule1", type: "rules" },
-                { id: "Community1", type: "community" }
-            ],
-            replies: [
-                { comment: "Das ist ein Kommentar", author: "Clemens Berkenhoff", id: "testComment" },
-                { comment: "Das ist ein weiterer Kommentar", author: "Clemens Berkenhoff", id: "testComment2" },
-                { comment: "Das ist ein letzter Kommentar", author: "Clemens Berkenhoff", id: "testComment3" },
-            ],
-            status: conflictStatus.inDiscussion,
-            timestamp: new Date(),
-            title: "Test Konflikt 2"
-        }
+        const conflictStore = useConflictsStore();
 
         // Data of the hovered point
         const hoveredPointData = ref<null | {
@@ -93,7 +55,7 @@ export default defineComponent({
 
         // Data from the props
         const activityData = props.activity;
-        const conflictData = props.activityConflicts as Conflict[];
+        const conflictData = conflictStore.getConflicts;
 
         // Checks if the Activity-Diagram has to be cleared when a Comment is sent by the editor
         let hasToBeCleared = computed(() => activityPointStore.getActivePoints.length === 0);
@@ -177,6 +139,7 @@ export default defineComponent({
         const updatePoints = () => {
             selectedPoints.value = points.value.filter((point) => point.active).map((point) => point.id);
             activityPointStore.setActivePoints(selectedPoints.value);
+            console.log("Punkte aktualisiert");
         };
 
         const isPointInTriangle = (x: number, y: number, triangle: { pointIds: string[] }) => {
@@ -459,10 +422,8 @@ export default defineComponent({
             }
         };
 
-        onMounted(() => {
-            // console.log(conflictData)
-            conflictData.push(testConflict);
-            conflictData.push(testConflict2);
+        onMounted(async () => {
+            console.log(props.activity);
             draw();
         });
 
@@ -476,6 +437,11 @@ export default defineComponent({
                 updateColors();
                 draw();
             }
+        });
+
+        watch(conflictStore.getConflicts, () => {
+            console.log("Conflicts updated", conflictStore.getConflicts);
+            draw();
         });
 
         return {
@@ -498,7 +464,8 @@ export default defineComponent({
             @click="handleClick" />
 
         <PointHoverPopUp v-if="hoveredPointData" :hoveredPoint="hoveredPointData" :position="hoverPosition" />
-        <ConflictHoverPopUp v-if="hoveredConflictPointData" :hoveredConflictPoint="hoveredConflictPointData" :position="hoverPosition" />
+        <ConflictHoverPopUp v-if="hoveredConflictPointData" :hoveredConflictPoint="hoveredConflictPointData"
+            :position="hoverPosition" />
     </div>
 </template>
 

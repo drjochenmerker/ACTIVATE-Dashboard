@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { contentData } from '@/data/contentData';
 import { types } from 'util';
 import { getConflictDetail, getConflictIds } from '@/data/knowledge_graph/read_operations';
+import { useConflictsStore } from '@/stores/conflictsStore';
+import { storeToRefs } from 'pinia';
 
 const props = defineProps({
   pageData: {
@@ -17,6 +19,9 @@ const props = defineProps({
     required: true,
   },
 });
+
+const conflictsStore = useConflictsStore();
+const { getConflicts } = storeToRefs(conflictsStore);
 
 
 const filteredConflicts = computed(() => {
