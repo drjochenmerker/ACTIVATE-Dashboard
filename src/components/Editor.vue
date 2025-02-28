@@ -299,22 +299,20 @@ input {
 
 .quill-editor {
   height: 250px;
-  width: 100%;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   background-color: #f9f9f9;
 }
 
 .anonymous-checkbox {
-  margin-top: 10px;
+  margin-top: 20px;
   display: flex;
-  align-items: center;
+  width: fit-content;
+  white-space: nowrap;
+  align-items: left;
   font-size: 14px;
 }
 
-.anonymous-checkbox input {
-  margin-right: 8px;
-}
 
 .transfer-button {
   margin-top: 20px;
@@ -328,6 +326,7 @@ input {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: background-color 0.3s ease;
 }
+
 
 .transfer-button:hover {
   background-color: #323232;
