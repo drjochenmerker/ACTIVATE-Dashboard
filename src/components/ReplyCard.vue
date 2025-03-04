@@ -18,6 +18,7 @@ onMounted(() => {
 
 <template>
     <div class="replies-section">
+        <div v-html="props.conflictReply.author"></div>
         <div v-html="props.conflictReply.comment"></div>
     </div>
 </template>
@@ -38,7 +39,7 @@ onMounted(() => {
     text-align: end;
 }
 
-/* Dynamische Schatten basierend auf dem ausgewählten Status */
+/* dynamic shadow based on selected status */
 .note-card.red {
     box-shadow: 0 2px 8px rgba(255, 182, 193, 0.5);
     /* Pastellrosa */
