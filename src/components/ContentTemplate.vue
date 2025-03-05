@@ -67,6 +67,8 @@ const saveReply = async (conflictId: string) => {
   // set visibility of comment-input field to false
   replyInputVisible.value[conflictId] = false;
   newReplyText.value[conflictId] = '';
+
+  console.log("saved ");
 };
 
 //filtered conflicts based on id of "pageData"
