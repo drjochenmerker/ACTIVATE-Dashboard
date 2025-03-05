@@ -1,105 +1,93 @@
 <script lang="ts" setup>
-import { defineProps, ref, defineEmits, onMounted } from 'vue';
+import { defineProps, computed, ref, onMounted } from 'vue';
+import ReplyCard from './ReplyCard.vue';
+import { getConflictDetail } from '@/data/knowledge_graph/read_operations';
 
 const props = defineProps({
     conflictReply: {
         type: Object,
         required: true,
+    },
+});
+
+const replies = computed(() => props.conflictReply.replies ?? []);
+const graph = 'Urology_Emergency_after_Debriefing'; // Hardcoded graph title
+const nestedReplies = ref<any[]>([]);
+
+const loadedReplies = ref<Set<string>>(new Set()); // Track loaded reply IDs
+
+const loadNestedReplies = async (replyId: string) => {
+    // Wenn diese Antwort bereits geladen wurde, tue nichts
+    if (loadedReplies.value.has(replyId)) {
+        return;
     }
 
-});
-const emit = defineEmits(['updateStatus']);
+    loadedReplies.value.add(replyId); // Markiere diese Antwort-ID als geladen
 
+    try {
+        const response = await getConflictDetail(graph, replyId);
 
+        // Sicherstellen, dass die Antwortstruktur gültig ist
+        if (Array.isArray(response.replies)) {
+            // Wenn neue Antworten vorhanden sind, füge sie nur hinzu, wenn sie noch nicht geladen wurden
+            response.replies.forEach((nestedReply: any) => {
+                if (!loadedReplies.value.has(nestedReply.id)) {
+                    nestedReplies.value.push(nestedReply);
+                    loadedReplies.value.add(nestedReply.id); // Füge auch die ID der geladenen Antworten hinzu
+                }
+            });
+        }
+    } catch (error) {
+        console.error(`Fehler beim Laden der verschachtelten Antworten für replyId: ${replyId}`, error);
+    }
+};
+
+// Wenn die Komponente gemountet wird, lade die verschachtelten Antworten
 onMounted(() => {
-
+    if (props.conflictReply.id) {
+        loadNestedReplies(props.conflictReply.id);
+    }
 });
 </script>
 
 <template>
-    <div class="replies-section">
-        <div v-html="props.conflictReply.author"></div>
-        <div v-html="props.conflictReply.comment"></div>
+    <div class="reply-card">
+        <div class="reply-content">
+            <p class="reply-author">{{ conflictReply.author }}</p>
+            <p class="reply-text">{{ conflictReply.comment }}</p>
+        </div>
+
+        <!-- Zeige verschachtelte Antworten an, wenn welche vorhanden sind -->
+        <div v-if="nestedReplies.length > 0" class="nested-replies">
+            <ReplyCard v-for="nestedReply in nestedReplies" :key="nestedReply.id" :conflictReply="nestedReply" />
+        </div>
     </div>
 </template>
 
 <style scoped>
-/* Allgemeines Styling */
-.replies-section {
-    box-shadow: 0 2px 8px rgba(223, 223, 223, 0.5);
+.reply-card {
+    border-left: 2px solid #ccc;
+    padding-left: 10px;
+    margin-left: 10px;
+    margin-top: 10px;
+}
+
+.reply-content {
     background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 16px;
-    margin: 10px 0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    max-width: 100%;
-    width: 100%;
-    transition: box-shadow 0.3s ease, border-color 0.3s ease;
-    text-align: end;
+    padding: 10px;
+    border-radius: 5px;
 }
 
-/* dynamic shadow based on selected status */
-.note-card.red {
-    box-shadow: 0 2px 8px rgba(255, 182, 193, 0.5);
-    /* Pastellrosa */
-    border-color: rgba(255, 182, 193, 0.7);
+.reply-author {
+    font-weight: bold;
 }
 
-.note-card.yellow {
-    box-shadow: 0 2px 8px rgba(253, 253, 150, 0.5);
-    /* Pastellgelb */
-    border-color: rgba(253, 253, 150, 0.7);
+.reply-text {
+    margin-top: 5px;
 }
 
-.note-card.green {
-    box-shadow: 0 2px 8px rgba(152, 251, 152, 0.5);
-    /* Pastellgrün */
-    border-color: rgba(152, 251, 152, 0.7);
-}
-
-/* Header Styling */
-.note-card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-    gap: 10px;
-}
-
-.note-card-status {
-    font-size: 12px;
-    padding: 4px 8px;
-    border-radius: 4px;
-    color: white;
-    border-radius: 20px;
-}
-
-.note-card-status.anonymous {
-    background-color: #c6c6c6;
-}
-
-.note-card-status:not(.anonymous) {
-    background-color: #0000009d;
-
-}
-
-/* Dropdown Styling */
-.status-selector select {
-    padding: 5px;
-    font-size: 14px;
-    cursor: pointer;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-    transition: background-color 0.2s ease;
-}
-
-.status-selector select:focus {
-    outline: none;
-    background-color: #f1f1f1;
-}
-
-.note-card-content {
-    margin-bottom: 10px;
+.nested-replies {
+    margin-top: 10px;
+    padding-left: 20px;
 }
 </style>

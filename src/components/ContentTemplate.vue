@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, computed, toRaw } from 'vue';
+import { ref, computed, toRaw, onMounted } from 'vue';
 import NoteCard from './NoteCard.vue';
 import ReplyCard from './ReplyCard.vue';
 import { addComment } from "@/data/knowledge_graph/write_operations";
@@ -21,9 +21,6 @@ const props = defineProps({
   },
 });
 
-const conflictsStore = useConflictsStore();
-const { getConflicts } = storeToRefs(conflictsStore);
-
 // visibility of comment-input field per conflict
 const replyInputVisible = ref<Record<string, boolean>>({});
 const newReplyText = ref<Record<string, string>>({});
@@ -36,9 +33,8 @@ const toggleReplyInput = (conflictId: string) => {
   }
 };
 
-
 const saveReply = async (conflictId: string) => {
-  console.log(`save comment for conlfictid: ${conflictId}:`, newReplyText.value[conflictId]);
+  console.log(`save comment for conlfict with id: ${conflictId}:`, newReplyText.value[conflictId]);
 
   if (!newReplyText.value[conflictId]) return;
 
@@ -99,10 +95,10 @@ const filteredConflicts = computed(() => {
           </div>
         </div>
 
-        <!-- show replies -->
+        <!-- Anzeige der Replies zu einem Konflikt -->
         <div v-if="conflict.replies && conflict.replies.length > 0" class="reply-container">
           <div v-for="(reply, replyIndex) in conflict.replies" :key="reply.id">
-            <ReplyCard :conflictReply="reply" />
+            <ReplyCard :key="reply.id" :conflictReply="reply" />
           </div>
         </div>
       </div>
