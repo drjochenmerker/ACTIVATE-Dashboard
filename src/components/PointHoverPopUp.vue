@@ -5,7 +5,7 @@ import { defineProps } from 'vue';
 defineProps<{
   hoveredPoint: {
     label: string;
-    content: Array<string>;
+    content: Array<{label: string; value?: string}>;
   };
   position: {
     x: number;

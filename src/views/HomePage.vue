@@ -15,8 +15,7 @@ const hasActivePoints = computed(() => activityPointStore.getActivePoints.length
 </script>
 
 <template>
-  <h1 class="text-2xl font-semibold mb-4">Home</h1>
-  <h3 class="text-xl font-semibold mb-4">Current Activity: {{ activityGraph ? activityGraph : "Can't Load Activity Name" }}</h3>
+  <h1 class="text-2xl font-semibold mb-4">Home ({{ activityGraph ? activityGraph : "Can't Load Activity Name" }})</h1>
 
   <div class="flex w-full h-2/3 relative mx-auto gap-4">
     <div class="flex-1 min-w-[900px]">
