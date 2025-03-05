@@ -139,6 +139,7 @@ export default defineComponent({
         const updatePoints = () => {
             selectedPoints.value = points.value.filter((point) => point.active).map((point) => point.id);
             activityPointStore.setActivePoints(selectedPoints.value);
+            console.log(activityData)
             console.log("Punkte aktualisiert");
         };
 

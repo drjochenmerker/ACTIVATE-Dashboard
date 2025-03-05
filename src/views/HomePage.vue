@@ -5,7 +5,7 @@ import ActivityDiagram from '@/components/ActivityDiagram.vue';
 import Editor from '@/components/Editor.vue';
 import { useActivityPointsStore } from "@/stores/activityPointsStore";
 
-defineProps<{ conflicts: any[], activity: any }>();
+defineProps<{ conflicts: any[], activity: any , activityGraph: string}>();
 
 const activityPointStore = useActivityPointsStore();
 const { getActivePoints } = storeToRefs(activityPointStore);
@@ -16,6 +16,7 @@ const hasActivePoints = computed(() => activityPointStore.getActivePoints.length
 
 <template>
   <h1 class="text-2xl font-semibold mb-4">Home</h1>
+  <h3 class="text-xl font-semibold mb-4">Current Activity: {{ activityGraph ? activityGraph : "Can't Load Activity Name" }}</h3>
 
   <div class="flex w-full h-2/3 relative mx-auto gap-4">
     <div class="flex-1 min-w-[900px]">
