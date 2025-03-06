@@ -48,7 +48,7 @@ const applyTriple = () => {
 </script>
 
 <template> 
-    <Button @click="openDialog">
+    <Button class="mb-4" @click="openDialog">
         Add RDF Triple
     </Button>
 
