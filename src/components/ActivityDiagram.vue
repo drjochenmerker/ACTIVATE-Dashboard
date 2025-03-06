@@ -73,12 +73,12 @@ export default defineComponent({
          * @property {boolean} active: Specifies if the point is active at the moment.
          */
         const points = ref([
-            { x: triangleWidth / 2, y: triangleHeight / 8, id: "instruments", label: "Instruments", color: getPointColor(), active: false }, // Ecke oben
-            { x: triangleWidth / 8, y: (triangleHeight / 8) * 7, id: "rules", label: "Rules", color: getPointColor(), active: false }, // Ecke Links Unten
-            { x: (triangleWidth / 8) * 7, y: (triangleHeight / 8) * 7, id: "division_of_labour", label: "Division of Labour", color: getPointColor(), active: false }, // Ecke Rechts Unten
-            { x: (triangleWidth / 16) * 5, y: triangleHeight / 2, id: "subject", label: "Subject", color: getPointColor(), active: false }, // Links Mitte
-            { x: (triangleWidth / 16) * 11, y: triangleHeight / 2, id: "object", label: "Object", color: getPointColor(), active: false }, // Rechts Mitte
-            { x: triangleWidth / 2, y: (triangleHeight / 8) * 7, id: "community", label: "Community", color: getPointColor(), active: false }, // Unten Mitte
+            { x: triangleWidth / 2, y: triangleHeight / 8, id: "instruments", label: "Instruments", color: getPointColor(), active: false, highlighted: false }, // Ecke oben
+            { x: triangleWidth / 8, y: (triangleHeight / 8) * 7, id: "rules", label: "Rules", color: getPointColor(), active: false, highlighted: false }, // Ecke Links Unten
+            { x: (triangleWidth / 8) * 7, y: (triangleHeight / 8) * 7, id: "division_of_labour", label: "Division of Labour", color: getPointColor(), active: false, highlighted: false }, // Ecke Rechts Unten
+            { x: (triangleWidth / 16) * 5, y: triangleHeight / 2, id: "subject", label: "Subject", color: getPointColor(), active: false, highlighted: false }, // Links Mitte
+            { x: (triangleWidth / 16) * 11, y: triangleHeight / 2, id: "object", label: "Object", color: getPointColor(), active: false, highlighted: false }, // Rechts Mitte
+            { x: triangleWidth / 2, y: (triangleHeight / 8) * 7, id: "community", label: "Community", color: getPointColor(), active: false, highlighted: false }, // Unten Mitte
         ]);
 
 
@@ -125,7 +125,7 @@ export default defineComponent({
 
                 const participantPoints = conflict.participants
                     .map((participant) => points.value.find((p) => p.id === participant.type))
-                    .filter((p): p is { x: number; y: number; id: string; label: string; color: string; active: boolean } => !!p);
+                    .filter((p): p is { x: number; y: number; id: string; label: string; color: string; active: boolean; highlighted: boolean } => !!p);
 
                 if (participantPoints.length) {
                     const avgX = participantPoints.reduce((sum, p) => sum + p.x, 0) / participantPoints.length;
@@ -139,7 +139,6 @@ export default defineComponent({
         const updatePoints = () => {
             selectedPoints.value = points.value.filter((point) => point.active).map((point) => point.id);
             activityPointStore.setActivePoints(selectedPoints.value);
-            console.log("Punkte aktualisiert");
         };
 
         const isPointInTriangle = (x: number, y: number, triangle: { pointIds: string[] }) => {
@@ -225,7 +224,7 @@ export default defineComponent({
                 }
             });
 
-            if (!hoveredPoint.value) {
+            if (!hoveredPoint.value && !hoveredConflictPointData.value) {
                 triangles.value.forEach((triangle) => {
                     if (isPointInTriangle(mouseX, mouseY, triangle)) {
                         hoveredTriangle.value = triangle;
@@ -242,6 +241,8 @@ export default defineComponent({
             points.value.forEach((point) => {
                 if (hoveredPoint.value === point.id && !point.active) {
                     point.color = "#ff9999";
+                } else if (point.highlighted) {
+                    point.color = "#db0000";
                 } else {
                     point.color = point.active ? "red" : getPointColor();
                 }
@@ -298,6 +299,22 @@ export default defineComponent({
                 }
             }
 
+            // draw red triangle between 3 points if 3 points are currently selected
+            if (selectedPoints.value.length === 3) {
+                const [p1, p2, p3] = selectedPoints.value.map((id) => points.value.find((p) => p.id === id));
+                if (p1 && p2 && p3) {
+                    ctx.beginPath();
+                    ctx.moveTo(p1.x, p1.y);
+                    ctx.lineTo(p2.x, p2.y);
+                    ctx.lineTo(p3.x, p3.y);
+                    ctx.closePath();
+                    ctx.strokeStyle = "red";
+                    ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
+                    ctx.stroke();
+                    ctx.fill();
+                }
+            }
+
             // draw lines
             lines.value.forEach((line) => {
                 const [point1, point2] = line.pointIds.map((id) => points.value.find((p) => p.id === id));
@@ -332,25 +349,8 @@ export default defineComponent({
 
             });
 
-            // draw red triangle between 3 points if 3 points are currently selected
-            if (selectedPoints.value.length === 3) {
-                const [p1, p2, p3] = selectedPoints.value.map((id) => points.value.find((p) => p.id === id));
-                if (p1 && p2 && p3) {
-                    ctx.beginPath();
-                    ctx.moveTo(p1.x, p1.y);
-                    ctx.lineTo(p2.x, p2.y);
-                    ctx.lineTo(p3.x, p3.y);
-                    ctx.closePath();
-                    ctx.strokeStyle = "red";
-                    ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
-                    ctx.stroke();
-                    ctx.fill();
-                }
-            }
-
             if (conflictPositions.value.length > 0) {
                 conflictPositions.value.forEach((conflict: any) => {
-                    // Zeichne einen kleinen Kreis als Konfliktindikator
                     ctx.beginPath();
                     ctx.arc(conflict.x, conflict.y, triangleHeight / 80, 0, 2 * Math.PI);
                     ctx.fillStyle = conflict.status == "gelöst" ? "green" : conflict.status == "in Besprechung" ? "yellow" : "red";
@@ -368,7 +368,7 @@ export default defineComponent({
             const mouseX = event.clientX - rect.left;
             const mouseY = event.clientY - rect.top;
 
-            hoverPosition.value = { x: mouseX + 50, y: mouseY + 10 };
+            hoverPosition.value = { x: mouseX + 10, y: mouseY + 10 };
 
             let foundPoint: { label: string; content: Array<string>; } | null = null;
 
@@ -438,6 +438,17 @@ export default defineComponent({
             }
         });
 
+        watch(hoveredConflictPointData, (newConflict) => {
+            const conflictTypes = newConflict
+                ? newConflict.participants.map(participant => participant.type)
+                : [];
+
+            points.value.forEach(point => {
+                point.highlighted = conflictTypes.includes(point.id);
+            });
+            updateColors();
+        });
+
         watch(conflictStore.getConflicts, () => {
             console.log("Conflicts updated", conflictStore.getConflicts);
             draw();
@@ -469,21 +480,4 @@ export default defineComponent({
 </template>
 
 <style scoped>
-canvas {
-    display: block;
-    margin: 0;
-    flex: 2;
-}
-
-.container {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-
-}
-
-.editor-placeholder {
-    transition: opacity 0.3s ease-in-out;
-    flex: 3;
-}
 </style>
