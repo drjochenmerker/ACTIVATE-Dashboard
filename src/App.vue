@@ -44,7 +44,7 @@ onMounted(async () => {
     <div class="flex flex-col h-screen">
         <NavBar />
         <main class="flex-grow h-full p-6">
-            <router-view v-if="activity && conflictDetails.length > 0" :key="$route.path" :activity="activity" :conflicts="conflictDetails" />
+            <router-view v-if="activity && conflictDetails.length > 0" :key="$route.path" :activity="activity" :activityGraph="activityGraph" :conflicts="conflictDetails" />
         </main>
     </div>
 </template>

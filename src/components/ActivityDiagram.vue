@@ -458,7 +458,7 @@ export default defineComponent({
 </script>
 
 <template>
-    <div class="container" @mouseleave="hoveredPointData = null">
+    <div @mouseleave="hoveredPointData = null">
         <canvas ref="canvas" :width="triangleWidth" :height="triangleHeight" @mousemove="handleHover"
             @click="handleClick" />
 
