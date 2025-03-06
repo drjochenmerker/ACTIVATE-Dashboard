@@ -121,18 +121,36 @@ export default defineComponent({
         const hoveredTriangle = ref<{ pointIds: string[] } | null>(null);
 
         const conflictPositions = computed(() => {
+            const processedPositions: Array<{ x: number; y: number }> = [];
             return conflictData.map((conflict: Conflict) => {
 
                 const participantPoints = conflict.participants
                     .map((participant) => points.value.find((p) => p.id === participant.type))
                     .filter((p): p is { x: number; y: number; id: string; label: string; color: string; active: boolean; highlighted: boolean } => !!p);
 
+                let baseX = 0;
+                let baseY = 0;
+
                 if (participantPoints.length) {
-                    const avgX = participantPoints.reduce((sum, p) => sum + p.x, 0) / participantPoints.length;
-                    const avgY = participantPoints.reduce((sum, p) => sum + p.y, 0) / participantPoints.length;
-                    return { ...conflict, x: avgX, y: avgY };
+                    baseX = participantPoints.reduce((sum, p) => sum + p.x, 0) / participantPoints.length;
+                    baseY = participantPoints.reduce((sum, p) => sum + p.y, 0) / participantPoints.length;
                 }
-                return null;
+
+                let offsetX = 0;
+                let offsetY = 0;
+
+                processedPositions.forEach((pos) => {
+                    const distance = Math.sqrt(Math.pow(baseX + offsetX - pos.x, 2) + Math.pow(baseY + offsetY - pos.y, 2));
+                    if (distance < 20) {
+                        offsetX += 20;
+                    }
+                })
+
+                const finalX = baseX + offsetX;
+                const finalY = baseY + offsetY;
+                processedPositions.push({ x: finalX, y: finalY });
+
+                return { ...conflict, x: finalX, y: finalY };
             }).filter((pos) => pos !== null);
         });
 
@@ -479,5 +497,4 @@ export default defineComponent({
     </div>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>
