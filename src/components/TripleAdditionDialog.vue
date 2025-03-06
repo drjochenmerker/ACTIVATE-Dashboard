@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import Button from '@/components/ui/button/Button.vue';
+
+import { defineProps } from 'vue';
+
+defineProps<{
+    isOpen: Boolean
+}>();
   
 const isOpen = ref(false);
 const subject = ref('');
