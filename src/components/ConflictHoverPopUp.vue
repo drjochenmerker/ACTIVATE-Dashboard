@@ -107,6 +107,7 @@ const adjustedPosition = computed(() => {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
   pointer-events: none; /* Verhindert unerwünschte Hover-Events */
   z-index: 10;
+  opacity: 0.9;
 }
 
 .custom-list {

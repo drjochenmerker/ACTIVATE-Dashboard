@@ -38,6 +38,7 @@ defineProps<{
   pointer-events: none;
   /* Verhindert unerwünschte Hover-Events */
   z-index: 10;
+  opacity: 0.9;
 }
 
 .custom-list {
