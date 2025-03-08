@@ -199,7 +199,7 @@ export default defineComponent({
                 const isConnected = line.pointIds.every((id) => triangle.pointIds.includes(id));
                 if (isConnected) {
                     line.active = !triangleIsActive;
-                    line.color = triangleIsActive ? getLineColor() : "red";
+                    line.color = triangleIsActive ? getLineColor() : "blue";
                 }
             });
 
@@ -254,11 +254,11 @@ export default defineComponent({
             // Update point colors
             points.value.forEach((point) => {
                 if (hoveredPoint.value === point.id && !point.active) {
-                    point.color = "#ff9999";
+                    point.color = "deepskyblue";
                 } else if (point.highlighted) {
-                    point.color = "#db0000";
+                    point.color = "deepskyblue";
                 } else {
-                    point.color = point.active ? "red" : getPointColor();
+                    point.color = point.active ? "blue" : getPointColor();
                 }
             });
 
@@ -270,7 +270,7 @@ export default defineComponent({
                     const isConnecting = line.pointIds.every((id) => selectedIds.includes(id));
 
                     if (isConnecting) {
-                        line.color = "red";
+                        line.color = "blue";
                         line.active = true;
                     } else {
                         line.color = getLineColor();
@@ -311,7 +311,7 @@ export default defineComponent({
                     ctx.lineTo(p2.x, p2.y);
                     ctx.lineTo(p3.x, p3.y);
                     ctx.closePath();
-                    ctx.fillStyle = "rgba(255, 153, 153, 0.5)";
+                    ctx.fillStyle = "rgba(0, 191, 255, 0.5)";
                     ctx.stroke();
                     ctx.fill();
                 }
@@ -326,8 +326,8 @@ export default defineComponent({
                     ctx.lineTo(p2.x, p2.y);
                     ctx.lineTo(p3.x, p3.y);
                     ctx.closePath();
-                    ctx.strokeStyle = "red";
-                    ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
+                    ctx.strokeStyle = "blue";
+                    ctx.fillStyle = "rgba(0, 191, 255, 0.5)";
                     ctx.stroke();
                     ctx.fill();
                 }
