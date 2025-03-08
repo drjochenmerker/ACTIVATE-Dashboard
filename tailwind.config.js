@@ -20,6 +20,8 @@ export const theme = {
     },
     extend: {
         colors: {
+            'custom-bg-gray' : '#333333',
+            'custom-bg-gray-2' : '#535353',
             border: 'hsl(var(--border))',
             input: 'hsl(var(--input))',
             ring: 'hsl(var(--ring))',
