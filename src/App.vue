@@ -1,27 +1,49 @@
 <script setup lang="ts">
+import { ref, onMounted } from 'vue';
 import NavBar from './components/NavBar.vue';
 // Backend Tests
-import { getPredicateObject } from './data/knowledge_graph/read_operations';
-import { KnowledgeGraphActivityClass, LanguageCode } from './data/knowledge_graph/structures';
-import { vocabAddPredicate } from './data/knowledge_graph/write_operations';
-getPredicateObject().then(async preds => {
-    console.log("Getting all predicates for Subject -> Object", preds.get(["subject","object"]))
-    console.log("Bidirectional predicate get for Subject <-> Object", preds.getBidirectional(["subject","object"]))
-    console.log("Adding predicates", await vocabAddPredicate("BorrowsFrom", 
-        [KnowledgeGraphActivityClass.subject], [KnowledgeGraphActivityClass.object, KnowledgeGraphActivityClass.community], 
-        [{label: "Borgt von", language: LanguageCode.german},{label: "Borrows from", language: LanguageCode.english}]
-    ));
-})
-// Tests end here
+import { getActivities, getActivityDetail, getAllConflictsWithDetail } from './data/knowledge_graph/read_operations';
+import { useConflictsStore } from './stores/conflictsStore';
+
+
+const conflictsStore = useConflictsStore();
+
+const conflictDetails = ref<any[]>([]);
+const activity = ref<any>(null);
+const activityGraph = ref<any>(null);
+
+const loadActivity = async () => {
+  const activities = await getActivities();
+  if (activities && activities.length > 0) {
+    activity.value = await getActivityDetail(activities[0]);
+    activityGraph.value = activities[0].graph;
+  }
+};
+
+const loadConflicts = async () => {
+  if (activity.value && activityGraph.value) {
+    const conflicts = await getAllConflictsWithDetail(activityGraph.value);
+    conflictsStore.setConflicts(conflicts);
+    conflictDetails.value = conflictsStore.getConflicts;
+  }
+};
+
+onMounted(async () => {
+  try {
+    await loadActivity();
+    await loadConflicts();
+
+  } catch (error) {
+    console.error("Fehler beim Laden der Aktivitäten:", error);
+  }
+});
 </script>
 
 <template>
     <div class="flex flex-col h-screen">
         <NavBar />
         <main class="flex-grow h-full p-6">
-            <router-view :key="$route.path" />
+            <router-view v-if="activity && conflictDetails.length > 0" :key="$route.path" :activity="activity" :activityGraph="activityGraph" :conflicts="conflictDetails" />
         </main>
     </div>
 </template>
-
-<style scoped></style>

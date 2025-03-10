@@ -2,6 +2,15 @@
  * TS Workaround for SPARQL responses
  * This is a dirty fix which prevent TS form comlaining about dynamic keys
  */
+/**
+ * Type for data returned by the knowledge graph
+ * in order to prevent VSCode from complaining about dynamic keys
+ */
+export type KnowledgeGraphData = {
+    [key: string]: any;
+};
+
+
 export type StringAccessObject = {
     [key: string]: any;
 }
