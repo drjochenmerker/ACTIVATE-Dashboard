@@ -1,5 +1,5 @@
 import hash from "object-hash";
-import { fetchSparql, getSparqlTemplate } from "./utils";
+import { fetchSparql, getSparqlTemplate, RDFSyntaxCheck } from "./utils";
 import { Conflict, conflictStatus, KnowledgeGraphActivityClass, LanguageLabel, RDFOperation, RDFTriple, sparqlTemplate, updateResponse } from "./structures";
 
 /**
@@ -86,6 +86,23 @@ export async function updateConflictStatus(graph: string, conflictId: string, st
     return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: conflictId, action: RDFOperation.insert } as updateResponse;
 }
 
+// TODO
+// export async function updateConflict(graph: string, conflictId: string, status: conflictStatus): Promise<updateResponse> {
+//     // Update Title
+//     // Update Description
+//     // Update Participants
+//     // Update Status?
+//     let query = await getSparqlTemplate(sparqlTemplate.updateConflictStatus);
+//     const mapObj = {
+//         "{{graph}}": graph,
+//         "{{conflictId}}": conflictId,
+//         "{{newStatus}}": status
+//     };
+//     query = query.replaceMultiple(mapObj);
+//     const data = await fetchSparql(query, true);
+//     return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: conflictId, action: RDFOperation.insert } as updateResponse;
+// }
+
 /**
  * Adds a comment to a conflict or another comment
  * @param parentId Id of the parent element. Can either be a conflict id or another comment id
@@ -147,6 +164,8 @@ export async function deleteComment(graph: string, commentId: string, isNestedCo
  * @returns updateResponse Object
  */
 export async function updateTriple(graph: string, triple: RDFTriple, operation: RDFOperation): Promise<updateResponse> {
+    // Check if triple is legit
+    if (RDFSyntaxCheck(triple) == false) return { code: 400, status: "Error", modified: Object.values(triple).join(" "), action: operation } as updateResponse;
     let query = operation === "insert"
         ? await getSparqlTemplate(sparqlTemplate.addTriple)
         : await getSparqlTemplate(sparqlTemplate.deleteTriple);
@@ -163,14 +182,15 @@ export async function updateTriple(graph: string, triple: RDFTriple, operation: 
 }
 
 /**
- * Adds a new predicate to the knowledge graph vocabulary
- * @param predicate Predicate label in CamelCase that all information will be accessed with. Example: Uses, ConnectsTo
- * @param domains Activity Classes that are able to be the initiator of the
- * @param ranges Activity Classes that are able to be the target of the predicate
- * @param labels Description of the predicate in multiple languages used for sentence construction
- * @returns Response Object
+ * Adds a new predicate to the vocabulary
+ * @param predicate New Predicate indentifier as string
+ * @param domains List of classes that can be used as domain (subject of rdf triple)
+ * @param ranges List of classes that can be used as range (object of rdf triple)
+ * @param labels Description of predicate in multiple languages
+ * @returns updateResponse Object
  */
 export async function vocabAddPredicate(predicate: string, domains: KnowledgeGraphActivityClass[], ranges: KnowledgeGraphActivityClass[], labels: LanguageLabel[]): Promise<updateResponse> {
+    if (RDFSyntaxCheck(predicate) == false) return { code: 400, status: "Error", modified: predicate, action: RDFOperation.insert } as updateResponse;
     let query = await getSparqlTemplate(sparqlTemplate.addPredicate);
     const labelString = labels.map(label => {
         return `"${label.label}"@${label.language}`;
