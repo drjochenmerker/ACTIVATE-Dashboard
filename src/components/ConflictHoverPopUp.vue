@@ -1,13 +1,14 @@
 <script setup lang="ts">
+import { useColorMode } from '@vueuse/core';
 import { computed, nextTick, onMounted, ref, watch } from 'vue';
 
-// Datenstruktur für die Beteiligten Parteien eines Konflikts
+// Data Structure for the participants of a conflict
 interface Participant {
   id: string;
   type: string;
 }
 
-// Datenstruktur für einen Konflikt
+// Data Structure for a conflict
 interface Conflict {
   title: string;
   description?: string;
@@ -18,21 +19,23 @@ interface Conflict {
   replies?: any[];
 }
 
-// Props für das Popup
+// Props of the popup
 const props = defineProps<{
   hoveredConflictPoint: Conflict;
   position: { x: number; y: number };
 }>();
 
-// Alles was folgt ist nötig für die Anpassung der Popup-Position, damit es nicht über den unteren Bildschirmrand hinausragt:
+const mode = useColorMode();
 
-// Ref für das Popup-Element
+// Everything that follows is nescessary to prevent overlapping and placement outside the viewport:
+
+// Ref for the Popup-Element
 const popupRef = ref<HTMLElement | null>(null);
 
-// Höhe des Popups
+// Height of the popup
 const popupHeight = ref(0);
 
-// Beim Mounten und wenn sich das Popup ändert, wird die Höhe des Popups neu gemessen
+// Height gets measured again on mount and when the popup changes
 const updatePopupHeight = () => {
   nextTick(() => {
     if (popupRef.value) {
@@ -46,12 +49,12 @@ onMounted(() => {
   updatePopupHeight();
 });
 
-// Falls sich die Position oder der Inhalt ändert, Höhe neu messen
+// Measure new Height
 watch(() => props.hoveredConflictPoint, updatePopupHeight);
 watch(() => props.position, updatePopupHeight);
 
-// Passt die Position des Popups an, sodass es nicht über den unteren Bildschirmrand hinausragt
-// TODO: In der If Anweisung steht gerade noch +120, da die positionen aus den props nicht die Positionen des gesamten Viewports sind, sondern die vom Canvas -> Hier sollte noch eine dynamische Lösung gesucht werden
+// Adjusts the position of the popup to prevent palcement outside the current viewport
+// TODO: The +120 in the if-statement is because of the height of the navbar (currently the viewportHeigth is only the height of the canvas), it would be great when there is a better dynamic solution for this
 const adjustedPosition = computed(() => {
   let top = props.position.y;
   const left = props.position.x;
@@ -70,7 +73,8 @@ const adjustedPosition = computed(() => {
   <div
     ref="popupRef"
     class="popup"
-    :style="{ top: `${adjustedPosition.y}px`, left: `${adjustedPosition.x}px` }"
+    :class="{'popup-dark' : mode === 'dark'}"
+    :style="{ top: `${adjustedPosition.y}px`, left: `${adjustedPosition.x}px`}"
   >
     <b>{{ hoveredConflictPoint.title }}</b>
     <p v-if="hoveredConflictPoint.description">
@@ -107,6 +111,12 @@ const adjustedPosition = computed(() => {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
   pointer-events: none; /* Verhindert unerwünschte Hover-Events */
   z-index: 10;
+  opacity: 0.9;
+}
+
+.popup-dark {
+  color: #fff;
+  background-color: #333;
 }
 
 .custom-list {

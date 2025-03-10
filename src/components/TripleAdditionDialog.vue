@@ -3,10 +3,13 @@ import { ref } from 'vue';
 import Button from '@/components/ui/button/Button.vue';
 
 import { defineProps } from 'vue';
+import { useColorMode } from '@vueuse/core';
 
 defineProps<{
     isOpen: Boolean
 }>();
+
+const mode = useColorMode();
   
 const isOpen = ref(false);
 const subject = ref('');
@@ -35,19 +38,19 @@ const isValidWord = (word: string): boolean => {
 
 const applyTriple = () => {
     if (!isValidWord(subject.value)) {
-        alert("Subject darf nur Buchstaben enthalten, ohne Leerzeichen, Zahlen oder Sonderzeichen.");
+        alert("Subject can only contain letters without spaces, numbers, or special characters.");
         return;
     }
     if (!isValidWord(predicate.value)) {
-        alert("Predicate darf nur Buchstaben enthalten, ohne Leerzeichen, Zahlen oder Sonderzeichen.");
+        alert("Predicate can only contain letters without spaces, numbers, or special characters.");
         return;
     }
     if (!isValidWord(object.value)) {
-        alert("Object darf nur Buchstaben enthalten, ohne Leerzeichen, Zahlen oder Sonderzeichen.");
+        alert("Object can only contain letters without spaces, numbers, or special characters.");
         return;
     }
 
-    // TODO: Hier die Logik zum Hinzufügen des Triples implementieren
+    // TODO: Implement Logic for adding RDF-Triples here
     console.log('Triple:', subject.value, predicate.value, object.value);
     closeDialog();
 };
@@ -59,22 +62,22 @@ const applyTriple = () => {
     </Button>
 
     <div v-if="isOpen" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50" @click.self="closeDialog">
-        <div class="bg-white rounded shadow p-6 w-full max-w-md">
+        <div :class="mode === 'dark' ? 'rounded shadow p-6 w-full max-w-md bg-custom-bg-gray' : 'rounded shadow p-6 w-full max-w-md bg-white'">
             <h2 class="text-xl font-bold mb-4">Add New RDF-Triple</h2>
             <p class="mb-8">Only add single words without numbers, spaces, special characters</p>
 
-        <div class="grid grid-cols-3 gap-4 mb-4">
+        <div class="grid grid-cols-3 gap-4 mb-4" :class="mode === 'dark' ? 'text-white' : 'text-gray-700'">
             <div>
-                <label class="block text-sm font-medium text-gray-700">Subject:</label>
-                <input v-model="subject" type="text" class="mt-1 block w-full border border-gray-300 rounded-md px-2 py-1"/>
+                <label class="block text-sm font-medium">Subject:</label>
+                <input v-model="subject" type="text" class="mt-1 block w-full border border-gray-300 rounded-md px-2 py-1" :class="mode === 'dark' ? 'bg-custom-bg-gray-2' : 'bg-white'"/>
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700">Predicate:</label>
-                <input v-model="predicate" type="text" class="mt-1 block w-full border border-gray-300 rounded-md px-2 py-1"/>
+                <label class="block text-sm font-medium">Predicate:</label>
+                <input v-model="predicate" type="text" class="mt-1 block w-full border border-gray-300 rounded-md px-2 py-1" :class="mode === 'dark' ? 'bg-custom-bg-gray-2' : 'bg-white'"/>
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700">Object:</label>
-                <input v-model="object" type="text" class="mt-1 block w-full border border-gray-300 rounded-md px-2 py-1"/>
+                <label class="block text-sm font-medium">Object:</label>
+                <input v-model="object" type="text" class="mt-1 block w-full border border-gray-300 rounded-md px-2 py-1" :class="mode === 'dark' ? 'bg-custom-bg-gray-2' : 'bg-white'"/>
             </div>
         </div>
 
