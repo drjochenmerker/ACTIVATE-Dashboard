@@ -197,6 +197,7 @@ export async function getConflictDetail(graph: string, conflictId: string): Prom
         case "HasParticipant":
           if (parsedConflict.participants === undefined) { parsedConflict.participants = [] as Participant[] };
           //HERE
+          if (item.object_type === undefined) { item.object_type = { value: "miscellaneous" } }
           let type = camelToSnakeCase(item.object_type.value.split("#").pop());
           if (type === "rule" || type === "instrument") {
             type += "s";

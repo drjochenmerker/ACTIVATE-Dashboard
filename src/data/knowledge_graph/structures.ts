@@ -34,7 +34,9 @@ export enum sparqlTemplate {
     deleteNestedComment = "deleteNestedComment",
     deleteTriple = "deleteTriple",
     deleteTriples = "deleteTriples",
-    updateConflictStatus = "updateConflictStatus"
+    updateConflict = "updateConflict",
+    deleteConflictParticipant = "deleteConflictParticipant",
+    addConflictParticipant = "addConflictParticipant"
 }
 
 /**
@@ -119,6 +121,15 @@ export enum conflictStatus {
     open = "offen",
     inDiscussion = "in Besprechung",
     resolved = "gelöst"
+}
+
+/**
+ * Enum containing conflict predicates that can be updated
+ */
+export enum conflictPredicate {
+    description = "ConflictDescription",
+    title = "ConflictTitle",
+    status = "ConflictState",
 }
 
 /**

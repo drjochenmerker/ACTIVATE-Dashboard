@@ -1,6 +1,6 @@
 import hash from "object-hash";
 import { fetchSparql, getSparqlTemplate, RDFSyntaxCheck } from "./utils";
-import { Conflict, conflictStatus, KnowledgeGraphActivityClass, LanguageLabel, RDFOperation, RDFTriple, sparqlTemplate, updateResponse } from "./structures";
+import { Conflict, conflictPredicate, conflictStatus, KnowledgeGraphActivityClass, LanguageLabel, RDFOperation, RDFTriple, sparqlTemplate, updateResponse } from "./structures";
 
 /**
  * Adds a new conflict to the sparql database
@@ -67,41 +67,37 @@ export async function deleteConflict(graph: string, conflictId: string): Promise
 }
 
 /**
- * Updates the current status of an existing conflict
- * Warning: Does not check whether a conflict ID exists. Could be used to fill the database
- * with irrelevant data
+ * Updates an existing conflict with new information. Can be used to update the status, description and title of a conflict
+ * Warning: Does not check whether a conflict ID exists. Could be used to fill the database with irrelevant data
  * @param conflictId 
- * @param status 
+ * @param predicate
+ * @param newValue
  * @returns updateResponse Object
  */
-export async function updateConflictStatus(graph: string, conflictId: string, status: conflictStatus): Promise<updateResponse> {
-    let query = await getSparqlTemplate(sparqlTemplate.updateConflictStatus);
+export async function updateConflict(graph: string, conflictId: string, predicate: conflictPredicate, newValue: conflictStatus | string): Promise<updateResponse> {
+    let query = await getSparqlTemplate(sparqlTemplate.updateConflict);
     const mapObj = {
         "{{graph}}": graph,
         "{{conflictId}}": conflictId,
-        "{{newStatus}}": status
+        "{{predicate}}": predicate,
+        "{{newValue}}": newValue
     };
     query = query.replaceMultiple(mapObj);
     const data = await fetchSparql(query, true);
     return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: conflictId, action: RDFOperation.insert } as updateResponse;
 }
 
-// TODO
-// export async function updateConflict(graph: string, conflictId: string, status: conflictStatus): Promise<updateResponse> {
-//     // Update Title
-//     // Update Description
-//     // Update Participants
-//     // Update Status?
-//     let query = await getSparqlTemplate(sparqlTemplate.updateConflictStatus);
-//     const mapObj = {
-//         "{{graph}}": graph,
-//         "{{conflictId}}": conflictId,
-//         "{{newStatus}}": status
-//     };
-//     query = query.replaceMultiple(mapObj);
-//     const data = await fetchSparql(query, true);
-//     return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: conflictId, action: RDFOperation.insert } as updateResponse;
-// }
+export async function updateConflictParticipants(graph: string, conflictId: string, operation: RDFOperation, participantId: string): Promise<updateResponse> {
+    let query = (operation == RDFOperation.insert) ? await getSparqlTemplate(sparqlTemplate.addConflictParticipant) : await getSparqlTemplate(sparqlTemplate.deleteConflictParticipant);
+    const mapObj = {
+        "{{graph}}": graph,
+        "{{conflictId}}": conflictId,
+        "{{participantId}}": participantId
+    };
+    query = query.replaceMultiple(mapObj);
+    const data = await fetchSparql(query, true);
+    return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: conflictId, action: RDFOperation.insert } as updateResponse;
+}
 
 /**
  * Adds a comment to a conflict or another comment
