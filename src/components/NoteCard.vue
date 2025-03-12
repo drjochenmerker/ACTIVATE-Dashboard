@@ -74,10 +74,11 @@ onMounted(async () => {
   //console.log(getConflictDetail("Urology_Emergency_after_Debriefing",props.conflict.id));
 
   const detail = await getConflictDetail(graph, props.conflict.id);
-  if(!detail.replies) {
+  if (!detail.replies) {
     detail.replies = []
   }
   conflictDetail.value = detail;
+  console.log(conflictDetail.value.replies)
 });
 
 // Status aktualisieren
@@ -112,26 +113,23 @@ const saveReply = async (conflictId: string) => {
 
     console.log("Kommentar erfolgreich gespeichert:", response);
 
-    // add new reply in UI
-    const conflict = props.conflict;
-    if (conflict) {
-      conflict.replies = conflict.replies || []; // Falls replies noch nicht existiert
-      conflict.replies.push({
-        id: Date.now().toString(), // TODO Temporäre ID für die UI
-        author: "test-replyer", // TODO Temporärer Hardcoded-Autor
-        comment: newReplyText.value[conflictId]
+    if (conflictDetail.value) {
+      // Falls replies noch nicht initialisiert sind, initialisieren
+      if (!conflictDetail.value.replies) {
+        conflictDetail.value.replies = [];
+      }
+      conflictDetail.value.replies.push({
+        id: Date.now().toString(), // temporäre ID
+        author: "test-replyer",
+        comment: newReplyText.value[conflictId],
+        replies: [] // leeres Array für potenzielle verschachtelte Antworten
       });
     }
     replyInputVisible.value[conflictId] = false;
     newReplyText.value[conflictId] = '';
   } catch (error) {
-    console.error("error saving comment:", error);
+    console.error("Error saving comment:", error);
   }
-  // set visibility of comment-input field to false
-  replyInputVisible.value[conflictId] = false;
-  newReplyText.value[conflictId] = '';
-
-  console.log("saved ");
 };
 </script>
 
@@ -161,19 +159,20 @@ const saveReply = async (conflictId: string) => {
       <div class="note-content" v-html="props.content"></div>
     </div>
     <div class="note-comment-section">
-    <Button @click="toggleReplyInput(conflict.id)"> Add comment </Button>
+      <Button @click="toggleReplyInput(conflict.id)"> Add comment </Button>
+    </div>
+    <!-- comment input field -->
+    <div v-if="replyInputVisible[conflict.id]" class="comment-input">
+      <textarea v-model="newReplyText[conflict.id]" placeholder="Write a reply..." />
+      <Button @click="saveReply(conflict.id)">Save</Button>
+    </div>
+    <!-- Anzeige der Replies zu einem Konflikt -->
+    <div v-if="conflictDetail && conflictDetail.replies && conflictDetail.replies.length > 0" class="reply-container">
+      <ReplyCard v-for="(reply) in conflictDetail.replies" :key="reply.id" :parentComment="reply"
+        :conflictId=conflict.id />
+    </div>
   </div>
-  <!-- comment input field -->
-  <div v-if="replyInputVisible[conflict.id]" class="comment-input">
-    <textarea v-model="newReplyText[conflict.id]" placeholder="Write a reply..." />
-    <Button @click="saveReply(conflict.id)">Save</Button>
-  </div>
-  <!-- Anzeige der Replies zu einem Konflikt -->
-  <div v-if="conflictDetail && conflictDetail.replies && conflictDetail.replies.length > 0" class="reply-container">
-      <ReplyCard v-for="(reply) in conflictDetail.replies" :key="reply.id" :conflictReply="reply" :conflictId=conflict.id />
-  </div>
-  </div>
-  
+
 </template>
 
 <style scoped>
