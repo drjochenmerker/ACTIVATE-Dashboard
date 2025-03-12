@@ -1,11 +1,10 @@
 <script lang="ts" setup>
-import { defineProps, ref, defineEmits, onMounted } from 'vue';
-import { noteStatus } from '@/assets/constants/noteStatus';
-import { conflictStatus } from '@/data/knowledge_graph/structures';
+import { defineProps, ref, onMounted } from 'vue';
+import { conflictPredicate, conflictStatus } from '@/data/knowledge_graph/structures';
 import ReplyCard from './ReplyCard.vue';
-import { addComment } from "@/data/knowledge_graph/write_operations";
+import { addComment, updateConflict } from "@/data/knowledge_graph/write_operations";
 import { Button } from '@/components/ui/button';
-import { getConflictDetail } from '@/data/knowledge_graph/read_operations';
+import { useConflictsStore } from '@/stores/conflictsStore';
 
 const props = defineProps({
   conflict: {
@@ -31,62 +30,36 @@ const props = defineProps({
 });
 
 const conflictDetail = ref<any>(null);
-
-// visibility of comment-input field per conflict
 const replyInputVisible = ref<Record<string, boolean>>({});
 const newReplyText = ref<Record<string, string>>({});
 
 //todo hard coded graph title
 const graph = 'Urology_Emergency_after_Debriefing';
 
-const emit = defineEmits(['updateStatus']);
-
-// Funktion zur Status-Zuordnung
-const mapConflictStatusToNoteStatus = (status: string) => {
-  switch (status) {
-    case conflictStatus.open:
-      return noteStatus.RED;
-    case conflictStatus.inDiscussion:
-      return noteStatus.YELLOW;
-    case conflictStatus.resolved:
-      return noteStatus.GREEN;
-    default:
-      return noteStatus.RED;
-  }
-};
-
 // Status aus den Props setzen
-const selectedStatus = ref(mapConflictStatusToNoteStatus(props.status));
+const selectedStatus = ref<any>(null);
 
-// Status in sessionStorage speichern
-function saveStatusToSessionStorage(color: typeof noteStatus.RED | typeof noteStatus.YELLOW | typeof noteStatus.GREEN) {
-  const noteKey = `noteStatus-${props.content}`;
-  sessionStorage.setItem(noteKey, color);
-}
+const conflictStore = useConflictsStore();
 
 // Status aus sessionStorage abrufen oder Standardwert setzen
 onMounted(async () => {
-  const noteKey = `noteStatus-${props.content}`;
-  const storedStatus = sessionStorage.getItem(noteKey);
-  if (storedStatus && Object.values(noteStatus).includes(storedStatus as typeof noteStatus.RED | typeof noteStatus.YELLOW | typeof noteStatus.GREEN)) {
-    selectedStatus.value = storedStatus as typeof noteStatus.RED | typeof noteStatus.YELLOW | typeof noteStatus.GREEN;
-  }
-  //console.log(getConflictDetail("Urology_Emergency_after_Debriefing",props.conflict.id));
+  const detail = props.conflict
 
-  const detail = await getConflictDetail(graph, props.conflict.id);
   if (!detail.replies) {
     detail.replies = []
   }
   conflictDetail.value = detail;
+  selectedStatus.value = conflictDetail.value.status;
   console.log(conflictDetail.value.replies)
 });
 
 // Status aktualisieren
-function setStatus(color: typeof noteStatus.RED | typeof noteStatus.YELLOW | typeof noteStatus.GREEN) {
-  selectedStatus.value = color;
-  emit('updateStatus', selectedStatus.value);
-  saveStatusToSessionStorage(color);
-  console.log("Mens")
+function setStatus(status: conflictStatus) {
+  selectedStatus.value = status;
+  updateConflict(graph, props.conflict.id, conflictPredicate.status, selectedStatus.value)
+  conflictStore.updateConflict(props.conflict.id, graph)
+  console.log("Konflikt erfolgreich aktualisiert")
+  console.log(selectedStatus.value);
 }
 
 // toggle input field
@@ -143,9 +116,9 @@ const saveReply = async (conflictId: string) => {
       <div class="status-selector">
         <!-- drop down for status selection -->
         <select v-model="selectedStatus" @change="setStatus(selectedStatus)">
-          <option :value="noteStatus.RED">{{ conflictStatus.open }}</option>
-          <option :value="noteStatus.YELLOW">{{ conflictStatus.inDiscussion }}</option>
-          <option :value="noteStatus.GREEN">{{ conflictStatus.resolved }}</option>
+          <option :value="conflictStatus.open">{{ conflictStatus.open }}</option>
+          <option :value="conflictStatus.inDiscussion">{{ conflictStatus.inDiscussion }}</option>
+          <option :value="conflictStatus.resolved">{{ conflictStatus.resolved }}</option>
         </select>
       </div>
     </div>

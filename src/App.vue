@@ -17,7 +17,7 @@ const loadActivity = async () => {
   const activities = await getActivities();
   if (activities && activities.length > 0) {
     activity.value = await getActivityDetail({graph: "Urology_Emergency_after_Debriefing", name: "Urology Emergency after Debriefing"} as Activity);
-    activityGraph.value = activities[0].graph;
+    activityGraph.value = "Urology_Emergency_after_Debriefing";
   }
 };
 

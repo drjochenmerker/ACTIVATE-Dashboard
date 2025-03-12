@@ -63,7 +63,7 @@ export default defineComponent({
 
         // Data from the props
         const activityData = props.activity;
-        const conflictData = conflictStore.getConflicts;
+        let conflictData = conflictStore.getConflicts;
 
         // Checks if the Activity-Diagram has to be cleared when a Comment is sent by the editor
         let hasToBeCleared = computed(() => activityPointStore.getActivePoints.length === 0);
@@ -452,7 +452,9 @@ export default defineComponent({
 
         // Draws the activity diagram when mounted
         onMounted(async () => {
+            conflictData = conflictStore.getConflicts;
             draw();
+            console.log("Diagram Mounted")
         });
 
         // Watchers for the mode, the hasToBeCleared state and the hoveredConflictPointData
@@ -486,6 +488,8 @@ export default defineComponent({
             console.log("Conflicts updated", conflictStore.getConflicts);
             draw();
         });
+
+        
 
         return {
             canvas,
