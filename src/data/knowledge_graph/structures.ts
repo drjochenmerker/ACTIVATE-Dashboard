@@ -34,7 +34,9 @@ export enum sparqlTemplate {
     deleteNestedComment = "deleteNestedComment",
     deleteTriple = "deleteTriple",
     deleteTriples = "deleteTriples",
-    updateConflictStatus = "updateConflictStatus"
+    updateConflict = "updateConflict",
+    deleteConflictParticipant = "deleteConflictParticipant",
+    addConflictParticipant = "addConflictParticipant"
 }
 
 /**
@@ -122,6 +124,15 @@ export enum conflictStatus {
 }
 
 /**
+ * Enum containing conflict predicates that can be updated
+ */
+export enum conflictPredicate {
+    description = "ConflictDescription",
+    title = "ConflictTitle",
+    status = "ConflictState",
+}
+
+/**
  * Interface for a subject, predicate, object triple
  * Note: The used terms refer to the RDF terminology, not the Activity diagram terminology
  */
@@ -171,7 +182,7 @@ export type LanguageLabel = {
  * Knowledge Graph Activity Classes that allow the usage of 
  * frontend access terms without messing up the backend
  */
-export enum KnowledeGraphActivityClass {
+export enum KnowledgeGraphActivityClass {
     subject = ":Subject",
     object = ":Object",
     rules = ":Rule",

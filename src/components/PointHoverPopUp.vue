@@ -1,11 +1,12 @@
 <script setup lang="ts">
+import { useColorMode } from '@vueuse/core';
 import { defineProps } from 'vue';
 
 
 defineProps<{
   hoveredPoint: {
     label: string;
-    content: Array<string>;
+    content: Array<{label: string; value?: string}>;
   };
   position: {
     x: number;
@@ -14,10 +15,12 @@ defineProps<{
 
 }>();
 
+const mode = useColorMode()
+
 </script>
 
 <template>
-  <div class="popup" :style="{ top: `${position.y}px`, left: `${position.x}px` }">
+  <div class="popup" :class="{'popup-dark' : mode === 'dark'}" :style="{ top: `${position.y}px`, left: `${position.x}px` }">
     <b>{{ hoveredPoint.label }}:</b>
     <ul class="custom-list">
       <li v-for="(item, index) in hoveredPoint.content" :key="index">
@@ -38,6 +41,12 @@ defineProps<{
   pointer-events: none;
   /* Verhindert unerwünschte Hover-Events */
   z-index: 10;
+  opacity: 0.9;
+}
+
+.popup-dark {
+  color: #fff;
+  background-color: #333;
 }
 
 .custom-list {
