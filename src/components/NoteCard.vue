@@ -5,6 +5,7 @@ import { conflictStatus } from '@/data/knowledge_graph/structures';
 import ReplyCard from './ReplyCard.vue';
 import { addComment } from "@/data/knowledge_graph/write_operations";
 import { Button } from '@/components/ui/button';
+import { getConflictDetail } from '@/data/knowledge_graph/read_operations';
 
 const props = defineProps({
   conflict: {
@@ -28,6 +29,8 @@ const props = defineProps({
     required: true,
   }
 });
+
+const conflictDetail = ref<any>(null);
 
 // visibility of comment-input field per conflict
 const replyInputVisible = ref<Record<string, boolean>>({});
@@ -62,12 +65,19 @@ function saveStatusToSessionStorage(color: typeof noteStatus.RED | typeof noteSt
 }
 
 // Status aus sessionStorage abrufen oder Standardwert setzen
-onMounted(() => {
+onMounted(async () => {
   const noteKey = `noteStatus-${props.content}`;
   const storedStatus = sessionStorage.getItem(noteKey);
   if (storedStatus && Object.values(noteStatus).includes(storedStatus as typeof noteStatus.RED | typeof noteStatus.YELLOW | typeof noteStatus.GREEN)) {
     selectedStatus.value = storedStatus as typeof noteStatus.RED | typeof noteStatus.YELLOW | typeof noteStatus.GREEN;
   }
+  //console.log(getConflictDetail("Urology_Emergency_after_Debriefing",props.conflict.id));
+
+  const detail = await getConflictDetail(graph, props.conflict.id);
+  if(!detail.replies) {
+    detail.replies = []
+  }
+  conflictDetail.value = detail;
 });
 
 // Status aktualisieren
@@ -159,10 +169,8 @@ const saveReply = async (conflictId: string) => {
     <Button @click="saveReply(conflict.id)">Save</Button>
   </div>
   <!-- Anzeige der Replies zu einem Konflikt -->
-  <div v-if="conflict.replies && conflict.replies.length > 0" class="reply-container">
-    <div v-for="(reply) in conflict.replies" :key="reply.id">
-      <ReplyCard :key="reply.id" :conflictReply="reply" />
-    </div>
+  <div v-if="conflictDetail && conflictDetail.replies && conflictDetail.replies.length > 0" class="reply-container">
+      <ReplyCard v-for="(reply) in conflictDetail.replies" :key="reply.id" :conflictReply="reply" :conflictId=conflict.id />
   </div>
   </div>
   

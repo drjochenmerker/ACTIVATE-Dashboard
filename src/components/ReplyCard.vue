@@ -1,7 +1,6 @@
 <script lang="ts" setup>
-import { defineProps, ref, computed, onMounted } from 'vue';
+import { defineProps, ref, onMounted } from 'vue';
 import { Button } from '@/components/ui/button'; // Button-Komponente importieren
-import { getConflictDetail } from '@/data/knowledge_graph/read_operations'; // Deine API zum Laden der Details
 
 const props = defineProps({
     conflictReply: {
@@ -10,36 +9,36 @@ const props = defineProps({
     },
 });
 
-const replies = computed(() => props.conflictReply.replies ?? []);
-const graph = 'Urology_Emergency_after_Debriefing'; // Hardcodierter Graph-Name
 const nestedReplies = ref<any[]>([]);
-const loadedReplies = ref<Set<string>>(new Set()); // Set zum Verfolgen von geladenen Antwort-IDs
+
 
 // Toggle für die Anzeige des Antwort-Eingabefelds
 const replyInputVisible = ref(false);
 const newReplyText = ref('');
 
-// Lade verschachtelte Antworten (falls vorhanden)
-const loadNestedReplies = async (replyId: string) => {
-    if (loadedReplies.value.has(replyId)) return;
+// // Lade verschachtelte Antworten (falls vorhanden)
+// const loadNestedReplies = async (replyId: string) => {
+//     if (loadedReplies.value.has(replyId)) return;
 
-    loadedReplies.value.add(replyId);
+//     loadedReplies.value.add(replyId);
 
-    try {
-        const response = await getConflictDetail(graph, replyId);
+//     try {
+//         const response = await getConflictDetail(graph, replyId);
 
-        if (Array.isArray(response.replies)) {
-            response.replies.forEach((nestedReply: any) => {
-                if (!loadedReplies.value.has(nestedReply.id)) {
-                    nestedReplies.value.push(nestedReply);
-                    loadedReplies.value.add(nestedReply.id);
-                }
-            });
-        }
-    } catch (error) {
-        console.error(`Fehler beim Laden der verschachtelten Antworten für replyId: ${replyId}`, error);
-    }
-};
+//         console.log(response);
+
+//         if (Array.isArray(response.replies)) {
+//             response.replies.forEach((nestedReply: any) => {
+//                 if (!loadedReplies.value.has(nestedReply.id)) {
+//                     nestedReplies.value.push(nestedReply);
+//                     loadedReplies.value.add(nestedReply.id);
+//                 }
+//             });
+//         }
+//     } catch (error) {
+//         console.error(`Fehler beim Laden der verschachtelten Antworten für replyId: ${replyId}`, error);
+//     }
+// };
 
 // Funktion zum Speichern einer Antwort
 const saveReply = async () => {
@@ -65,12 +64,6 @@ const saveReply = async () => {
     }
 };
 
-// Lade die verschachtelten Antworten, wenn die Komponente gemountet wird
-onMounted(() => {
-    if (props.conflictReply.id) {
-        loadNestedReplies(props.conflictReply.id);
-    }
-});
 </script>
 
 <template>
@@ -92,8 +85,11 @@ onMounted(() => {
         </div>
 
         <!-- Zeige verschachtelte Antworten an -->
-        <div v-if="nestedReplies.length > 0" class="nested-replies">
-            <ReplyCard v-for="nestedReply in nestedReplies" :key="nestedReply.id" :conflictReply="nestedReply" />
+        <div v-if="conflictReply.replies && conflictReply.replies.length > 0" class="nested-replies">
+            <ReplyCard 
+        v-for="nestedReply in conflictReply.replies" 
+        :key="nestedReply.id" 
+        :conflictReply="nestedReply" />
         </div>
     </div>
 </template>
