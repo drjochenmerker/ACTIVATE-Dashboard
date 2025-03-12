@@ -16,7 +16,6 @@ export const useConflictsStore = defineStore('ActivityConflicts', () => {
     };
 
     const getConflicts = computed(() => {
-        console.log(conflictDetails.value)
         return conflictDetails.value;
     });
 

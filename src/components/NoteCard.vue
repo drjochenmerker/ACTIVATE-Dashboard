@@ -50,7 +50,6 @@ onMounted(async () => {
   }
   conflictDetail.value = detail;
   selectedStatus.value = conflictDetail.value.status;
-  console.log(conflictDetail.value.replies)
 });
 
 // Status aktualisieren

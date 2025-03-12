@@ -24,7 +24,6 @@ const loadActivity = async () => {
 const loadConflicts = async () => {
   if (activity.value && activityGraph.value) {
     const conflicts = await getAllConflictsWithDetail(activityGraph.value);
-    console.log(conflicts)
     conflictsStore.setConflicts(conflicts);
     conflictDetails.value = conflictsStore.getConflicts;
   }

@@ -25,7 +25,7 @@ export const contentData = [
         number: 1,
     },
     {
-        id: 'divisionoflabour',
+        id: 'division_of_labour',
         title: 'Division of Labour',
         number: 2,
     },

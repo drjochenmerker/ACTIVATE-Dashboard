@@ -454,7 +454,6 @@ export default defineComponent({
         onMounted(async () => {
             conflictData = conflictStore.getConflicts;
             draw();
-            console.log("Diagram Mounted")
         });
 
         // Watchers for the mode, the hasToBeCleared state and the hoveredConflictPointData

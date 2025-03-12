@@ -142,7 +142,7 @@ export default {
 
         return {
           id: label, // Use selected label, or 'N/A' if not selected
-          type: point.charAt(0).toUpperCase() + point.slice(1) // Capitalize the first letter
+          type: point.charAt(0) + point.slice(1) // Capitalize the first letter
         };
       });
 
@@ -171,15 +171,12 @@ export default {
 
           // **VERIFY:** Check if conflictDetail has the correct properties
           if (conflictDetail && conflictDetail.title === note.title && conflictDetail.description === note.description) {
-            console.log("Conflict added and retrieved successfully!", conflictDetail);
             //console.log("Conflict Ids test log: ", getConflictIds(graph));
 
             //console.log("Conflict IDs:", getConflictDetail(graph, "973d26bf5902cf923ff792b64d533a3444d83b5c"));
             const conflictsStore = useConflictsStore();
             
             conflictsStore.addConflict(conflictDetail);
-            console.log(conflictDetail);
-            console.log(conflictsStore.getConflicts);
           } else {
             console.warn("Conflict added, but getConflictDetail returned incorrect data.");
           }
