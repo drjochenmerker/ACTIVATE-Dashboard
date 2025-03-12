@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { defineProps, ref, onMounted } from 'vue';
+import { defineProps, ref, onMounted, nextTick } from 'vue';
 import { conflictPredicate, conflictStatus } from '@/data/knowledge_graph/structures';
 import ReplyCard from './ReplyCard.vue';
 import { addComment, updateConflict } from "@/data/knowledge_graph/write_operations";
@@ -41,6 +41,8 @@ const selectedStatus = ref<any>(null);
 
 const conflictStore = useConflictsStore();
 
+const textareaRef = ref<HTMLTextAreaElement | null>(null)
+
 // Status aus sessionStorage abrufen oder Standardwert setzen
 onMounted(async () => {
   const detail = props.conflict
@@ -57,21 +59,21 @@ function setStatus(status: conflictStatus) {
   selectedStatus.value = status;
   updateConflict(graph, props.conflict.id, conflictPredicate.status, selectedStatus.value)
   conflictStore.updateConflict(props.conflict.id, graph)
-  console.log("Konflikt erfolgreich aktualisiert")
-  console.log(selectedStatus.value);
 }
 
 // toggle input field
-const toggleReplyInput = (conflictId: string) => {
+const toggleReplyInput = async (conflictId: string) => {
   replyInputVisible.value[conflictId] = !replyInputVisible.value[conflictId];
+  if (replyInputVisible.value) {
+        await nextTick();
+        textareaRef.value?.focus();
+    }
   if (!replyInputVisible.value[conflictId]) {
     newReplyText.value[conflictId] = ''; // Textfeld leeren, wenn es geschlossen wird
   }
 };
 
 const saveReply = async (conflictId: string) => {
-  console.log(`save comment for conlfict with id: ${conflictId}:`, newReplyText.value[conflictId]);
-
   if (!newReplyText.value[conflictId]) return;
 
   try {
@@ -101,6 +103,13 @@ const saveReply = async (conflictId: string) => {
     newReplyText.value[conflictId] = '';
   } catch (error) {
     console.error("Error saving comment:", error);
+  }
+};
+
+const handleEnterKey = (event: KeyboardEvent) => {
+  if (event.key === 'Enter' && !event.shiftKey) {
+    event.preventDefault();
+    saveReply(props.conflict.id);
   }
 };
 </script>
@@ -135,7 +144,7 @@ const saveReply = async (conflictId: string) => {
     </div>
     <!-- comment input field -->
     <div v-if="replyInputVisible[conflict.id]" class="comment-input">
-      <textarea v-model="newReplyText[conflict.id]" placeholder="Write a reply..." />
+      <textarea ref="textareaRef" v-model="newReplyText[conflict.id]" placeholder="Write a reply..." @keydown.enter="handleEnterKey($event)"/>
       <Button @click="saveReply(conflict.id)">Save</Button>
     </div>
     <!-- Anzeige der Replies zu einem Konflikt -->
@@ -174,6 +183,19 @@ const saveReply = async (conflictId: string) => {
 .note-card.green {
   box-shadow: 0 2px 8px rgba(152, 251, 152, 0.5);
   border-color: rgba(152, 251, 152, 0.7);
+}
+
+.comment-input {
+  margin-top: 10px;
+}
+
+.comment-input textarea {
+    width: 100%;
+    min-height: 60px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    resize: vertical;
 }
 
 /* Header */

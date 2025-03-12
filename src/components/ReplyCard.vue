@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { defineProps, ref } from 'vue';
+import { defineProps, nextTick, ref } from 'vue';
 import { Button } from '@/components/ui/button'; // Button-Komponente importieren
 import { addComment } from '@/data/knowledge_graph/write_operations';
 
@@ -12,46 +12,59 @@ const props = defineProps({
 
 const graph = 'Urology_Emergency_after_Debriefing';
 
-const toggleReplyInput = () => {
-    replyInputVisible.value = !replyInputVisible.value
-}
-
-
 // Toggle für die Anzeige des Antwort-Eingabefelds
 const replyInputVisible = ref(false);
 const newReplyText = ref('');
+
+const textareaRef = ref<HTMLTextAreaElement | null>(null)
+
+const toggleReplyInput = async () => {
+    replyInputVisible.value = !replyInputVisible.value;
+    if (replyInputVisible.value) {
+        await nextTick();
+        textareaRef.value?.focus();
+    }
+}
 
 // Funktion zum Speichern einer Antwort
 const saveReply = async (parentCommentId: string) => {
     console.log(`save comment for conflict with id: ${parentCommentId}:`, newReplyText.value)
 
-  if (!newReplyText.value) return;
+    if (!newReplyText.value) return;
 
-  try {
+    try {
 
-    const response = await addComment(
-        graph,
-        parentCommentId,
-        "test-replyer",
-        newReplyText.value
-    );
+        const response = await addComment(
+            graph,
+            parentCommentId,
+            "test-replyer",
+            newReplyText.value
+        );
 
-    console.log("Unterkommentar erfolgreich gespeichert:", response)
+        console.log("Unterkommentar erfolgreich gespeichert:", response)
 
-    if (!props.parentComment.replies) {
-      props.parentComment.replies = [];
+        if (!props.parentComment.replies) {
+            props.parentComment.replies = [];
+        }
+        // Füge die neue Antwort (Reply) hinzu
+        props.parentComment.replies.push({
+            id: Date.now().toString(), // temporäre ID
+            author: "test-replyer", // Temporärer Autor
+            comment: newReplyText.value, // Kommentartext
+            replies: [] // Leeres Array für mögliche weitere Verschachtelungen
+        });
+        replyInputVisible.value = false; // Eingabefeld verstecken
+        newReplyText.value = ''; // Textfeld leeren
+    } catch (error) {
+        console.error('Fehler beim Speichern der Antwort:', error);
     }
-    // Füge die neue Antwort (Reply) hinzu
-    props.parentComment.replies.push({
-      id: Date.now().toString(), // temporäre ID
-      author: "test-replyer", // Temporärer Autor
-      comment: newReplyText.value, // Kommentartext
-      replies: [] // Leeres Array für mögliche weitere Verschachtelungen
-    });
-    replyInputVisible.value = false; // Eingabefeld verstecken
-    newReplyText.value = ''; // Textfeld leeren
-  } catch (error) {
-    console.error('Fehler beim Speichern der Antwort:', error);
+};
+
+// Funktion zum Abschicken per Enter-Taste im Textarea
+const handleEnterKey = (event: KeyboardEvent) => {
+  if (event.key === 'Enter' && !event.shiftKey) {
+    event.preventDefault();
+    saveReply(props.parentComment.id);
   }
 };
 
@@ -66,21 +79,19 @@ const saveReply = async (parentCommentId: string) => {
 
         <!-- Antwort-Button zum Umblenden des Eingabefeldes -->
         <Button @click="toggleReplyInput()">
-            {{ replyInputVisible ? 'Antworten abbrechen' : 'Antworten' }}
+            {{ replyInputVisible ? 'Cancel' : 'Answer' }}
         </Button>
 
         <!-- Antwort Eingabefeld -->
         <div v-if="replyInputVisible" class="reply-input">
-            <textarea v-model="newReplyText" placeholder="Schreibe eine Antwort..."></textarea>
-            <Button @click="saveReply(parentComment.id)">Antwort speichern</Button>
+            <textarea ref="textareaRef" v-model="newReplyText" placeholder="Write something to answer..." @keydown.enter="handleEnterKey($event)"></textarea>
+            <Button @click="saveReply(parentComment.id)">Save Comment</Button>
         </div>
 
         <!-- Zeige verschachtelte Antworten an -->
         <div v-if="parentComment.replies && parentComment.replies.length > 0" class="nested-replies">
-            <ReplyCard 
-        v-for="nestedReply in parentComment.replies" 
-        :key="nestedReply.id" 
-        :parentComment="nestedReply" />
+            <ReplyCard v-for="nestedReply in parentComment.replies" :key="nestedReply.id"
+                :parentComment="nestedReply" />
         </div>
     </div>
 </template>
