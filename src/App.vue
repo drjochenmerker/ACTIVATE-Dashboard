@@ -4,6 +4,7 @@ import NavBar from './components/NavBar.vue';
 // Backend Tests
 import { getActivities, getActivityDetail, getAllConflictsWithDetail } from './data/knowledge_graph/read_operations';
 import { useConflictsStore } from './stores/conflictsStore';
+import { Activity } from './data/knowledge_graph/structures';
 
 
 const conflictsStore = useConflictsStore();
@@ -15,7 +16,7 @@ const activityGraph = ref<any>(null);
 const loadActivity = async () => {
   const activities = await getActivities();
   if (activities && activities.length > 0) {
-    activity.value = await getActivityDetail(activities[0]);
+    activity.value = await getActivityDetail({graph: "Urology_Emergency_after_Debriefing", name: "Urology Emergency after Debriefing"} as Activity);
     activityGraph.value = activities[0].graph;
   }
 };
