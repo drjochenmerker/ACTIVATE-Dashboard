@@ -1,9 +1,19 @@
 <template>
-    <div class="dropdown">
+    <div class="dropdown" ref="dropdownContainer">
         <h3>{{ label }}:</h3>
-        <input type="text" v-model="search" @focus="showDropdown = true" @blur="hideWithDelay" />
-        <ul v-if="showDropdown">
-            <li v-for="option in filteredOptions" :key="option.label" @mousedown="selectOption(option)">
+        <div class="search-container">
+            <!-- Anzeige der ausgewählten Optionen -->
+            <div v-for="option in selectedOptions" :key="option.label" class="selected-item">
+                {{ option.label }}
+                <span class="remove-icon" @click="removeOption(option)">✕</span>
+            </div>
+            <!-- Eingabefeld für die Suche -->
+            <input type="text" v-model="search" @focus="showDropdown = true" @input="updateSearch"
+                placeholder="Suchen..." />
+        </div>
+        <!-- Dropdown-Liste -->
+        <ul v-if="showDropdown" class="dropdown-list">
+            <li v-for="option in filteredOptions" :key="option.label" @mousedown.prevent="selectOption(option)">
                 {{ option.label }}
             </li>
         </ul>
@@ -22,49 +32,66 @@ export default {
             type: Array,
             required: true
         },
-        modelValue: { // Use `modelValue` for v-model
-            type: Object,
-            default: null
+        modelValue: {
+            type: Array,
+            default: () => []
         }
     },
-    emits: ['update:modelValue'], // Emit `update:modelValue`
+    emits: ['update:modelValue'],
     data() {
         return {
-            search: "",
-            showDropdown: false
+            search: '',
+            showDropdown: false,
+            selectedOptions: this.modelValue
         };
     },
     computed: {
         filteredOptions() {
-            return this.options.filter(option =>
-                option.label.toLowerCase().includes(this.search.toLowerCase())
+            return this.options.filter(
+                option =>
+                    option.label.toLowerCase().includes(this.search.toLowerCase()) &&
+                    !this.selectedOptions.some(selected => selected.label === option.label)
             );
         }
     },
     methods: {
-        hideWithDelay() {
-            setTimeout(() => {
-                this.showDropdown = false;
-            }, 200);
+        updateSearch(event) {
+            this.search = event.target.value;
+            this.showDropdown = true;
         },
         selectOption(option) {
-            this.$emit('update:modelValue', option);
-            this.search = option.label;
-            this.showDropdown = false;
-            //console.log("Selected in Dropdown:", option); // Log the selected option
+            this.selectedOptions.push(option);
+            this.$emit('update:modelValue', this.selectedOptions);
+            this.search = '';
+            this.$nextTick(() => {
+                const input = this.$el.querySelector('input');
+                if (input) {
+                    input.focus();
+                }
+            });
         },
-        // ... other methods
+        removeOption(option) {
+            this.selectedOptions = this.selectedOptions.filter(o => o !== option);
+            this.$emit('update:modelValue', this.selectedOptions);
+        },
+        handleClickOutside(event) {
+            // test if the click was inside or outside the dropdown container
+            if (this.$refs.dropdownContainer && !this.$refs.dropdownContainer.contains(event.target)) {
+                this.showDropdown = false;
+            }
+        }
+    },
+    mounted() {
+        // global click listener
+        document.addEventListener('click', this.handleClickOutside);
+    },
+    beforeUnmount() {
+        // remove the global click listener
+        document.removeEventListener('click', this.handleClickOutside);
     },
     watch: {
-        modelValue: {  // Watch for changes in the bound value
-            immediate: true,
-            handler(newValue) {
-                if (newValue) {
-                    this.search = newValue.label; // Update the search input when the value changes
-                } else {
-                    this.search = ""; // Clear the search if the value is null
-                }
-            }
+        modelValue(newValue) {
+            this.selectedOptions = newValue;
         }
     }
 };
@@ -74,19 +101,46 @@ export default {
 .dropdown {
     position: relative;
     width: 100%;
-    margin-bottom: 10px;
 }
 
-input {
-    width: 100%;
-    padding: 8px;
+.search-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 5px;
     border: 1px solid #ccc;
+    padding: 5px;
     border-radius: 4px;
 }
 
-ul {
+.selected-item {
+    display: flex;
+    align-items: center;
+    background-color: #e0e0e0;
+    padding: 5px;
+    border-radius: 4px;
+}
+
+.remove-icon {
+    margin-left: 5px;
+    cursor: pointer;
+    color: red;
+}
+
+input {
+    flex-grow: 1;
+    padding: 8px;
+    border: none;
+}
+
+input:focus {
+    outline: none;
+}
+
+.dropdown-list {
     position: absolute;
     top: 100%;
+    left: 0;
     width: 100%;
     background: white;
     border: 1px solid #ccc;
@@ -96,16 +150,16 @@ ul {
     margin: 0;
     max-height: 150px;
     overflow-y: auto;
-    z-index: 1000;
+    z-index: 1001;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-li {
+.dropdown-list li {
     padding: 8px;
     cursor: pointer;
 }
 
-li:hover {
+.dropdown-list li:hover {
     background: #f0f0f0;
 }
 </style>
