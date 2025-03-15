@@ -101,7 +101,7 @@ export async function updateConflictParticipants(graph: string, conflictId: stri
 
 /**
  * Adds a comment to a conflict or another comment
- * @param parentId Id of the parent element. Can either be a conflict id or another comment id
+ * @param parentId Id of the parent element. Can be a conflict id, another comment id or "root" for parentless comments
  * @param author Author of the comment
  * @param comment Comment as string
  * @returns 
@@ -185,13 +185,14 @@ export async function updateTriple(graph: string, triple: RDFTriple, operation: 
  * @param labels Description of predicate in multiple languages
  * @returns updateResponse Object
  */
-export async function vocabAddPredicate(predicate: string, domains: KnowledgeGraphActivityClass[], ranges: KnowledgeGraphActivityClass[], labels: LanguageLabel[]): Promise<updateResponse> {
+export async function graphVocabAddPredicate(graph: string, predicate: string, domains: KnowledgeGraphActivityClass[], ranges: KnowledgeGraphActivityClass[], labels: LanguageLabel[]): Promise<updateResponse> {
     if (RDFSyntaxCheck(predicate) == false) return { code: 400, status: "Error", modified: predicate, action: RDFOperation.insert } as updateResponse;
     let query = await getSparqlTemplate(sparqlTemplate.addPredicate);
     const labelString = labels.map(label => {
         return `"${label.label}"@${label.language}`;
     }).join(", ")
     const mapObj = {
+        "{{graph}}": graph,
         "{{label}}": predicate,
         "{{domains}}": domains.join(", "),
         "{{ranges}}": ranges.join(", "),

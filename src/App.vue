@@ -23,7 +23,6 @@ const loadActivity = async () => {
 const loadConflicts = async () => {
   if (activity.value && activityGraph.value) {
     const conflicts = await getAllConflictsWithDetail(activityGraph.value);
-    console.log(conflicts)
     conflictsStore.setConflicts(conflicts);
     conflictDetails.value = conflictsStore.getConflicts;
   }
@@ -33,7 +32,6 @@ onMounted(async () => {
   try {
     await loadActivity();
     await loadConflicts();
-
   } catch (error) {
     console.error("Fehler beim Laden der Aktivitäten:", error);
   }
