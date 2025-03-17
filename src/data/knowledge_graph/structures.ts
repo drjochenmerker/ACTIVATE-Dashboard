@@ -37,7 +37,9 @@ export enum sparqlTemplate {
     updateConflict = "updateConflict",
     deleteConflictParticipant = "deleteConflictParticipant",
     addConflictParticipant = "addConflictParticipant",
-    getMiscComments = "getMiscComments"
+    getMiscComments = "getMiscComments",
+    addEntity = "addEntity",
+    getActivityClassIds = "getActivityClassIds"
 }
 
 /**
@@ -184,12 +186,12 @@ export type LanguageLabel = {
  * frontend access terms without messing up the backend
  */
 export enum KnowledgeGraphActivityClass {
-    subject = ":Subject",
-    object = ":Object",
-    rules = ":Rule",
-    instruments = ":Instrument",
-    divison_of_labour = ":DivisonOfLabour",
-    community = ":Community"
+    subject = "Subject",
+    object = "Object",
+    rules = "Rule",
+    instruments = "Instrument",
+    divison_of_labour = "DivisonOfLabour",
+    community = "Community"
 }
 
 /**

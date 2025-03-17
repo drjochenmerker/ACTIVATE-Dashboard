@@ -106,3 +106,7 @@ export function RDFSyntaxCheck(input: RDFTriple | string): boolean {
     }
     return true;
 }
+
+export function CapitalizeFirstLetter(input: string): string {
+    return input.charAt(0).toUpperCase() + input.slice(1);
+}

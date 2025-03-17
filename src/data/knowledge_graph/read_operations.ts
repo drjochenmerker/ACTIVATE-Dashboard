@@ -1,4 +1,4 @@
-import { Action, Activity, ActivityDetail, Conflict, Comment, StringAccessObject, Object, sparqlTemplate, Participant, PredicateDict } from "./structures";
+import { Action, Activity, ActivityDetail, Conflict, Comment, StringAccessObject, Object, sparqlTemplate, Participant, PredicateDict, KnowledgeGraphActivityClass } from "./structures";
 import { fetchSparql, findNestedComment, getSparqlTemplate, camelToSnakeCase } from "./utils";
 
 /**
@@ -313,6 +313,11 @@ export async function getPredicateObject(graph: string): Promise<PredicateDict> 
   return predDict;
 }
 
+/**
+ * Fetches alle Comments with :root as parent
+ * @param graph Graph to fetch the comments from
+ * @returns List of miscellanous comments
+ */
 export async function getMiscComments(graph: string): Promise<Comment[]> {
   // Fetch data
   let query = await getSparqlTemplate(sparqlTemplate.getMiscComments);
@@ -392,4 +397,19 @@ export async function getMiscComments(graph: string): Promise<Comment[]> {
     }
   });
   return parsedComments;
+}
+
+export async function getActivityClassIds(graph: string, activityClass: KnowledgeGraphActivityClass): Promise<string[]> {
+  let query = await getSparqlTemplate(sparqlTemplate.getActivityClassIds);
+  const mapObj = {
+    "{{graph}}": graph,
+    "{{activityClass}}": activityClass,
+  };
+  query = query.replaceMultiple(mapObj);
+  const data = await fetchSparql(query);
+  let result = [] as string[];
+  data.map((item: StringAccessObject) => {
+    result.push(item.entity.value.split("#").pop());
+  })
+  return result;
 }

@@ -1,5 +1,5 @@
 import hash from "object-hash";
-import { fetchSparql, getSparqlTemplate, RDFSyntaxCheck } from "./utils";
+import { CapitalizeFirstLetter, fetchSparql, getSparqlTemplate, RDFSyntaxCheck } from "./utils";
 import { Conflict, conflictPredicate, conflictStatus, KnowledgeGraphActivityClass, LanguageLabel, RDFOperation, RDFTriple, sparqlTemplate, updateResponse } from "./structures";
 
 /**
@@ -179,26 +179,50 @@ export async function updateTriple(graph: string, triple: RDFTriple, operation: 
 
 /**
  * Adds a new predicate to the vocabulary
+ * @param graph Graph in which the predicate should be added
  * @param predicate New Predicate indentifier as string
  * @param domains List of classes that can be used as domain (subject of rdf triple)
  * @param ranges List of classes that can be used as range (object of rdf triple)
  * @param labels Description of predicate in multiple languages
  * @returns updateResponse Object
  */
-export async function graphVocabAddPredicate(graph: string, predicate: string, domains: KnowledgeGraphActivityClass[], ranges: KnowledgeGraphActivityClass[], labels: LanguageLabel[]): Promise<updateResponse> {
+export async function addPredicate(graph: string, predicate: string, domains: KnowledgeGraphActivityClass[], ranges: KnowledgeGraphActivityClass[], labels: LanguageLabel[]): Promise<updateResponse> {
     if (RDFSyntaxCheck(predicate) == false) return { code: 400, status: "Error", modified: predicate, action: RDFOperation.insert } as updateResponse;
     let query = await getSparqlTemplate(sparqlTemplate.addPredicate);
     const labelString = labels.map(label => {
         return `"${label.label}"@${label.language}`;
     }).join(", ")
+    const stringDomains = domains.map(domain => ":" + domain);
+    const stringRanges = ranges.map(range => ":" + range);
     const mapObj = {
         "{{graph}}": graph,
-        "{{label}}": predicate,
-        "{{domains}}": domains.join(", "),
-        "{{ranges}}": ranges.join(", "),
+        "{{label}}": CapitalizeFirstLetter(predicate),
+        "{{domains}}": stringDomains.join(", "),
+        "{{ranges}}": stringRanges.join(", "),
         "{{labels}}": labelString
     }
     query = query.replaceMultiple(mapObj);
     const data = await fetchSparql(query, true);
     return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: predicate, action: RDFOperation.insert } as updateResponse;
+}
+
+/**
+ * Adds a new entity to the knowledge graph
+ * @param graph Graph in which the entity should be added
+ * @param entity Entity to be added
+ * @param activityClass Activity class of the entity
+ * @returns UpdateResponse Object
+ */
+export async function addEntity(graph: string, entity: string, activityClass: KnowledgeGraphActivityClass): Promise<updateResponse> {
+    entity[0].toUpperCase();
+    if (RDFSyntaxCheck(entity) == false) return { code: 400, status: "Error", modified: entity, action: RDFOperation.insert } as updateResponse;
+    let query = await getSparqlTemplate(sparqlTemplate.addEntity);
+    const mapObj = {
+        "{{graph}}": graph,
+        "{{entity}}": CapitalizeFirstLetter(entity),
+        "{{activityClass}}": activityClass
+    }
+    query = query.replaceMultiple(mapObj);
+    const data = await fetchSparql(query, true);
+    return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: entity, action: RDFOperation.insert } as updateResponse;
 }

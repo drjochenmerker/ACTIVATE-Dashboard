@@ -36,3 +36,6 @@ rdflib/data/*
 !Vocabulary.ttl
 !Urology Emergency after Debriefing.ttl
 !Urology Emergency before Debriefing.ttl
+
+# package-lock.json
+package-lock.json
