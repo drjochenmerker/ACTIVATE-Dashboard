@@ -132,14 +132,19 @@ export default {
       const title = this.title || 'New Note';
       const author = this.isAnonymous ? 'Anonymous' : 'Author übergeben';
 
-      const participants = this.activePoints.map(point => {
-        const selectedValue = this.selectedPoints[point] || []; // Get array of selected values
+      const participants = [];
 
-        return {
-          id: selectedValue.length > 0 ? selectedValue.map(item => item.label).join(", ") : 'N/A', // Join selected labels if multiple
-          type: point.charAt(0) + point.slice(1)
-        };
+      this.activePoints.forEach(point => {
+        const selectedValues = this.selectedPoints[point] || [];
+
+        selectedValues.forEach(item => {
+          participants.push({
+            id: item.label,  // every entry stays a separate participant (important for the graph)
+            type: point.charAt(0).toUpperCase() + point.slice(1)
+          });
+        });
       });
+
 
       const note = {
         title: title,
@@ -151,7 +156,7 @@ export default {
       };
 
       try {
-        const graph = 'Urology_Emergency_after_Debriefing';
+        const graph = 'Urology_Emergency_after_Debriefing'; // todo: change to graph name
         console.log("note:", note);
         const addConflictResponse = await addConflict(graph, note);
 
@@ -176,7 +181,7 @@ export default {
     showDropdown() {
       this.showDropdown = true;
       this.$nextTick(() => {
-        // Dynamisch Z-Index erhöhen, wenn Dropdown geöffnet wird
+        // dynamically increase Z-Index when dropdown is opened
         const dropdownList = this.$el.querySelector('.dropdown-list');
         dropdownList.style.zIndex = 1001 + this.$parent.activePoints.indexOf(this.label);
       });
@@ -210,7 +215,7 @@ export default {
       <h3>Add a title:</h3>
       <div class="title-field">
         <input type="text" v-model="title" placeholder="Title" class="title-input" />
-      </div> <!-- editor container description: -->
+      </div>
     </div>
 
     <!-- editor: -->
