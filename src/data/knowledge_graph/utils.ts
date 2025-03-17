@@ -1,4 +1,4 @@
-import { Comment, Conflict, sparqlTemplate, StringAccessObject } from "./structures";
+import { Comment, Conflict, RDFTriple, sparqlTemplate, StringAccessObject } from "./structures";
 
 /**
  * Internal function that allows to load a SPARQL query template from the filesystem
@@ -37,6 +37,12 @@ export async function fetchSparql(query: string, update: boolean = false): Promi
     return response;
 }
 
+/**
+ * Finds all comments that are nested in a conflict
+ * @param commentId Comment id to search nested comments for in conflict
+ * @param conflict Conflict object to search in
+ * @returns nested Comment or undefined if nothing was found
+ */
 export function findNestedComment(commentId: string, conflict: Conflict): Comment | undefined {
     for (const reply of conflict.replies ?? []) {
         // console.log("Nested Search on", conflict, "for", commentId);
@@ -48,6 +54,7 @@ export function findNestedComment(commentId: string, conflict: Conflict): Commen
     return undefined;
 }
 
+// Recursive part of nested comment search
 function findNestedCommentR(commentId: string, comment: Comment): Comment | undefined {
     const replyIndex = comment.replies?.find(reply => reply.id == commentId);
     // console.log("Nested Search for", commentId, "in", comment.replies, "found", replyIndex);
@@ -63,6 +70,32 @@ function findNestedCommentR(commentId: string, comment: Comment): Comment | unde
     return undefined;
 }
 
+/**
+ * Changes string in CamelCase to snake_case
+ * @param str input
+ * @returns output string
+ */
 export function camelToSnakeCase(str: string) {
     return str.replace(/([a-z])([A-Z])/g, '$1_$2').toLowerCase();
+}
+
+/**
+ * Checks if the input syntax of a RDF Triple or a string is correct
+ * @param input 
+ * @returns 
+ */
+export function RDFSyntaxCheck(input: RDFTriple | string): boolean {
+    if (typeof input == "string") {
+        if (!/^[A-Za-z0-9]+$/.test(input)) return false;
+        if (input.includes(" ")) return false;
+        return /^[A-Za-z]+(?:[A-Z0-9][a-z0-9]*)*$/.test(input);
+    }
+    else {
+        for (const [_, value] of Object.entries(input)) {
+            if (!/^[A-Za-z0-9]+$/.test(value)) return false;
+            if (value.includes(" ")) return false;
+            if (!/^[A-Za-z]+(?:[A-Z0-9][a-z0-9]*)*$/.test(value)) return false;
+        }
+    }
+    return true;
 }
