@@ -7,7 +7,7 @@ import { useActivityPointsStore } from '@/stores/activityPointsStore';
 import { useConflictsStore } from '@/stores/conflictsStore';
 import { conflictStatus } from '@/data/knowledge_graph/structures';
 import { getActivities, getActivityDetail, getConflictDetail, getConflictIds } from '@/data/knowledge_graph/read_operations';
-import { addConflict } from '@/data/knowledge_graph/write_operations';
+import { addComment, addConflict } from '@/data/knowledge_graph/write_operations';
 
 export default {
   name: 'Editor',
@@ -100,7 +100,7 @@ export default {
         this.quill.root.innerHTML = ''; // Clear Quill editor content
       }
       this.isAnonymous = false; // Reset the anonymous checkbox
-
+      this.title = ''; // Clear the title
       // Clear the selected values in the dropdowns
       for (const point in this.selectedPoints) {
         this.selectedPoints[point] = []; // Reset to empty arrays
@@ -123,16 +123,48 @@ export default {
     },
 
     async transferText() {
+      // consts
+      const graph = 'Urology_Emergency_after_Debriefing'; // todo: change to graph name
+      const content = this.quill.root.innerHTML;
+      const title = this.title || 'New Note';
+      const author = this.isAnonymous ? 'Anonymous' : 'HARD CODED';
+      const participants = [];
+
+
+      if (this.activePoints.length === 0) {
+        // Speichern von Titel und Inhalt in einer Variablen
+        const titleAndContent = title + '|' + content; // '|', the safest separator
+        console.log(titleAndContent);
+
+        try {
+          const response = await addComment(graph, "root", author, titleAndContent);
+
+          if (response.status === "OK") {
+            console.log("Kommentar erfolgreich gespeichert");
+          } else {
+            console.warn("Fehler beim Speichern des Kommentars:", response);
+          }
+        } catch (error) {
+          console.error("Fehler bei der Anfrage:", error);
+        }
+
+        // test:
+        /*
+        // Splitte den String an der Stelle des Trennzeichens '|'
+        const [extractedTitle, extractedContent] = titleAndContent.split('|');
+        // Jetzt kannst du auf 'extractedTitle' und 'extractedContent' zugreifen
+        console.log("Titel:", extractedTitle);
+        console.log("Beschreibung:", extractedContent);
+        */
+        this.clearEditor();
+        return;
+      }
+
+
       if (!this.activityDetails) {
         console.warn("Activity details not loaded yet. Please try again.");
         return; // Exit the function if data is not ready
       }
-
-      const content = this.quill.root.innerHTML;
-      const title = this.title || 'New Note';
-      const author = this.isAnonymous ? 'Anonymous' : 'HARD CODED';
-
-      const participants = [];
 
       this.activePoints.forEach(point => {
         const selectedValues = this.selectedPoints[point] || [];
@@ -156,7 +188,6 @@ export default {
       };
 
       try {
-        const graph = 'Urology_Emergency_after_Debriefing'; // todo: change to graph name
         console.log("note:", note);
         const addConflictResponse = await addConflict(graph, note);
 

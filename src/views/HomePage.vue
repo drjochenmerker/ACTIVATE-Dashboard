@@ -32,7 +32,7 @@ const isTripleAdditionDialogOpen = ref(false);
 
     <!-- Editor oder Platzhalter anzeigen -->
     <div class="flex-1">
-      <Editor v-if="hasActivePoints" :activePoints="getActivePoints" />
+      <Editor :activePoints="getActivePoints" />
     </div>
   </div>
 </template>
