@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { ref } from 'vue';
 import Button from '@/components/ui/button/Button.vue';
 import RDFAdditionDropdown from './RDFAdditionDropdown.vue';
 import { defineProps } from 'vue';
 import { useColorMode } from '@vueuse/core';
+import { updateTriple } from '@/data/knowledge_graph/write_operations';
+import { RDFOperation } from '@/data/knowledge_graph/structures';
 
 const props = defineProps<{
     activity: any,
@@ -13,31 +15,16 @@ const props = defineProps<{
 const activityData = props.activity
 const activityParticipants = ref([] as Array<{ label: string }>);
 
-onMounted(async () => {
-    console.log(activityData)
-});
-
 const mode = useColorMode();
 
 const isOpen = ref(false);
-const subject = ref([] as Array<{ label: string }>);
+const subject = ref('');
 const predicate = ref('');
-const object = ref([] as Array<{ label: string }>);
-
-// Dropdown-Werte (initial leer, damit "Choose Class" angezeigt wird)
-const subjectType = ref('');
-const predicateType = ref('');
-const objectType = ref('');
-
-// Dropdown Open States
-const subjectDropdownOpen = ref(false);
-const predicateDropdownOpen = ref(false);
-const objectDropdownOpen = ref(false);
+const object = ref('');
 
 const openDialog = () => {
     isOpen.value = true;
     activityParticipants.value = [];
-    // Alle Keys im JSON durchgehen und die 'label'-Werte sammeln
     Object.keys(activityData).forEach(key => {
         const items = activityData[key];
         if (Array.isArray(items)) {
@@ -57,36 +44,45 @@ const closeDialog = () => {
 };
 
 const resetInputs = () => {
-    subject.value = [];
-    object.value = [];
-    subjectType.value = '';
-    predicateType.value = '';
-    objectType.value = '';
-    subjectDropdownOpen.value = false;
-    predicateDropdownOpen.value = false;
-    objectDropdownOpen.value = false;
+    subject.value = '';
+    object.value = '';
+    predicate.value = '';
 };
 
-const isValidWord = (word: string): boolean => {
+const isValidPredicate = (word: string): boolean => {
     const regex = /^[A-Za-z]+$/;
     return regex.test(word);
 };
 
+const isValidSubjectOrObject = (word: string): boolean => {
+    return activityParticipants.value.some(participant => participant.label === word);
+}
+
+const cleanLabel = (label: string): string => {
+    return label.replace(/\s*\(.*?\)\s*/g, '').replace(/\s+/g, '');
+};
+
 const applyTriple = () => {
-    if (!subject.value.every(item => isValidWord(item.label))) {
-        alert("Subject can only contain letters without spaces, numbers, or special characters.");
+    if (!isValidSubjectOrObject(subject.value)) {
+        alert("Agent does not exist in this Activity. Please add it seperately.");
         return;
     }
-    if (!isValidWord(predicateType.value)) {
+    if (!isValidPredicate(predicate.value)) {
         alert("Predicate can only contain letters without spaces, numbers, or special characters.");
         return;
     }
-    if (!object.value.every(item => isValidWord(item.label))) {
-        alert("Object can only contain letters without spaces, numbers, or special characters.");
+
+    if (!isValidSubjectOrObject(object.value)) {
+        alert("Target does not exist in this Activity. Please add it seperately.");
         return;
     }
 
-    console.log('Triple:', subject.value, subjectType.value, predicate.value, predicateType.value, object.value, objectType.value);
+    const subjectString = cleanLabel(subject.value);
+    const objectString = cleanLabel(object.value);
+
+    updateTriple('Urology_Emergency_after_Debriefing', { subject: subjectString, predicate: predicate.value, object: objectString }, 'insert' as RDFOperation)
+
+    console.log('Added Triple:', subjectString, predicate.value, objectString);
     closeDialog();
 };
 </script>
@@ -107,7 +103,7 @@ const applyTriple = () => {
             <div class="flex space-x-4 mb-6">
                 <!-- Subject Field -->
                 <div class="flex-1">
-                    <RDFAdditionDropdown label="Agent" :options="activityParticipants" :v-model="subject" />
+                    <RDFAdditionDropdown label="Agent" :options="activityParticipants" v-model="subject" />
                 </div>
 
                 <!-- Predicate Field -->
@@ -120,7 +116,7 @@ const applyTriple = () => {
 
                 <!-- Object Field -->
                 <div class="flex-1">
-                    <RDFAdditionDropdown label="Target" :options="activityParticipants" :v-model="object" />
+                    <RDFAdditionDropdown label="Target" :options="activityParticipants" v-model="object" />
                 </div>
             </div>
 
