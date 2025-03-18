@@ -68,7 +68,7 @@ const applyTriple = () => {
 
         <div class="grid grid-cols-3 gap-4 mb-4" :class="mode === 'dark' ? 'text-white' : 'text-gray-700'">
             <div>
-                <label class="block text-sm font-medium">Subject:</label>
+                <label class="block text-sm font-medium">Agent:</label>
                 <input v-model="subject" type="text" class="mt-1 block w-full border border-gray-300 rounded-md px-2 py-1" :class="mode === 'dark' ? 'bg-custom-bg-gray-2' : 'bg-white'"/>
             </div>
             <div>
@@ -76,7 +76,7 @@ const applyTriple = () => {
                 <input v-model="predicate" type="text" class="mt-1 block w-full border border-gray-300 rounded-md px-2 py-1" :class="mode === 'dark' ? 'bg-custom-bg-gray-2' : 'bg-white'"/>
             </div>
             <div>
-                <label class="block text-sm font-medium">Object:</label>
+                <label class="block text-sm font-medium">Target:</label>
                 <input v-model="object" type="text" class="mt-1 block w-full border border-gray-300 rounded-md px-2 py-1" :class="mode === 'dark' ? 'bg-custom-bg-gray-2' : 'bg-white'"/>
             </div>
         </div>
