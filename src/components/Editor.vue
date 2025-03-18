@@ -130,7 +130,7 @@ export default {
 
       const content = this.quill.root.innerHTML;
       const title = this.title || 'New Note';
-      const author = this.isAnonymous ? 'Anonymous' : 'Author übergeben';
+      const author = this.isAnonymous ? 'Anonymous' : 'HARD CODED';
 
       const participants = [];
 

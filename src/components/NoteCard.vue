@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { defineProps, ref, onMounted, nextTick } from 'vue';
+import { defineProps, ref, onMounted, nextTick, computed } from 'vue';
 import { conflictPredicate, conflictStatus } from '@/data/knowledge_graph/structures';
 import ReplyCard from './ReplyCard.vue';
 import { addComment, updateConflict } from "@/data/knowledge_graph/write_operations";
@@ -73,6 +73,21 @@ const toggleReplyInput = async (conflictId: string) => {
   }
 };
 
+// grouped participants for tags
+const groupedParticipants = computed(() => {
+  const groups: Record<string, string[]> = {};
+  if (!props.conflict.participants) return groups;
+
+  props.conflict.participants.forEach(participant => {
+    if (!groups[participant.type]) {
+      groups[participant.type] = [];
+    }
+    groups[participant.type].push(participant.id);
+  });
+
+  return groups;
+});
+
 const saveReply = async (conflictId: string) => {
   if (!newReplyText.value[conflictId]) return;
 
@@ -94,7 +109,7 @@ const saveReply = async (conflictId: string) => {
       }
       conflictDetail.value.replies.push({
         id: Date.now().toString(), // temporäre ID
-        author: "test-replyer",
+        author: "test-replyer", //  todo: Temporärer Hardcoded-Autor
         comment: newReplyText.value[conflictId],
         replies: [] // empty array for potential nested replies
       });
@@ -138,16 +153,22 @@ const handleEnterKey = (event: KeyboardEvent) => {
     <div class="note-card-content">
       <div class="note-title" v-html="props.title"></div>
       <div class="note-participants">
-        <span v-for="participant in props.conflict.participants" :key="participant.id" class="participant-tag">
-          {{ participant.id }}
-        </span>
+        <div v-for="(group, type) in groupedParticipants" :key="type" class="participant-group">
+          <div class="participant-group-box">
+            <strong class="participant-group-title">{{ type }}:</strong>
+            <div class="participant-tag-container">
+              <span v-for="id in group" :key="id" class="participant-tag">
+                {{ id }}
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
-
-
-
       <div class="note-content" v-html="props.content"></div>
 
     </div>
+
+    <!-- comment section -->
     <div class="note-comment-section">
       <Button @click="toggleReplyInput(conflict.id)"> Add comment </Button>
     </div>
@@ -157,7 +178,7 @@ const handleEnterKey = (event: KeyboardEvent) => {
         @keydown.enter="handleEnterKey($event)" />
       <Button @click="saveReply(conflict.id)">Save</Button>
     </div>
-    <!-- Anzeige der Replies zu einem Konflikt -->
+    <!-- show replies to specific conflict -->
     <div v-if="conflictDetail && conflictDetail.replies && conflictDetail.replies.length > 0" class="reply-container">
       <ReplyCard v-for="(reply) in conflictDetail.replies" :key="reply.id" :parentComment="reply"
         :conflictId=conflict.id />
@@ -228,15 +249,36 @@ const handleEnterKey = (event: KeyboardEvent) => {
 .note-participants {
   display: flex;
   flex-wrap: wrap;
-  gap: 5px;
+  gap: 10px;
   margin-bottom: 10px;
+}
+
+.participant-group-box {
+  background-color: #f5f5f5;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 150px;
+}
+
+.participant-group-title {
+  font-size: 14px;
+  font-weight: bold;
+  color: #444;
+}
+
+.participant-tag-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
 }
 
 .participant-tag {
   background-color: #e0e0e0;
-  /* Helles Grau */
   color: #333;
-  /* Dunklere Schrift für besseren Kontrast */
   padding: 5px 10px;
   border-radius: 12px;
   font-size: 14px;
