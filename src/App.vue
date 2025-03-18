@@ -33,7 +33,6 @@ onMounted(async () => {
   try {
     await loadActivity();
     await loadConflicts();
-
   } catch (error) {
     console.error("Fehler beim Laden der Aktivitäten:", error);
   }

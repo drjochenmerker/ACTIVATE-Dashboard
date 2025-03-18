@@ -34,6 +34,7 @@
         "@types/object-hash": "^3.0.6",
         "@types/quill": "^2.0.14",
         "@vitejs/plugin-vue": "^5.2.1",
+        "@vue/runtime-core": "^3.5.13",
         "autoprefixer": "^10.4.20",
         "postcss": "^8.4.49",
         "prettier": "^3.4.2",
