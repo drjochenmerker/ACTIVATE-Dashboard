@@ -7,6 +7,7 @@ const props = defineProps({
         required: true,
     }
 });
+const [extractedTitle, extractedContent] = props.comment.comment.split('|');
 </script>
 
 <template>
@@ -16,8 +17,8 @@ const props = defineProps({
         </div>
         <hr class="misc-note-divider" />
         <div class="misc-note-content">
-            <div class="misc-note-title" v-html="props.comment.title"></div>
-            <div class="misc-note-description" v-html="props.comment.description"></div>
+            <div class="misc-note-title" v-html="extractedTitle"></div>
+            <div class="misc-note-description" v-html="extractedContent"></div>
         </div>
     </div>
 </template>

@@ -4,6 +4,7 @@ import { contentData } from '@/data/contentData';
 import ContentTemplate from '@/components/ContentTemplate.vue';
 import { getMiscComments } from '@/data/knowledge_graph/read_operations';
 import { onMounted, ref } from 'vue';
+import NoteCardMisc from '@/components/NoteCardMisc.vue';
 
 // Define props
 const props = defineProps<{ conflicts: any[], activity: any }>();
@@ -42,7 +43,9 @@ console.log("Beschreibung:", extractedContent);
         <div v-if="route.params.id === 'misc'">
             <div v-if="miscComments.length > 0">
                 <ul>
-                    <li v-for="(comment, index) in miscComments" :key="index">{{ comment }}</li>
+                    <li v-for="(comment, index) in miscComments" :key="index">
+                        <NoteCardMisc :comment="comment" />
+                    </li>
                 </ul>
             </div>
 

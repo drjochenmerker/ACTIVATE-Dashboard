@@ -147,6 +147,13 @@ export default {
         } catch (error) {
           console.error("Fehler bei der Anfrage:", error);
         }
+        /*
+        //Splitte den String an der Stelle des Trennzeichens '|'
+          const [extractedTitle, extractedContent] = titleAndContent.split('|');
+          // Jetzt kannst du auf 'extractedTitle' und 'extractedContent' zugreifen
+          console.log("Titel:", extractedTitle);
+          console.log("Beschreibung:", extractedContent);
+          */
         this.clearEditor();
         return;
       }
