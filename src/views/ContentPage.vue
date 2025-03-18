@@ -2,6 +2,8 @@
 import { useRoute } from 'vue-router';
 import { contentData } from '@/data/contentData';
 import ContentTemplate from '@/components/ContentTemplate.vue';
+import { getMiscComments } from '@/data/knowledge_graph/read_operations';
+import { onMounted, ref } from 'vue';
 
 // Define props
 const props = defineProps<{ conflicts: any[], activity: any }>();
@@ -10,17 +12,44 @@ const route = useRoute();
 const pageData = contentData.find((item) => item.id === route.params.id);
 const graph = 'Urology_Emergency_after_Debriefing'; // todo: change to graph name
 
+// Reactive variable to hold miscellaneous comments
+const miscComments = ref<string[]>([]);
+
+// Fetch miscellaneous comments on mount
+onMounted(async () => {
+    if (route.params.id === 'misc') {
+        // Get miscellaneous comments from the graph
+        miscComments.value = await getMiscComments(graph);
+    }
+});
+
+/*
+// Splitte den String an der Stelle des Trennzeichens '|'
+const [extractedTitle, extractedContent] = titleAndContent.split('|');
+// Jetzt kannst du auf 'extractedTitle' und 'extractedContent' zugreifen
+console.log("Titel:", extractedTitle);
+console.log("Beschreibung:", extractedContent);
+*/
 </script>
 
 <template>
     <div>
         <h1 class="text-2xl font-semibold mb-4">{{ pageData?.title }}</h1>
-        <ContentTemplate v-if="pageData" :pageData="pageData" :conflicts="props.conflicts" />
 
-        <div v-if="props.conflicts">{{ props.conflicts }}</div>
-        <!-- Anzeige nur wenn wir auf der 'misc' Seite sind -->
+        <ContentTemplate v-if="route.params.id !== 'misc'" :pageData="pageData" :conflicts="props.conflicts" />
+
+        <!--when on misc page, show misc comments-->
         <div v-if="route.params.id === 'misc'">
-            Misc Page data
+            <div v-if="miscComments.length > 0">
+                <ul>
+                    <li v-for="(comment, index) in miscComments" :key="index">{{ comment }}</li>
+                </ul>
+            </div>
+
+            <div v-else>
+                There are no miscellaneous comments.
+            </div>
         </div>
+
     </div>
 </template>

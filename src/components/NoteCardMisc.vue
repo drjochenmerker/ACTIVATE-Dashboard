@@ -1,0 +1,69 @@
+<script lang="ts" setup>
+import { defineProps } from 'vue';
+
+const props = defineProps({
+    comment: {
+        type: Object,
+        required: true,
+    }
+});
+</script>
+
+<template>
+    <div class="misc-note-card">
+        <div class="misc-note-header">
+            <span class="misc-note-author">Author: {{ props.comment.author || 'Unknown' }}</span>
+        </div>
+        <hr class="misc-note-divider" />
+        <div class="misc-note-content">
+            <div class="misc-note-title" v-html="props.comment.title"></div>
+            <div class="misc-note-description" v-html="props.comment.description"></div>
+        </div>
+    </div>
+</template>
+
+<style scoped>
+.misc-note-card {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 16px;
+    margin: 10px 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    max-width: 100%;
+    width: 100%;
+}
+
+.misc-note-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    gap: 10px;
+}
+
+.misc-note-author {
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+}
+
+.misc-note-divider {
+    border: none;
+    border-top: 1px solid #ddd;
+    margin: 10px 0;
+}
+
+.misc-note-content {
+    margin-bottom: 10px;
+}
+
+.misc-note-title {
+    font-size: xx-large;
+    font-weight: normal;
+}
+
+.misc-note-description {
+    font-weight: normal;
+}
+</style>
