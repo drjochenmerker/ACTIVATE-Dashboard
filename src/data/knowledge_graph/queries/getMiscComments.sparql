@@ -6,11 +6,21 @@ PREFIX xml: <http://www.w3.org/XML/1998/namespace>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> 
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> 
 
-INSERT DATA {
-	GRAPH graph:{{graph}} {
-		:{{label}} rdf:type owl:ObjectProperty ;
-			rdfs:domain {{domains}} ;
-			rdfs:range {{ranges}} ;
-            rdfs:label {{labels}} .
-	}
+SELECT * WHERE {
+    GRAPH graph:{{graph}} {
+    {
+        SELECT ?root_comment_id WHERE {
+            :root :HasComment ?root_comment_id .
+        }
+    }
+    UNION
+    {
+        SELECT ?s ?p ?o WHERE {
+            :root :HasComment ?r_c .
+            ?r_c (<>|!<>)* ?s .
+            ?s ?p ?o .
+            FILTER (?p != rdf:type) .
+        }
+    }
+    }
 }

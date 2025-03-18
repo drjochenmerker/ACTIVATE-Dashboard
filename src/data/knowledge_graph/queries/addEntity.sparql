@@ -8,9 +8,7 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
 INSERT DATA {
 	GRAPH graph:{{graph}} {
-		:{{label}} rdf:type owl:ObjectProperty ;
-			rdfs:domain {{domains}} ;
-			rdfs:range {{ranges}} ;
-            rdfs:label {{labels}} .
+		:{{entity}} rdf:type owl:NamedIndividual ,
+                            :{{activityClass}} .
 	}
 }
