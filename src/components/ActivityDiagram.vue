@@ -62,7 +62,6 @@ export default defineComponent({
         const hoverPosition = ref<{ x: number; y: number }>({ x: 0, y: 0 });
 
         // Data from the props
-        const activityData = props.activity;
         let conflictData = conflictStore.getConflicts;
 
         // Checks if the Activity-Diagram has to be cleared when a Comment is sent by the editor
@@ -398,7 +397,7 @@ export default defineComponent({
             points.value.forEach((point) => {
                 const distance = Math.sqrt((mouseX - point.x) ** 2 + (mouseY - point.y) ** 2);
                 if (distance < triangleHeight / 40) {
-                    foundPoint = { label: point.label, content: activityData[point.id] || [] };
+                    foundPoint = { label: point.label, content: props.activity[point.id] || [] };
 
                     // Adjust hoverPosition for cases in which the hoverPopUp would be outside the canvas
                     // TODO: Maybe find a better dynamic way to adjust the hoverPosition
