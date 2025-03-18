@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { getActivities, getActivityDetail, getAllConflictsWithDetail } from '@/data/knowledge_graph/read_operations';
+import { getAllConflictsWithDetail } from '@/data/knowledge_graph/read_operations';
 import { Activity } from '@/data/knowledge_graph/structures';
 import { useConflictsStore } from '@/stores/conflictsStore';
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted } from 'vue';
 import NavBar from './NavBar.vue';
 import { useActivityStore } from '@/stores/activityStore';
 
@@ -12,17 +12,10 @@ const activity = ref<Activity | null>(null);
 const conflictsStore = useConflictsStore();
 const conflictDetails = ref<any[]>([]);
 
-const loadActivity = async () => {
-  const activities = await getActivities();
-  activity.value = activities[0];
-};
-
 const loadConflicts = async () => {
-  //this shit is somehow not working
-  //activity.value = activityStore.getActivity();
-
+  activity.value = activityStore.getActivity();
   if (activity.value) {
-    const conflicts = await getAllConflictsWithDetail("Urology_Emergency_after_Debriefing");
+    const conflicts = await getAllConflictsWithDetail(activity.value.graph);
     conflictsStore.setConflicts(conflicts);
     conflictDetails.value = conflicts;
   }
@@ -30,7 +23,6 @@ const loadConflicts = async () => {
 
 onMounted(async () => {
   try {
-    await loadActivity();
     await loadConflicts();
 
   } catch (error) {

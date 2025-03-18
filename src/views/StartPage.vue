@@ -31,7 +31,7 @@ const router = useRouter();
 const activityStore = useActivityStore();
 
 const activities = ref<Activity[]>([]);
-const selectedActivity = ref<string | null>(null);
+const selectedActivity = ref<string | undefined>(undefined);
 
 onMounted(async () => {
   try {
@@ -58,6 +58,15 @@ const handleStartSession = async () => {
   router.push('/');
 }
 
+const selectedRole = ref<string>('');
+
+const roles = [
+  {id: 0, name: "Doctor 1"},
+  {id: 1, name: "Doctor 2"},
+  {id: 2, name: "Nurse 1"},
+  {id: 3, name: "Nurse 2"},
+]
+
 </script>
 
 <template>
@@ -78,9 +87,20 @@ const handleStartSession = async () => {
           </SelectContent>
         </Select>
 
-        <p class="text-sm text-muted-foreground mt-4">
+        <p class="text-sm text-muted-foreground my-4">
           {{ getDescription() }}
         </p>
+
+        <Select v-model="selectedRole">
+          <SelectTrigger>
+            <SelectValue placeholder="Select your role" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem v-for="role in roles" :key="role.id" :value="role.name">
+              {{ role.name }}
+            </SelectItem>
+          </SelectContent>
+        </Select>
 
       </CardContent>
       <CardFooter>
