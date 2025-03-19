@@ -1,4 +1,4 @@
-import { Comment, Conflict, RDFTriple, sparqlTemplate, StringAccessObject } from "./structures";
+import type { Comment, Conflict, RDFTriple, sparqlTemplate, StringAccessObject } from "./structures";
 
 /**
  * Internal function that allows to load a SPARQL query template from the filesystem
@@ -40,12 +40,19 @@ export async function fetchSparql(query: string, update: boolean = false): Promi
 /**
  * Finds all comments that are nested in a conflict
  * @param commentId Comment id to search nested comments for in conflict
- * @param conflict Conflict object to search in
+ * @param input Conflict or Comment object to search in
  * @returns nested Comment or undefined if nothing was found
  */
-export function findNestedComment(commentId: string, conflict: Conflict): Comment | undefined {
-    for (const reply of conflict.replies ?? []) {
-        // console.log("Nested Search on", conflict, "for", commentId);
+export function findNestedComment(commentId: string, input: Conflict | Comment[]): Comment | undefined {
+    let searchArray: any;
+    if (Array.isArray(input)) {
+        searchArray = input;
+    }
+    else {
+        searchArray = input.replies;
+    }
+    for (const reply of searchArray) {
+        // console.log("Nested Search on", input, "for", commentId, "on", reply);
         const nestedReply = findNestedCommentR(commentId, reply);
         if (nestedReply) {
             return nestedReply;
@@ -98,4 +105,8 @@ export function RDFSyntaxCheck(input: RDFTriple | string): boolean {
         }
     }
     return true;
+}
+
+export function CapitalizeFirstLetter(input: string): string {
+    return input.charAt(0).toUpperCase() + input.slice(1);
 }

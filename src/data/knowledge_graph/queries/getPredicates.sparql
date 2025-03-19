@@ -9,10 +9,24 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> 
 
 SELECT * WHERE {
-  GRAPH graph:Vocabulary {
-    ?s rdf:type owl:ObjectProperty .
-    ?s rdfs:domain ?domain .
-    ?s rdfs:range ?range .
-    ?s rdfs:label ?label .
+  {
+    SELECT * WHERE {
+      GRAPH graph:{{graph}} {
+        ?s rdf:type owl:ObjectProperty .
+        ?s rdfs:domain ?domain .
+        ?s rdfs:range ?range .
+        ?s rdfs:label ?label .
+      }
+    }
+  }
+  UNION{
+    SELECT * WHERE {
+      GRAPH graph:Vocabulary {
+        ?s rdf:type owl:ObjectProperty .
+        ?s rdfs:domain ?domain .
+        ?s rdfs:range ?range .
+        ?s rdfs:label ?label .
+      }
+    }
   }
 }

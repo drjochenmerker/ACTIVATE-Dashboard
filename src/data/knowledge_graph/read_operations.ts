@@ -1,4 +1,4 @@
-import { Action, Activity, ActivityDetail, Conflict, StringAccessObject, Object, sparqlTemplate, Participant, PredicateDict } from "./structures";
+import { Action, Activity, ActivityDetail, Conflict, Comment, StringAccessObject, Object, sparqlTemplate, Participant, PredicateDict, KnowledgeGraphActivityClass } from "./structures";
 import { fetchSparql, findNestedComment, getSparqlTemplate, camelToSnakeCase } from "./utils";
 
 /**
@@ -292,8 +292,9 @@ export async function getAllConflictsWithDetail(graph: string): Promise<Conflict
  * for each Class relation
  * Example: (Subject,Rule) = HasToFollow
  */
-export async function getPredicateObject(): Promise<PredicateDict> {
-  const query = await getSparqlTemplate(sparqlTemplate.getPredicates);
+export async function getPredicateObject(graph: string): Promise<PredicateDict> {
+  let query = await getSparqlTemplate(sparqlTemplate.getPredicates);
+  query = query.replace("{{graph}}", graph);
   const data = await fetchSparql(query);
   const predDict = new PredicateDict;
   data.map((item: StringAccessObject) => {
@@ -310,4 +311,105 @@ export async function getPredicateObject(): Promise<PredicateDict> {
     })
   })
   return predDict;
+}
+
+/**
+ * Fetches alle Comments with :root as parent
+ * @param graph Graph to fetch the comments from
+ * @returns List of miscellanous comments
+ */
+export async function getMiscComments(graph: string): Promise<Comment[]> {
+  // Fetch data
+  let query = await getSparqlTemplate(sparqlTemplate.getMiscComments);
+  query = query.replace("{{graph}}", graph);
+  const data = await fetchSparql(query);
+  // Preproccess data
+  let rootIds = [] as string[];
+  let parsedComments = [] as Comment[];
+  // Build data structure
+  data.map((item: StringAccessObject) => {
+    if (item.root_comment_id !== undefined) {
+      const commentObj = { id: item.root_comment_id.value.split("#").pop() };
+      rootIds.push(commentObj.id);
+      parsedComments.push(commentObj);
+    }
+    else if (item.p.value.split("#").pop() == "HasComment") {
+      const rootParent = parsedComments.find(comment => comment.id == item.s.value.split("#").pop());
+      if (rootParent) {
+        if (rootParent.replies === undefined) { rootParent.replies = [] };
+        rootParent.replies.push({
+          id: item.o.value.split("#").pop()
+        });
+      }
+      else {
+        let nestedComment = undefined
+        nestedComment = findNestedComment(item.s.value.split("#").pop(), parsedComments);
+        if (nestedComment) {
+          if (nestedComment.replies === undefined) { nestedComment.replies = [] };
+          nestedComment.replies.push({
+            id: item.o.value.split("#").pop()
+          });
+        }
+      }
+    }
+  });
+  // Fill in details
+  data.map((item: StringAccessObject) => {
+    if (item.p == undefined) { return };
+    let comment = undefined
+    switch (item.p.value.split("#").pop()) {
+      case "WrittenBy":
+        comment = parsedComments.find(comment => comment.id == item.s.value.split("#").pop());
+        if (comment) {
+          comment.author = item.o.value;
+        }
+        else {
+          const nestedComment = findNestedComment(item.s.value.split("#").pop(), parsedComments);
+          if (nestedComment) {
+            nestedComment.author = item.o.value;
+          }
+        }
+        break;
+      case "CommentDescription":
+        comment = parsedComments.find(comment => comment.id == item.s.value.split("#").pop());
+        if (comment) {
+          comment.comment = item.o.value;
+        }
+        else {
+          const nestedComment = findNestedComment(item.s.value.split("#").pop(), parsedComments);
+          if (nestedComment) {
+            nestedComment.comment = item.o.value;
+          }
+        }
+        break;
+      case "CreationDate":
+        comment = parsedComments.find(comment => comment.id == item.s.value.split("#").pop());
+        if (comment) {
+          comment.timestamp = new Date(item.o.value);
+        }
+        else {
+          const nestedComment = findNestedComment(item.s.value.split("#").pop(), parsedComments);
+          if (nestedComment) {
+            nestedComment.timestamp = new Date(item.o.value);
+          }
+        }
+        break;
+    }
+  });
+  return parsedComments;
+}
+
+export async function getActivityClassIds(graph: string, activityClass: KnowledgeGraphActivityClass): Promise<string[]> {
+  let query = await getSparqlTemplate(sparqlTemplate.getActivityClassIds);
+  const mapObj = {
+    "{{graph}}": graph,
+    "{{activityClass}}": activityClass,
+  };
+  query = query.replaceMultiple(mapObj);
+  const data = await fetchSparql(query);
+  let result = [] as string[];
+  data.map((item: StringAccessObject) => {
+    result.push(item.entity.value.split("#").pop());
+  })
+  return result;
 }

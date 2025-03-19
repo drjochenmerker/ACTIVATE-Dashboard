@@ -1,46 +1,46 @@
 from rdflib import Dataset, URIRef
 import uvicorn
-from rdflib_endpoint import SparqlEndpoint
+from rdflib_endpoint import SparqlRouter
 import os
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 
-example_query = """PREFIX : <http://activate.htwk-leipzig.de/model#> 
-PREFIX owl: <http://www.w3.org/2002/07/owl#> 
-PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> 
-PREFIX xml: <http://www.w3.org/XML/1998/namespace> 
-PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> 
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> 
+DATA_DIR = "./data"
+FILES = [file for file in os.listdir(DATA_DIR) if file.endswith(".ttl")]
 
-SELECT * WHERE {
-    ?s ?p ?o .
-} LIMIT 100"""
-
-
-# Use ConjunctiveGraph to support nquads and graphs in SPARQL queries
-# identifier is the default graph
+# Create dataset with Namespaces and dynamically define graphs
 ds = Dataset()
+graphs = {file: ds.graph(URIRef(f"http://activate.htwk-leipzig.de/graph/{file[:-4].replace(" ", "_")}")) for file in FILES}
+ttl_filepath_dict = {file[:-4].replace(" ", "_"): os.path.join(DATA_DIR, file) for file in FILES}
 
-graph_vocabulary = ds.graph(URIRef("http://activate.htwk-leipzig.de/graph/Vocabulary"))
-graph_after = ds.graph(URIRef("http://activate.htwk-leipzig.de/graph/Urology_Emergency_after_Debriefing"))
-graph_before = ds.graph(URIRef("http://activate.htwk-leipzig.de/graph/Urology_Emergency_before_Debriefing"))
+# Load TTL files into graphs
+for filename, graph in graphs.items():
+    ttl_path = os.path.join(DATA_DIR, filename)
+    if os.path.exists(ttl_path):
+        graph.parse(ttl_path, format="turtle")
 
-graph_vocabulary.parse(os.path.join(".", "data", "Vocabulary.ttl"), format="turtle")
-graph_after.parse(os.path.join(".", "data", "Urology Emergency after Debriefing.ttl"), format="turtle")
-graph_before.parse(os.path.join(".", "data", "Urology Emergency before Debriefing.ttl"), format="turtle")
-
-# Start the SPARQL endpoint based on the RDFLib Graph
-app = SparqlEndpoint(
+sparql_router = SparqlRouter(
     graph=ds,
+    graphs=graphs,
     path="/",
-    cors_enabled=True,
     # Metadata used for the SPARQL service description and Swagger UI:
     title="SPARQL endpoint for RDFLib graph",
+    description="A SPARQL endpoint to serve machine learning models, or any other logic implemented in Python. \n[Source code](https://github.com/vemonet/rdflib-endpoint)",
     version="0.1.0",
-    # Example query displayed in YASGUI default tab
-    example_query = example_query,
-    enable_update=True,
+    ttl_files=ttl_filepath_dict,
+    enable_update=True
 )
 
-# Uncomment to run it directly with python app/main.py
+app = FastAPI()
+app.include_router(sparql_router)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 if __name__ == "__main__":
     uvicorn.run(app, host="localhost", port=8000)

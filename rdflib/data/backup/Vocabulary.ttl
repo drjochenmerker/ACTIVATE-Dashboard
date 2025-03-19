@@ -166,7 +166,8 @@
                            :DivisionOfLabour ,
                            :Instrument ,
                            :Object ,
-                           :Subject ;
+                           :Subject ,
+                           :Rule ;
                 rdfs:label "Har deltagare"@sv ,
                            "Has participant"@en ,
                            "Hat Teilnehmer"@de .
