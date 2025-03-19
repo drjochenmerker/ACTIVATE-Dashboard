@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue';
 import NavBar from './components/NavBar.vue';
 // Backend Tests
-import { getActivities, getActivityDetail, getAllConflictsWithDetail } from './data/knowledge_graph/read_operations';
+import { getActivities, getActivityDetail, getAllConflictsWithDetail, getPredicateObject } from './data/knowledge_graph/read_operations';
 import { useConflictsStore } from './stores/conflictsStore';
 import { Activity } from './data/knowledge_graph/structures';
 
@@ -33,6 +33,9 @@ onMounted(async () => {
   try {
     await loadActivity();
     await loadConflicts();
+    const preds = await getPredicateObject(activityGraph.value);
+    console.log("Predicates:", preds);
+    console.log("test", preds.getBidirectional(["subject", "rules"]), preds.ge);
   } catch (error) {
     console.error("Fehler beim Laden der Aktivitäten:", error);
   }

@@ -156,8 +156,8 @@ export default {
       };
 
       try {
-        const graph = 'Urology_Emergency_after_Debriefing'; // todo: change to graph name
-        console.log("note:", note);
+        // todo replace with actual graph name
+        const graph = 'Urology_Emergency_before_Debriefing';
         const addConflictResponse = await addConflict(graph, note);
 
         if (addConflictResponse.status === "OK") {
