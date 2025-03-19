@@ -1,6 +1,6 @@
 from rdflib import Dataset, URIRef
 import uvicorn
-from customSparql import SparqlRouter
+from rdflib_endpoint import SparqlRouter
 import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -22,6 +22,7 @@ for filename, graph in graphs.items():
 
 sparql_router = SparqlRouter(
     graph=ds,
+    graphs=graphs,
     path="/",
     # Metadata used for the SPARQL service description and Swagger UI:
     title="SPARQL endpoint for RDFLib graph",

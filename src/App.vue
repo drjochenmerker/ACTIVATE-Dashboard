@@ -4,6 +4,7 @@ import NavBar from './components/NavBar.vue';
 // Backend Tests
 import { getActivities, getActivityDetail, getAllConflictsWithDetail, getPredicateObject } from './data/knowledge_graph/read_operations';
 import { useConflictsStore } from './stores/conflictsStore';
+import { Activity } from './data/knowledge_graph/structures';
 
 
 const conflictsStore = useConflictsStore();
@@ -15,6 +16,7 @@ const activityGraph = ref<any>(null);
 const loadActivity = async () => {
   const activities = await getActivities();
   if (activities && activities.length > 0) {
+    activities[0] = {graph: "Urology_Emergency_after_Debriefing", name: "Urology Emergency after Debriefing"} as Activity
     activity.value = await getActivityDetail(activities[0]);
     activityGraph.value = activities[0].graph;
   }
@@ -32,9 +34,6 @@ onMounted(async () => {
   try {
     await loadActivity();
     await loadConflicts();
-    const preds = await getPredicateObject(activityGraph.value);
-    console.log("Predicates:", preds);
-    console.log("test", preds.getBidirectional(["subject", "rules"]), preds.ge);
   } catch (error) {
     console.error("Fehler beim Laden der Aktivitäten:", error);
   }

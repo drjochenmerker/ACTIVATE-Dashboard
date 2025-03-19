@@ -160,7 +160,7 @@ export default {
       // **ADD CONFLICT**
       try {
         // todo replace with actual graph name
-        const graph = 'Urology_Emergency_before_Debriefing';
+        const graph = 'Urology_Emergency_after_Debriefing';
         const addConflictResponse = await addConflict(graph, note);
 
         // **TEST: GET CONFLICT DETAIL**
