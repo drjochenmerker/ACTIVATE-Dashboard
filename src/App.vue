@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue';
 import NavBar from './components/NavBar.vue';
 // Backend Tests
-import { getActivities, getActivityDetail, getAllConflictsWithDetail, getPredicateObject } from './data/knowledge_graph/read_operations';
+import { getActivities, getActivityDetail, getAllConflictsWithDetail } from './data/knowledge_graph/read_operations';
 import { useConflictsStore } from './stores/conflictsStore';
 import { Activity } from './data/knowledge_graph/structures';
 
