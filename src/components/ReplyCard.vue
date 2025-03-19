@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { defineProps, nextTick, ref } from 'vue';
 import { Button } from '@/components/ui/button'; // Button-Komponente importieren
-import { addComment } from '@/data/knowledge_graph/write_operations';
+import { addComment, deleteConflict } from '@/data/knowledge_graph/write_operations';
 
 const props = defineProps({
     parentComment: {
@@ -62,10 +62,25 @@ const saveReply = async (parentCommentId: string) => {
 
 // Funktion zum Abschicken per Enter-Taste im Textarea
 const handleEnterKey = (event: KeyboardEvent) => {
-  if (event.key === 'Enter' && !event.shiftKey) {
-    event.preventDefault();
-    saveReply(props.parentComment.id);
-  }
+    if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        saveReply(props.parentComment.id);
+    }
+};
+
+const handleDelete = async (id: string) => {
+    console.log(id);
+    try {
+        const response = await deleteConflict(graph, id);
+        if (response.status === "OK") {
+            console.log("Konflikt erfolgreich gelöscht.");
+        } else {
+            console.error("Fehler beim Löschen des Konflikts.");
+        }
+
+    } catch (error) {
+        console.error("Fehler beim Löschen des Konflikts:", error);
+    }
 };
 
 </script>
@@ -73,9 +88,15 @@ const handleEnterKey = (event: KeyboardEvent) => {
 <template>
     <div class="reply-card">
         <div class="reply-content">
-            <p class="reply-author">{{ parentComment.author }}</p>
+            <div class="reply-head">
+                <p class="reply-author">{{ parentComment.author }}</p>
+                <button class="icon-button" @click="handleDelete(parentComment.id)">
+                    <span class="material-symbols-outlined">delete</span>
+                </button>
+            </div>
             <p class="reply-text">{{ parentComment.comment }}</p>
         </div>
+
 
         <!-- Antwort-Button zum Umblenden des Eingabefeldes -->
         <Button @click="toggleReplyInput()">
@@ -84,7 +105,8 @@ const handleEnterKey = (event: KeyboardEvent) => {
 
         <!-- Antwort Eingabefeld -->
         <div v-if="replyInputVisible" class="reply-input">
-            <textarea ref="textareaRef" v-model="newReplyText" placeholder="Write something to answer..." @keydown.enter="handleEnterKey($event)"></textarea>
+            <textarea ref="textareaRef" v-model="newReplyText" placeholder="Write something to answer..."
+                @keydown.enter="handleEnterKey($event)"></textarea>
             <Button @click="saveReply(parentComment.id)">Save Comment</Button>
         </div>
 
@@ -108,6 +130,12 @@ const handleEnterKey = (event: KeyboardEvent) => {
     background-color: #f9f9f9;
     padding: 10px;
     border-radius: 5px;
+}
+
+.reply-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .reply-author {

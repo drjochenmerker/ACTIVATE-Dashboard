@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import { defineProps, ref, onMounted, nextTick, computed } from 'vue';
+import { defineProps, ref, onMounted, nextTick, computed, watch } from 'vue';
 import { conflictPredicate, conflictStatus } from '@/data/knowledge_graph/structures';
 import ReplyCard from './ReplyCard.vue';
-import { addComment, updateConflict } from "@/data/knowledge_graph/write_operations";
+import { addComment, deleteConflict, updateConflict } from "@/data/knowledge_graph/write_operations";
 import { Button } from '@/components/ui/button';
 import { useConflictsStore } from '@/stores/conflictsStore';
 
@@ -37,39 +37,37 @@ const newReplyText = ref<Record<string, string>>({});
 const graph = 'Urology_Emergency_after_Debriefing';
 
 // Status aus den Props setzen
-const selectedStatus = ref<any>(null);
+const selectedStatus = ref<any>(props.status);
 
 const conflictStore = useConflictsStore();
 
-const textareaRef = ref<HTMLTextAreaElement | null>(null)
+const textareaRef = ref<HTMLTextAreaElement | null>(null);
 
-// get status from sessionStorage or set default value
-onMounted(async () => {
-  const detail = props.conflict
-
-  if (!detail.replies) {
-    detail.replies = []
-  }
-  conflictDetail.value = detail;
-  selectedStatus.value = conflictDetail.value.status;
+// Set initial conflict detail
+onMounted(() => {
+  conflictDetail.value = { ...props.conflict }; // Kopie erstellen, um Reaktivität zu erhalten
 });
 
-// refresh status
-function setStatus(status: conflictStatus) {
-  selectedStatus.value = status;
-  updateConflict(graph, props.conflict.id, conflictPredicate.status, selectedStatus.value)
-  conflictStore.updateConflict(props.conflict.id, graph)
-}
+// 🔄 Watch für `props.conflict`, falls sich der Konflikt extern ändert (z. B. durch Store-Updates)
+watch(() => props.conflict, (newConflict) => {
+  conflictDetail.value = { ...newConflict };
+}, { deep: true });
+
+// 🔄 Watch für `selectedStatus`, um Status-Änderungen sofort zu speichern
+watch(selectedStatus, async (newStatus) => {
+  await updateConflict(graph, props.conflict.id, conflictPredicate.status, newStatus);
+  conflictStore.updateConflict(props.conflict.id, graph);
+});
 
 // toggle input field
 const toggleReplyInput = async (conflictId: string) => {
   replyInputVisible.value[conflictId] = !replyInputVisible.value[conflictId];
-  if (replyInputVisible.value) {
+  if (replyInputVisible.value[conflictId]) {
     await nextTick();
     textareaRef.value?.focus();
   }
   if (!replyInputVisible.value[conflictId]) {
-    newReplyText.value[conflictId] = ''; // Textfeld leeren, wenn es geschlossen wird
+    newReplyText.value[conflictId] = ''; // Textfeld leeren
   }
 };
 
@@ -92,26 +90,24 @@ const saveReply = async (conflictId: string) => {
   if (!newReplyText.value[conflictId]) return;
 
   try {
-    // SPARQL query to save the comment (reply)
     const response = await addComment(
-      graph, // current knowledge graph
-      conflictId, // id of the conflict
+      graph,
+      conflictId,
       "test-replyer", // TODO: Temporärer Hardcoded-Autor
-      newReplyText.value[conflictId] // reply text
+      newReplyText.value[conflictId]
     );
 
     console.log("Kommentar erfolgreich gespeichert:", response);
 
     if (conflictDetail.value) {
-      // if replies not initialized, initialize
       if (!conflictDetail.value.replies) {
         conflictDetail.value.replies = [];
       }
       conflictDetail.value.replies.push({
         id: Date.now().toString(), // temporäre ID
-        author: "test-replyer", //  todo: Temporärer Hardcoded-Autor
+        author: "test-replyer",
         comment: newReplyText.value[conflictId],
-        replies: [] // empty array for potential nested replies
+        replies: []
       });
     }
     replyInputVisible.value[conflictId] = false;
@@ -127,29 +123,49 @@ const handleEnterKey = (event: KeyboardEvent) => {
     saveReply(props.conflict.id);
   }
 };
+
+// delete conflicts
+const handleDelete = async (id) => {
+  try {
+    // Löschen des Konflikts aus der Datenbank
+    const response = await deleteConflict(graph, id);
+    if (response.status === "OK") {
+      // Löschen des Konflikts aus dem Store
+      conflictStore.conflictDetails.value = conflictStore.conflictDetails.value.filter(conflict => conflict.id !== id);
+      console.log("Konflikt erfolgreich gelöscht");
+    } else {
+      console.error("Fehler beim Löschen des Konflikts");
+    }
+  } catch (error) {
+    console.error("Fehler beim Löschen:", error);
+  }
+};
+
+
+
+
 </script>
 
 <template>
   <div class="note-card" :class="selectedStatus">
     <div class="note-card-header">
-      <!-- show author -->
       <span class="note-card-author">
         Author: {{ props.author }}
       </span>
       <div class="status-selector">
-        <!-- drop down for status selection -->
-        <select v-model="selectedStatus" @change="setStatus(selectedStatus)">
+        <select v-model="selectedStatus">
           <option :value="conflictStatus.open">{{ conflictStatus.open }}</option>
           <option :value="conflictStatus.inDiscussion">{{ conflictStatus.inDiscussion }}</option>
           <option :value="conflictStatus.resolved">{{ conflictStatus.resolved }}</option>
         </select>
       </div>
+      <button class="icon-button" @click="handleDelete(props.conflict.id)">
+        <span class="material-symbols-outlined">delete</span>
+      </button>
     </div>
 
-    <!-- line break -->
     <hr class="note-divider" />
 
-    <!-- content -->
     <div class="note-card-content">
       <div class="note-title" v-html="props.title"></div>
       <div class="note-participants">
@@ -165,27 +181,25 @@ const handleEnterKey = (event: KeyboardEvent) => {
         </div>
       </div>
       <div class="note-content" v-html="props.content"></div>
-
     </div>
 
-    <!-- comment section -->
     <div class="note-comment-section">
       <Button @click="toggleReplyInput(conflict.id)"> Add comment </Button>
     </div>
-    <!-- comment input field -->
+
     <div v-if="replyInputVisible[conflict.id]" class="comment-input">
       <textarea ref="textareaRef" v-model="newReplyText[conflict.id]" placeholder="Write a reply..."
         @keydown.enter="handleEnterKey($event)" />
       <Button @click="saveReply(conflict.id)">Save</Button>
     </div>
-    <!-- show replies to specific conflict -->
+
     <div v-if="conflictDetail && conflictDetail.replies && conflictDetail.replies.length > 0" class="reply-container">
       <ReplyCard v-for="(reply) in conflictDetail.replies" :key="reply.id" :parentComment="reply"
-        :conflictId=conflict.id />
+        :conflictId="conflict.id" />
     </div>
   </div>
-
 </template>
+
 
 <style scoped>
 .note-card {
@@ -216,6 +230,21 @@ const handleEnterKey = (event: KeyboardEvent) => {
   border-color: rgba(152, 251, 152, 0.7);
 }
 
+/* icon */
+.icon-button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  font-size: 24px;
+  color: red;
+}
+
+.icon-button:hover {
+  color: darkred;
+}
+
+/* comment input */
 .comment-input {
   margin-top: 10px;
 }
