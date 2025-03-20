@@ -8,6 +8,7 @@ import { useConflictsStore } from '@/stores/conflictsStore';
 import { conflictStatus } from '@/data/knowledge_graph/structures';
 import { getActivities, getActivityDetail, getConflictDetail, getConflictIds } from '@/data/knowledge_graph/read_operations';
 import { addConflict } from '@/data/knowledge_graph/write_operations';
+import { useActivityStore } from '@/stores/activityStore';
 
 export default {
   name: 'Editor',
@@ -159,8 +160,7 @@ export default {
       const conflictDetail = null;
       // **ADD CONFLICT**
       try {
-        // todo replace with actual graph name
-        const graph = 'Urology_Emergency_after_Debriefing';
+        const graph = useActivityStore().getActivity().graph;
         const addConflictResponse = await addConflict(graph, note);
 
         // **TEST: GET CONFLICT DETAIL**
@@ -190,6 +190,7 @@ export default {
       }
 
       const activityPointStore = useActivityPointsStore();
+      
       activityPointStore.deactivateAllPoints();
 
       this.clearEditor();

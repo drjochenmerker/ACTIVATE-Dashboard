@@ -5,6 +5,7 @@ import ReplyCard from './ReplyCard.vue';
 import { addComment, updateConflict } from "@/data/knowledge_graph/write_operations";
 import { Button } from '@/components/ui/button';
 import { useConflictsStore } from '@/stores/conflictsStore';
+import { useActivityStore } from '@/stores/activityStore';
 
 const props = defineProps({
   conflict: {
@@ -33,13 +34,13 @@ const conflictDetail = ref<any>(null);
 const replyInputVisible = ref<Record<string, boolean>>({});
 const newReplyText = ref<Record<string, string>>({});
 
-//todo hard coded graph title
-const graph = 'Urology_Emergency_after_Debriefing';
+const graph = useActivityStore().getActivity()!.graph;
 
 // Status aus den Props setzen
 const selectedStatus = ref<any>(null);
 
 const conflictStore = useConflictsStore();
+const activityStore = useActivityStore();
 
 const textareaRef = ref<HTMLTextAreaElement | null>(null)
 
@@ -81,7 +82,7 @@ const saveReply = async (conflictId: string) => {
     const response = await addComment(
       graph, // current knowledge graph
       conflictId, // id of the conflict
-      "test-replyer", // TODO Temporärer Hardcoded-Autor
+      activityStore.getRole()!,
       newReplyText.value[conflictId] // reply text
     );
 
@@ -94,7 +95,7 @@ const saveReply = async (conflictId: string) => {
       }
       conflictDetail.value.replies.push({
         id: Date.now().toString(), // temporäre ID
-        author: "test-replyer",
+        author: activityStore.getRole()!,
         comment: newReplyText.value[conflictId],
         replies: [] // leeres Array für potenzielle verschachtelte Antworten
       });
