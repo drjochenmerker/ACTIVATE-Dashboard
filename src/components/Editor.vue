@@ -34,12 +34,12 @@ export default {
       title: '',
       activityDetails: null,
       selectedPoints: {
-        subject: null,
-        instruments: null,
-        object: null,
-        community: null,
-        rules: null,
-        divisionoflabour: null
+        subject: [],
+        instruments: [],
+        object: [],
+        community: [],
+        rules: [],
+        divisionoflabour: []
       },
     };
   },
@@ -68,6 +68,12 @@ export default {
     },
     isActivePoint() {
       return (pointType) => this.activePoints.includes(pointType);
+    },
+    isDoneDisabled() {
+      return this.activePoints.some(point => {
+        const value = this.selectedPoints[point];
+        return !value || value.length === 0; // Check if any selection is made for each active point
+      });
     }
   },
   methods: {
@@ -98,7 +104,7 @@ export default {
 
       // Clear the selected values in the dropdowns
       for (const point in this.selectedPoints) {
-        this.selectedPoints[point] = null; // Reset to null
+        this.selectedPoints[point] = []; // Reset to empty arrays
       }
     },
 
@@ -118,36 +124,29 @@ export default {
     },
 
     async transferText() {
-      // Ensure activityDetails is loaded before proceeding
       if (!this.activityDetails) {
         console.warn("Activity details not loaded yet. Please try again.");
         return; // Exit the function if data is not ready
       }
 
       const content = this.quill.root.innerHTML;
-      const title = this.title || 'New Note'; // Use the title from data, or default to 'New Note'
+      const title = this.title || 'New Note';
       const author = this.isAnonymous ? 'Anonymous' : 'Author übergeben';
 
-      // Transform activePoints into the desired participants array
-      const participants = this.activePoints.map(point => {
-        // Access selected value from dropdown
-        const selectedValue = this.selectedPoints[point] || {};;
+      const participants = [];
 
-        // Use a fallback label if selectedValue is null or undefined
-        const label = selectedValue.label || 'N/A';
+      this.activePoints.forEach(point => {
+        const selectedValues = this.selectedPoints[point] || [];
 
-        // test log
-        //console.log("selectedPoints:", this.selectedPoints);
-        //console.log("activePoints:", this.activePoints);
-
-
-        return {
-          id: label, // Use selected label, or 'N/A' if not selected
-          type: point.charAt(0) + point.slice(1) // Capitalize the first letter
-        };
+        selectedValues.forEach(item => {
+          participants.push({
+            id: item.label,  // every entry stays a separate participant (important for the graph)
+            type: point.charAt(0).toUpperCase() + point.slice(1)
+          });
+        });
       });
 
-      // Create the note object that is then going into the store
+
       const note = {
         title: title,
         timestamp: new Date().toISOString(),
@@ -157,36 +156,21 @@ export default {
         description: content,
       };
 
-      const conflictDetail = null;
-      // **ADD CONFLICT**
       try {
         const graph = useActivityStore().getActivity().graph;
+        console.log("note:", note);
         const addConflictResponse = await addConflict(graph, note);
 
-        // **TEST: GET CONFLICT DETAIL**
         if (addConflictResponse.status === "OK") {
           const conflictId = addConflictResponse.modified;
           const conflictDetail = await getConflictDetail(graph, conflictId);
-          // console.log("new conflictDetail", conflictDetail);
-
-          // **VERIFY:** Check if conflictDetail has the correct properties
-          if (conflictDetail && conflictDetail.title === note.title && conflictDetail.description === note.description) {
-            //console.log("Conflict Ids test log: ", getConflictIds(graph));
-
-            //console.log("Conflict IDs:", getConflictDetail(graph, "973d26bf5902cf923ff792b64d533a3444d83b5c"));
-            const conflictsStore = useConflictsStore();
-            
-            conflictsStore.addConflict(conflictDetail);
-          } else {
-            console.warn("Conflict added, but getConflictDetail returned incorrect data.");
-          }
+          const conflictsStore = useConflictsStore();
+          conflictsStore.addConflict(conflictDetail);
         } else {
-          console.warn("Error adding conflict. Skipping getConflictDetail test.");
+          console.warn("Error adding conflict.");
         }
-
       } catch (error) {
         console.error("Error adding conflict:", error);
-        // Handle the error appropriately (e.g., display an error message)
       }
 
       const activityPointStore = useActivityPointsStore();
@@ -196,7 +180,14 @@ export default {
       this.clearEditor();
     },
 
-
+    showDropdown() {
+      this.showDropdown = true;
+      this.$nextTick(() => {
+        // dynamically increase Z-Index when dropdown is opened
+        const dropdownList = this.$el.querySelector('.dropdown-list');
+        dropdownList.style.zIndex = 1001 + this.$parent.activePoints.indexOf(this.label);
+      });
+    }
   },
   watch: {
     value(newValue) {
@@ -208,24 +199,25 @@ export default {
 };
 </script>
 
+
 <template>
   <div class="editor-container">
     <button class="clear-button" @click="clearEditor">Clear Editor</button>
 
     <h3>Add Note to selected Points:</h3>
     <!-- dropdown: -->
-    <div>
+    <div class="dropdown-container">
       <div v-for="point in activePoints" :key="point">
+        <!-- Pass selectedPoints[point] as v-model to the Dropdown to manage multiple selections -->
         <Dropdown :label="point" :options="pointData[point] || []" v-model="selectedPoints[point]" />
       </div>
-
     </div>
     <!-- title: -->
     <div>
       <h3>Add a title:</h3>
       <div class="title-field">
         <input type="text" v-model="title" placeholder="Title" class="title-input" />
-      </div> <!-- editor container description: -->
+      </div>
     </div>
 
     <!-- editor: -->
@@ -236,9 +228,10 @@ export default {
       Send anonymously
     </label>
 
-    <Button variant="primary" size="large" class="transfer-button" @click="transferText">
+    <Button variant="primary" size="large" class="transfer-button" @click="transferText" :disabled="isDoneDisabled">
       Done
     </Button>
+
   </div>
 </template>
 
@@ -270,9 +263,17 @@ input {
   border-radius: 4px;
 }
 
+.dropdown-container {
+  position: relative;
+  /* Stellt sicher, dass alle Dropdowns korrekt gestapelt werden */
+}
+
 .dropdown-list {
   position: absolute;
+  /* Dropdown wird relativ zum Dropdown-Container positioniert */
   top: 100%;
+  /* Dropdown öffnet sich unterhalb des Eingabefeldes */
+  left: 0;
   width: 100%;
   background: white;
   border: 1px solid #ccc;
@@ -282,9 +283,11 @@ input {
   margin: 0;
   max-height: 150px;
   overflow-y: auto;
-  z-index: 1000;
+
+  /* Dropdown über andere Elemente legen */
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
+
 
 .dropdown-list li {
   padding: 8px;
@@ -297,6 +300,8 @@ input {
 
 .quill-editor {
   height: 250px;
+  overflow-y: auto;
+  /* Allow scrolling if content exceeds the set height */
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   background-color: #f9f9f9;
