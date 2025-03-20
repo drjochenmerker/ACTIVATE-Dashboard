@@ -93,7 +93,7 @@ const saveReply = async (conflictId: string) => {
     const response = await addComment(
       graph,
       conflictId,
-      "test-replyer", // TODO: Temporärer Hardcoded-Autor
+      "test-replyer", // Temporärer Hardcoded-Autor
       newReplyText.value[conflictId]
     );
 
@@ -103,12 +103,16 @@ const saveReply = async (conflictId: string) => {
       if (!conflictDetail.value.replies) {
         conflictDetail.value.replies = [];
       }
-      conflictDetail.value.replies.push({
-        id: Date.now().toString(), // temporäre ID
-        author: "test-replyer",
-        comment: newReplyText.value[conflictId],
-        replies: []
-      });
+      // Neue Referenz für `replies` zuweisen
+      conflictDetail.value.replies = [
+        ...conflictDetail.value.replies, // alte Kommentare
+        {
+          id: Date.now().toString(), // temporäre ID
+          author: "test-replyer",
+          comment: newReplyText.value[conflictId],
+          replies: []
+        }
+      ];
     }
     replyInputVisible.value[conflictId] = false;
     newReplyText.value[conflictId] = '';
@@ -116,6 +120,7 @@ const saveReply = async (conflictId: string) => {
     console.error("Error saving comment:", error);
   }
 };
+
 
 const handleEnterKey = (event: KeyboardEvent) => {
   if (event.key === 'Enter' && !event.shiftKey) {

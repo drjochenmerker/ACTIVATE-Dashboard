@@ -33,7 +33,6 @@ const saveReply = async (parentCommentId: string) => {
     if (!newReplyText.value) return;
 
     try {
-
         const response = await addComment(
             graph,
             parentCommentId,
@@ -41,24 +40,28 @@ const saveReply = async (parentCommentId: string) => {
             newReplyText.value
         );
 
-        console.log("Unterkommentar erfolgreich gespeichert:", response)
+        console.log("Unterkommentar erfolgreich gespeichert:", response);
 
         if (!props.parentComment.replies) {
             props.parentComment.replies = [];
         }
-        // Füge die neue Antwort (Reply) hinzu
-        props.parentComment.replies.push({
-            id: Date.now().toString(), // temporäre ID
-            author: "test-replyer", // Temporärer Autor
-            comment: newReplyText.value, // Kommentartext
-            replies: [] // Leeres Array für mögliche weitere Verschachtelungen
-        });
+        // Neue Referenz für `replies` zuweisen
+        props.parentComment.replies = [
+            ...props.parentComment.replies, // alte Antworten
+            {
+                id: Date.now().toString(), // temporäre ID
+                author: "test-replyer", // todo Temporärer Autor
+                comment: newReplyText.value, // Kommentartext
+                replies: [] // Leeres Array für mögliche weitere Verschachtelungen
+            }
+        ];
         replyInputVisible.value = false; // Eingabefeld verstecken
         newReplyText.value = ''; // Textfeld leeren
     } catch (error) {
         console.error('Fehler beim Speichern der Antwort:', error);
     }
 };
+
 
 // Funktion zum Abschicken per Enter-Taste im Textarea
 const handleEnterKey = (event: KeyboardEvent) => {
