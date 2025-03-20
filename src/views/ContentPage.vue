@@ -18,19 +18,12 @@ const miscComments = ref<string[]>([]);
 
 // Fetch miscellaneous comments on mount
 onMounted(async () => {
+    console.log(props.conflicts[1].replies);
     if (route.params.id === 'misc') {
         // Get miscellaneous comments from the graph
         miscComments.value = await getMiscComments(graph);
     }
 });
-
-/*
-// Splitte den String an der Stelle des Trennzeichens '|'
-const [extractedTitle, extractedContent] = titleAndContent.split('|');
-// Jetzt kannst du auf 'extractedTitle' und 'extractedContent' zugreifen
-console.log("Titel:", extractedTitle);
-console.log("Beschreibung:", extractedContent);
-*/
 </script>
 
 <template>

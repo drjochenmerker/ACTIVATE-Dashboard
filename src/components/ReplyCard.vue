@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { defineProps, nextTick, ref } from 'vue';
 import { Button } from '@/components/ui/button'; // Button-Komponente importieren
-import { addComment, deleteConflict } from '@/data/knowledge_graph/write_operations';
+import { addComment, deleteConflict, deleteComment } from '@/data/knowledge_graph/write_operations';
 
 const props = defineProps({
     parentComment: {
@@ -16,7 +16,7 @@ const graph = 'Urology_Emergency_after_Debriefing';
 const replyInputVisible = ref(false);
 const newReplyText = ref('');
 
-const textareaRef = ref<HTMLTextAreaElement | null>(null)
+const textareaRef = ref<HTMLTextAreaElement | null>(null);
 
 const toggleReplyInput = async () => {
     replyInputVisible.value = !replyInputVisible.value;
@@ -27,8 +27,8 @@ const toggleReplyInput = async () => {
 }
 
 // Funktion zum Speichern einer Antwort
-const saveReply = async (parentCommentId: string) => {
-    console.log(`save comment for conflict with id: ${parentCommentId}:`, newReplyText.value)
+const saveReply = async (parentCommentId: string, parentReply?: any) => {
+    console.log(`save comment for conflict with id: ${parentCommentId}:`, newReplyText.value);
 
     if (!newReplyText.value) return;
 
@@ -42,12 +42,14 @@ const saveReply = async (parentCommentId: string) => {
 
         console.log("Unterkommentar erfolgreich gespeichert:", response);
 
-        if (!props.parentComment.replies) {
-            props.parentComment.replies = [];
+        // Sicherstellen, dass das Array existiert
+        if (!parentReply.replies) {
+            parentReply.replies = [];
         }
-        // Neue Referenz für `replies` zuweisen
-        props.parentComment.replies = [
-            ...props.parentComment.replies, // alte Antworten
+
+        // Verschachtelte Antwort hinzufügen
+        parentReply.replies = [
+            ...parentReply.replies,
             {
                 id: Date.now().toString(), // temporäre ID
                 author: "test-replyer", // todo Temporärer Autor
@@ -55,6 +57,7 @@ const saveReply = async (parentCommentId: string) => {
                 replies: [] // Leeres Array für mögliche weitere Verschachtelungen
             }
         ];
+
         replyInputVisible.value = false; // Eingabefeld verstecken
         newReplyText.value = ''; // Textfeld leeren
     } catch (error) {
@@ -62,29 +65,45 @@ const saveReply = async (parentCommentId: string) => {
     }
 };
 
-
 // Funktion zum Abschicken per Enter-Taste im Textarea
 const handleEnterKey = (event: KeyboardEvent) => {
     if (event.key === 'Enter' && !event.shiftKey) {
         event.preventDefault();
-        saveReply(props.parentComment.id);
+        saveReply(props.parentComment.id, props.parentComment);
     }
 };
 
-const handleDelete = async (id: string) => {
-    console.log(id);
+const handleDelete = async (id: string, parentComment: any) => {
+    console.log("Lösche Kommentar mit ID:", id);
     try {
-        const response = await deleteConflict(graph, id);
-        if (response.status === "OK") {
-            console.log("Konflikt erfolgreich gelöscht.");
-        } else {
-            console.error("Fehler beim Löschen des Konflikts.");
-        }
+        // Lösche den Kommentar (ist es ein verschachtelter Kommentar?)
+        const isNestedComment = parentComment.replies ? true : false;
 
+        // Aufruf der deleteComment-Funktion
+        const response = await deleteComment(graph, id, isNestedComment);
+
+        // Überprüfen, ob die Antwort erfolgreich war
+        if (response.status === "OK") {
+            console.log("Kommentar erfolgreich gelöscht.");
+
+            // Wenn der Kommentar verschachtelt ist, entferne ihn aus den replies
+            if (parentComment.replies) {
+                parentComment.replies = parentComment.replies.filter((reply: any) => reply.id !== id);
+            }
+            // Wenn der Kommentar keine verschachtelten Antworten hat, lösche ihn direkt
+            if (!parentComment.replies || parentComment.replies.length === 0) {
+                // Hier kannst du den Kommentar aus der übergeordneten Liste der Kommentare entfernen, 
+                // falls der Kommentar direkt entfernt wurde.
+            }
+        } else {
+            console.error("Fehler beim Löschen des Kommentars.");
+        }
     } catch (error) {
-        console.error("Fehler beim Löschen des Konflikts:", error);
+        console.error("Fehler beim Löschen des Kommentars:", error);
     }
 };
+
+
 
 </script>
 
@@ -92,14 +111,14 @@ const handleDelete = async (id: string) => {
     <div class="reply-card">
         <div class="reply-content">
             <div class="reply-head">
-                <p class="reply-author">{{ parentComment.author }}</p>
-                <button class="icon-button" @click="handleDelete(parentComment.id)">
+                <p class="reply-author">{{ props.parentComment.author }}</p>
+                <button class="icon-button" @click="handleDelete(props.parentComment.id, props.parentComment)">
                     <span class="material-symbols-outlined">delete</span>
                 </button>
+
             </div>
             <p class="reply-text">{{ parentComment.comment }}</p>
         </div>
-
 
         <!-- Antwort-Button zum Umblenden des Eingabefeldes -->
         <Button @click="toggleReplyInput()">
@@ -110,7 +129,7 @@ const handleDelete = async (id: string) => {
         <div v-if="replyInputVisible" class="reply-input">
             <textarea ref="textareaRef" v-model="newReplyText" placeholder="Write something to answer..."
                 @keydown.enter="handleEnterKey($event)"></textarea>
-            <Button @click="saveReply(parentComment.id)">Save Comment</Button>
+            <Button @click="saveReply(parentComment.id, parentComment)">Save Comment</Button>
         </div>
 
         <!-- Zeige verschachtelte Antworten an -->
