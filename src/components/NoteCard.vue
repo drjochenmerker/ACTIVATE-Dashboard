@@ -45,15 +45,16 @@ const textareaRef = ref<HTMLTextAreaElement | null>(null);
 
 // Set initial conflict detail
 onMounted(() => {
-  conflictDetail.value = { ...props.conflict }; // Kopie erstellen, um Reaktivität zu erhalten
+  conflictDetail.value = { ...props.conflict };
 });
 
-// 🔄 Watch für `props.conflict`, falls sich der Konflikt extern ändert (z. B. durch Store-Updates)
+// watch for props.conflict in case it changes externally (e.g. through store updates)
 watch(() => props.conflict, (newConflict) => {
   conflictDetail.value = { ...newConflict };
 }, { deep: true });
 
-// 🔄 Watch für `selectedStatus`, um Status-Änderungen sofort zu speichern
+
+// watch the selected status and update the conflict status
 watch(selectedStatus, async (newStatus) => {
   await updateConflict(graph, props.conflict.id, conflictPredicate.status, newStatus);
   conflictStore.updateConflict(props.conflict.id, graph);
@@ -141,7 +142,6 @@ const handleDelete = async (id: string) => {
     console.error("Error deleting conflict: ", error);
   }
 };
-
 
 </script>
 
