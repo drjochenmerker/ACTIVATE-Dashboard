@@ -1,4 +1,18 @@
 {
-    "files": [],
-    "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }]
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ],
+  "compilerOptions": {
+    "allowJs" : true,
+    "checkJs": false,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "types": ["./src/vue-shims.d.ts"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
 }

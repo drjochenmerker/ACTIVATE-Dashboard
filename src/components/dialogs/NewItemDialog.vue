@@ -17,7 +17,7 @@ import { CirclePlus } from 'lucide-vue-next';
 <template>
     <Dialog>
         <DialogTrigger as-child>
-            <Button class="fixed bottom-6 right-6"> <CirclePlus class="w-4 h-4 mr-2" /> Add new item </Button>
+            <Button class="fixed bottom-6 right-6"> <CirclePlus class="w-4 h-4 mr-2" /> Add misc note </Button>
         </DialogTrigger>
         <DialogContent class="sm:max-w-[425px]">
             <DialogHeader>

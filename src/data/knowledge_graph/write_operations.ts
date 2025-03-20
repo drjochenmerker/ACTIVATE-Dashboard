@@ -1,0 +1,228 @@
+import hash from "object-hash";
+import { CapitalizeFirstLetter, fetchSparql, getSparqlTemplate, RDFSyntaxCheck } from "./utils";
+import { Conflict, conflictPredicate, conflictStatus, KnowledgeGraphActivityClass, LanguageLabel, RDFOperation, RDFTriple, sparqlTemplate, updateResponse } from "./structures";
+
+/**
+ * Adds a new conflict to the sparql database
+ * @param activity Activity as string used to generate ID
+ * @param participants List of Participants used to link them to the conflict and generate an ID
+ * @param author Author used to generate the ID. Multiple anonymous will lead to issues
+ * @param status Status of the new conflict
+ * @returns updateResponse Object
+ */
+export async function addConflict(graph: string, conflict: Conflict): Promise<updateResponse> {
+    // Create unique hash as a conflict ID
+    const timestamp = new Date().toISOString();
+    const conflictId = hash({
+        participants: conflict.participants,
+        author: conflict.author,
+        created: timestamp
+    });
+    // Build query dynamically using participants
+    const participantString = conflict.participants.map(participant => {
+        return `\t\t:HasParticipant :${participant.id} ;`;
+    }).join("\n")
+    let query = await getSparqlTemplate(sparqlTemplate.addConflict);
+    const mapObj = {
+        "{{graph}}": graph,
+        "{{conflictId}}": conflictId,
+        "{{participants}}": participantString,
+        "{{description}}": conflict.description ? conflict.description : "",
+        "{{author}}": conflict.author,
+        "{{status}}": conflict.status,
+        "{{created}}": timestamp,
+        "{{title}}": conflict.title
+    };
+    query = query.replaceMultiple(mapObj);
+    // Exeucte Query in update mode
+    const data = await fetchSparql(query, true);
+    return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: conflictId, action: RDFOperation.insert } as updateResponse;
+}
+
+/**
+ * Deletes a conflict and all nested comments. Currently doesn't work
+ * properly due to the testing sparql solution being a piece of shit that doesn't accept
+ * any solution I tried and me refusing to delete everything triple by triple. Nested comments
+ * will remain in the RDF-Triple-Store as of now without any references to them wasting memory
+ * @param conflictId 
+ * @returns 
+ */
+export async function deleteConflict(graph: string, conflictId: string): Promise<updateResponse> {
+    // let query = await getSparqlTemplate(sparqlTemplate.getNestedCommentIds);
+    // query = query.replace("{{conflict}}", conflictId);
+    // const commentIds = await fetchSparql(query, false);
+    let query = await getSparqlTemplate(sparqlTemplate.deleteTriples);
+    const mapObj = {
+        "{{graph}}": graph,
+        "{{subject}}": conflictId
+    };
+    query = query.replaceMultiple(mapObj);
+    const data = await fetchSparql(query, true);
+    // let tripleString = `\t"${conflictId}",`;
+    // for (let id in commentIds) {
+    //     tripleString += `"${commentIds[id].s.value.split("/").pop()}",\n`;
+    // }
+    // query = query.replace("{{tripleString}}", tripleString.slice(0, -2));
+    return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: conflictId, action: RDFOperation.delete } as updateResponse;
+}
+
+/**
+ * Updates an existing conflict with new information. Can be used to update the status, description and title of a conflict
+ * Warning: Does not check whether a conflict ID exists. Could be used to fill the database with irrelevant data
+ * @param conflictId 
+ * @param predicate
+ * @param newValue
+ * @returns updateResponse Object
+ */
+export async function updateConflict(graph: string, conflictId: string, predicate: conflictPredicate, newValue: conflictStatus | string): Promise<updateResponse> {
+    let query = await getSparqlTemplate(sparqlTemplate.updateConflict);
+    const mapObj = {
+        "{{graph}}": graph,
+        "{{conflictId}}": conflictId,
+        "{{predicate}}": predicate,
+        "{{newValue}}": newValue
+    };
+    query = query.replaceMultiple(mapObj);
+    const data = await fetchSparql(query, true);
+    return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: conflictId, action: RDFOperation.insert } as updateResponse;
+}
+
+export async function updateConflictParticipants(graph: string, conflictId: string, operation: RDFOperation, participantId: string): Promise<updateResponse> {
+    let query = (operation == RDFOperation.insert) ? await getSparqlTemplate(sparqlTemplate.addConflictParticipant) : await getSparqlTemplate(sparqlTemplate.deleteConflictParticipant);
+    const mapObj = {
+        "{{graph}}": graph,
+        "{{conflictId}}": conflictId,
+        "{{participantId}}": participantId
+    };
+    query = query.replaceMultiple(mapObj);
+    const data = await fetchSparql(query, true);
+    return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: conflictId, action: RDFOperation.insert } as updateResponse;
+}
+
+/**
+ * Adds a comment to a conflict or another comment
+ * @param parentId Id of the parent element. Can be a conflict id, another comment id or "root" for parentless comments
+ * @param author Author of the comment
+ * @param comment Comment as string
+ * @returns 
+ */
+export async function addComment(graph: string, parentId: string, author: string, comment: string): Promise<updateResponse> {
+    // Create unique hash as a conflict ID
+    const timestamp = new Date().toISOString();
+    const commentId = hash({
+        conflictId: parentId,
+        author: author,
+        comment: comment,
+        created: timestamp
+    });
+    let query = await getSparqlTemplate(sparqlTemplate.addComment);
+    const mapObj = {
+        "{{graph}}": graph,
+        "{{author}}": author,
+        "{{commentId}}": commentId,
+        "{{comment}}": comment,
+        "{{created}}": timestamp,
+        "{{parentId}}": parentId
+    };
+    query = query.replaceMultiple(mapObj);
+    // Exeucte Query in update mode
+    const data = await fetchSparql(query, true);
+    return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: commentId, action: RDFOperation.insert } as updateResponse;
+}
+
+/**
+ * Deletes a comment from the knowledge graph. If the comment is a nested comment, the author and the content of
+ * the original comment will be overwritten to prevent nested comments from being orphaned
+ * @param commentId 
+ * @param isNestedComment 
+ * @returns updateResponse Object
+ */
+export async function deleteComment(graph: string, commentId: string, isNestedComment: boolean): Promise<updateResponse> {
+    let query = "";
+    if (isNestedComment) {
+        query = await getSparqlTemplate(sparqlTemplate.deleteNestedComment);
+    }
+    else {
+        query = await getSparqlTemplate(sparqlTemplate.deleteComment);
+    }
+    const mapObj = {
+        "{{graph}}": graph,
+        "{{commentId}}": commentId
+    };
+    query = query.replaceMultiple(mapObj);
+    const data = await fetchSparql(query, true);
+    return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: commentId, action: RDFOperation.delete } as updateResponse;
+}
+
+/**
+ * Add a triple with new information to the knowledge graph
+ * @param triple 
+ * @returns updateResponse Object
+ */
+export async function updateTriple(graph: string, triple: RDFTriple, operation: RDFOperation): Promise<updateResponse> {
+    // Check if triple is legit
+    if (RDFSyntaxCheck(triple) == false) return { code: 400, status: "Error", modified: Object.values(triple).join(" "), action: operation } as updateResponse;
+    let query = operation === "insert"
+        ? await getSparqlTemplate(sparqlTemplate.addTriple)
+        : await getSparqlTemplate(sparqlTemplate.deleteTriple);
+    const mapObj = {
+        "{{graph}}": graph,
+        "{{subject}}": triple.subject,
+        "{{predicate}}": triple.predicate,
+        "{{object}}": triple.object
+    };
+    query = query.replaceMultiple(mapObj);
+    // Exeucte Query in update mode
+    const data = await fetchSparql(query, true);
+    return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: Object.values(triple).join(" "), action: operation } as updateResponse;
+}
+
+/**
+ * Adds a new predicate to the vocabulary
+ * @param graph Graph in which the predicate should be added
+ * @param predicate New Predicate indentifier as string
+ * @param domains List of classes that can be used as domain (subject of rdf triple)
+ * @param ranges List of classes that can be used as range (object of rdf triple)
+ * @param labels Description of predicate in multiple languages
+ * @returns updateResponse Object
+ */
+export async function addPredicate(graph: string, predicate: string, domains: KnowledgeGraphActivityClass[], ranges: KnowledgeGraphActivityClass[], labels: LanguageLabel[]): Promise<updateResponse> {
+    if (RDFSyntaxCheck(predicate) == false) return { code: 400, status: "Error", modified: predicate, action: RDFOperation.insert } as updateResponse;
+    let query = await getSparqlTemplate(sparqlTemplate.addPredicate);
+    const labelString = labels.map(label => {
+        return `"${label.label}"@${label.language}`;
+    }).join(", ")
+    const stringDomains = domains.map(domain => ":" + domain);
+    const stringRanges = ranges.map(range => ":" + range);
+    const mapObj = {
+        "{{graph}}": graph,
+        "{{label}}": CapitalizeFirstLetter(predicate),
+        "{{domains}}": stringDomains.join(", "),
+        "{{ranges}}": stringRanges.join(", "),
+        "{{labels}}": labelString
+    }
+    query = query.replaceMultiple(mapObj);
+    const data = await fetchSparql(query, true);
+    return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: predicate, action: RDFOperation.insert } as updateResponse;
+}
+
+/**
+ * Adds a new entity to the knowledge graph
+ * @param graph Graph in which the entity should be added
+ * @param entity Entity to be added
+ * @param activityClass Activity class of the entity
+ * @returns UpdateResponse Object
+ */
+export async function addEntity(graph: string, entity: string, activityClass: KnowledgeGraphActivityClass): Promise<updateResponse> {
+    entity[0].toUpperCase();
+    if (RDFSyntaxCheck(entity) == false) return { code: 400, status: "Error", modified: entity, action: RDFOperation.insert } as updateResponse;
+    let query = await getSparqlTemplate(sparqlTemplate.addEntity);
+    const mapObj = {
+        "{{graph}}": graph,
+        "{{entity}}": CapitalizeFirstLetter(entity),
+        "{{activityClass}}": activityClass
+    }
+    query = query.replaceMultiple(mapObj);
+    const data = await fetchSparql(query, true);
+    return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: entity, action: RDFOperation.insert } as updateResponse;
+}
