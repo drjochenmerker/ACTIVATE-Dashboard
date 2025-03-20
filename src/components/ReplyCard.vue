@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import { defineProps, nextTick, ref } from 'vue';
 import { Button } from '@/components/ui/button'; // Button-Komponente importieren
-import { addComment, deleteConflict, deleteComment } from '@/data/knowledge_graph/write_operations';
+import { addComment, deleteComment } from '@/data/knowledge_graph/write_operations';
+import { useRepliesStore } from '@/stores/repliesStore';
 
 const props = defineProps({
     parentComment: {
@@ -11,6 +12,8 @@ const props = defineProps({
 });
 
 const graph = 'Urology_Emergency_after_Debriefing';
+const repliesStore = useRepliesStore();
+
 
 // Toggle für die Anzeige des Antwort-Eingabefelds
 const replyInputVisible = ref(false);
@@ -36,18 +39,13 @@ const saveReply = async (parentCommentId: string, parentReply?: any) => {
         const response = await addComment(
             graph,
             parentCommentId,
-            "test-replyer",
+            "test-replyer", //TODO
             newReplyText.value
         );
 
-        console.log("Unterkommentar erfolgreich gespeichert:", response);
-
-        // Sicherstellen, dass das Array existiert
         if (!parentReply.replies) {
             parentReply.replies = [];
         }
-
-        // Verschachtelte Antwort hinzufügen
         parentReply.replies = [
             ...parentReply.replies,
             {
@@ -102,8 +100,6 @@ const handleDelete = async (id: string, parentComment: any) => {
         console.error("Fehler beim Löschen des Kommentars:", error);
     }
 };
-
-
 
 </script>
 

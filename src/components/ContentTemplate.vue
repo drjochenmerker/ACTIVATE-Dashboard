@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+
 import { computed } from 'vue';
 import { useConflictsStore } from '@/stores/conflictsStore';
 import NoteCard from './NoteCard.vue';
@@ -9,7 +10,7 @@ const props = defineProps({
     required: true,
   },
   conflicts: {
-    type: Array, // Changed to Array because .filter() is applied to arrays
+    type: Array,
     required: true,
   },
 });
@@ -25,11 +26,6 @@ const filteredConflicts = computed(() => {
   });
 });
 
-// Function to remove a conflict from the store when it is deleted.
-// This ensures the UI updates immediately without requiring a page refresh.
-const handleConflictDeleted = (conflictId: string) => {
-  conflictStore.removeConflict(conflictId);
-};
 </script>
 
 <template>
@@ -39,13 +35,13 @@ const handleConflictDeleted = (conflictId: string) => {
       <div class="conflict-container">
         <div class="note-container">
           <!-- NoteCard component for displaying conflict details -->
-          <!-- The @conflictDeleted event is emitted when a conflict is deleted -->
           <NoteCard :conflict="conflict" :title="conflict.title" :content="conflict.description"
-            :author="conflict.author" :status="conflict.status" @conflictDeleted="handleConflictDeleted" />
+            :author="conflict.author" :status="conflict.status" />
         </div>
       </div>
     </div>
   </div>
+
   <!-- Display a message if there are no conflicts -->
   <div v-else>
     <p>There are no conflicts.</p>

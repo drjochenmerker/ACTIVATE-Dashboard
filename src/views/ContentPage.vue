@@ -18,7 +18,9 @@ const miscComments = ref<string[]>([]);
 
 // Fetch miscellaneous comments on mount
 onMounted(async () => {
-    console.log(props.conflicts[1].replies);
+    //console.log(props.conflicts[1].replies);
+    //console.log(props.conflicts[0]);
+    //console.log(props.conflicts[0].replies[0].id);
     if (route.params.id === 'misc') {
         // Get miscellaneous comments from the graph
         miscComments.value = await getMiscComments(graph);
