@@ -25,7 +25,15 @@ export const useConflictsStore = defineStore('ActivityConflicts', () => {
         if (index !== -1) {
             conflictDetails.value[index] = updatedConflict;
         }
-    }
+    };
+    const removeConflict = (conflictId: string) => {
+        const index = conflictDetails.value.findIndex(conflict => conflict.id === conflictId);
+        if (index !== -1) {
+            conflictDetails.value.splice(index, 1); // Ändert das bestehende Array statt es zu ersetzen
+        }
+    };
 
-    return { addConflict, setConflicts, getConflicts, updateConflict };
+    return { addConflict, setConflicts, getConflicts, updateConflict, removeConflict };
+
+
 });

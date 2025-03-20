@@ -33,7 +33,7 @@ const conflictDetail = ref<any>(null);
 const replyInputVisible = ref<Record<string, boolean>>({});
 const newReplyText = ref<Record<string, string>>({});
 
-//todo hard coded graph title
+//TODO hard coded graph title
 const graph = 'Urology_Emergency_after_Debriefing';
 
 // Status aus den Props setzen
@@ -125,21 +125,19 @@ const handleEnterKey = (event: KeyboardEvent) => {
 };
 
 // delete conflicts
-const handleDelete = async (id) => {
+const handleDelete = async (id: string) => {
   try {
-    // Löschen des Konflikts aus der Datenbank
     const response = await deleteConflict(graph, id);
+
     if (response.status === "OK") {
-      // Löschen des Konflikts aus dem Store
-      conflictStore.conflictDetails.value = conflictStore.conflictDetails.value.filter(conflict => conflict.id !== id);
-      console.log("Konflikt erfolgreich gelöscht");
-    } else {
-      console.error("Fehler beim Löschen des Konflikts");
+      conflictStore.removeConflict(id); // delete conflict from store
     }
   } catch (error) {
-    console.error("Fehler beim Löschen:", error);
+    console.error("Error deleting conflict: ", error);
   }
 };
+
+
 
 
 
