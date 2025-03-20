@@ -16,8 +16,9 @@ const activityGraph = ref<any>(null);
 const loadActivity = async () => {
   const activities = await getActivities();
   if (activities && activities.length > 0) {
-    activity.value = await getActivityDetail({graph: "Urology_Emergency_after_Debriefing", name: "Urology Emergency after Debriefing"} as Activity);
-    activityGraph.value = "Urology_Emergency_after_Debriefing";
+    activities[0] = { graph: "Urology_Emergency_after_Debriefing", name: "Urology Emergency after Debriefing" } as Activity
+    activity.value = await getActivityDetail(activities[0]);
+    activityGraph.value = activities[0].graph;
   }
 };
 
@@ -40,10 +41,11 @@ onMounted(async () => {
 </script>
 
 <template>
-    <div class="flex flex-col h-screen">
-        <NavBar />
-        <main class="flex-grow h-full p-6">
-            <router-view v-if="activity && conflictDetails.length > 0" :key="$route.path" :activity="activity" :activityGraph="activityGraph" :conflicts="conflictDetails" />
-        </main>
-    </div>
+  <div class="flex flex-col h-screen">
+    <NavBar />
+    <main class="flex-grow h-full p-6">
+      <router-view v-if="activity && conflictDetails.length > 0" :key="$route.path" :activity="activity"
+        :activityGraph="activityGraph" :conflicts="conflictDetails" />
+    </main>
+  </div>
 </template>
