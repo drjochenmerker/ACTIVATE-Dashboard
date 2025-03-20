@@ -76,7 +76,7 @@ const groupedParticipants = computed(() => {
   const groups: Record<string, string[]> = {};
   if (!props.conflict.participants) return groups;
 
-  props.conflict.participants.forEach(participant => {
+  props.conflict.participants.forEach((participant: { type: string | number; id: string; }) => {
     if (!groups[participant.type]) {
       groups[participant.type] = [];
     }
@@ -141,10 +141,6 @@ const handleDelete = async (id: string) => {
     console.error("Error deleting conflict: ", error);
   }
 };
-
-
-
-
 
 
 </script>

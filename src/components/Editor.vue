@@ -132,7 +132,6 @@ export default {
 
 
       if (this.activePoints.length === 0) {
-        // Speichern von Titel und Inhalt in einer Variablen
         const titleAndContent = title + '|' + content; // '|', the safest separator
         console.log(titleAndContent);
 
@@ -140,20 +139,14 @@ export default {
           const response = await addComment(graph, "root", author, titleAndContent);
 
           if (response.status === "OK") {
-            console.log("Kommentar erfolgreich gespeichert");
+            //console.log("Kommentar erfolgreich gespeichert");
           } else {
             console.warn("Fehler beim Speichern des Kommentars:", response);
           }
         } catch (error) {
           console.error("Fehler bei der Anfrage:", error);
         }
-        /*
-        //Splitte den String an der Stelle des Trennzeichens '|'
-          const [extractedTitle, extractedContent] = titleAndContent.split('|');
-          // Jetzt kannst du auf 'extractedTitle' und 'extractedContent' zugreifen
-          console.log("Titel:", extractedTitle);
-          console.log("Beschreibung:", extractedContent);
-          */
+
         this.clearEditor();
         return;
       }
@@ -229,7 +222,12 @@ export default {
 
 <template>
   <div class="editor-container">
-    <button class="clear-button" @click="clearEditor">Clear Editor</button>
+    <div class="icon-container">
+
+      <button class="icon-button" @click="clearEditor">
+        <span class="material-symbols-outlined">delete</span>
+      </button>
+    </div>
 
     <h3>Add Note to selected Points:</h3>
     <!-- dropdown: -->
@@ -266,7 +264,6 @@ export default {
 .editor-container {
   display: flex;
   flex-direction: column;
-  align-items: left;
   background-color: #ffffff;
   padding: 20px;
   border: 1px solid #e0e0e0;
@@ -276,10 +273,32 @@ export default {
   max-width: 600px;
   margin: 0 auto;
   overflow: visible;
-  /* Verhindert das Abschneiden */
   position: relative;
-  /* Stellt sicher, dass das absolute Positionieren funktioniert */
 
+}
+
+/*icon button*/
+.icon-container {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  /* Align the icon button to the right */
+  margin-bottom: 10px;
+  /* Optional, adds space between the icon and the rest of the content */
+}
+
+/* icon */
+.icon-button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  font-size: 24px;
+  color: red;
+}
+
+.icon-button:hover {
+  color: darkred;
 }
 
 

@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import ActivityDiagram from '@/components/ActivityDiagram.vue';
 import TripleAdditionDialog from '@/components/TripleAdditionDialog.vue';
 import Editor from '@/components/Editor.vue';
 import { useActivityPointsStore } from "@/stores/activityPointsStore";
+import { ref } from 'vue';
 
 defineProps<{ conflicts: any[], activity: any, activityGraph: string }>();
 
 const activityPointStore = useActivityPointsStore();
 const { getActivePoints } = storeToRefs(activityPointStore);
 
-const hasActivePoints = computed(() => activityPointStore.getActivePoints.length > 0);
+
 
 const isTripleAdditionDialogOpen = ref(false);
 

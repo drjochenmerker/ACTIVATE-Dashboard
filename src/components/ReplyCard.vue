@@ -2,7 +2,6 @@
 import { defineProps, nextTick, ref } from 'vue';
 import { Button } from '@/components/ui/button'; // Button-Komponente importieren
 import { addComment, deleteComment } from '@/data/knowledge_graph/write_operations';
-import { useRepliesStore } from '@/stores/repliesStore';
 
 const props = defineProps({
     parentComment: {
@@ -11,9 +10,7 @@ const props = defineProps({
     },
 });
 
-const graph = 'Urology_Emergency_after_Debriefing';
-const repliesStore = useRepliesStore();
-
+const graph = 'Urology_Emergency_after_Debriefing'; //todo hard coded graph title
 
 // Toggle für die Anzeige des Antwort-Eingabefelds
 const replyInputVisible = ref(false);
@@ -36,7 +33,7 @@ const saveReply = async (parentCommentId: string, parentReply?: any) => {
     if (!newReplyText.value) return;
 
     try {
-        const response = await addComment(
+        await addComment(
             graph,
             parentCommentId,
             "test-replyer", //TODO

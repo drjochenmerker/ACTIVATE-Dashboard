@@ -1,5 +1,8 @@
 <script lang="ts" setup>
+import { deleteComment } from '@/data/knowledge_graph/write_operations';
 import { defineProps } from 'vue';
+
+const graph = 'Urology_Emergency_after_Debriefing'; //todo hard coded graph title
 
 const props = defineProps({
     comment: {
@@ -8,18 +11,36 @@ const props = defineProps({
     }
 });
 const [extractedTitle, extractedContent] = props.comment.comment.split('|');
+
+// delete conflicts
+const handleDelete = async (id: string) => {
+    try {
+        //comment cant be nested because its the misc card
+        await deleteComment(graph, id, false);
+    } catch (error) {
+        console.error("Error deleting conflict: ", error);
+    }
+};
+
 </script>
 
 <template>
     <div class="misc-note-card">
         <div class="misc-note-header">
             <span class="misc-note-author">Author: {{ props.comment.author || 'Unknown' }}</span>
+            <div>
+                <button class="icon-button" @click="handleDelete(props.comment.id)">
+                    <span class="material-symbols-outlined">delete</span>
+                </button>
+            </div>
         </div>
         <hr class="misc-note-divider" />
         <div class="misc-note-content">
             <div class="misc-note-title" v-html="extractedTitle"></div>
             <div class="misc-note-description" v-html="extractedContent"></div>
         </div>
+
+
     </div>
 </template>
 
