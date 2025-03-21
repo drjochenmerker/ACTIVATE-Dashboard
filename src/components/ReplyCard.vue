@@ -1,104 +1,140 @@
 <script lang="ts" setup>
-import { defineProps, defineEmits, onMounted } from 'vue';
+import { defineProps, nextTick, ref } from 'vue';
+import { Button } from '@/components/ui/button'; // Button-Komponente importieren
+import { addComment } from '@/data/knowledge_graph/write_operations';
+import { useActivityStore } from '@/stores/activityStore';
 
 const props = defineProps({
-    conflictReply: {
+    parentComment: {
         type: Object,
         required: true,
+    },
+});
+
+const activityStore = useActivityStore();
+
+// Toggle für die Anzeige des Antwort-Eingabefelds
+const replyInputVisible = ref(false);
+const newReplyText = ref('');
+
+const textareaRef = ref<HTMLTextAreaElement | null>(null)
+
+const toggleReplyInput = async () => {
+    replyInputVisible.value = !replyInputVisible.value;
+    if (replyInputVisible.value) {
+        await nextTick();
+        textareaRef.value?.focus();
     }
-
-});
-const emit = defineEmits(['updateStatus']);
+}
 
 
-onMounted(() => {
+// Funktion zum Speichern einer Antwort
+const saveReply = async (parentCommentId: string) => {
+    console.log(`save comment for conflict with id: ${parentCommentId}:`, newReplyText.value)
 
-});
+    if (!newReplyText.value) return;
+
+    try {
+        const response = await addComment(
+            // There must be a cleaner way, but I know for sure that the activity is not null since it must be set in start page
+            activityStore.getActivity()!.graph,
+            parentCommentId,
+            activityStore.getRole()!,
+            newReplyText.value
+        );
+
+        console.log("Unterkommentar erfolgreich gespeichert:", response)
+
+        if (!props.parentComment.replies) {
+            props.parentComment.replies = [];
+        }
+        // Füge die neue Antwort (Reply) hinzu
+        props.parentComment.replies.push({
+            id: Date.now().toString(), // temporäre ID
+            author: activityStore.getRole()!, // Temporärer Autor
+            comment: newReplyText.value, // Kommentartext
+            replies: [] // Leeres Array für mögliche weitere Verschachtelungen
+        });
+        replyInputVisible.value = false; // Eingabefeld verstecken
+        newReplyText.value = ''; // Textfeld leeren
+    } catch (error) {
+        console.error('Fehler beim Speichern der Antwort:', error);
+    }
+};
+
+// Funktion zum Abschicken per Enter-Taste im Textarea
+const handleEnterKey = (event: KeyboardEvent) => {
+  if (event.key === 'Enter' && !event.shiftKey) {
+    event.preventDefault();
+    saveReply(props.parentComment.id);
+  }
+};
+
 </script>
 
 <template>
-    <div class="replies-section">
-        <div v-html="props.conflictReply.comment"></div>
+    <div class="reply-card">
+        <div class="reply-content">
+            <p class="reply-author">{{ parentComment.author }}</p>
+            <p class="reply-text">{{ parentComment.comment }}</p>
+        </div>
+
+        <!-- Antwort-Button zum Umblenden des Eingabefeldes -->
+        <Button @click="toggleReplyInput()">
+            {{ replyInputVisible ? 'Cancel' : 'Answer' }}
+        </Button>
+
+        <!-- Antwort Eingabefeld -->
+        <div v-if="replyInputVisible" class="reply-input">
+            <textarea ref="textareaRef" v-model="newReplyText" placeholder="Write something to answer..." @keydown.enter="handleEnterKey($event)"></textarea>
+            <Button @click="saveReply(parentComment.id)">Save Comment</Button>
+        </div>
+
+        <!-- Zeige verschachtelte Antworten an -->
+        <div v-if="parentComment.replies && parentComment.replies.length > 0" class="nested-replies">
+            <ReplyCard v-for="nestedReply in parentComment.replies" :key="nestedReply.id"
+                :parentComment="nestedReply" />
+        </div>
     </div>
 </template>
 
 <style scoped>
-/* Allgemeines Styling */
-.replies-section {
-    box-shadow: 0 2px 8px rgba(223, 223, 223, 0.5);
+.reply-card {
+    border-left: 2px solid #ccc;
+    padding-left: 10px;
+    margin-left: 10px;
+    margin-top: 10px;
+}
+
+.reply-content {
     background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 16px;
-    margin: 10px 0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    max-width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.reply-author {
+    font-weight: bold;
+}
+
+.reply-text {
+    margin-top: 5px;
+}
+
+.reply-input {
+    margin-top: 10px;
+}
+
+.reply-input textarea {
     width: 100%;
-    transition: box-shadow 0.3s ease, border-color 0.3s ease;
-    text-align: end;
-}
-
-/* Dynamische Schatten basierend auf dem ausgewählten Status */
-.note-card.red {
-    box-shadow: 0 2px 8px rgba(255, 182, 193, 0.5);
-    /* Pastellrosa */
-    border-color: rgba(255, 182, 193, 0.7);
-}
-
-.note-card.yellow {
-    box-shadow: 0 2px 8px rgba(253, 253, 150, 0.5);
-    /* Pastellgelb */
-    border-color: rgba(253, 253, 150, 0.7);
-}
-
-.note-card.green {
-    box-shadow: 0 2px 8px rgba(152, 251, 152, 0.5);
-    /* Pastellgrün */
-    border-color: rgba(152, 251, 152, 0.7);
-}
-
-/* Header Styling */
-.note-card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-    gap: 10px;
-}
-
-.note-card-status {
-    font-size: 12px;
-    padding: 4px 8px;
-    border-radius: 4px;
-    color: white;
-    border-radius: 20px;
-}
-
-.note-card-status.anonymous {
-    background-color: #c6c6c6;
-}
-
-.note-card-status:not(.anonymous) {
-    background-color: #0000009d;
-
-}
-
-/* Dropdown Styling */
-.status-selector select {
-    padding: 5px;
-    font-size: 14px;
-    cursor: pointer;
-    border-radius: 4px;
+    min-height: 60px;
+    padding: 8px;
     border: 1px solid #ccc;
-    transition: background-color 0.2s ease;
+    border-radius: 8px;
+    resize: vertical;
 }
 
-.status-selector select:focus {
-    outline: none;
-    background-color: #f1f1f1;
-}
-
-.note-card-content {
-    margin-bottom: 10px;
+.nested-replies {
+    margin-top: 10px;
+    padding-left: 20px;
 }
 </style>

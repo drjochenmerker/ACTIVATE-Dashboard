@@ -1,7 +1,11 @@
 <script lang="ts" setup>
-import { defineProps, ref, defineEmits, onMounted } from 'vue';
-import { noteStatus } from '@/assets/constants/noteStatus';
-import { conflictStatus } from '@/data/knowledge_graph/structures';
+import { defineProps, ref, onMounted, nextTick } from 'vue';
+import { conflictPredicate, conflictStatus } from '@/data/knowledge_graph/structures';
+import ReplyCard from './ReplyCard.vue';
+import { addComment, updateConflict } from "@/data/knowledge_graph/write_operations";
+import { Button } from '@/components/ui/button';
+import { useConflictsStore } from '@/stores/conflictsStore';
+import { useActivityStore } from '@/stores/activityStore';
 
 const props = defineProps({
   conflict: {
@@ -26,46 +30,89 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits(['updateStatus']);
+const conflictDetail = ref<any>(null);
+const replyInputVisible = ref<Record<string, boolean>>({});
+const newReplyText = ref<Record<string, string>>({});
 
-// Funktion zur Status-Zuordnung
-const mapConflictStatusToNoteStatus = (status: string) => {
-  switch (status) {
-    case conflictStatus.open:
-      return noteStatus.RED;
-    case conflictStatus.inDiscussion:
-      return noteStatus.YELLOW;
-    case conflictStatus.resolved:
-      return noteStatus.GREEN;
-    default:
-      return noteStatus.RED;
-  }
-};
+const graph = useActivityStore().getActivity()!.graph;
 
 // Status aus den Props setzen
-const selectedStatus = ref(mapConflictStatusToNoteStatus(props.status));
+const selectedStatus = ref<any>(null);
 
-// Status in sessionStorage speichern
-function saveStatusToSessionStorage(color: typeof noteStatus.RED | typeof noteStatus.YELLOW | typeof noteStatus.GREEN) {
-  const noteKey = `noteStatus-${props.content}`;
-  sessionStorage.setItem(noteKey, color);
-}
+const conflictStore = useConflictsStore();
+const activityStore = useActivityStore();
+
+const textareaRef = ref<HTMLTextAreaElement | null>(null)
 
 // Status aus sessionStorage abrufen oder Standardwert setzen
-onMounted(() => {
-  const noteKey = `noteStatus-${props.content}`;
-  const storedStatus = sessionStorage.getItem(noteKey);
-  if (storedStatus && (Object.values(noteStatus) as string[]).includes(storedStatus)) {
-    selectedStatus.value = storedStatus as typeof noteStatus.RED | typeof noteStatus.YELLOW | typeof noteStatus.GREEN;
+onMounted(async () => {
+  const detail = props.conflict
+
+  if (!detail.replies) {
+    detail.replies = []
   }
+  conflictDetail.value = detail;
+  selectedStatus.value = conflictDetail.value.status;
 });
 
 // Status aktualisieren
-function setStatus(color: typeof noteStatus.RED | typeof noteStatus.YELLOW | typeof noteStatus.GREEN) {
-  selectedStatus.value = color;
-  emit('updateStatus', selectedStatus.value);
-  saveStatusToSessionStorage(color);
+function setStatus(status: conflictStatus) {
+  selectedStatus.value = status;
+  updateConflict(graph, props.conflict.id, conflictPredicate.status, selectedStatus.value)
+  conflictStore.updateConflict(props.conflict.id, graph)
 }
+
+// toggle input field
+const toggleReplyInput = async (conflictId: string) => {
+  replyInputVisible.value[conflictId] = !replyInputVisible.value[conflictId];
+  if (replyInputVisible.value) {
+        await nextTick();
+        textareaRef.value?.focus();
+    }
+  if (!replyInputVisible.value[conflictId]) {
+    newReplyText.value[conflictId] = ''; // Textfeld leeren, wenn es geschlossen wird
+  }
+};
+
+const saveReply = async (conflictId: string) => {
+  if (!newReplyText.value[conflictId]) return;
+
+  try {
+    // SPARQL query to save the comment (reply)
+    const response = await addComment(
+      graph, // current knowledge graph
+      conflictId, // id of the conflict
+      activityStore.getRole()!,
+      newReplyText.value[conflictId] // reply text
+    );
+
+    console.log("Kommentar erfolgreich gespeichert:", response);
+
+    if (conflictDetail.value) {
+      // Falls replies noch nicht initialisiert sind, initialisieren
+      if (!conflictDetail.value.replies) {
+        conflictDetail.value.replies = [];
+      }
+      conflictDetail.value.replies.push({
+        id: Date.now().toString(), // temporäre ID
+        author: activityStore.getRole()!,
+        comment: newReplyText.value[conflictId],
+        replies: [] // leeres Array für potenzielle verschachtelte Antworten
+      });
+    }
+    replyInputVisible.value[conflictId] = false;
+    newReplyText.value[conflictId] = '';
+  } catch (error) {
+    console.error("Error saving comment:", error);
+  }
+};
+
+const handleEnterKey = (event: KeyboardEvent) => {
+  if (event.key === 'Enter' && !event.shiftKey) {
+    event.preventDefault();
+    saveReply(props.conflict.id);
+  }
+};
 </script>
 
 <template>
@@ -73,14 +120,14 @@ function setStatus(color: typeof noteStatus.RED | typeof noteStatus.YELLOW | typ
     <div class="note-card-header">
       <!-- show author -->
       <span class="note-card-author">
-        {{ props.author }}
+        Author: {{ props.author }}
       </span>
       <div class="status-selector">
         <!-- drop down for status selection -->
         <select v-model="selectedStatus" @change="setStatus(selectedStatus)">
-          <option :value="noteStatus.RED">{{ conflictStatus.open }}</option>
-          <option :value="noteStatus.YELLOW">{{ conflictStatus.inDiscussion }}</option>
-          <option :value="noteStatus.GREEN">{{ conflictStatus.resolved }}</option>
+          <option :value="conflictStatus.open">{{ conflictStatus.open }}</option>
+          <option :value="conflictStatus.inDiscussion">{{ conflictStatus.inDiscussion }}</option>
+          <option :value="conflictStatus.resolved">{{ conflictStatus.resolved }}</option>
         </select>
       </div>
     </div>
@@ -93,7 +140,21 @@ function setStatus(color: typeof noteStatus.RED | typeof noteStatus.YELLOW | typ
       <div class="note-title" v-html="props.title"></div>
       <div class="note-content" v-html="props.content"></div>
     </div>
+    <div class="note-comment-section">
+      <Button @click="toggleReplyInput(conflict.id)"> Add comment </Button>
+    </div>
+    <!-- comment input field -->
+    <div v-if="replyInputVisible[conflict.id]" class="comment-input">
+      <textarea ref="textareaRef" v-model="newReplyText[conflict.id]" placeholder="Write a reply..." @keydown.enter="handleEnterKey($event)"/>
+      <Button @click="saveReply(conflict.id)">Save</Button>
+    </div>
+    <!-- Anzeige der Replies zu einem Konflikt -->
+    <div v-if="conflictDetail && conflictDetail.replies && conflictDetail.replies.length > 0" class="reply-container">
+      <ReplyCard v-for="(reply) in conflictDetail.replies" :key="reply.id" :parentComment="reply"
+        :conflictId=conflict.id />
+    </div>
   </div>
+
 </template>
 
 <style scoped>
@@ -123,6 +184,19 @@ function setStatus(color: typeof noteStatus.RED | typeof noteStatus.YELLOW | typ
 .note-card.green {
   box-shadow: 0 2px 8px rgba(152, 251, 152, 0.5);
   border-color: rgba(152, 251, 152, 0.7);
+}
+
+.comment-input {
+  margin-top: 10px;
+}
+
+.comment-input textarea {
+    width: 100%;
+    min-height: 60px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    resize: vertical;
 }
 
 /* Header */
@@ -168,10 +242,12 @@ function setStatus(color: typeof noteStatus.RED | typeof noteStatus.YELLOW | typ
 }
 
 .note-title {
-  font-weight: bold;
+  font-size: xx-large;
+  font-weight: normal;
 }
 
 .note-content {
   font-weight: normal;
+
 }
 </style>

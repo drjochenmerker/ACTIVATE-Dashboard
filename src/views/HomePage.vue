@@ -19,7 +19,7 @@ const isTripleAdditionDialogOpen = ref(false);
 
 <template>
   <div class="flex justify-between w-1/2 items-center mb-4">
-    <h1 class="text-2xl font-semibold mb-4">Home ({{ activityGraph ? activityGraph : "Can't Load Activity Name" }})</h1>
+    <h1 class="text-2xl font-semibold mb-4">Dashboard ({{ activityGraph ? activityGraph : "Can't Load Activity Name" }})</h1>
     <TripleAdditionDialog v-model:isOpen="isTripleAdditionDialogOpen" />
     <!--<Button @click="() => isTripleAdditionDialogOpen = true">Add RDF-Triple</Button>-->
   </div>

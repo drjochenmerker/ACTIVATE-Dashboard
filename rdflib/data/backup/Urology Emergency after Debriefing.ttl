@@ -28,7 +28,7 @@
                     :CommentDescription "VVK war mit trüber Flüssigkeit verunreinigt"@de ;
                     :CreationDate "2011-10-06T14:55:00.000Z" ;
                     :HasComment :51952e5c5c8a0d0b107889a02c746ec415f4a512 ;
-                    :HasComment :76c5927235efe9d651c1267109c2e995a63b0459 .
+                    :HasComment :76c5927235efe9d651c1267109c2e995a63b0458 .
 
 ###  http://activate.htwk-leipzig.de/model#51952e5c5c8a0d0b107889a02c746ec415f4a512
 :51952e5c5c8a0d0b107889a02c746ec415f4a512 rdf:type owl:NamedIndividual ,
@@ -37,8 +37,8 @@
                     :CommentDescription "Das könnte Blut sein!"@de ;
                     :CreationDate "2011-10-06T14:57:00.000Z" .
 
-###  http://activate.htwk-leipzig.de/model#76c5927235efe9d651c1267109c2e995a63b0459
-:76c5927235efe9d651c1267109c2e995a63b0459 rdf:type owl:NamedIndividual ,
+###  http://activate.htwk-leipzig.de/model#76c5927235efe9d651c1267109c2e995a63b0458
+:76c5927235efe9d651c1267109c2e995a63b0458 rdf:type owl:NamedIndividual ,
                              :Comment ;
                     :WrittenBy "Nutzer 1" ;
                     :CommentDescription "VVK war mit trüber Flüssigkeit verunreinigt, wir haben herausgefunden durch wen (Arzt1) und warum (Verletzung von Rule for Handling Of VVK)."@de ;
@@ -145,7 +145,7 @@
             :ConflictTitle "VVK Problem" ;
             :ConflictDescription "Es gibt mehrere Probleme mit der Venenverweilkanüle." ;
             :WrittenBy "Anonym" ;
-            :CreationDate "2011-10-05T14:48:00.000Z" ;
+            :CreationDate "2011-10-05T14:50:00.000Z" ;
             :HasParticipant :NursingSpecialist1 ,
                             :Patient1 ,
                             :PlaceVVK ,

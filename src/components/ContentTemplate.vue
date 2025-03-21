@@ -1,10 +1,6 @@
 <script lang="ts" setup>
-import { onMounted, toRaw, computed } from 'vue';
+import { computed, toRaw } from 'vue';
 import NoteCard from './NoteCard.vue';
-import ReplyCard from './ReplyCard.vue';
-import { Button } from '@/components/ui/button';
-import { useConflictsStore } from '@/stores/conflictsStore';
-import { storeToRefs } from 'pinia';
 
 const props = defineProps({
   pageData: {
@@ -17,38 +13,22 @@ const props = defineProps({
   },
 });
 
-const conflictsStore = useConflictsStore();
-storeToRefs(conflictsStore);
-
-
+//filtered conflicts based on id of "pageData"
 const filteredConflicts = computed(() => {
-  return toRaw(props.conflicts).filter((conflict: { participants: any[]; }) => {
-    if (!Array.isArray(conflict.participants)) return false;
-    return conflict.participants.some(participant => participant.type === props.pageData.id);
+  return toRaw(props.conflicts).filter((conflict: { participants: any[] }) => {
+    return Array.isArray(conflict.participants) &&
+      conflict.participants.some(participant => participant.type === props.pageData.id);
   });
 });
-onMounted(() => {
-  //filterNotesBySelectedPoint();
-});
-
-
 </script>
 
 <template>
   <div v-if="filteredConflicts.length > 0">
-    <div v-for="(conflict, _) in filteredConflicts" :key="conflict.id">
+    <div v-for="(conflict) in filteredConflicts" :key="conflict.id">
       <div class="conflict-container">
         <div class="note-container">
           <NoteCard :conflict="conflict" :title="conflict.title" :content="conflict.description"
             :author="conflict.author" :status="conflict.status" />
-          <div class="note-comment-section">
-            <Button> Add comment </Button>
-          </div>
-        </div>
-        <div class="reply-container">
-          <div v-for="(reply, _) in conflict.replies" :key="reply.id">
-            <ReplyCard :conflictReply="reply" />
-          </div>
         </div>
       </div>
     </div>
@@ -60,28 +40,8 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.conflicts-wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  padding: 20px;
-}
-
-.conflict-card {
-  background-color: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.note-container {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 10px;
+.conflict-container {
+  margin-bottom: 20px;
 }
 
 .note-comment-section {
@@ -90,22 +50,19 @@ onMounted(() => {
   width: 100%;
 }
 
-.comment-button {
-  background-color: #007bff;
-  color: white;
-  padding: 8px 16px;
-  border-radius: 8px;
-  transition: background-color 0.3s;
+.comment-input {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.comment-button:hover {
-  background-color: #0056b3;
-}
-
-.reply-container {
-  background-color: #f8f9fa;
-  padding: 15px;
+.comment-input textarea {
+  width: 100%;
+  min-height: 60px;
+  padding: 8px;
+  border: 1px solid #ccc;
   border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  resize: vertical;
 }
 </style>

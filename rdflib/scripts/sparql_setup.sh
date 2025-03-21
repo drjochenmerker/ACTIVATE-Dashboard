@@ -1,5 +1,4 @@
 #!/bin/bash
-
 if [ -z "$(find ./rdflib/data -maxdepth 1 -name '*.ttl' -print -quit)" ]; then
   cp -n ./rdflib/data/backup/* ./rdflib/data/
 fi
