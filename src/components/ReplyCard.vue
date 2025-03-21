@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { defineProps, ref, defineEmits, onMounted } from 'vue';
+import { defineProps, defineEmits, onMounted } from 'vue';
 
 const props = defineProps({
     conflictReply: {

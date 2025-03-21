@@ -55,7 +55,7 @@ function saveStatusToSessionStorage(color: typeof noteStatus.RED | typeof noteSt
 onMounted(() => {
   const noteKey = `noteStatus-${props.content}`;
   const storedStatus = sessionStorage.getItem(noteKey);
-  if (storedStatus && Object.values(noteStatus).includes(storedStatus)) {
+  if (storedStatus && (Object.values(noteStatus) as string[]).includes(storedStatus)) {
     selectedStatus.value = storedStatus as typeof noteStatus.RED | typeof noteStatus.YELLOW | typeof noteStatus.GREEN;
   }
 });

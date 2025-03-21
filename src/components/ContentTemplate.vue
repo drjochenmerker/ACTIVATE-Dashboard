@@ -1,11 +1,8 @@
 <script lang="ts" setup>
-import { ref, onMounted, toRaw, computed } from 'vue';
+import { onMounted, toRaw, computed } from 'vue';
 import NoteCard from './NoteCard.vue';
 import ReplyCard from './ReplyCard.vue';
 import { Button } from '@/components/ui/button';
-import { contentData } from '@/data/contentData';
-import { types } from 'util';
-import { getConflictDetail, getConflictIds } from '@/data/knowledge_graph/read_operations';
 import { useConflictsStore } from '@/stores/conflictsStore';
 import { storeToRefs } from 'pinia';
 
@@ -21,7 +18,7 @@ const props = defineProps({
 });
 
 const conflictsStore = useConflictsStore();
-const { getConflicts } = storeToRefs(conflictsStore);
+storeToRefs(conflictsStore);
 
 
 const filteredConflicts = computed(() => {
@@ -39,7 +36,7 @@ onMounted(() => {
 
 <template>
   <div v-if="filteredConflicts.length > 0">
-    <div v-for="(conflict, index) in filteredConflicts" :key="conflict.id">
+    <div v-for="(conflict, _) in filteredConflicts" :key="conflict.id">
       <div class="conflict-container">
         <div class="note-container">
           <NoteCard :conflict="conflict" :title="conflict.title" :content="conflict.description"
@@ -49,7 +46,7 @@ onMounted(() => {
           </div>
         </div>
         <div class="reply-container">
-          <div v-for="(reply, replyIndex) in conflict.replies" :key="reply.id">
+          <div v-for="(reply, _) in conflict.replies" :key="reply.id">
             <ReplyCard :conflictReply="reply" />
           </div>
         </div>
