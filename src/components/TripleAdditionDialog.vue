@@ -86,7 +86,6 @@ watch(object, () => {
             }
             if (predicates.length > 0) {
                 predicateOptions.value = predicates.map(item => ({ label: item.predicate }));
-                console.log(predicateOptions.value);
             } else {
                 noExistingPredicates.value = true;
             }
@@ -148,6 +147,11 @@ const applyTriple = () => {
                     </p>
                 </div>
             </div>
+            <p class="mb-4">This component lets you easily add new RDF triples to your knowledge graph. Simply select an agent (subject) and a target (object) from the 
+                    provided lists. If the two are valid and belong to different categories, a list of applicable predicates (relationships) will appear for you 
+                    to choose from. Please note that if the agent and target come from the same category or if no predicates are available for the chosen 
+                    combination, a warning message will be displayed. If there are no existing predicates between the chosen agent and target you can simply 
+                    add a new one by typing it into the predicate textfield</p>
 
             <div class="flex space-x-4 mb-6">
 

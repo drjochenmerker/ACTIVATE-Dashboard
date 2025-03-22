@@ -1,20 +1,6 @@
-<template>
-  <div class="dropdown" ref="dropdownContainer">
-    <h3 class="label" :class="{ disabled: disabled}">{{ label }}:</h3>
-    <div class="search-container" :class="{ disabled: disabled}">
-      <input class="text-input" :class="{ disabled: disabled}" type="text" v-model="search" @focus="!disabled && (showDropdown = true)" @input="handleInput" placeholder="Suchen..."
-        :disabled="disabled" />
-    </div>
-    <!-- Dropdown-Liste -->
-    <ul v-if="showDropdown && !disabled" class="dropdown-list">
-      <li v-for="option in filteredOptions" :key="option.label" @mousedown.prevent="selectOption(option)">
-        {{ option.label }}
-      </li>
-    </ul>
-  </div>
-</template>
-
 <script>
+import { Delete, DeleteIcon } from 'lucide-vue-next';
+
 export default {
   name: 'Dropdown',
   props: {
@@ -68,6 +54,11 @@ export default {
       ) {
         this.showDropdown = false;
       }
+    },
+    clearInput() {
+      this.search = '';
+      this.$emit('update:modelValue', '');
+      this.showDropdown = false;
     }
   },
   watch: {
@@ -84,6 +75,23 @@ export default {
 };
 </script>
 
+<template>
+  <div class="dropdown" ref="dropdownContainer">
+    <h3 class="label" :class="{ disabled: disabled }">{{ label }}:</h3>
+    <div class="search-container" :class="{ disabled: disabled }">
+      <input class="text-input" :class="{ disabled: disabled }" type="text" v-model="search"
+        @focus="!disabled && (showDropdown = true)" @input="handleInput" placeholder="Suchen..." :disabled="disabled" />
+      <button v-if="search" type="button" class="clear-btn" @click="clearInput">×</button>
+    </div>
+
+    <ul v-if="showDropdown && !disabled" class="dropdown-list">
+      <li v-for="option in filteredOptions" :key="option.label" @mousedown.prevent="selectOption(option)">
+        {{ option.label }}
+      </li>
+    </ul>
+  </div>
+</template>
+
 <style scoped>
 .dropdown {
   position: relative;
@@ -91,12 +99,11 @@ export default {
 }
 
 .search-container {
+  position: relative;
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: 5px;
   border: 1px solid #a6a4a4;
-  padding: 5px;
+  padding: 5px 35px 5px 5px; /* Rechts Platz für das Icon */
   border-radius: 4px;
 }
 
@@ -110,6 +117,9 @@ export default {
 
 .text-input {
   color: black;
+  flex: 1;
+  border: none;
+  padding: 8px;
 }
 
 .text-input.disabled {
@@ -154,5 +164,19 @@ input:focus {
 
 .dropdown-list li:hover {
   background: #f0f0f0;
+}
+
+.clear-btn {
+  position: absolute;
+  right: 10px;
+  top: 45%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  font-size: 2.0rem;
+  cursor: pointer;
+  color: #ff0000;
+  padding: 0;
+  line-height: 1;
 }
 </style>
