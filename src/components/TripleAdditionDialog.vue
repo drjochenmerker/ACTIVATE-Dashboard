@@ -26,6 +26,7 @@ const predicate = ref('');
 const object = ref('');
 const selectedDuplicateClass = ref(false)
 const noExistingPredicates = ref(false)
+const noValidParticipants = ref(false)
 
 
 const isSubjectValid = computed(() => {
@@ -58,38 +59,43 @@ const extractClass = (str: string): string | null => {
 };
 
 onMounted(async () => {
+    selectedDuplicateClass.value = false;
+    noExistingPredicates.value = false;
+    noValidParticipants.value = false;
     activityPredicates.value = await getPredicateObject('Urology_Emergency_after_Debriefing');
 });
 
 watch(object, () => {
     predicate.value = '';
+    selectedDuplicateClass.value = false;
+    noExistingPredicates.value = false;
+    noValidParticipants.value = false;
+
     const subjectClass = extractClass(subject.value);
     const objectClass = extractClass(object.value);
 
-    if (isObjectValid && isSubjectValid) {
-        try {
+    if (isSubjectValid.value && isObjectValid.value) {
+        if (subjectClass !== objectClass) {
             let predicates: Array<{ predicate: string }> = [];
-            if(subjectClass != objectClass) {
-                predicates = (subjectClass && objectClass && activityPredicates.value )
-                ? (activityPredicates.value.get([subjectClass, objectClass]) as Array<{ predicate: string }> || [])
-                : [];
-            } else {
-                selectedDuplicateClass.value = true;
+            if (subjectClass && objectClass && activityPredicates.value) {
+                try {
+                    predicates = (activityPredicates.value.get([subjectClass, objectClass]) as Array<{ predicate: string }>) || [];
+                } catch (error) {
+                    predicates = [];
+                }      
             }
-            
-            if (predicates) {
-                predicateOptions.value = predicates ? predicates.map(item => ({ label: item.predicate })) : [];
+            if (predicates.length > 0) {
+                predicateOptions.value = predicates.map(item => ({ label: item.predicate }));
                 console.log(predicateOptions.value);
-            } else if (!predicates) {
+            } else {
                 noExistingPredicates.value = true;
             }
-        } catch (error) {
-            console.error("Found no Predicates", error);
-
+        } else {
+            selectedDuplicateClass.value = true;
         }
-
+    } else {
+        noValidParticipants.value = true;
     }
-
 });
 
 const closeDialog = () => {
@@ -103,34 +109,11 @@ const resetInputs = () => {
     predicate.value = '';
 };
 
-const isValidPredicate = (word: string): boolean => {
-    const regex = /^[A-Za-z]+$/;
-    return regex.test(word);
-};
-
-const isValidSubjectOrObject = (word: string): boolean => {
-    return activityParticipants.value.some(participant => participant.label === word);
-}
-
 const cleanLabel = (label: string): string => {
     return label.replace(/\s*\(.*?\)\s*/g, '').replace(/\s+/g, '');
 };
 
 const applyTriple = () => {
-    if (!isValidSubjectOrObject(subject.value)) {
-        alert("Agent does not exist in this Activity. Please add it seperately.");
-        return;
-    }
-    if (!isValidPredicate(predicate.value)) {
-        alert("Predicate can only contain letters without spaces, numbers, or special characters.");
-        return;
-    }
-
-    if (!isValidSubjectOrObject(object.value)) {
-        alert("Target does not exist in this Activity. Please add it seperately.");
-        return;
-    }
-
     const subjectString = cleanLabel(subject.value);
     const objectString = cleanLabel(object.value);
 
@@ -148,22 +131,26 @@ const applyTriple = () => {
 
     <div v-if="isOpen" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
         @click.self="closeDialog">
-        <div
-            :class="mode === 'dark' ? 'rounded shadow p-6 w-full max-w-5xl bg-gray-800' : 'rounded shadow p-6 w-full max-w-5xl bg-white'">
-            <h2 class="text-xl font-bold mb-4">Add New RDF-Triple</h2>
-            <div class="alert-container">
-                <p v-if="selectedDuplicateClass" class="alert-message">
-                    Subject and Object cannot be from the same class.
-                </p>
-                <p v-else-if="noExistingPredicates" class="alert-message">
-                    No predicates available for the selected classes.
-                </p>
-                <p v-else class="alert-placeholder">&nbsp;</p>
-            </div>
-            <p class="mb-8">Only add single words without numbers, spaces, or special characters</p>
+        <div :class="mode === 'dark' ? 'rounded shadow p-6 w-full max-w-5xl bg-gray-800 relative' : 'rounded shadow p-6 w-full max-w-5xl bg-white relative'">
 
-            <!-- Felder in einer Zeile -->
+            <button class="close-btn" @click="closeDialog">×</button>
+            <div class="header-container flex items-center mb-4">
+                <h2 class="text-xl font-bold">Add New RDF-Triple</h2>
+                <div class="alert-container">
+                    <p v-if="selectedDuplicateClass" class="alert-message">
+                        Subject and Object cannot be from the same class.
+                    </p>
+                    <p v-else-if="noExistingPredicates" class="alert-message">
+                        No predicates available for the selected classes.
+                    </p>
+                    <p v-else-if="noValidParticipants" class="alert-message">
+                        Please choose a valid agent and target to see associated predicates.
+                    </p>
+                </div>
+            </div>
+
             <div class="flex space-x-4 mb-6">
+
                 <!-- Subject Field -->
                 <div class="flex-1">
                     <RDFAdditionDropdown label="Agent" :options="activityParticipants" v-model="subject"
@@ -192,18 +179,31 @@ const applyTriple = () => {
 </template>
 
 <style scoped>
+.close-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 1.0rem;
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: inherit;
+}
+
 .alert-container {
-  min-height: 1.5em;
-  margin-bottom: 1rem;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
 }
 
 .alert-message {
-  color: red; 
-  margin: 0;
+    color: red;
+    margin: 0;
 }
 
 .alert-placeholder {
-  margin: 0;
+    margin: 0;
 }
 
 .predicate-container {
