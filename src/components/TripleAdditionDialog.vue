@@ -1,26 +1,40 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import Button from '@/components/ui/button/Button.vue';
 import RDFAdditionDropdown from './RDFAdditionDropdown.vue';
 import { defineProps } from 'vue';
 import { useColorMode } from '@vueuse/core';
 import { updateTriple } from '@/data/knowledge_graph/write_operations';
-import { RDFOperation } from '@/data/knowledge_graph/structures';
+import { PredicateDict, RDFOperation } from '@/data/knowledge_graph/structures';
+import { getPredicateObject } from '@/data/knowledge_graph/read_operations';
 
 const props = defineProps<{
     activity: any,
     isOpen: Boolean,
 }>();
 
-const activityData = props.activity
-const activityParticipants = ref([] as Array<{ label: string }>);
 
 const mode = useColorMode();
 
+const activityData = props.activity
+const activityParticipants = ref([] as Array<{ label: string }>);
+const activityPredicates = ref<PredicateDict | null>(null);
+const predicateOptions = ref([] as Array<{ label: string }>);
 const isOpen = ref(false);
 const subject = ref('');
 const predicate = ref('');
 const object = ref('');
+const selectedDuplicateClass = ref(false)
+const noExistingPredicates = ref(false)
+
+
+const isSubjectValid = computed(() => {
+    return activityParticipants.value.some(item => item.label === subject.value);
+});
+
+const isObjectValid = computed(() => {
+    return activityParticipants.value.some(item => item.label === object.value);
+});
 
 const openDialog = () => {
     isOpen.value = true;
@@ -37,6 +51,46 @@ const openDialog = () => {
     });
     console.log(activityParticipants);
 };
+
+const extractClass = (str: string): string | null => {
+    const match = str.match(/\(([^)]+)\)/);
+    return match ? match[1] : null;
+};
+
+onMounted(async () => {
+    activityPredicates.value = await getPredicateObject('Urology_Emergency_after_Debriefing');
+});
+
+watch(object, () => {
+    predicate.value = '';
+    const subjectClass = extractClass(subject.value);
+    const objectClass = extractClass(object.value);
+
+    if (isObjectValid && isSubjectValid) {
+        try {
+            let predicates: Array<{ predicate: string }> = [];
+            if(subjectClass != objectClass) {
+                predicates = (subjectClass && objectClass && activityPredicates.value )
+                ? (activityPredicates.value.get([subjectClass, objectClass]) as Array<{ predicate: string }> || [])
+                : [];
+            } else {
+                selectedDuplicateClass.value = true;
+            }
+            
+            if (predicates) {
+                predicateOptions.value = predicates ? predicates.map(item => ({ label: item.predicate })) : [];
+                console.log(predicateOptions.value);
+            } else if (!predicates) {
+                noExistingPredicates.value = true;
+            }
+        } catch (error) {
+            console.error("Found no Predicates", error);
+
+        }
+
+    }
+
+});
 
 const closeDialog = () => {
     isOpen.value = false;
@@ -97,26 +151,35 @@ const applyTriple = () => {
         <div
             :class="mode === 'dark' ? 'rounded shadow p-6 w-full max-w-5xl bg-gray-800' : 'rounded shadow p-6 w-full max-w-5xl bg-white'">
             <h2 class="text-xl font-bold mb-4">Add New RDF-Triple</h2>
+            <div class="alert-container">
+                <p v-if="selectedDuplicateClass" class="alert-message">
+                    Subject and Object cannot be from the same class.
+                </p>
+                <p v-else-if="noExistingPredicates" class="alert-message">
+                    No predicates available for the selected classes.
+                </p>
+                <p v-else class="alert-placeholder">&nbsp;</p>
+            </div>
             <p class="mb-8">Only add single words without numbers, spaces, or special characters</p>
 
             <!-- Felder in einer Zeile -->
             <div class="flex space-x-4 mb-6">
                 <!-- Subject Field -->
                 <div class="flex-1">
-                    <RDFAdditionDropdown label="Agent" :options="activityParticipants" v-model="subject" />
+                    <RDFAdditionDropdown label="Agent" :options="activityParticipants" v-model="subject"
+                        :disabled="false" />
                 </div>
 
                 <!-- Predicate Field -->
                 <div class="flex-1">
-                    <h3 class="mb-0">Predicate:</h3>
-                    <div class="predicate-container">
-                        <input v-model="predicate" type="text" placeholder="Choose Predicate..." />
-                    </div>
+                    <RDFAdditionDropdown label="Predicate" :options="predicateOptions" v-model="predicate"
+                        :disabled="!isSubjectValid || !isObjectValid" />
                 </div>
 
                 <!-- Object Field -->
                 <div class="flex-1">
-                    <RDFAdditionDropdown label="Target" :options="activityParticipants" v-model="object" />
+                    <RDFAdditionDropdown label="Target" :options="activityParticipants" v-model="object"
+                        :disabled="!isSubjectValid" />
                 </div>
             </div>
 
@@ -129,6 +192,20 @@ const applyTriple = () => {
 </template>
 
 <style scoped>
+.alert-container {
+  min-height: 1.5em;
+  margin-bottom: 1rem;
+}
+
+.alert-message {
+  color: red; 
+  margin: 0;
+}
+
+.alert-placeholder {
+  margin: 0;
+}
+
 .predicate-container {
     display: flex;
     flex-wrap: wrap;
