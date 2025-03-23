@@ -9,6 +9,10 @@
     "checkJs": false,
     "moduleResolution": "node",
     "esModuleInterop": true,
-    "types": ["./src/vue-shims.d.ts"]
+    "types": ["./src/vue-shims.d.ts"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   }
 }

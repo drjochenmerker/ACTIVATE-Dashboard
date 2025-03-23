@@ -69,3 +69,6 @@ SELECT * WHERE {
 } LIMIT 10
 ```
 
+## Deployment using Docker/Podman
+It's highly recommended to use the following command:
+```podman-compose up -d```

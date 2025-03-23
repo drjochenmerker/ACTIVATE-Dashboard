@@ -1,0 +1,23 @@
+version: "3"
+services:
+  backend:
+    build:
+      context: ./rdflib
+    ports:
+      - "8000:8000"
+    networks:
+      - activate-network
+
+  frontend:
+    build:
+      context: .
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+    networks:
+      - activate-network
+
+networks:
+  activate-network:
+    driver: bridge
