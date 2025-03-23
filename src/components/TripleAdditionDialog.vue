@@ -5,18 +5,18 @@ import RDFAdditionDropdown from './RDFAdditionDropdown.vue';
 import { defineProps } from 'vue';
 import { useColorMode } from '@vueuse/core';
 import { updateTriple } from '@/data/knowledge_graph/write_operations';
-import { PredicateDict, RDFOperation } from '@/data/knowledge_graph/structures';
-import { getPredicateObject } from '@/data/knowledge_graph/read_operations';
+import { Activity, PredicateDict, RDFOperation } from '@/data/knowledge_graph/structures';
+import { getActivityDetail, getPredicateObject } from '@/data/knowledge_graph/read_operations';
+import { useActivityStore } from '@/stores/activityStore';
 
-const props = defineProps<{
-    activity: any,
+defineProps<{
     isOpen: Boolean,
 }>();
 
+const activityStore = useActivityStore();
 
 const mode = useColorMode();
 
-const activityData = props.activity
 const activityParticipants = ref([] as Array<{ label: string }>);
 const activityPredicates = ref<PredicateDict | null>(null);
 const predicateOptions = ref([] as Array<{ label: string }>);
@@ -43,19 +43,21 @@ const isPredicateValid = computed(() => {
 })
 
 const isApplyEnabled = computed(() => {
-  return (
-    isSubjectValid.value &&
-    isObjectValid.value &&
-    isPredicateValid.value &&
-    !selectedDuplicateClass.value &&
-    !noExistingPredicates.value &&
-    !noValidParticipants.value
-  );
+    return (
+        isSubjectValid.value &&
+        isObjectValid.value &&
+        isPredicateValid.value &&
+        !selectedDuplicateClass.value &&
+        !noExistingPredicates.value &&
+        !noValidParticipants.value
+    );
 });
 
-const openDialog = () => {
+const openDialog = async () => {
     isOpen.value = true;
     activityParticipants.value = [];
+    const activityData = await getActivityDetail(activityStore.getActivity() as Activity)
+
     Object.keys(activityData).forEach(key => {
         const items = activityData[key];
         if (Array.isArray(items)) {
@@ -66,7 +68,6 @@ const openDialog = () => {
             });
         }
     });
-    console.log(activityParticipants);
 };
 
 const extractClass = (str: string): string | null => {
@@ -78,7 +79,8 @@ onMounted(async () => {
     selectedDuplicateClass.value = false;
     noExistingPredicates.value = false;
     noValidParticipants.value = false;
-    activityPredicates.value = await getPredicateObject('Urology_Emergency_after_Debriefing');
+    activityPredicates.value = await getPredicateObject(activityStore.getActivity()!.graph);
+    console.log(activityPredicates.value)
 });
 
 watch(object, () => {
@@ -98,7 +100,7 @@ watch(object, () => {
                     predicates = (activityPredicates.value.get([subjectClass, objectClass]) as Array<{ predicate: string }>) || [];
                 } catch (error) {
                     predicates = [];
-                }      
+                }
             }
             if (predicates.length > 0) {
                 predicateOptions.value = predicates.map(item => ({ label: item.predicate }));
@@ -139,7 +141,7 @@ const applyTriple = () => {
     const subjectString = cleanLabel(subject.value);
     const objectString = cleanLabel(object.value);
 
-    updateTriple('Urology_Emergency_after_Debriefing', { subject: subjectString, predicate: predicate.value, object: objectString }, 'insert' as RDFOperation)
+    updateTriple(activityStore.getActivity()!.graph, { subject: subjectString, predicate: predicate.value, object: objectString }, 'insert' as RDFOperation)
 
     console.log('Added Triple:', subjectString, predicate.value, objectString);
     closeDialog();
@@ -153,7 +155,8 @@ const applyTriple = () => {
 
     <div v-if="isOpen" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
         @click.self="closeDialog">
-        <div :class="mode === 'dark' ? 'rounded shadow p-6 w-full max-w-5xl bg-gray-800 relative' : 'rounded shadow p-6 w-full max-w-5xl bg-white relative'">
+        <div
+            :class="mode === 'dark' ? 'rounded shadow p-6 w-full max-w-5xl bg-gray-800 relative' : 'rounded shadow p-6 w-full max-w-5xl bg-white relative'">
 
             <button class="close-btn" @click="closeDialog">×</button>
             <div class="header-container flex items-center mb-4">
@@ -174,11 +177,15 @@ const applyTriple = () => {
 
                 </div>
             </div>
-            <p class="mb-4">This component lets you easily add new RDF triples to your knowledge graph. Simply select an agent (subject) and a target (object) from the 
-                    provided lists. If the two are valid and belong to different categories, a list of applicable predicates (relationships) will appear for you 
-                    to choose from. Please note that if the agent and target come from the same category or if no predicates are available for the chosen 
-                    combination, a warning message will be displayed. If there are no existing predicates between the chosen agent and target you can simply 
-                    add a new one by typing it into the predicate textfield</p>
+            <p class="mb-4">This component lets you easily add new RDF triples to your knowledge graph. Simply select an
+                agent (subject) and a target (object) from the
+                provided lists. If the two are valid and belong to different categories, a list of applicable predicates
+                (relationships) will appear for you
+                to choose from. Please note that if the agent and target come from the same category or if no predicates
+                are available for the chosen
+                combination, a warning message will be displayed. If there are no existing predicates between the chosen
+                agent and target you can simply
+                add a new one by typing it into the predicate textfield</p>
 
             <div class="flex space-x-4 mb-6">
 
@@ -211,21 +218,21 @@ const applyTriple = () => {
 
 <style scoped>
 .close-btn {
-  position: absolute;
-  top: 0.5rem;
-  right: 1.0rem;
-  background: transparent;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-  color: inherit;
+    position: absolute;
+    top: 0.5rem;
+    right: 1.0rem;
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: inherit;
 }
 
 .alert-container {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  text-align: center;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
 }
 
 .alert-message {
