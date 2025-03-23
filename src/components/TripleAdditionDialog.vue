@@ -37,6 +37,22 @@ const isObjectValid = computed(() => {
     return activityParticipants.value.some(item => item.label === object.value);
 });
 
+const isPredicateValid = computed(() => {
+    const regex = /^[A-Za-z]+$/;
+    return regex.test(predicate.value);
+})
+
+const isApplyEnabled = computed(() => {
+  return (
+    isSubjectValid.value &&
+    isObjectValid.value &&
+    isPredicateValid.value &&
+    !selectedDuplicateClass.value &&
+    !noExistingPredicates.value &&
+    !noValidParticipants.value
+  );
+});
+
 const openDialog = () => {
     isOpen.value = true;
     activityParticipants.value = [];
@@ -97,6 +113,13 @@ watch(object, () => {
     }
 });
 
+
+// watch(predicate, () => {
+//     if(isPredicateValid) {
+
+//     }
+// });
+
 const closeDialog = () => {
     isOpen.value = false;
     resetInputs();
@@ -145,6 +168,10 @@ const applyTriple = () => {
                     <p v-else-if="noValidParticipants" class="alert-message">
                         Please choose a valid agent and target to see associated predicates.
                     </p>
+                    <p v-else-if="isObjectValid && isSubjectValid && !isPredicateValid" class="alert-message">
+                        Predicate can only contain letters without spaces, numbers, or special characters.
+                    </p>
+
                 </div>
             </div>
             <p class="mb-4">This component lets you easily add new RDF triples to your knowledge graph. Simply select an agent (subject) and a target (object) from the 
@@ -174,9 +201,9 @@ const applyTriple = () => {
                 </div>
             </div>
 
-            <div class="flex justify-between">
-                <Button @click="closeDialog">Cancel</Button>
-                <Button @click="applyTriple">Apply</Button>
+            <div class="flex gap-4">
+                <Button class="w-full" @click="closeDialog">Cancel</Button>
+                <Button class="w-full" :disabled="!isApplyEnabled" @click="applyTriple">Apply</Button>
             </div>
         </div>
     </div>
