@@ -5,7 +5,7 @@ import ReplyCard from './ReplyCard.vue';
 import { addComment, updateConflict } from "@/data/knowledge_graph/write_operations";
 import { Button } from '@/components/ui/button';
 import { useConflictsStore } from '@/stores/conflictsStore';
-import { useActivityStore } from '@/stores/activityStore';
+import { useSessionStore } from '@/stores/sessionStore';
 
 const props = defineProps({
   conflict: {
@@ -34,13 +34,11 @@ const conflictDetail = ref<any>(null);
 const replyInputVisible = ref<Record<string, boolean>>({});
 const newReplyText = ref<Record<string, string>>({});
 
-const graph = useActivityStore().getActivity()!.graph;
-
 // Status aus den Props setzen
 const selectedStatus = ref<any>(null);
 
 const conflictStore = useConflictsStore();
-const activityStore = useActivityStore();
+const sessionStore = useSessionStore();
 
 const textareaRef = ref<HTMLTextAreaElement | null>(null)
 
@@ -58,6 +56,7 @@ onMounted(async () => {
 // Status aktualisieren
 function setStatus(status: conflictStatus) {
   selectedStatus.value = status;
+  const graph = sessionStore.sessionActivity!.graph
   updateConflict(graph, props.conflict.id, conflictPredicate.status, selectedStatus.value)
   conflictStore.updateConflict(props.conflict.id, graph)
 }
@@ -75,6 +74,8 @@ const toggleReplyInput = async (conflictId: string) => {
 };
 
 const saveReply = async (conflictId: string) => {
+  const graph = sessionStore.sessionActivity!.graph;
+  const role = sessionStore.sessionRole!;
   if (!newReplyText.value[conflictId]) return;
 
   try {
@@ -82,7 +83,7 @@ const saveReply = async (conflictId: string) => {
     const response = await addComment(
       graph, // current knowledge graph
       conflictId, // id of the conflict
-      activityStore.getRole()!,
+      role,
       newReplyText.value[conflictId] // reply text
     );
 
@@ -95,7 +96,7 @@ const saveReply = async (conflictId: string) => {
       }
       conflictDetail.value.replies.push({
         id: Date.now().toString(), // temporäre ID
-        author: activityStore.getRole()!,
+        author: role,
         comment: newReplyText.value[conflictId],
         replies: [] // leeres Array für potenzielle verschachtelte Antworten
       });
