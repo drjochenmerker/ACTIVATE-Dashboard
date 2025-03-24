@@ -5,6 +5,7 @@ import ReplyCard from './ReplyCard.vue';
 import { addComment, deleteConflict, updateConflict } from "@/data/knowledge_graph/write_operations";
 import { Button } from '@/components/ui/button';
 import { useConflictsStore } from '@/stores/conflictsStore';
+import { useActivityStore } from '@/stores/activityStore';
 
 const props = defineProps({
   conflict: {
@@ -33,13 +34,13 @@ const conflictDetail = ref<any>(null);
 const replyInputVisible = ref<Record<string, boolean>>({});
 const newReplyText = ref<Record<string, string>>({});
 
-//TODO hard coded graph title
-const graph = 'Urology_Emergency_after_Debriefing';
+const graph = useActivityStore().getActivity()!.graph;
 
 // Status aus den Props setzen
 const selectedStatus = ref<any>(props.status);
 
 const conflictStore = useConflictsStore();
+const activityStore = useActivityStore();
 
 const textareaRef = ref<HTMLTextAreaElement | null>(null);
 
@@ -92,10 +93,10 @@ const saveReply = async (conflictId: string) => {
 
   try {
     const response = await addComment(
-      graph,
-      conflictId,
-      "test-replyer", // Temporärer Hardcoded-Autor
-      newReplyText.value[conflictId]
+      graph, // current knowledge graph
+      conflictId, // id of the conflict
+      activityStore.getRole()!,
+      newReplyText.value[conflictId] // reply text
     );
 
     console.log("Kommentar erfolgreich gespeichert:", response);
@@ -109,7 +110,7 @@ const saveReply = async (conflictId: string) => {
         ...conflictDetail.value.replies, // alte Kommentare
         {
           id: Date.now().toString(), // temporäre ID
-          author: "test-replyer",
+          author: activityStore.getRole()!,
           comment: newReplyText.value[conflictId],
           replies: []
         }

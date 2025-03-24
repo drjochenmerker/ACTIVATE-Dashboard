@@ -8,6 +8,7 @@ import { useConflictsStore } from '@/stores/conflictsStore';
 import { conflictStatus } from '@/data/knowledge_graph/structures';
 import { getActivities, getActivityDetail, getConflictDetail, getConflictIds } from '@/data/knowledge_graph/read_operations';
 import { addComment, addConflict } from '@/data/knowledge_graph/write_operations';
+import { useActivityStore } from '@/stores/activityStore';
 
 export default {
   name: 'Editor',
@@ -124,7 +125,7 @@ export default {
 
     async transferText() {
       // consts
-      const graph = 'Urology_Emergency_after_Debriefing'; // todo: change to graph name
+      //const graph = 'Urology_Emergency_after_Debriefing'; // todo: change to graph name
       const content = this.quill.root.innerHTML;
       const title = this.title || 'New Note';
       const author = this.isAnonymous ? 'Anonymous' : 'HARD CODED';
@@ -179,6 +180,7 @@ export default {
       };
 
       try {
+        const graph = useActivityStore().getActivity().graph;
         console.log("note:", note);
         const addConflictResponse = await addConflict(graph, note);
 
@@ -195,6 +197,7 @@ export default {
       }
 
       const activityPointStore = useActivityPointsStore();
+
       activityPointStore.deactivateAllPoints();
 
       this.clearEditor();

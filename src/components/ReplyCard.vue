@@ -2,6 +2,7 @@
 import { defineProps, nextTick, ref } from 'vue';
 import { Button } from '@/components/ui/button'; // Button-Komponente importieren
 import { addComment, deleteComment } from '@/data/knowledge_graph/write_operations';
+import { useActivityStore } from '@/stores/activityStore';
 
 const props = defineProps({
     parentComment: {
@@ -10,7 +11,7 @@ const props = defineProps({
     },
 });
 
-const graph = 'Urology_Emergency_after_Debriefing'; //todo hard coded graph title
+const activityStore = useActivityStore(); //todo hard coded graph title
 
 // Toggle für die Anzeige des Antwort-Eingabefelds
 const replyInputVisible = ref(false);
@@ -26,6 +27,7 @@ const toggleReplyInput = async () => {
     }
 }
 
+
 // Funktion zum Speichern einer Antwort
 const saveReply = async (parentCommentId: string, parentReply?: any) => {
     console.log(`save comment for conflict with id: ${parentCommentId}:`, newReplyText.value);
@@ -33,10 +35,11 @@ const saveReply = async (parentCommentId: string, parentReply?: any) => {
     if (!newReplyText.value) return;
 
     try {
-        await addComment(
-            graph,
+        const response = await addComment(
+            // There must be a cleaner way, but I know for sure that the activity is not null since it must be set in start page
+            activityStore.getActivity()!.graph,
             parentCommentId,
-            "test-replyer", //TODO
+            activityStore.getRole()!,
             newReplyText.value
         );
 
@@ -47,7 +50,7 @@ const saveReply = async (parentCommentId: string, parentReply?: any) => {
             ...parentReply.replies,
             {
                 id: Date.now().toString(), // temporäre ID
-                author: "test-replyer", // todo Temporärer Autor
+                author: activityStore.getRole()!, // todo Temporärer Autor
                 comment: newReplyText.value, // Kommentartext
                 replies: [] // Leeres Array für mögliche weitere Verschachtelungen
             }

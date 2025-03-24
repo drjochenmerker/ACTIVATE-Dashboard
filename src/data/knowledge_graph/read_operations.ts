@@ -9,22 +9,12 @@ import { fetchSparql, findNestedComment, getSparqlTemplate, camelToSnakeCase } f
 export async function getActivities(): Promise<Activity[]> {
   let query = await getSparqlTemplate(sparqlTemplate.getActivities);
   const data = await fetchSparql(query);
-  // let parsedData: StringAccessObject = {};
   let parsedData: Activity[] = [];
   data.forEach((triple: StringAccessObject) => {
-    // Legacy code which allows loading multiple languages at the same time. Might still be useful later
-    // if (triple.language.value in parsedData === false) {
-    //   parsedData[triple.language.value] = [] as Activity[];
-    // }
-    // parsedData[triple.language.value].push(
-    //   {
-    //     uri: triple.activity.value,
-    //     label: triple.label.value
-    //   }
-    // )
     parsedData.push({
       graph: triple.graph.value.split("/").pop(),
-      name: triple.name.value,
+      name: triple.name.value ? triple.name.value : "Error - No Name given",
+      description: triple.description.value ? triple.description.value : "Error - No Description given"
     });
   });
   return parsedData;

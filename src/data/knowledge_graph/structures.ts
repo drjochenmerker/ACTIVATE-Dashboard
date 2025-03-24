@@ -39,7 +39,9 @@ export enum sparqlTemplate {
     addConflictParticipant = "addConflictParticipant",
     getMiscComments = "getMiscComments",
     addEntity = "addEntity",
-    getActivityClassIds = "getActivityClassIds"
+    getActivityClassIds = "getActivityClassIds",
+    addActivity = "addActivity",
+    deleteActivity = "deleteActivity"
 }
 
 /**
@@ -48,6 +50,7 @@ export enum sparqlTemplate {
 export type Activity = {
     graph: string;
     name: string;
+    description?: string;
 }
 
 /**
