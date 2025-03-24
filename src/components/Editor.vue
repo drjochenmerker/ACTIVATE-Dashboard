@@ -3,6 +3,7 @@ import Quill from 'quill';
 import 'quill/dist/quill.snow.css';
 import Button from '@/components/ui/button/Button.vue';
 import Dropdown from './Dropdown.vue';
+
 import { useActivityPointsStore } from '@/stores/activityPointsStore';
 import { useConflictsStore } from '@/stores/conflictsStore';
 import { conflictStatus } from '@/data/knowledge_graph/structures';
@@ -46,7 +47,8 @@ export default {
 
   async mounted() {
     this.initQuill();
-    await this.fetchActivityDetails(); // Fetch activity details on mount
+    // Fetch activity details on mount
+    await this.fetchActivityDetails();
   },
   computed: {
     pointData() {
@@ -60,7 +62,8 @@ export default {
         if (Array.isArray(this.activityDetails[key])) {
           pointData[key] = this.activityDetails[key].map(item => ({ label: item.label }));
         } else {
-          pointData[key] = []; // Ensure it's an array even if no data
+          // Ensure it's an array even with no data:
+          pointData[key] = [];
         }
       }
 
@@ -72,7 +75,9 @@ export default {
     isDoneDisabled() {
       return this.activePoints.some(point => {
         const value = this.selectedPoints[point];
-        return !value || value.length === 0; // Check if any selection is made for each active point
+
+        // Check if any selection is made for each active point:
+        return !value || value.length === 0;
       });
     }
   },
@@ -98,13 +103,12 @@ export default {
 
     clearEditor() {
       if (this.quill) {
-        this.quill.root.innerHTML = ''; // Clear Quill editor content
+        this.quill.root.innerHTML = ''; // Clear the content
       }
       this.isAnonymous = false; // Reset the anonymous checkbox
       this.title = ''; // Clear the title
-      // Clear the selected values in the dropdowns
-      for (const point in this.selectedPoints) {
-        this.selectedPoints[point] = []; // Reset to empty arrays
+      for (const point in this.selectedPoints) { // Clear the selected values in the dropdowns / reset to empty arrays
+        this.selectedPoints[point] = [];
       }
     },
 
@@ -128,26 +132,23 @@ export default {
       // consts
       const content = this.quill.root.innerHTML;
       const title = this.title || 'New Note';
-
       const author = this.isAnonymous ? 'Anonymous' : (useActivityStore().getRole());
       const participants = [];
 
       if (this.activePoints.length === 0) {
-        const titleAndContent = title + '|' + content; // '|', the safest separator
-        console.log(titleAndContent);
+        // WORKAROUND: merge title and content to later separate in miscellaneous comment section
+        const titleAndContent = title + '|' + content; // '|', the safest separator for now
 
         try {
           const graph = useActivityStore().getActivity().graph;
-
           const response = await addComment(graph, "root", author, titleAndContent);
 
           if (response.status === "OK") {
-            //console.log("Kommentar erfolgreich gespeichert");
           } else {
-            console.warn("Fehler beim Speichern des Kommentars:", response);
+            console.warn("Error saving the comment: ", response);
           }
         } catch (error) {
-          console.error("Fehler bei der Anfrage:", error);
+          console.error("Error with API call: ", error);
         }
 
         this.clearEditor();
@@ -172,6 +173,7 @@ export default {
       });
 
 
+      // temporary save note object ot then try and add it to the graph
       const note = {
         title: title,
         timestamp: new Date().toISOString(),
@@ -194,7 +196,7 @@ export default {
           console.warn("Error adding conflict.");
         }
       } catch (error) {
-        console.error("Error adding conflict:", error);
+        console.error("Error adding conflict: ", error);
       }
 
       const activityPointStore = useActivityPointsStore();
@@ -207,7 +209,7 @@ export default {
     showDropdown() {
       this.showDropdown = true;
       this.$nextTick(() => {
-        // dynamically increase Z-Index when dropdown is opened
+        // dynamically increase Z-Index when dropdown is opened to make sure it's on top
         const dropdownList = this.$el.querySelector('.dropdown-list');
         dropdownList.style.zIndex = 1001 + this.$parent.activePoints.indexOf(this.label);
       });
@@ -241,6 +243,7 @@ export default {
         <Dropdown :label="point" :options="pointData[point] || []" v-model="selectedPoints[point]" />
       </div>
     </div>
+
     <!-- title: -->
     <div>
       <h3>Add a title:</h3>

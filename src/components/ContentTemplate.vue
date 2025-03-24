@@ -15,10 +15,11 @@ const props = defineProps({
   },
 });
 
+// Store for conflicts
 const conflictStore = useConflictsStore();
 
 // Computed property that dynamically filters conflicts based on the pageData ID.
-// This ensures that only relevant conflicts are displayed.
+// This ensures that only relevant conflicts on specific tab page are displayed.
 const filteredConflicts = computed(() => {
   return conflictStore.getConflicts.filter(conflict => {
     return Array.isArray(conflict.participants) &&
@@ -29,11 +30,13 @@ const filteredConflicts = computed(() => {
 </script>
 
 <template>
+
   <!-- Check if there are any filtered conflicts to display -->
   <div v-if="filteredConflicts.length > 0">
     <div v-for="conflict in filteredConflicts" :key="conflict.id">
       <div class="conflict-container">
         <div class="note-container">
+
           <!-- NoteCard component for displaying conflict details -->
           <NoteCard :conflict="conflict" :title="conflict.title" :content="conflict.description || ''"
             :author="conflict.author" :status="conflict.status" />
@@ -62,7 +65,6 @@ const filteredConflicts = computed(() => {
   width: 100%;
 }
 
-/* Styling for the comment input field */
 .comment-input {
   margin-top: 10px;
   display: flex;

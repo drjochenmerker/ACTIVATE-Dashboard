@@ -11,14 +11,13 @@ const props = defineProps({
     },
 });
 
+// Store
 const activityStore = useActivityStore();
 
-// Toggle für die Anzeige des Antwort-Eingabefelds
+// Toggle for visibility of reply input field
 const replyInputVisible = ref(false);
 const newReplyText = ref('');
-
 const textareaRef = ref<HTMLTextAreaElement | null>(null);
-
 const toggleReplyInput = async () => {
     replyInputVisible.value = !replyInputVisible.value;
     if (replyInputVisible.value) {
@@ -28,13 +27,14 @@ const toggleReplyInput = async () => {
 }
 
 
-// Funktion zum Speichern einer Antwort
+// Function to save a reply
 const saveReply = async (parentCommentId: string, parentReply?: any) => {
     console.log(`save comment for conflict with id: ${parentCommentId}:`, newReplyText.value);
 
     if (!newReplyText.value) return;
 
     try {
+
         await addComment(
             // There must be a cleaner way, but I know for sure that the activity is not null since it must be set in start page
             activityStore.getActivity()!.graph,
@@ -49,21 +49,21 @@ const saveReply = async (parentCommentId: string, parentReply?: any) => {
         parentReply.replies = [
             ...parentReply.replies,
             {
-                id: Date.now().toString(), // temporäre ID
-                author: activityStore.getRole()!, // todo Temporärer Autor
-                comment: newReplyText.value, // Kommentartext
-                replies: [] // Leeres Array für mögliche weitere Verschachtelungen
+                id: Date.now().toString(),
+                author: activityStore.getRole()!,
+                comment: newReplyText.value,
+                replies: [] // empty array for possible nested replies
             }
         ];
 
-        replyInputVisible.value = false; // Eingabefeld verstecken
-        newReplyText.value = ''; // Textfeld leeren
+        replyInputVisible.value = false; // hide input field
+        newReplyText.value = ''; // empty the text field 
     } catch (error) {
-        console.error('Fehler beim Speichern der Antwort:', error);
+        console.error('Error while saving the reply: ', error);
     }
 };
 
-// Funktion zum Abschicken per Enter-Taste im Textarea
+// Function to submit via Enter key in textarea
 const handleEnterKey = (event: KeyboardEvent) => {
     if (event.key === 'Enter' && !event.shiftKey) {
         event.preventDefault();
@@ -71,33 +71,32 @@ const handleEnterKey = (event: KeyboardEvent) => {
     }
 };
 
+// Delete comment
 const handleDelete = async (id: string, parentComment: any) => {
-    console.log("Lösche Kommentar mit ID:", id);
     try {
-        // Lösche den Kommentar (ist es ein verschachtelter Kommentar?)
-        const isNestedComment = parentComment.replies ? true : false;
+        // Delete the comment (is it a nested comment?)
+        const isNestedComment = props.parentComment.replies ? true : false;
 
-        // Aufruf der deleteComment-Funktion
+        // call deleteComment function
         const response = await deleteComment(activityStore.getActivity()!.graph, id, isNestedComment);
 
-        // Überprüfen, ob die Antwort erfolgreich war
         if (response.status === "OK") {
-            console.log("Kommentar erfolgreich gelöscht.");
+            // console.log("Kommentar erfolgreich gelöscht.");
 
-            // Wenn der Kommentar verschachtelt ist, entferne ihn aus den replies
+            // if comment is nested, remove it from the replies
             if (parentComment.replies) {
                 parentComment.replies = parentComment.replies.filter((reply: any) => reply.id !== id);
             }
-            // Wenn der Kommentar keine verschachtelten Antworten hat, lösche ihn direkt
+
+            // if comment is not nested, delete it directly
             if (!parentComment.replies || parentComment.replies.length === 0) {
-                // Hier kannst du den Kommentar aus der übergeordneten Liste der Kommentare entfernen, 
-                // falls der Kommentar direkt entfernt wurde.
+
             }
         } else {
-            console.error("Fehler beim Löschen des Kommentars.");
+            console.error("Error while deleting the reply.");
         }
     } catch (error) {
-        console.error("Fehler beim Löschen des Kommentars:", error);
+        console.error("Error while deleting the reply: ", error);
     }
 };
 
@@ -116,25 +115,26 @@ const handleDelete = async (id: string, parentComment: any) => {
             <p class="reply-text">{{ parentComment.comment }}</p>
         </div>
 
-        <!-- Antwort-Button zum Umblenden des Eingabefeldes -->
+        <!-- Reply Button to hide input field -->
         <Button @click="toggleReplyInput()">
             {{ replyInputVisible ? 'Cancel' : 'Answer' }}
         </Button>
 
-        <!-- Antwort Eingabefeld -->
+        <!-- Reply input field -->
         <div v-if="replyInputVisible" class="reply-input">
             <textarea ref="textareaRef" v-model="newReplyText" placeholder="Write something to answer..."
                 @keydown.enter="handleEnterKey($event)"></textarea>
             <Button @click="saveReply(parentComment.id, parentComment)">Save Comment</Button>
         </div>
 
-        <!-- Zeige verschachtelte Antworten an -->
+        <!-- Show nested replies with recursive component -->
         <div v-if="parentComment.replies && parentComment.replies.length > 0" class="nested-replies">
             <ReplyCard v-for="nestedReply in parentComment.replies" :key="nestedReply.id"
                 :parentComment="nestedReply" />
         </div>
     </div>
 </template>
+
 
 <style scoped>
 .reply-card {

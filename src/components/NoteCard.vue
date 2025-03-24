@@ -34,9 +34,8 @@ const conflictDetail = ref<any>(null);
 const replyInputVisible = ref<Record<string, boolean>>({});
 const newReplyText = ref<Record<string, string>>({});
 
-const graph = useActivityStore().getActivity()!.graph;
 
-// Status aus den Props setzen
+// Set status from props
 const selectedStatus = ref<any>(props.status);
 
 const conflictStore = useConflictsStore();
@@ -57,8 +56,8 @@ watch(() => props.conflict, (newConflict) => {
 
 // watch the selected status and update the conflict status
 watch(selectedStatus, async (newStatus) => {
-  await updateConflict(graph, props.conflict.id, conflictPredicate.status, newStatus);
-  conflictStore.updateConflict(props.conflict.id, graph);
+  await updateConflict(activityStore.getActivity()!.graph, props.conflict.id, conflictPredicate.status, newStatus);
+  conflictStore.updateConflict(props.conflict.id, activityStore.getActivity()!.graph,);
 });
 
 // toggle input field
@@ -73,7 +72,7 @@ const toggleReplyInput = async (conflictId: string) => {
   }
 };
 
-// grouped participants for tags
+// Grouped participants to see which participants are included in the conflict
 const groupedParticipants = computed(() => {
   const groups: Record<string, string[]> = {};
   if (!props.conflict.participants) return groups;
@@ -88,28 +87,28 @@ const groupedParticipants = computed(() => {
   return groups;
 });
 
+// Function to save a reply to a conflict
 const saveReply = async (conflictId: string) => {
   if (!newReplyText.value[conflictId]) return;
 
   try {
-    const response = await addComment(
-      graph, // current knowledge graph
-      conflictId, // id of the conflict
+    await addComment(
+      activityStore.getActivity()!.graph,
+      conflictId,
       activityStore.getRole()!,
       newReplyText.value[conflictId] // reply text
     );
-
-    console.log("Kommentar erfolgreich gespeichert:", response);
 
     if (conflictDetail.value) {
       if (!conflictDetail.value.replies) {
         conflictDetail.value.replies = [];
       }
-      // Neue Referenz für `replies` zuweisen
+
+      // Assign a new reference for `replies`
       conflictDetail.value.replies = [
-        ...conflictDetail.value.replies, // alte Kommentare
+        ...conflictDetail.value.replies, // old comments
         {
-          id: Date.now().toString(), // temporäre ID
+          id: Date.now().toString(),
           author: activityStore.getRole()!,
           comment: newReplyText.value[conflictId],
           replies: []
@@ -119,11 +118,11 @@ const saveReply = async (conflictId: string) => {
     replyInputVisible.value[conflictId] = false;
     newReplyText.value[conflictId] = '';
   } catch (error) {
-    console.error("Error saving comment:", error);
+    console.error("Error saving comment: ", error);
   }
 };
 
-
+// Function to submit via Enter key in textarea
 const handleEnterKey = (event: KeyboardEvent) => {
   if (event.key === 'Enter' && !event.shiftKey) {
     event.preventDefault();
@@ -131,10 +130,10 @@ const handleEnterKey = (event: KeyboardEvent) => {
   }
 };
 
-// delete conflicts
+// Delete conflict
 const handleDelete = async (id: string) => {
   try {
-    const response = await deleteConflict(graph, id);
+    const response = await deleteConflict(activityStore.getActivity()!.graph, id);
 
     if (response.status === "OK") {
       conflictStore.removeConflict(id); // delete conflict from store
@@ -149,9 +148,11 @@ const handleDelete = async (id: string) => {
 <template>
   <div class="note-card" :class="selectedStatus">
     <div class="note-card-header">
+      <!-- Author-->
       <span class="note-card-author">
         Author: {{ props.author }}
       </span>
+      <!-- Status selector -->
       <div class="status-selector">
         <select v-model="selectedStatus">
           <option :value="conflictStatus.open">{{ conflictStatus.open }}</option>
@@ -159,6 +160,7 @@ const handleDelete = async (id: string) => {
           <option :value="conflictStatus.resolved">{{ conflictStatus.resolved }}</option>
         </select>
       </div>
+      <!-- Delete button -->
       <button class="icon-button" @click="handleDelete(props.conflict.id)">
         <span class="material-symbols-outlined">delete</span>
       </button>
@@ -167,7 +169,10 @@ const handleDelete = async (id: string) => {
     <hr class="note-divider" />
 
     <div class="note-card-content">
+      <!-- Note title -->
       <div class="note-title" v-html="props.title"></div>
+
+      <!-- Participants grouped by type -->
       <div class="note-participants">
         <div v-for="(group, type) in groupedParticipants" :key="type" class="participant-group">
           <div class="participant-group-box">
@@ -180,9 +185,12 @@ const handleDelete = async (id: string) => {
           </div>
         </div>
       </div>
+
+      <!-- Content -->
       <div class="note-content" v-html="props.content"></div>
     </div>
 
+    <!-- Note comment section starting with add comment button -->
     <div class="note-comment-section">
       <Button @click="toggleReplyInput(conflict.id)"> Add comment </Button>
     </div>
@@ -198,6 +206,7 @@ const handleDelete = async (id: string) => {
         :conflictId="conflict.id" />
     </div>
   </div>
+
 </template>
 
 

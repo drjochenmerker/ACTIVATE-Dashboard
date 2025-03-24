@@ -1,25 +1,3 @@
-<template>
-    <div class="dropdown" ref="dropdownContainer">
-        <h3>{{ label }}:</h3>
-        <div class="search-container">
-            <!-- Anzeige der ausgewählten Optionen -->
-            <div v-for="option in selectedOptions" :key="option.label" class="selected-item">
-                {{ option.label }}
-                <span class="remove-icon" @click="removeOption(option)">✕</span>
-            </div>
-            <!-- Eingabefeld für die Suche -->
-            <input type="text" v-model="search" @focus="showDropdown = true" @input="updateSearch"
-                placeholder="Suchen..." />
-        </div>
-        <!-- Dropdown-Liste -->
-        <ul v-if="showDropdown" class="dropdown-list">
-            <li v-for="option in filteredOptions" :key="option.label" @mousedown.prevent="selectOption(option)">
-                {{ option.label }}
-            </li>
-        </ul>
-    </div>
-</template>
-
 <script>
 export default {
     name: 'Dropdown',
@@ -96,6 +74,32 @@ export default {
     }
 };
 </script>
+
+<template>
+    <div class="dropdown" ref="dropdownContainer">
+        <h3>{{ label }}:</h3>
+        <div class="search-container">
+
+            <!-- Show selected options -->
+            <div v-for="option in selectedOptions" :key="option.label" class="selected-item">
+                {{ option.label }}
+                <span class="remove-icon" @click="removeOption(option)">✕</span>
+            </div>
+
+            <!-- Input field for searching -->
+            <input type="text" v-model="search" @focus="showDropdown = true" @input="updateSearch"
+                placeholder="Suchen..." />
+        </div>
+
+        <!-- Dropdown list -->
+        <ul v-if="showDropdown" class="dropdown-list">
+            <li v-for="option in filteredOptions" :key="option.label" @mousedown.prevent="selectOption(option)">
+                {{ option.label }}
+            </li>
+        </ul>
+    </div>
+</template>
+
 
 <style scoped>
 .dropdown {
