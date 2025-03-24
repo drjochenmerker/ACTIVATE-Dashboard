@@ -35,8 +35,9 @@ const filteredConflicts = computed(() => {
       <div class="conflict-container">
         <div class="note-container">
           <!-- NoteCard component for displaying conflict details -->
-          <NoteCard :conflict="conflict" :title="conflict.title" :content="conflict.description"
+          <NoteCard :conflict="conflict" :title="conflict.title" :content="conflict.description || ''"
             :author="conflict.author" :status="conflict.status" />
+
         </div>
       </div>
     </div>

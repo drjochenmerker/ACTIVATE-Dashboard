@@ -11,7 +11,7 @@ const props = defineProps({
     },
 });
 
-const activityStore = useActivityStore(); //todo hard coded graph title
+const activityStore = useActivityStore();
 
 // Toggle für die Anzeige des Antwort-Eingabefelds
 const replyInputVisible = ref(false);
@@ -35,7 +35,7 @@ const saveReply = async (parentCommentId: string, parentReply?: any) => {
     if (!newReplyText.value) return;
 
     try {
-        const response = await addComment(
+        await addComment(
             // There must be a cleaner way, but I know for sure that the activity is not null since it must be set in start page
             activityStore.getActivity()!.graph,
             parentCommentId,
@@ -78,7 +78,7 @@ const handleDelete = async (id: string, parentComment: any) => {
         const isNestedComment = parentComment.replies ? true : false;
 
         // Aufruf der deleteComment-Funktion
-        const response = await deleteComment(graph, id, isNestedComment);
+        const response = await deleteComment(activityStore.getActivity()!.graph, id, isNestedComment);
 
         // Überprüfen, ob die Antwort erfolgreich war
         if (response.status === "OK") {

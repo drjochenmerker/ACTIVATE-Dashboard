@@ -123,20 +123,22 @@ export default {
       }
     },
 
+
     async transferText() {
       // consts
-      //const graph = 'Urology_Emergency_after_Debriefing'; // todo: change to graph name
       const content = this.quill.root.innerHTML;
       const title = this.title || 'New Note';
-      const author = this.isAnonymous ? 'Anonymous' : 'HARD CODED';
-      const participants = [];
 
+      const author = this.isAnonymous ? 'Anonymous' : (useActivityStore().getRole());
+      const participants = [];
 
       if (this.activePoints.length === 0) {
         const titleAndContent = title + '|' + content; // '|', the safest separator
         console.log(titleAndContent);
 
         try {
+          const graph = useActivityStore().getActivity().graph;
+
           const response = await addComment(graph, "root", author, titleAndContent);
 
           if (response.status === "OK") {
@@ -181,7 +183,6 @@ export default {
 
       try {
         const graph = useActivityStore().getActivity().graph;
-        console.log("note:", note);
         const addConflictResponse = await addConflict(graph, note);
 
         if (addConflictResponse.status === "OK") {

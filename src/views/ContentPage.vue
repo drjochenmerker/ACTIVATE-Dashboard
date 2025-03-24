@@ -5,22 +5,31 @@ import ContentTemplate from '@/components/ContentTemplate.vue';
 import { getMiscComments } from '@/data/knowledge_graph/read_operations';
 import { onMounted, ref } from 'vue';
 import NoteCardMisc from '@/components/NoteCardMisc.vue';
+import { useActivityStore } from '@/stores/activityStore';
+import { Comment } from '@/data/knowledge_graph/structures';
 
 // Define props
 const props = defineProps<{ conflicts: any[], activity: any }>();
 
+// stores
+const activityStore = useActivityStore();
+
 const route = useRoute();
-const pageData = contentData.find((item) => item.id === route.params.id);
-const graph = 'Urology_Emergency_after_Debriefing'; // todo: change to graph name
+//const pageData = contentData.find((item) => item.id === route.params.id);
+
+// Define the expected structure of pageData
+type PageDataType = { id: string; title: string; number: number } | undefined;
+// Assign pageData with a proper type
+const pageData: PageDataType = contentData.find((item) => item.id === route.params.id);
+
+
+const graph = activityStore.getActivity()!.graph;
 
 // Reactive variable to hold miscellaneous comments
-const miscComments = ref<string[]>([]);
+const miscComments = ref<Comment[]>([]);
 
 // Fetch miscellaneous comments on mount
 onMounted(async () => {
-    //console.log(props.conflicts[1].replies);
-    //console.log(props.conflicts[0]);
-    //console.log(props.conflicts[0].replies[0].id);
     if (route.params.id === 'misc') {
         // Get miscellaneous comments from the graph
         miscComments.value = await getMiscComments(graph);
@@ -32,7 +41,10 @@ onMounted(async () => {
     <div>
         <h1 class="text-2xl font-semibold mb-4">{{ pageData?.title }}</h1>
 
-        <ContentTemplate v-if="route.params.id !== 'misc'" :pageData="pageData" :conflicts="props.conflicts" />
+
+        <ContentTemplate v-if="route.params.id !== 'misc' && pageData" :pageData="pageData"
+            :conflicts="props.conflicts" />
+
 
         <!--when on misc page, show misc comments-->
         <div v-if="route.params.id === 'misc'">
