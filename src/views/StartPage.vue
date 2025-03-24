@@ -50,6 +50,7 @@ const handleStartSession = async () => {
   const activity = activities.value.find(a => a.graph === selectedActivity.value);
   if (activity) {
     activityStore.setActivity(activity);
+    console.log(activity)
   }
   activityStore.setRole(selectedRole.value);
 
