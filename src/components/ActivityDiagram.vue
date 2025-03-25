@@ -28,7 +28,6 @@ export default defineComponent({
      * Sets up the canvas of the component with the given Height and Width
      * Adds every point with its label to the canvas
      * Adds every needed line between points to the canvas
-     * @param {object} props: Props of the component
      */
     setup() {
         const canvas = ref<HTMLCanvasElement | null>(null);
@@ -82,7 +81,7 @@ export default defineComponent({
             { x: triangleWidth / 8, y: (triangleHeight / 8) * 7, id: "rules", label: "Rules", color: getPointColor(), active: false, highlighted: false }, // Ecke Links Unten
             { x: (triangleWidth / 8) * 7, y: (triangleHeight / 8) * 7, id: "division_of_labour", label: "Division of Labour", color: getPointColor(), active: false, highlighted: false }, // Ecke Rechts Unten
             { x: (triangleWidth / 16) * 5, y: triangleHeight / 2, id: "subject", label: "Subject", color: getPointColor(), active: false, highlighted: false }, // Links Mitte
-            { x: (triangleWidth / 16) * 11, y: triangleHeight / 2, id: "object", label: "Object", color: getPointColor(), active: false, highlighted: false }, // Rechts Mitte
+            { x: (triangleWidth / 16) * 11, y: triangleHeight / 2, id: "object", label: "Object/-ive", color: getPointColor(), active: false, highlighted: false }, // Rechts Mitte
             { x: triangleWidth / 2, y: (triangleHeight / 8) * 7, id: "community", label: "Community", color: getPointColor(), active: false, highlighted: false }, // Unten Mitte
         ]);
 
@@ -359,7 +358,7 @@ export default defineComponent({
                 if (point.id === "rules" || point.id === "community" || point.id === "division_of_labour") ctx.fillText(point.label, point.x, point.y + triangleHeight / 20);
                 if (point.id === "instruments") ctx.fillText(point.label, point.x, point.y - triangleHeight / 30);
                 if (point.id === "subject") ctx.fillText(point.label, point.x - triangleWidth / 30, point.y - triangleHeight / 30);
-                if (point.id === "object") ctx.fillText(point.label, point.x + triangleWidth / 30, point.y - triangleHeight / 30);
+                if (point.id === "object") ctx.fillText(point.label, point.x + triangleWidth / 20, point.y - triangleHeight / 30);
 
             });
 

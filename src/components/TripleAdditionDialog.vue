@@ -234,7 +234,6 @@ const applyTriple = async () => {
             </div>
 
             <div class="flex gap-4">
-                <Button class="w-full" @click="closeDialog">Cancel</Button>
                 <Button class="w-full" :disabled="!isApplyEnabled" @click="applyTriple">Apply</Button>
             </div>
         </div>
