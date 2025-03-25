@@ -41,7 +41,8 @@ export enum sparqlTemplate {
     addEntity = "addEntity",
     getActivityClassIds = "getActivityClassIds",
     addActivity = "addActivity",
-    deleteActivity = "deleteActivity"
+    deleteActivity = "deleteActivity",
+    getDiagramVocab = "getDiagramVocab",
 }
 
 /**
