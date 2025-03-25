@@ -27,7 +27,7 @@ const isTripleAdditionDialogOpen = ref(false);
   <div class="flex w-full h-2/3 relative mx-auto gap-4">
     <div class="flex-1 min-w-[900px]">
       <!-- ActivityDiagram nur rendern, wenn activity geladen ist -->
-      <ActivityDiagram v-if="activity" :activity="activity" />
+      <ActivityDiagram/>
     </div>
 
     <!-- Editor oder Platzhalter anzeigen -->
