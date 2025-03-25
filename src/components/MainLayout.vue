@@ -4,16 +4,16 @@ import { Activity } from '@/data/knowledge_graph/structures';
 import { useConflictsStore } from '@/stores/conflictsStore';
 import { ref, onMounted } from 'vue';
 import NavBar from './NavBar.vue';
-import { useActivityStore } from '@/stores/activityStore';
+import { useSessionStore } from '@/stores/sessionStore';
 
-const activityStore = useActivityStore();
-const activity = ref<Activity | null>(null);
+const sessionStore = useSessionStore();
+const activity = ref<Activity | undefined>(undefined);
 
 const conflictsStore = useConflictsStore();
 const conflictDetails = ref<any[]>([]);
 
 const loadConflicts = async () => {
-  activity.value = activityStore.getActivity();
+  activity.value = sessionStore.sessionActivity;
   if (activity.value) {
     const conflicts = await getAllConflictsWithDetail(activity.value.graph);
     conflictsStore.setConflicts(conflicts);

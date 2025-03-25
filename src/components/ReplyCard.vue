@@ -2,7 +2,7 @@
 import { defineProps, nextTick, ref } from 'vue';
 import { Button } from '@/components/ui/button'; // Button-Komponente importieren
 import { addComment } from '@/data/knowledge_graph/write_operations';
-import { useActivityStore } from '@/stores/activityStore';
+import { useSessionStore } from '@/stores/sessionStore';
 
 const props = defineProps({
     parentComment: {
@@ -11,7 +11,7 @@ const props = defineProps({
     },
 });
 
-const activityStore = useActivityStore();
+const sessionStore = useSessionStore();
 
 // Toggle für die Anzeige des Antwort-Eingabefelds
 const replyInputVisible = ref(false);
@@ -37,9 +37,9 @@ const saveReply = async (parentCommentId: string) => {
     try {
         const response = await addComment(
             // There must be a cleaner way, but I know for sure that the activity is not null since it must be set in start page
-            activityStore.getActivity()!.graph,
+            sessionStore.sessionActivity!.graph,
             parentCommentId,
-            activityStore.getRole()!,
+            sessionStore.sessionRole!,
             newReplyText.value
         );
 
@@ -51,7 +51,7 @@ const saveReply = async (parentCommentId: string) => {
         // Füge die neue Antwort (Reply) hinzu
         props.parentComment.replies.push({
             id: Date.now().toString(), // temporäre ID
-            author: activityStore.getRole()!, // Temporärer Autor
+            author: sessionStore.sessionRole!, // Temporärer Autor
             comment: newReplyText.value, // Kommentartext
             replies: [] // Leeres Array für mögliche weitere Verschachtelungen
         });
