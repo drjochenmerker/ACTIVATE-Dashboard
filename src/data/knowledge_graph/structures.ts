@@ -50,6 +50,7 @@ export enum sparqlTemplate {
 export type Activity = {
     graph: string;
     name: string;
+    description?: string;
 }
 
 /**
