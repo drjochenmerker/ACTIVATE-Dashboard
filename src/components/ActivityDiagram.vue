@@ -10,6 +10,7 @@ import { useConflictsStore } from "@/stores/conflictsStore";
 import { calculateConflictPositions } from "@/composables/calculateConflictPositions";
 import { useSessionStore } from "@/stores/sessionStore";
 import { getActivityDetail } from "@/data/knowledge_graph/read_operations";
+import { useRouter } from "vue-router";
 
 /** 
  * Activity-Diagram-Component
@@ -35,6 +36,9 @@ export default defineComponent({
         // Dimensions of the activity diagram. Possibly dynamic in the future
         const triangleWidth = 900;
         const triangleHeight = 800;
+
+        // Define router for routing in handleClickFunction
+        const router = useRouter();
 
         // Current color mode (Light- or Dark-Mode)
         const mode = useColorMode();
@@ -429,6 +433,7 @@ export default defineComponent({
             const mouseX = event.clientX - rect.left;
             const mouseY = event.clientY - rect.top;
             let pointWasClicked = false;
+            let conflictPointWasClicked = false;
 
             points.value.forEach((point) => {
                 const distance = Math.sqrt((mouseX - point.x) ** 2 + (mouseY - point.y) ** 2);
@@ -440,7 +445,18 @@ export default defineComponent({
                 }
             });
 
-            if (!pointWasClicked) {
+            conflictPositions.value.forEach((conflict) => {
+                const distance = Math.sqrt((mouseX - conflict.x) ** 2 + (mouseY - conflict.y) ** 2);
+                if (distance < triangleHeight / 80) {
+                    conflictPointWasClicked = true;
+
+                    const conflictParticipantTypes = conflict.participants.map((participant: { type: any; }) => participant.type)
+
+                    router.push(`/${conflictParticipantTypes[0]}`)
+                }
+            });
+
+            if (!pointWasClicked && !conflictPointWasClicked) {
                 checkIfTriangleIsClicked(mouseX, mouseY);
             }
         };
