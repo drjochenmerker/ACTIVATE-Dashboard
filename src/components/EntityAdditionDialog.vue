@@ -4,8 +4,9 @@ import Button from '@/components/ui/button/Button.vue';
 import { defineProps } from 'vue';
 import { useColorMode } from '@vueuse/core';
 import { useSessionStore } from '@/stores/sessionStore';
-import { KnowledgeGraphActivityClass } from '@/data/knowledge_graph/structures';
+import { Activity, KnowledgeGraphActivityClass } from '@/data/knowledge_graph/structures';
 import { addEntity } from '@/data/knowledge_graph/write_operations';
+import { getActivityDetail } from '@/data/knowledge_graph/read_operations';
 
 defineProps<{
     isOpen: Boolean,
@@ -51,14 +52,17 @@ const applyEntity = async () => {
         return;
     }
 
-    // Call the addEntity function.
     const response = await addEntity(
         sessionStore.sessionActivity!.graph,
         entityName.value,
         selectedClass.value as KnowledgeGraphActivityClass
     );
+
+    const activityData = await getActivityDetail(sessionStore.sessionActivity as Activity)
+
+    // TODO: Neue Entität ist nicht hier drin...
+    console.log(activityData)
     console.log("Entity addition response:", response);
-    // Optionally, you can handle errors based on response here.
 
     closeDialog();
 };
