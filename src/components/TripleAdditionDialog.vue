@@ -4,22 +4,23 @@ import Button from '@/components/ui/button/Button.vue';
 import RDFAdditionDropdown from './RDFAdditionDropdown.vue';
 import { defineProps } from 'vue';
 import { useColorMode } from '@vueuse/core';
-import { updateTriple } from '@/data/knowledge_graph/write_operations';
-import { Activity, PredicateDict, RDFOperation } from '@/data/knowledge_graph/structures';
+import { addPredicate, updateTriple } from '@/data/knowledge_graph/write_operations';
+import { Activity, KnowledgeGraphActivityClass, LanguageCode, LanguageLabel, PredicateDict, RDFOperation } from '@/data/knowledge_graph/structures';
 import { getActivityDetail, getPredicateObject } from '@/data/knowledge_graph/read_operations';
-import { useActivityStore } from '@/stores/activityStore';
+import { useSessionStore } from '@/stores/sessionStore';
 
 defineProps<{
     isOpen: Boolean,
 }>();
 
-const activityStore = useActivityStore();
+const sessionStore = useSessionStore()
 
 const mode = useColorMode();
 
 const activityParticipants = ref([] as Array<{ label: string }>);
 const activityPredicates = ref<PredicateDict | null>(null);
 const predicateOptions = ref([] as Array<{ label: string }>);
+const predicates = ref([] as Array<{ predicate: string }>)
 const isOpen = ref(false);
 const subject = ref('');
 const predicate = ref('');
@@ -48,7 +49,6 @@ const isApplyEnabled = computed(() => {
         isObjectValid.value &&
         isPredicateValid.value &&
         !selectedDuplicateClass.value &&
-        !noExistingPredicates.value &&
         !noValidParticipants.value
     );
 });
@@ -56,7 +56,7 @@ const isApplyEnabled = computed(() => {
 const openDialog = async () => {
     isOpen.value = true;
     activityParticipants.value = [];
-    const activityData = await getActivityDetail(activityStore.getActivity() as Activity)
+    const activityData = await getActivityDetail(sessionStore.sessionActivity as Activity)
 
     Object.keys(activityData).forEach(key => {
         const items = activityData[key];
@@ -79,11 +79,10 @@ onMounted(async () => {
     selectedDuplicateClass.value = false;
     noExistingPredicates.value = false;
     noValidParticipants.value = false;
-    activityPredicates.value = await getPredicateObject(activityStore.getActivity()!.graph);
-    console.log(activityPredicates.value)
+    activityPredicates.value = await getPredicateObject(sessionStore.sessionActivity!.graph);
 });
 
-watch(object, () => {
+watch([subject, object], () => {
     predicate.value = '';
     selectedDuplicateClass.value = false;
     noExistingPredicates.value = false;
@@ -94,17 +93,18 @@ watch(object, () => {
 
     if (isSubjectValid.value && isObjectValid.value) {
         if (subjectClass !== objectClass) {
-            let predicates: Array<{ predicate: string }> = [];
+            //let predicates: Array<{ predicate: string }> = [];
             if (subjectClass && objectClass && activityPredicates.value) {
                 try {
-                    predicates = (activityPredicates.value.get([subjectClass, objectClass]) as Array<{ predicate: string }>) || [];
+                    predicates.value = (activityPredicates.value.get([subjectClass, objectClass]) as Array<{ predicate: string }>) || [];
                 } catch (error) {
-                    predicates = [];
+                    predicates.value = [];
                 }
             }
-            if (predicates.length > 0) {
-                predicateOptions.value = predicates.map(item => ({ label: item.predicate }));
+            if (predicates.value.length > 0) {
+                predicateOptions.value = predicates.value.map(item => ({ label: item.predicate }));
             } else {
+                predicateOptions.value = [];
                 noExistingPredicates.value = true;
             }
         } else {
@@ -114,13 +114,6 @@ watch(object, () => {
         noValidParticipants.value = true;
     }
 });
-
-
-// watch(predicate, () => {
-//     if(isPredicateValid) {
-
-//     }
-// });
 
 const closeDialog = () => {
     isOpen.value = false;
@@ -137,15 +130,47 @@ const cleanLabel = (label: string): string => {
     return label.replace(/\s*\(.*?\)\s*/g, '').replace(/\s+/g, '');
 };
 
-const applyTriple = () => {
+function mapToActivityClass(str: string): KnowledgeGraphActivityClass | undefined {
+    switch (str.toLowerCase()) {
+        case "subject":
+            return KnowledgeGraphActivityClass.subject;
+        case "object":
+            return KnowledgeGraphActivityClass.object;
+        case "rules":
+            return KnowledgeGraphActivityClass.rules;
+        case "instruments":
+            return KnowledgeGraphActivityClass.instruments;
+        case "division_of_labour":
+            return KnowledgeGraphActivityClass.divison_of_labour;
+        case "community":
+            return KnowledgeGraphActivityClass.community;
+        default:
+            return undefined;
+    }
+}
+
+const applyTriple = async () => {
     const subjectString = cleanLabel(subject.value);
     const objectString = cleanLabel(object.value);
 
-    updateTriple(activityStore.getActivity()!.graph, { subject: subjectString, predicate: predicate.value, object: objectString }, 'insert' as RDFOperation)
+    const subjectClass = mapToActivityClass(extractClass(subject.value) || '');
+    const objectClass = mapToActivityClass(extractClass(object.value) || '');
 
-    console.log('Added Triple:', subjectString, predicate.value, objectString);
+    const languageLabelDummy: LanguageLabel[] = [
+        { label: predicate.value, language: LanguageCode.german },
+        { label: predicate.value, language: LanguageCode.english },
+        { label: predicate.value, language: LanguageCode.swedish }
+    ];
+
+    if (predicates.value.length === 0 || !predicates.value.some(item => item.predicate === predicate.value)) {
+        if (subjectClass && objectClass) {
+            await addPredicate(sessionStore.sessionActivity!.graph, predicate.value, [subjectClass], [objectClass], languageLabelDummy);
+        }
+    }
+    updateTriple(sessionStore.sessionActivity!.graph, { subject: subjectString, predicate: predicate.value, object: objectString }, 'insert' as RDFOperation)
+
     closeDialog();
-};
+}
 </script>
 
 <template>

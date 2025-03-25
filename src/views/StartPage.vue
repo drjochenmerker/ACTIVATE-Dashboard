@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useColorMode } from '@vueuse/core';
-import { useRouter } from 'vue-router';
 import { getActivities, getActivityClassIds } from '@/data/knowledge_graph/read_operations';
 import { Activity } from '@/data/knowledge_graph/structures';
 import { ref, onMounted, watch } from 'vue';

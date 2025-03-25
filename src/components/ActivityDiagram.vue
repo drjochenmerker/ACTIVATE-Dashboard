@@ -8,7 +8,7 @@ import { Activity, Conflict } from "@/data/knowledge_graph/structures";
 import ConflictHoverPopUp from "./ConflictHoverPopUp.vue";
 import { useConflictsStore } from "@/stores/conflictsStore";
 import { calculateConflictPositions } from "@/composables/calculateConflictPositions";
-import { useActivityStore } from "@/stores/activityStore";
+import { useSessionStore } from "@/stores/sessionStore";
 import { getActivityDetail } from "@/data/knowledge_graph/read_operations";
 
 /** 
@@ -43,7 +43,7 @@ export default defineComponent({
         // Stores for the active points and conflicts
         const activityPointStore = useActivityPointsStore();
         const conflictStore = useConflictsStore();
-        const activityStore = useActivityStore();
+        const sessionStore = useSessionStore();
 
         // Data of the hovered point
         const hoveredPointData = ref<null | {
@@ -448,7 +448,7 @@ export default defineComponent({
 
         // Draws the activity diagram when mounted
         onMounted(async () => {
-            activityData.value = await getActivityDetail(activityStore.getActivity() as Activity)
+            activityData.value = await getActivityDetail(sessionStore.sessionActivity as Activity)
             conflictData = conflictStore.getConflicts;
             draw();
         });
