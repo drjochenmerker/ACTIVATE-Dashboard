@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { defineProps, nextTick, ref } from 'vue';
+import { computed, defineProps, nextTick, ref } from 'vue';
 import { Button } from '@/components/ui/button'; // Button-Komponente importieren
 import { addComment, deleteComment } from '@/data/knowledge_graph/write_operations';
 import { useActivityStore } from '@/stores/activityStore';
@@ -18,6 +18,9 @@ const activityStore = useActivityStore();
 const replyInputVisible = ref(false);
 const newReplyText = ref('');
 const textareaRef = ref<HTMLTextAreaElement | null>(null);
+const isDeleted = ref(false); // Default to false or any initial value
+
+
 const toggleReplyInput = async () => {
     replyInputVisible.value = !replyInputVisible.value;
     if (replyInputVisible.value) {
@@ -25,7 +28,6 @@ const toggleReplyInput = async () => {
         textareaRef.value?.focus();
     }
 }
-
 
 // Function to save a reply
 const saveReply = async (parentCommentId: string, parentReply?: any) => {
@@ -58,6 +60,8 @@ const saveReply = async (parentCommentId: string, parentReply?: any) => {
 
         replyInputVisible.value = false; // hide input field
         newReplyText.value = ''; // empty the text field 
+
+        console.log(props.parentComment.comment)
     } catch (error) {
         console.error('Error while saving the reply: ', error);
     }
@@ -86,11 +90,12 @@ const handleDelete = async (id: string, parentComment: any) => {
             // if comment is nested, remove it from the replies
             if (parentComment.replies) {
                 parentComment.replies = parentComment.replies.filter((reply: any) => reply.id !== id);
+                isDeleted.value = true;
             }
 
             // if comment is not nested, delete it directly
             if (!parentComment.replies || parentComment.replies.length === 0) {
-
+                isDeleted.value = true;
             }
         } else {
             console.error("Error while deleting the reply.");
@@ -112,7 +117,7 @@ const handleDelete = async (id: string, parentComment: any) => {
                 </button>
 
             </div>
-            <p class="reply-text">{{ parentComment.comment }}</p>
+            <p class="reply-text">{{ isDeleted ? "Kommentar wurde gelöscht" : parentComment.comment }}</p>
         </div>
 
         <!-- Reply Button to hide input field -->
