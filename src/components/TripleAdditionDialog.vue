@@ -1,24 +1,119 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import Button from '@/components/ui/button/Button.vue';
-
+import RDFAdditionDropdown from './RDFAdditionDropdown.vue';
 import { defineProps } from 'vue';
 import { useColorMode } from '@vueuse/core';
+import { addPredicate, updateTriple } from '@/data/knowledge_graph/write_operations';
+import { Activity, KnowledgeGraphActivityClass, LanguageCode, LanguageLabel, PredicateDict, RDFOperation } from '@/data/knowledge_graph/structures';
+import { getActivityDetail, getPredicateObject } from '@/data/knowledge_graph/read_operations';
+import { useSessionStore } from '@/stores/sessionStore';
 
 defineProps<{
-    isOpen: Boolean
+    isOpen: Boolean,
 }>();
 
+const sessionStore = useSessionStore()
+
 const mode = useColorMode();
-  
+
+const activityParticipants = ref([] as Array<{ label: string }>);
+const activityPredicates = ref<PredicateDict | null>(null);
+const predicateOptions = ref([] as Array<{ label: string }>);
+const predicates = ref([] as Array<{ predicate: string }>)
 const isOpen = ref(false);
 const subject = ref('');
 const predicate = ref('');
 const object = ref('');
-  
-const openDialog = () => {
+const selectedDuplicateClass = ref(false)
+const noExistingPredicates = ref(false)
+const noValidParticipants = ref(false)
+
+
+const isSubjectValid = computed(() => {
+    return activityParticipants.value.some(item => item.label === subject.value);
+});
+
+const isObjectValid = computed(() => {
+    return activityParticipants.value.some(item => item.label === object.value);
+});
+
+const isPredicateValid = computed(() => {
+    const regex = /^[A-Za-z]+$/;
+    return regex.test(predicate.value);
+})
+
+const isApplyEnabled = computed(() => {
+    return (
+        isSubjectValid.value &&
+        isObjectValid.value &&
+        isPredicateValid.value &&
+        !selectedDuplicateClass.value &&
+        !noValidParticipants.value
+    );
+});
+
+const openDialog = async () => {
     isOpen.value = true;
+    activityParticipants.value = [];
+    const activityData = await getActivityDetail(sessionStore.sessionActivity as Activity)
+
+    Object.keys(activityData).forEach(key => {
+        const items = activityData[key];
+        if (Array.isArray(items)) {
+            items.forEach(item => {
+                if (item && item.label) {
+                    activityParticipants.value.push({ label: `${item.label} (${key})` });
+                }
+            });
+        }
+    });
 };
+
+const extractClass = (str: string): string | null => {
+    const match = str.match(/\(([^)]+)\)/);
+    return match ? match[1] : null;
+};
+
+onMounted(async () => {
+    selectedDuplicateClass.value = false;
+    noExistingPredicates.value = false;
+    noValidParticipants.value = false;
+    activityPredicates.value = await getPredicateObject(sessionStore.sessionActivity!.graph);
+});
+
+watch([subject, object], () => {
+    predicate.value = '';
+    selectedDuplicateClass.value = false;
+    noExistingPredicates.value = false;
+    noValidParticipants.value = false;
+
+    const subjectClass = extractClass(subject.value);
+    const objectClass = extractClass(object.value);
+
+    if (isSubjectValid.value && isObjectValid.value) {
+        if (subjectClass !== objectClass) {
+            //let predicates: Array<{ predicate: string }> = [];
+            if (subjectClass && objectClass && activityPredicates.value) {
+                try {
+                    predicates.value = (activityPredicates.value.get([subjectClass, objectClass]) as Array<{ predicate: string }>) || [];
+                } catch (error) {
+                    predicates.value = [];
+                }
+            }
+            if (predicates.value.length > 0) {
+                predicateOptions.value = predicates.value.map(item => ({ label: item.predicate }));
+            } else {
+                predicateOptions.value = [];
+                noExistingPredicates.value = true;
+            }
+        } else {
+            selectedDuplicateClass.value = true;
+        }
+    } else {
+        noValidParticipants.value = true;
+    }
+});
 
 const closeDialog = () => {
     isOpen.value = false;
@@ -27,73 +122,169 @@ const closeDialog = () => {
 
 const resetInputs = () => {
     subject.value = '';
-    predicate.value = '';
     object.value = '';
+    predicate.value = '';
 };
 
-const isValidWord = (word: string): boolean => {
-    const regex = /^[A-Za-z]+$/;
-    return regex.test(word);
+const cleanLabel = (label: string): string => {
+    return label.replace(/\s*\(.*?\)\s*/g, '').replace(/\s+/g, '');
 };
 
-const applyTriple = () => {
-    if (!isValidWord(subject.value)) {
-        alert("Subject can only contain letters without spaces, numbers, or special characters.");
-        return;
+function mapToActivityClass(str: string): KnowledgeGraphActivityClass | undefined {
+    switch (str.toLowerCase()) {
+        case "subject":
+            return KnowledgeGraphActivityClass.subject;
+        case "object":
+            return KnowledgeGraphActivityClass.object;
+        case "rules":
+            return KnowledgeGraphActivityClass.rules;
+        case "instruments":
+            return KnowledgeGraphActivityClass.instruments;
+        case "division_of_labour":
+            return KnowledgeGraphActivityClass.divison_of_labour;
+        case "community":
+            return KnowledgeGraphActivityClass.community;
+        default:
+            return undefined;
     }
-    if (!isValidWord(predicate.value)) {
-        alert("Predicate can only contain letters without spaces, numbers, or special characters.");
-        return;
-    }
-    if (!isValidWord(object.value)) {
-        alert("Object can only contain letters without spaces, numbers, or special characters.");
-        return;
-    }
+}
 
-    // TODO: Implement Logic for adding RDF-Triples here
-    console.log('Triple:', subject.value, predicate.value, object.value);
+const applyTriple = async () => {
+    const subjectString = cleanLabel(subject.value);
+    const objectString = cleanLabel(object.value);
+
+    const subjectClass = mapToActivityClass(extractClass(subject.value) || '');
+    const objectClass = mapToActivityClass(extractClass(object.value) || '');
+
+    const languageLabelDummy: LanguageLabel[] = [
+        { label: predicate.value, language: LanguageCode.german },
+        { label: predicate.value, language: LanguageCode.english },
+        { label: predicate.value, language: LanguageCode.swedish }
+    ];
+
+    if (predicates.value.length === 0 || !predicates.value.some(item => item.predicate === predicate.value)) {
+        if (subjectClass && objectClass) {
+            await addPredicate(sessionStore.sessionActivity!.graph, predicate.value, [subjectClass], [objectClass], languageLabelDummy);
+        }
+    }
+    updateTriple(sessionStore.sessionActivity!.graph, { subject: subjectString, predicate: predicate.value, object: objectString }, 'insert' as RDFOperation)
+
     closeDialog();
-};
+}
 </script>
 
-<template> 
+<template>
     <Button class="mb-4" @click="openDialog">
         Add RDF Triple
     </Button>
 
-    <div v-if="isOpen" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50" @click.self="closeDialog">
-        <div :class="mode === 'dark' ? 'rounded shadow p-6 w-full max-w-md bg-custom-bg-gray' : 'rounded shadow p-6 w-full max-w-md bg-white'">
-            <h2 class="text-xl font-bold mb-4">Add New RDF-Triple</h2>
-            <p class="mb-8">Only add single words without numbers, spaces, special characters</p>
+    <div v-if="isOpen" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+        @click.self="closeDialog">
+        <div
+            :class="mode === 'dark' ? 'rounded shadow p-6 w-full max-w-5xl bg-gray-800 relative' : 'rounded shadow p-6 w-full max-w-5xl bg-white relative'">
 
-        <div class="grid grid-cols-3 gap-4 mb-4" :class="mode === 'dark' ? 'text-white' : 'text-gray-700'">
-            <div>
-                <label class="block text-sm font-medium">Subject:</label>
-                <input v-model="subject" type="text" class="mt-1 block w-full border border-gray-300 rounded-md px-2 py-1" :class="mode === 'dark' ? 'bg-custom-bg-gray-2' : 'bg-white'"/>
-            </div>
-            <div>
-                <label class="block text-sm font-medium">Predicate:</label>
-                <input v-model="predicate" type="text" class="mt-1 block w-full border border-gray-300 rounded-md px-2 py-1" :class="mode === 'dark' ? 'bg-custom-bg-gray-2' : 'bg-white'"/>
-            </div>
-            <div>
-                <label class="block text-sm font-medium">Object:</label>
-                <input v-model="object" type="text" class="mt-1 block w-full border border-gray-300 rounded-md px-2 py-1" :class="mode === 'dark' ? 'bg-custom-bg-gray-2' : 'bg-white'"/>
-            </div>
-        </div>
+            <button class="close-btn" @click="closeDialog">×</button>
+            <div class="header-container flex items-center mb-4">
+                <h2 class="text-xl font-bold">Add New RDF-Triple</h2>
+                <div class="alert-container">
+                    <p v-if="selectedDuplicateClass" class="alert-message">
+                        Subject and Object cannot be from the same class.
+                    </p>
+                    <p v-else-if="noExistingPredicates" class="alert-message">
+                        No predicates available for the selected classes.
+                    </p>
+                    <p v-else-if="noValidParticipants" class="alert-message">
+                        Please choose a valid agent and target to see associated predicates.
+                    </p>
+                    <p v-else-if="isObjectValid && isSubjectValid && !isPredicateValid" class="alert-message">
+                        Predicate can only contain letters without spaces, numbers, or special characters.
+                    </p>
 
-        <div class="flex justify-between space-x-2">
-            <Button @click="closeDialog">
-            Cancel
-            </Button>
-            <Button @click="applyTriple">
-            Apply
-            </Button>
+                </div>
+            </div>
+            <p class="mb-4">This component lets you easily add new RDF triples to your knowledge graph. Simply select an
+                agent (subject) and a target (object) from the
+                provided lists. If the two are valid and belong to different categories, a list of applicable predicates
+                (relationships) will appear for you
+                to choose from. Please note that if the agent and target come from the same category or if no predicates
+                are available for the chosen
+                combination, a warning message will be displayed. If there are no existing predicates between the chosen
+                agent and target you can simply
+                add a new one by typing it into the predicate textfield</p>
+
+            <div class="flex space-x-4 mb-6">
+
+                <!-- Subject Field -->
+                <div class="flex-1">
+                    <RDFAdditionDropdown label="Agent" :options="activityParticipants" v-model="subject"
+                        :disabled="false" />
+                </div>
+
+                <!-- Predicate Field -->
+                <div class="flex-1">
+                    <RDFAdditionDropdown label="Predicate" :options="predicateOptions" v-model="predicate"
+                        :disabled="!isSubjectValid || !isObjectValid" />
+                </div>
+
+                <!-- Object Field -->
+                <div class="flex-1">
+                    <RDFAdditionDropdown label="Target" :options="activityParticipants" v-model="object"
+                        :disabled="!isSubjectValid" />
+                </div>
+            </div>
+
+            <div class="flex gap-4">
+                <Button class="w-full" :disabled="!isApplyEnabled" @click="applyTriple">Apply</Button>
+            </div>
         </div>
     </div>
-</div>
 </template>
-  
-<style scoped>
 
+<style scoped>
+.close-btn {
+    position: absolute;
+    top: 0.5rem;
+    right: 1.0rem;
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: inherit;
+}
+
+.alert-container {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+}
+
+.alert-message {
+    color: red;
+    margin: 0;
+}
+
+.alert-placeholder {
+    margin: 0;
+}
+
+.predicate-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 5px;
+    border: 1px solid #ccc;
+    padding: 5px;
+    border-radius: 4px;
+}
+
+.predicate-container input {
+    flex-grow: 1;
+    padding: 8px;
+    border: none;
+}
+
+.predicate-container input:focus {
+    outline: none;
+}
 </style>
-  

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/button';
-import { Sun, Moon } from 'lucide-vue-next';
-import { useColorMode } from '@vueuse/core';
+import { useSessionStore } from '@/stores/sessionStore';
+import { LogOut } from 'lucide-vue-next';
 import {
     Tooltip,
     TooltipContent,
@@ -9,10 +9,11 @@ import {
     TooltipTrigger,
 } from '@/components/ui/tooltip'
 
-const mode = useColorMode();
+const sessionStore = useSessionStore();
 
-const toggleMode = () => {
-    mode.value = mode.value === 'dark' ? 'light' : 'dark';
+
+const logout = () => {
+    sessionStore.endSession();
 };
 </script>
 
@@ -20,13 +21,12 @@ const toggleMode = () => {
     <TooltipProvider>
         <Tooltip>
             <TooltipTrigger as-child>
-                <Button size="icon" class="rounded-full" @click="toggleMode">
-                    <Sun v-if="mode === 'dark'" />
-                    <Moon v-else />
+                <Button size="icon" class="rounded-full" @click="logout">
+                    <LogOut />
                 </Button>
             </TooltipTrigger>
             <TooltipContent>
-                <p>Change theme</p>
+                <p>End session</p>
             </TooltipContent>
         </Tooltip>
     </TooltipProvider>

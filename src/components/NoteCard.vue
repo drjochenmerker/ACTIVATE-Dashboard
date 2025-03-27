@@ -5,7 +5,7 @@ import ReplyCard from './ReplyCard.vue';
 import { addComment, updateConflict } from "@/data/knowledge_graph/write_operations";
 import { Button } from '@/components/ui/button';
 import { useConflictsStore } from '@/stores/conflictsStore';
-import { useActivityStore } from '@/stores/activityStore';
+import { useSessionStore } from '@/stores/sessionStore';
 
 const props = defineProps({
   conflict: {
@@ -34,17 +34,15 @@ const conflictDetail = ref<any>(null);
 const replyInputVisible = ref<Record<string, boolean>>({});
 const newReplyText = ref<Record<string, string>>({});
 
-const graph = useActivityStore().getActivity()!.graph;
-
 // Status aus den Props setzen
 const selectedStatus = ref<any>(null);
 
 const conflictStore = useConflictsStore();
-const activityStore = useActivityStore();
+const sessionStore = useSessionStore();
 
 const textareaRef = ref<HTMLTextAreaElement | null>(null)
 
-// Status aus sessionStorage abrufen oder Standardwert setzen
+// get status from sessionStorage or set default value
 onMounted(async () => {
   const detail = props.conflict
 
@@ -55,9 +53,10 @@ onMounted(async () => {
   selectedStatus.value = conflictDetail.value.status;
 });
 
-// Status aktualisieren
+// refresh status
 function setStatus(status: conflictStatus) {
   selectedStatus.value = status;
+  const graph = sessionStore.sessionActivity!.graph
   updateConflict(graph, props.conflict.id, conflictPredicate.status, selectedStatus.value)
   conflictStore.updateConflict(props.conflict.id, graph)
 }
@@ -66,15 +65,17 @@ function setStatus(status: conflictStatus) {
 const toggleReplyInput = async (conflictId: string) => {
   replyInputVisible.value[conflictId] = !replyInputVisible.value[conflictId];
   if (replyInputVisible.value) {
-        await nextTick();
-        textareaRef.value?.focus();
-    }
+    await nextTick();
+    textareaRef.value?.focus();
+  }
   if (!replyInputVisible.value[conflictId]) {
     newReplyText.value[conflictId] = ''; // Textfeld leeren, wenn es geschlossen wird
   }
 };
 
 const saveReply = async (conflictId: string) => {
+  const graph = sessionStore.sessionActivity!.graph;
+  const role = sessionStore.sessionRole!;
   if (!newReplyText.value[conflictId]) return;
 
   try {
@@ -82,22 +83,22 @@ const saveReply = async (conflictId: string) => {
     const response = await addComment(
       graph, // current knowledge graph
       conflictId, // id of the conflict
-      activityStore.getRole()!,
+      role,
       newReplyText.value[conflictId] // reply text
     );
 
     console.log("Kommentar erfolgreich gespeichert:", response);
 
     if (conflictDetail.value) {
-      // Falls replies noch nicht initialisiert sind, initialisieren
+      // if replies not initialized, initialize
       if (!conflictDetail.value.replies) {
         conflictDetail.value.replies = [];
       }
       conflictDetail.value.replies.push({
         id: Date.now().toString(), // temporäre ID
-        author: activityStore.getRole()!,
+        author: role,
         comment: newReplyText.value[conflictId],
-        replies: [] // leeres Array für potenzielle verschachtelte Antworten
+        replies: [] // empty array for potential nested replies
       });
     }
     replyInputVisible.value[conflictId] = false;
@@ -138,14 +139,24 @@ const handleEnterKey = (event: KeyboardEvent) => {
     <!-- content -->
     <div class="note-card-content">
       <div class="note-title" v-html="props.title"></div>
+      <div class="note-participants">
+        <span v-for="participant in props.conflict.participants" :key="participant.id" class="participant-tag">
+          {{ participant.id }}
+        </span>
+      </div>
+
+
+
       <div class="note-content" v-html="props.content"></div>
+
     </div>
     <div class="note-comment-section">
       <Button @click="toggleReplyInput(conflict.id)"> Add comment </Button>
     </div>
     <!-- comment input field -->
     <div v-if="replyInputVisible[conflict.id]" class="comment-input">
-      <textarea ref="textareaRef" v-model="newReplyText[conflict.id]" placeholder="Write a reply..." @keydown.enter="handleEnterKey($event)"/>
+      <textarea ref="textareaRef" v-model="newReplyText[conflict.id]" placeholder="Write a reply..."
+        @keydown.enter="handleEnterKey($event)" />
       <Button @click="saveReply(conflict.id)">Save</Button>
     </div>
     <!-- Anzeige der Replies zu einem Konflikt -->
@@ -170,7 +181,7 @@ const handleEnterKey = (event: KeyboardEvent) => {
   transition: box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
-/* Dynamische Farben basierend auf Status */
+/* dynamic colors based on status */
 .note-card.red {
   box-shadow: 0 2px 8px rgba(255, 182, 193, 0.5);
   border-color: rgba(255, 182, 193, 0.7);
@@ -191,12 +202,12 @@ const handleEnterKey = (event: KeyboardEvent) => {
 }
 
 .comment-input textarea {
-    width: 100%;
-    min-height: 60px;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    resize: vertical;
+  width: 100%;
+  min-height: 60px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  resize: vertical;
 }
 
 /* Header */
@@ -208,11 +219,31 @@ const handleEnterKey = (event: KeyboardEvent) => {
   gap: 10px;
 }
 
-/* Autor */
+/* Author */
 .note-card-author {
   font-size: 14px;
   font-weight: bold;
   color: #333;
+}
+
+/* participants */
+.note-participants {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.participant-tag {
+  background-color: #e0e0e0;
+  /* Helles Grau */
+  color: #333;
+  /* Dunklere Schrift für besseren Kontrast */
+  padding: 5px 10px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: capitalize;
 }
 
 /* Dropdown */
@@ -236,7 +267,7 @@ const handleEnterKey = (event: KeyboardEvent) => {
   margin: 10px 0;
 }
 
-/* Inhalt */
+/* Content */
 .note-card-content {
   margin-bottom: 10px;
 }
