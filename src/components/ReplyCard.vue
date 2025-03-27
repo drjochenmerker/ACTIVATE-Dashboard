@@ -1,8 +1,9 @@
 <script lang="ts" setup>
-import { computed, defineProps, nextTick, ref } from 'vue';
+import { defineProps, nextTick, ref } from 'vue';
 import { Button } from '@/components/ui/button'; // Button-Komponente importieren
 import { addComment, deleteComment } from '@/data/knowledge_graph/write_operations';
 import { useActivityStore } from '@/stores/activityStore';
+import { getConflictDetail } from '@/data/knowledge_graph/read_operations';
 
 const props = defineProps({
     parentComment: {
@@ -29,9 +30,12 @@ const toggleReplyInput = async () => {
     }
 }
 
+// local variable for parentComment
+const parentComment = ref(props.parentComment);
+
 // Function to save a reply
 const saveReply = async (parentCommentId: string, parentReply?: any) => {
-    console.log(`save comment for conflict with id: ${parentCommentId}:`, newReplyText.value);
+    // console.log(`save comment for conflict with id: ${parentCommentId}:`, newReplyText.value);
 
     if (!newReplyText.value) return;
 
@@ -67,6 +71,7 @@ const saveReply = async (parentCommentId: string, parentReply?: any) => {
     }
 };
 
+
 // Function to submit via Enter key in textarea
 const handleEnterKey = (event: KeyboardEvent) => {
     if (event.key === 'Enter' && !event.shiftKey) {
@@ -75,27 +80,34 @@ const handleEnterKey = (event: KeyboardEvent) => {
     }
 };
 
+// help function
+const hasReplies = (comment: any) => Array.isArray(comment.replies) && comment.replies.length > 0;
+
+
+const emit = defineEmits(['deleteComment']);
 // Delete comment
 const handleDelete = async (id: string, parentComment: any) => {
     try {
         // Delete the comment (is it a nested comment?)
-        const isNestedComment = props.parentComment.replies ? true : false;
+        const isNestedComment = hasReplies(parentComment);
+
 
         // call deleteComment function
         const response = await deleteComment(activityStore.getActivity()!.graph, id, isNestedComment);
 
         if (response.status === "OK") {
-            // console.log("Kommentar erfolgreich gelöscht.");
-
+            // inform the parent
+            emit('deleteComment', id);
+            isDeleted.value = true;
+            parentComment.comment = "This comment is deleted.";
             // if comment is nested, remove it from the replies
             if (parentComment.replies) {
                 parentComment.replies = parentComment.replies.filter((reply: any) => reply.id !== id);
-                isDeleted.value = true;
             }
 
             // if comment is not nested, delete it directly
             if (!parentComment.replies || parentComment.replies.length === 0) {
-                isDeleted.value = true;
+                //isDeleted.value = true;
             }
         } else {
             console.error("Error while deleting the reply.");
@@ -105,10 +117,18 @@ const handleDelete = async (id: string, parentComment: any) => {
     }
 };
 
+const removeReply = (id: string) => {
+    if (!Array.isArray(props.parentComment.replies)) return;
+    props.parentComment.replies = props.parentComment.replies.filter(reply => reply.id !== id);
+};
+
+
+
 </script>
 
 <template>
     <div class="reply-card">
+
         <div class="reply-content">
             <div class="reply-head">
                 <p class="reply-author">{{ props.parentComment.author }}</p>
@@ -117,13 +137,15 @@ const handleDelete = async (id: string, parentComment: any) => {
                 </button>
 
             </div>
-            <p class="reply-text">{{ isDeleted ? "Kommentar wurde gelöscht" : parentComment.comment }}</p>
+            <p class="reply-text">{{ isDeleted ? "This comment is deleted." : parentComment.comment }}</p>
         </div>
 
         <!-- Reply Button to hide input field -->
-        <Button @click="toggleReplyInput()">
-            {{ replyInputVisible ? 'Cancel' : 'Answer' }}
-        </Button>
+        <div v-if="!isDeleted || parentComment.comment === 'This comment is deleted.'">
+            <Button @click="toggleReplyInput()">
+                {{ replyInputVisible ? 'Cancel' : 'Answer' }}
+            </Button>
+        </div>
 
         <!-- Reply input field -->
         <div v-if="replyInputVisible" class="reply-input">
@@ -134,8 +156,8 @@ const handleDelete = async (id: string, parentComment: any) => {
 
         <!-- Show nested replies with recursive component -->
         <div v-if="parentComment.replies && parentComment.replies.length > 0" class="nested-replies">
-            <ReplyCard v-for="nestedReply in parentComment.replies" :key="nestedReply.id"
-                :parentComment="nestedReply" />
+            <ReplyCard v-for="nestedReply in parentComment.replies" :key="nestedReply.id" :parentComment="nestedReply"
+                @deleteComment="removeReply" />
         </div>
     </div>
 </template>
@@ -148,6 +170,8 @@ const handleDelete = async (id: string, parentComment: any) => {
     margin-left: 10px;
     margin-top: 10px;
 }
+
+
 
 .reply-content {
     background-color: #f9f9f9;

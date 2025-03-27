@@ -143,6 +143,13 @@ const handleDelete = async (id: string) => {
   }
 };
 
+const removeReply = (id: string) => {
+  if (conflictDetail.value && conflictDetail.value.replies) {
+    conflictDetail.value.replies = conflictDetail.value.replies.filter((reply: { id: string; }) => reply.id !== id);
+  }
+};
+
+
 </script>
 
 <template>
@@ -203,7 +210,7 @@ const handleDelete = async (id: string) => {
 
     <div v-if="conflictDetail && conflictDetail.replies && conflictDetail.replies.length > 0" class="reply-container">
       <ReplyCard v-for="(reply) in conflictDetail.replies" :key="reply.id" :parentComment="reply"
-        :conflictId="conflict.id" />
+        :conflictId="conflict.id" @deleteComment="removeReply" />
     </div>
   </div>
 

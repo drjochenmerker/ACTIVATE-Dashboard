@@ -15,7 +15,7 @@ const props = defineProps<{ conflicts: any[], activity: any }>();
 const activityStore = useActivityStore();
 
 const route = useRoute();
-//const pageData = contentData.find((item) => item.id === route.params.id);
+
 
 // Define the expected structure of pageData
 type PageDataType = { id: string; title: string; number: number } | undefined;
@@ -35,6 +35,11 @@ onMounted(async () => {
         miscComments.value = await getMiscComments(graph);
     }
 });
+
+const removeComment = (id: string) => {
+    miscComments.value = miscComments.value.filter(comment => comment.id !== id);
+};
+
 </script>
 
 <template>
@@ -51,7 +56,7 @@ onMounted(async () => {
             <div v-if="miscComments.length > 0">
                 <ul>
                     <li v-for="(comment, index) in miscComments" :key="index">
-                        <NoteCardMisc :comment="comment" />
+                        <NoteCardMisc :comment="comment" @deleteComment="removeComment" />
                     </li>
                 </ul>
             </div>

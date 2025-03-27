@@ -3,8 +3,12 @@ import { addComment, deleteComment } from '@/data/knowledge_graph/write_operatio
 import { defineProps, nextTick, ref } from 'vue';
 import Button from './ui/button/Button.vue';
 import ReplyCard from './ReplyCard.vue';
+import { useActivityStore } from '@/stores/activityStore';
 
-const graph = 'Urology_Emergency_after_Debriefing'; //todo hard coded graph title
+
+const activityStore = useActivityStore();
+
+const graph = activityStore.getActivity()!.graph
 
 const props = defineProps({
     comment: {
@@ -19,12 +23,15 @@ const replyInputVisible = ref<Record<string, boolean>>({});
 const newReplyText = ref<Record<string, string>>({});
 const textareaRef = ref<HTMLTextAreaElement | null>(null);
 
+const emit = defineEmits(['deleteComment']);
+
 
 // delete conflicts
 const handleDelete = async (id: string) => {
     try {
         //comment cant be nested because its the misc card
         await deleteComment(graph, id, false);
+        emit('deleteComment', id); // Event an Parent-Komponente senden
     } catch (error) {
         console.error("Error deleting conflict: ", error);
     }
@@ -57,7 +64,7 @@ const saveReply = async (conflictId: string) => {
         const response = await addComment(
             graph,
             conflictId,
-            "test-replyer", // TODO Temporärer Hardcoded-Autor
+            activityStore.getRole()!,
             newReplyText.value[conflictId]
         );
 
@@ -71,8 +78,8 @@ const saveReply = async (conflictId: string) => {
             conflictDetail.value.replies = [
                 ...conflictDetail.value.replies, // alte Kommentare
                 {
-                    id: Date.now().toString(), // temporäre ID
-                    author: "test-replyer", //todo
+                    id: Date.now().toString(),
+                    author: activityStore.getRole()!,
                     comment: newReplyText.value[conflictId],
                     replies: []
                 }
