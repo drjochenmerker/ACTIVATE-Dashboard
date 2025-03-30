@@ -1,9 +1,8 @@
 <script lang="ts" setup>
-import { defineProps, nextTick, ref, watch } from 'vue';
-import { Button } from '@/components/ui/button'; // Button-Komponente importieren
+import { defineProps, nextTick, onMounted, ref, watch } from 'vue';
+import { Button } from '@/components/ui/button';
 import { addComment, deleteComment } from '@/data/knowledge_graph/write_operations';
 import { useActivityStore } from '@/stores/activityStore';
-import { getConflictDetail } from '@/data/knowledge_graph/read_operations';
 import { useConflictsStore } from '@/stores/conflictsStore';
 
 
@@ -14,7 +13,6 @@ const props = defineProps({
     },
 });
 
-
 // Store
 const activityStore = useActivityStore();
 const conflictStore = useConflictsStore();
@@ -23,11 +21,10 @@ const conflictStore = useConflictsStore();
 const replyInputVisible = ref(false);
 const newReplyText = ref('');
 const textareaRef = ref<HTMLTextAreaElement | null>(null);
-//const isDeleted = ref(false); // Default to false or any initial value
 
-watch(props.parentComment, () => {
-    console.log(props.parentComment)
-});
+onMounted(() => {
+    //console.log(props.parentComment.id)
+})
 
 const toggleReplyInput = async () => {
     replyInputVisible.value = !replyInputVisible.value;
@@ -37,9 +34,8 @@ const toggleReplyInput = async () => {
     }
 }
 
-
 // Function to save a reply
-const saveReply = async (parentCommentId: string, parentReply?: any) => {
+const saveReply = async (parentCommentId: string) => {
     // console.log(`save comment for conflict with id: ${parentCommentId}:`, newReplyText.value);
 
     if (!newReplyText.value) return;
@@ -54,17 +50,14 @@ const saveReply = async (parentCommentId: string, parentReply?: any) => {
         );
         console.log('reply saved successfully');
 
-        if (!parentReply.replies) {
-            parentReply.replies = [];
-        }
-
-        useConflictsStore().refreshConflictList();
 
         replyInputVisible.value = false; // hide input field
         newReplyText.value = ''; // empty the text field 
     } catch (error) {
         console.error('Error while saving the reply: ', error);
     }
+
+    conflictStore.refreshConflictList();
 };
 
 watch(conflictStore, () => {
@@ -75,7 +68,7 @@ watch(conflictStore, () => {
 const handleEnterKey = (event: KeyboardEvent) => {
     if (event.key === 'Enter' && !event.shiftKey) {
         event.preventDefault();
-        saveReply(props.parentComment.id, props.parentComment);
+        saveReply(props.parentComment.id);
     }
 };
 
@@ -123,8 +116,6 @@ const removeReply = (id: string) => {
     conflictStore.refreshConflictList();
 };
 
-
-
 </script>
 
 <template>
@@ -142,17 +133,15 @@ const removeReply = (id: string) => {
         </div>
 
         <!-- Reply Button to hide input field -->
-
         <Button @click="toggleReplyInput()">
             {{ replyInputVisible ? 'Cancel' : 'Answer' }}
         </Button>
-
 
         <!-- Reply input field -->
         <div v-if="replyInputVisible" class="reply-input">
             <textarea ref="textareaRef" v-model="newReplyText" placeholder="Write something to answer..."
                 @keydown.enter="handleEnterKey($event)"></textarea>
-            <Button @click="saveReply(props.parentComment.id, props.parentComment)">Save Comment</Button>
+            <Button @click="saveReply(props.parentComment.id)">Save Comment</Button>
         </div>
 
         <div v-if="Array.isArray(props.parentComment.replies) && props.parentComment.replies.length"
