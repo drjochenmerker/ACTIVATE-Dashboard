@@ -1,8 +1,10 @@
 <script lang="ts" setup>
-import { defineProps, nextTick, ref } from 'vue';
-import { Button } from '@/components/ui/button'; // Button-Komponente importieren
-import { addComment } from '@/data/knowledge_graph/write_operations';
-import { useSessionStore } from '@/stores/sessionStore';
+import { defineProps, nextTick, onMounted, ref, watch } from 'vue';
+import { Button } from '@/components/ui/button';
+import { addComment, deleteComment } from '@/data/knowledge_graph/write_operations';
+import { useActivityStore } from '@/stores/activityStore';
+import { useConflictsStore } from '@/stores/conflictsStore';
+
 
 const props = defineProps({
     parentComment: {
@@ -11,13 +13,18 @@ const props = defineProps({
     },
 });
 
-const sessionStore = useSessionStore();
+// Store
+const activityStore = useActivityStore();
+const conflictStore = useConflictsStore();
 
-// Toggle für die Anzeige des Antwort-Eingabefelds
+// Toggle for visibility of reply input field
 const replyInputVisible = ref(false);
 const newReplyText = ref('');
+const textareaRef = ref<HTMLTextAreaElement | null>(null);
 
-const textareaRef = ref<HTMLTextAreaElement | null>(null)
+onMounted(() => {
+    //console.log(props.parentComment.id)
+})
 
 const toggleReplyInput = async () => {
     replyInputVisible.value = !replyInputVisible.value;
@@ -27,76 +34,111 @@ const toggleReplyInput = async () => {
     }
 }
 
-
-// Funktion zum Speichern einer Antwort
+// Function to save a reply
 const saveReply = async (parentCommentId: string) => {
-    console.log(`save comment for conflict with id: ${parentCommentId}:`, newReplyText.value)
+    // console.log(`save comment for conflict with id: ${parentCommentId}:`, newReplyText.value);
 
     if (!newReplyText.value) return;
 
     try {
-        const response = await addComment(
+        await addComment(
             // There must be a cleaner way, but I know for sure that the activity is not null since it must be set in start page
             sessionStore.sessionActivity!.graph,
             parentCommentId,
             sessionStore.sessionRole!,
             newReplyText.value
         );
+        console.log('reply saved successfully');
 
-        console.log("Unterkommentar erfolgreich gespeichert:", response)
 
-        if (!props.parentComment.replies) {
-            props.parentComment.replies = [];
-        }
-        // Füge die neue Antwort (Reply) hinzu
-        props.parentComment.replies.push({
-            id: Date.now().toString(), // temporäre ID
-            author: sessionStore.sessionRole!, // Temporärer Autor
-            comment: newReplyText.value, // Kommentartext
-            replies: [] // Leeres Array für mögliche weitere Verschachtelungen
-        });
-        replyInputVisible.value = false; // Eingabefeld verstecken
-        newReplyText.value = ''; // Textfeld leeren
+        replyInputVisible.value = false; // hide input field
+        newReplyText.value = ''; // empty the text field 
     } catch (error) {
-        console.error('Fehler beim Speichern der Antwort:', error);
+        console.error('Error while saving the reply: ', error);
+    }
+
+    conflictStore.refreshConflictList();
+};
+
+watch(conflictStore, () => {
+    console.log("conflictstore: ", conflictStore.getConflicts);
+})
+
+// Function to submit via Enter key in textarea
+const handleEnterKey = (event: KeyboardEvent) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        saveReply(props.parentComment.id);
     }
 };
 
-// Funktion zum Abschicken per Enter-Taste im Textarea
-const handleEnterKey = (event: KeyboardEvent) => {
-  if (event.key === 'Enter' && !event.shiftKey) {
-    event.preventDefault();
-    saveReply(props.parentComment.id);
-  }
+// help function
+const hasReplies = (comment: any) => Array.isArray(comment.replies) && comment.replies.length > 0;
+
+
+const emit = defineEmits(['deleteComment']);
+// Delete comment
+const handleDelete = async (id: string, parentComment: any) => {
+    try {
+        // Delete the comment (is it a nested comment?)
+        const isNestedComment = hasReplies(parentComment);
+
+
+        // call deleteComment function
+        const response = await deleteComment(activityStore.getActivity()!.graph, id, isNestedComment);
+        conflictStore.refreshConflictList();
+
+        if (response.status === "OK") {
+            // inform the parent
+            emit('deleteComment', id);
+
+            //parentComment.comment = "This comment is deleted.";
+            // if comment is nested, remove it from the replies
+            if (parentComment.replies) {
+                parentComment.replies = parentComment.replies.filter((reply: any) => reply.id !== id);
+            }
+
+            // if comment is not nested, delete it directly
+            if (!parentComment.replies || parentComment.replies.length === 0) {
+                //isDeleted.value = true;
+            }
+        } else {
+            console.error("Error while deleting the reply.");
+        }
+    } catch (error) {
+        console.error("Error while deleting the reply: ", error);
+    }
+};
+
+const removeReply = (id: string) => {
+    if (!Array.isArray(props.parentComment.replies)) return;
+    props.parentComment.replies = props.parentComment.replies.filter(reply => reply.id !== id);
+    conflictStore.refreshConflictList();
 };
 
 </script>
 
 <template>
     <div class="reply-card">
+
         <div class="reply-content">
-            <p class="reply-author">{{ parentComment.author }}</p>
-            <p class="reply-text">{{ parentComment.comment }}</p>
+            <div class="reply-head">
+                <p class="reply-author">{{ props.parentComment.author }}</p>
+                <button class="icon-button" @click="handleDelete(props.parentComment.id, props.parentComment)">
+                    <span class="material-symbols-outlined">delete</span>
+                </button>
+
+            </div>
+            <p class="reply-text">{{ props.parentComment.comment }}</p>
         </div>
 
-        <!-- Antwort-Button zum Umblenden des Eingabefeldes -->
-        <Button @click="toggleReplyInput()">
-            {{ replyInputVisible ? 'Cancel' : 'Answer' }}
-        </Button>
 
-        <!-- Antwort Eingabefeld -->
-        <div v-if="replyInputVisible" class="reply-input">
-            <textarea ref="textareaRef" v-model="newReplyText" placeholder="Write something to answer..." @keydown.enter="handleEnterKey($event)"></textarea>
-            <Button @click="saveReply(parentComment.id)">Save Comment</Button>
-        </div>
 
-        <!-- Zeige verschachtelte Antworten an -->
-        <div v-if="parentComment.replies && parentComment.replies.length > 0" class="nested-replies">
-            <ReplyCard v-for="nestedReply in parentComment.replies" :key="nestedReply.id"
-                :parentComment="nestedReply" />
-        </div>
+
+
     </div>
 </template>
+
 
 <style scoped>
 .reply-card {
@@ -106,10 +148,18 @@ const handleEnterKey = (event: KeyboardEvent) => {
     margin-top: 10px;
 }
 
+
+
 .reply-content {
     background-color: #f9f9f9;
     padding: 10px;
     border-radius: 5px;
+}
+
+.reply-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .reply-author {

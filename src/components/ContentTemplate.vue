@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { computed, toRaw } from 'vue';
+import { computed } from 'vue';
+import { useConflictsStore } from '@/stores/conflictsStore';
 import NoteCard from './NoteCard.vue';
 
 const props = defineProps({
@@ -8,42 +9,54 @@ const props = defineProps({
     required: true,
   },
   conflicts: {
-    type: Object,
+    type: Array,
     required: true,
   },
 });
 
-//filtered conflicts based on id of "pageData"
+// Store for conflicts
+const conflictStore = useConflictsStore();
+
+// Filter conflicts based on the page data
 const filteredConflicts = computed(() => {
-  return toRaw(props.conflicts).filter((conflict: { participants: any[] }) => {
+  return conflictStore.getConflicts.filter(conflict => {
     return Array.isArray(conflict.participants) &&
       conflict.participants.some(participant => participant.type === props.pageData.id);
   });
 });
+
+
 </script>
 
 <template>
+  <!-- Check if there are any filtered conflicts to display -->
   <div v-if="filteredConflicts.length > 0">
-    <div v-for="(conflict) in filteredConflicts" :key="conflict.id">
+    <div v-for="conflict in filteredConflicts" :key="conflict.id">
       <div class="conflict-container">
         <div class="note-container">
-          <NoteCard :conflict="conflict" :title="conflict.title" :content="conflict.description"
+          <!-- NoteCard component for displaying conflict details -->
+          <NoteCard :conflict="conflict" :title="conflict.title" :content="conflict.description || ''"
             :author="conflict.author" :status="conflict.status" />
         </div>
+
       </div>
     </div>
   </div>
 
+  <!-- Display a message if there are no conflicts -->
   <div v-else>
     <p>There are no conflicts.</p>
   </div>
 </template>
 
+
 <style scoped>
+/* Container styling for each conflict */
 .conflict-container {
   margin-bottom: 20px;
 }
 
+/* Styling for the comment section */
 .note-comment-section {
   display: flex;
   justify-content: flex-end;
