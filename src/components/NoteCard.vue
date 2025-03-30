@@ -5,7 +5,7 @@ import ReplyCard from './ReplyCard.vue';
 import { addComment, deleteConflict, updateConflict } from "@/data/knowledge_graph/write_operations";
 import { Button } from '@/components/ui/button';
 import { useConflictsStore } from '@/stores/conflictsStore';
-import { useActivityStore } from '@/stores/activityStore';
+import { useSessionStore } from '@/stores/sessionStore';
 
 const props = defineProps({
   conflict: {
@@ -39,7 +39,7 @@ const newReplyText = ref<Record<string, string>>({});
 const selectedStatus = ref<any>(props.status);
 
 const conflictStore = useConflictsStore();
-const activityStore = useActivityStore();
+const sessionStore = useSessionStore();
 
 const textareaRef = ref<HTMLTextAreaElement | null>(null);
 
@@ -89,6 +89,8 @@ const groupedParticipants = computed(() => {
 
 // Function to save a reply to a conflict
 const saveReply = async (conflictId: string) => {
+  const graph = sessionStore.sessionActivity!.graph;
+  const role = sessionStore.sessionRole!;
   if (!newReplyText.value[conflictId]) return;
 
   try {

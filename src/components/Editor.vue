@@ -8,8 +8,8 @@ import { useActivityPointsStore } from '@/stores/activityPointsStore';
 import { useConflictsStore } from '@/stores/conflictsStore';
 import { conflictStatus } from '@/data/knowledge_graph/structures';
 import { getActivities, getActivityDetail, getConflictDetail, getConflictIds } from '@/data/knowledge_graph/read_operations';
-import { addComment, addConflict } from '@/data/knowledge_graph/write_operations';
-import { useActivityStore } from '@/stores/activityStore';
+import { addConflict } from '@/data/knowledge_graph/write_operations';
+import { useSessionStore } from '@/stores/sessionStore';
 
 export default {
   name: 'Editor',
@@ -184,7 +184,8 @@ export default {
       };
 
       try {
-        const graph = useActivityStore().getActivity().graph;
+        const graph = useSessionStore().sessionActivity.graph;
+        console.log("note:", note);
         const addConflictResponse = await addConflict(graph, note);
 
         if (addConflictResponse.status === "OK") {

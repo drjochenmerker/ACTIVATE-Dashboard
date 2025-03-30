@@ -43,9 +43,9 @@ const saveReply = async (parentCommentId: string) => {
     try {
         await addComment(
             // There must be a cleaner way, but I know for sure that the activity is not null since it must be set in start page
-            activityStore.getActivity()!.graph,
+            sessionStore.sessionActivity!.graph,
             parentCommentId,
-            activityStore.getRole()!,
+            sessionStore.sessionRole!,
             newReplyText.value
         );
         console.log('reply saved successfully');

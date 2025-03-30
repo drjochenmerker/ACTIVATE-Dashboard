@@ -3,7 +3,7 @@ import HomePage from '@/views/HomePage.vue';
 import StartPage from '@/views/StartPage.vue';
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 import MainLayout from '@/components/MainLayout.vue';
-import { useSession } from '@/stores/useSession';
+import { useSessionStore } from '@/stores/sessionStore';
 
 const routes: Array<RouteRecordRaw> = [
     {
@@ -26,10 +26,9 @@ const router = createRouter({
     routes,
 });
 
-router.beforeEach((to) => {
-    const { isSessionActive } = useSession();
-  
-    if (!isSessionActive.value && to.path !== '/start') {
+router.beforeEach((to) => {  
+const sessionStore = useSessionStore();
+    if (!sessionStore.isSessionActive && to.path !== '/start') {
       return '/start';
     }
   });

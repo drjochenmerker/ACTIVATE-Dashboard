@@ -1,12 +1,9 @@
 <script setup lang="ts">
-import Button from '@/components/ui/button/Button.vue';
 import { useColorMode } from '@vueuse/core';
-import { useRouter } from 'vue-router';
 import { getActivities, getActivityClassIds } from '@/data/knowledge_graph/read_operations';
 import { Activity } from '@/data/knowledge_graph/structures';
-import { useSession } from '@/stores/useSession';
 import { ref, onMounted, watch } from 'vue';
-import { useActivityStore } from '@/stores/activityStore';
+import { useSessionStore } from '@/stores/sessionStore';
 import { Play, Loader2 } from 'lucide-vue-next';
 import { KnowledgeGraphActivityClass } from '@/data/knowledge_graph/structures';
 import {
@@ -24,49 +21,38 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import Label from '@/components/ui/label/Label.vue';
+import Checkbox from '@/components/ui/checkbox/Checkbox.vue';
+import Button from '@/components/ui/button/Button.vue';
 
 useColorMode();
-const { startSession } = useSession();
-const router = useRouter();
-const activityStore = useActivityStore();
+const sessionStore = useSessionStore();
 
-const activities = ref<Activity[]>([]);
-const selectedActivity = ref<string | undefined>(undefined);
+const selectedActivity = ref<string>();
+const allActivities = ref<Activity[]>([]);
 
 onMounted(async () => {
   try {
-    activities.value = await getActivities();
+    allActivities.value = await getActivities();
 
   } catch (error) {
     console.error("Fehler beim Laden der Aktivitäten:", error);
   }
 });
 
-// const getDescription = () => {
-//   return activities.value.find(a => a.graph === selectedActivity.value)?.name
-// }
+watch(selectedActivity, async () => {
+  if (!selectedActivity.value) {
+    return;
+  }
+  sessionStore.availableRoles = await getActivityClassIds(selectedActivity.value, KnowledgeGraphActivityClass.subject);
+  sessionStore.sessionRole = ''; // Unset role when activity changes
+});
 
 const handleStartSession = async () => {
-  const activity = activities.value.find(a => a.graph === selectedActivity.value);
-  if (activity) {
-    activityStore.setActivity(activity);
-    console.log(activity)
-  }
-  activityStore.setRole(selectedRole.value);
-
-  startSession();
-  router.push('/');
+  sessionStore.sessionActivity = allActivities.value.find(a => a.graph === selectedActivity.value)!;
+  sessionStore.startSession();
 }
 
-const selectedRole = ref<string>('');
-const roles = ref<string[]>([]);
-
-watch(selectedActivity, async () => {
-  if (selectedActivity.value) {
-    roles.value = await getActivityClassIds(selectedActivity.value, KnowledgeGraphActivityClass.subject);
-    selectedRole.value = '';
-  }
-});
+const sessionStartAllowed = () => !selectedActivity || !sessionStore.sessionRole;
 </script>
 
 <template>
@@ -84,7 +70,7 @@ watch(selectedActivity, async () => {
             <SelectValue placeholder="Select an activity for the debriefing" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem v-for="activity in activities" :value="activity.graph">
+            <SelectItem v-for="activity in allActivities" :value="activity.graph">
               {{ activity.graph }}
             </SelectItem>
           </SelectContent>
@@ -92,30 +78,30 @@ watch(selectedActivity, async () => {
 
         <div class="mt-4">
           <Label for="roleSelect">Role</Label>
-          <Select v-model="selectedRole" :disabled="!selectedActivity" id="roleSelect">
+          <Select v-model="sessionStore.sessionRole" :disabled="!selectedActivity" id="roleSelect">
             <SelectTrigger>
               <SelectValue placeholder="Select your role for the debriefing" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem v-for="role in roles" :value="role">
+              <SelectItem v-for="role in sessionStore.availableRoles" :value="role">
                 {{ role }}
               </SelectItem>
             </SelectContent>
           </Select>
         </div>
 
-        <!-- Not sure if this is right -->
-        <!-- <div v-if="selectedActivity" class="mt-4">
-          <Label>Description</Label>
-          <p class="text-sm text-foreground">
-            {{ getDescription() }}
-          </p>
-        </div> -->
+        <div class="flex items-center space-x-2 mt-4">
+          <Checkbox id="cbInstructorMode" :checked="sessionStore.instructorMode"
+            @update:checked="sessionStore.instructorMode = $event" />
+          <Label for="cbInstructorMode" class="text-sm font-normal">
+            Enable Instructor Mode
+          </Label>
+        </div>
 
       </CardContent>
       <CardFooter>
-        <Button @click="handleStartSession" class="w-full" :disabled="!selectedActivity">
-          <template v-if="!selectedActivity || !selectedRole">
+        <Button @click="handleStartSession" class="w-full" :disabled="sessionStartAllowed()">
+          <template v-if="sessionStartAllowed()">
             <Loader2 class="w-4 h-4 mr-2 animate-spin" />
             Select activity and role
           </template>

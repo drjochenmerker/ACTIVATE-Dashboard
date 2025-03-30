@@ -4,10 +4,13 @@ import PointHoverPopUp from '@/components/PointHoverPopUp.vue';
 import { useColorMode } from "@vueuse/core";
 import { Button } from '@/components/ui/button';
 import { useActivityPointsStore } from "@/stores/activityPointsStore";
-import { Conflict } from "@/data/knowledge_graph/structures";
+import { Activity, Conflict } from "@/data/knowledge_graph/structures";
 import ConflictHoverPopUp from "./ConflictHoverPopUp.vue";
 import { useConflictsStore } from "@/stores/conflictsStore";
 import { calculateConflictPositions } from "@/composables/calculateConflictPositions";
+import { useSessionStore } from "@/stores/sessionStore";
+import { getActivityDetail } from "@/data/knowledge_graph/read_operations";
+import { useRouter } from "vue-router";
 
 /** 
  * Activity-Diagram-Component
@@ -21,26 +24,21 @@ export default defineComponent({
         Button
     },
 
-    props: {
-        activity: {
-            type: Object,
-            default: () => ({})
-        }
-    },
-
     /**
      * Setup-Function
      * Sets up the canvas of the component with the given Height and Width
      * Adds every point with its label to the canvas
      * Adds every needed line between points to the canvas
-     * @param {object} props: Props of the component
      */
-    setup(props) {
+    setup() {
         const canvas = ref<HTMLCanvasElement | null>(null);
 
         // Dimensions of the activity diagram. Possibly dynamic in the future
         const triangleWidth = 900;
         const triangleHeight = 800;
+
+        // Define router for routing in handleClickFunction
+        const router = useRouter();
 
         // Current color mode (Light- or Dark-Mode)
         const mode = useColorMode();
@@ -48,6 +46,7 @@ export default defineComponent({
         // Stores for the active points and conflicts
         const activityPointStore = useActivityPointsStore();
         const conflictStore = useConflictsStore();
+        const sessionStore = useSessionStore();
 
         // Data of the hovered point
         const hoveredPointData = ref<null | {
@@ -61,9 +60,9 @@ export default defineComponent({
         // Position of the hover popup we need to give to the PointHoverPopUp component
         const hoverPosition = ref<{ x: number; y: number }>({ x: 0, y: 0 });
 
-        // Data from the props
-        const activityData = props.activity;
+        // Conflict Data
         let conflictData = conflictStore.getConflicts;
+        const activityData = ref<any>(null);
 
         // Checks if the Activity-Diagram has to be cleared when a Comment is sent by the editor
         let hasToBeCleared = computed(() => activityPointStore.getActivePoints.length === 0);
@@ -86,7 +85,7 @@ export default defineComponent({
             { x: triangleWidth / 8, y: (triangleHeight / 8) * 7, id: "rules", label: "Rules", color: getPointColor(), active: false, highlighted: false }, // Ecke Links Unten
             { x: (triangleWidth / 8) * 7, y: (triangleHeight / 8) * 7, id: "division_of_labour", label: "Division of Labour", color: getPointColor(), active: false, highlighted: false }, // Ecke Rechts Unten
             { x: (triangleWidth / 16) * 5, y: triangleHeight / 2, id: "subject", label: "Subject", color: getPointColor(), active: false, highlighted: false }, // Links Mitte
-            { x: (triangleWidth / 16) * 11, y: triangleHeight / 2, id: "object", label: "Object", color: getPointColor(), active: false, highlighted: false }, // Rechts Mitte
+            { x: (triangleWidth / 16) * 11, y: triangleHeight / 2, id: "object", label: "Object/-ive", color: getPointColor(), active: false, highlighted: false }, // Rechts Mitte
             { x: triangleWidth / 2, y: (triangleHeight / 8) * 7, id: "community", label: "Community", color: getPointColor(), active: false, highlighted: false }, // Unten Mitte
         ]);
 
@@ -363,7 +362,7 @@ export default defineComponent({
                 if (point.id === "rules" || point.id === "community" || point.id === "division_of_labour") ctx.fillText(point.label, point.x, point.y + triangleHeight / 20);
                 if (point.id === "instruments") ctx.fillText(point.label, point.x, point.y - triangleHeight / 30);
                 if (point.id === "subject") ctx.fillText(point.label, point.x - triangleWidth / 30, point.y - triangleHeight / 30);
-                if (point.id === "object") ctx.fillText(point.label, point.x + triangleWidth / 30, point.y - triangleHeight / 30);
+                if (point.id === "object") ctx.fillText(point.label, point.x + triangleWidth / 20, point.y - triangleHeight / 30);
 
             });
 
@@ -398,7 +397,7 @@ export default defineComponent({
             points.value.forEach((point) => {
                 const distance = Math.sqrt((mouseX - point.x) ** 2 + (mouseY - point.y) ** 2);
                 if (distance < triangleHeight / 40) {
-                    foundPoint = { label: point.label, content: activityData[point.id] || [] };
+                    foundPoint = { label: point.label, content: activityData.value[point.id] || [] };
 
                     // Adjust hoverPosition for cases in which the hoverPopUp would be outside the canvas
                     // TODO: Maybe find a better dynamic way to adjust the hoverPosition
@@ -434,6 +433,7 @@ export default defineComponent({
             const mouseX = event.clientX - rect.left;
             const mouseY = event.clientY - rect.top;
             let pointWasClicked = false;
+            let conflictPointWasClicked = false;
 
             points.value.forEach((point) => {
                 const distance = Math.sqrt((mouseX - point.x) ** 2 + (mouseY - point.y) ** 2);
@@ -445,13 +445,25 @@ export default defineComponent({
                 }
             });
 
-            if (!pointWasClicked) {
+            conflictPositions.value.forEach((conflict) => {
+                const distance = Math.sqrt((mouseX - conflict.x) ** 2 + (mouseY - conflict.y) ** 2);
+                if (distance < triangleHeight / 80) {
+                    conflictPointWasClicked = true;
+
+                    const conflictParticipantTypes = conflict.participants.map((participant: { type: any; }) => participant.type)
+
+                    router.push(`/${conflictParticipantTypes[0]}`)
+                }
+            });
+
+            if (!pointWasClicked && !conflictPointWasClicked) {
                 checkIfTriangleIsClicked(mouseX, mouseY);
             }
         };
 
         // Draws the activity diagram when mounted
         onMounted(async () => {
+            activityData.value = await getActivityDetail(sessionStore.sessionActivity as Activity)
             conflictData = conflictStore.getConflicts;
             draw();
         });
@@ -484,7 +496,6 @@ export default defineComponent({
 
         // Watcher for the conflictsStore
         watch(conflictStore.getConflicts, () => {
-            console.log("Conflicts updated", conflictStore.getConflicts);
             draw();
         });
 
