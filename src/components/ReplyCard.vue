@@ -1,10 +1,11 @@
 <script lang="ts" setup>
-import { defineProps, nextTick, ref } from 'vue';
+import { defineProps, nextTick, ref, watch } from 'vue';
 import { Button } from '@/components/ui/button'; // Button-Komponente importieren
 import { addComment, deleteComment } from '@/data/knowledge_graph/write_operations';
 import { useActivityStore } from '@/stores/activityStore';
 import { getConflictDetail } from '@/data/knowledge_graph/read_operations';
 import { useConflictsStore } from '@/stores/conflictsStore';
+
 
 const props = defineProps({
     parentComment: {
@@ -24,6 +25,9 @@ const newReplyText = ref('');
 const textareaRef = ref<HTMLTextAreaElement | null>(null);
 const isDeleted = ref(false); // Default to false or any initial value
 
+watch(props.parentComment, () => {
+    console.log(props.parentComment)
+});
 
 const toggleReplyInput = async () => {
     replyInputVisible.value = !replyInputVisible.value;
@@ -43,7 +47,6 @@ const saveReply = async (parentCommentId: string, parentReply?: any) => {
     if (!newReplyText.value) return;
 
     try {
-
         await addComment(
             // There must be a cleaner way, but I know for sure that the activity is not null since it must be set in start page
             activityStore.getActivity()!.graph,
@@ -51,24 +54,14 @@ const saveReply = async (parentCommentId: string, parentReply?: any) => {
             activityStore.getRole()!,
             newReplyText.value
         );
+        conflictStore.refreshConflictList();
 
         if (!parentReply.replies) {
             parentReply.replies = [];
         }
-        parentReply.replies = [
-            ...parentReply.replies,
-            {
-                id: Date.now().toString(),
-                author: activityStore.getRole()!,
-                comment: newReplyText.value,
-                replies: [] // empty array for possible nested replies
-            }
-        ];
-        await getConflictDetail(activityStore.getActivity()!.graph, parentCommentId);
 
         replyInputVisible.value = false; // hide input field
         newReplyText.value = ''; // empty the text field 
-        //await nextTick();
     } catch (error) {
         console.error('Error while saving the reply: ', error);
     }
@@ -99,10 +92,11 @@ const handleDelete = async (id: string, parentComment: any) => {
         const response = await deleteComment(activityStore.getActivity()!.graph, id, isNestedComment);
 
         if (response.status === "OK") {
+            conflictStore.refreshConflictList();
             // inform the parent
             emit('deleteComment', id);
             isDeleted.value = true;
-            parentComment.comment = "This comment is deleted.";
+            //parentComment.comment = "This comment is deleted.";
             // if comment is nested, remove it from the replies
             if (parentComment.replies) {
                 parentComment.replies = parentComment.replies.filter((reply: any) => reply.id !== id);

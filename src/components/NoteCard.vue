@@ -103,18 +103,8 @@ const saveReply = async (conflictId: string) => {
       if (!conflictDetail.value.replies) {
         conflictDetail.value.replies = [];
       }
-
-      // Assign a new reference for `replies`
-      conflictDetail.value.replies = [
-        ...conflictDetail.value.replies, // old comments
-        {
-          id: Date.now().toString(),
-          author: activityStore.getRole()!,
-          comment: newReplyText.value[conflictId],
-          replies: []
-        }
-      ];
     }
+    useConflictsStore().refreshConflictList();
     replyInputVisible.value[conflictId] = false;
     newReplyText.value[conflictId] = '';
   } catch (error) {
@@ -135,6 +125,7 @@ const handleDelete = async (id: string) => {
   try {
     const response = await deleteConflict(activityStore.getActivity()!.graph, id);
 
+    conflictStore.refreshConflictList();
     if (response.status === "OK") {
       conflictStore.removeConflict(id); // delete conflict from store
     }

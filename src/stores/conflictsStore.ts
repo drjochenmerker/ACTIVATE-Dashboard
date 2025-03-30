@@ -1,10 +1,23 @@
-import { getConflictDetail } from '@/data/knowledge_graph/read_operations';
+import { getAllConflictsWithDetail, getConflictDetail } from '@/data/knowledge_graph/read_operations';
 import { Conflict } from '@/data/knowledge_graph/structures';
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
+import { useActivityStore } from './activityStore';
 
 export const useConflictsStore = defineStore('ActivityConflicts', () => {
     let conflictDetails = ref<Conflict[]>([]);
+
+    const activityStore = useActivityStore();
+
+
+    const refreshConflictList = async () => {
+        const activity = activityStore.getActivity();
+        if (activity) {
+          const conflicts = await getAllConflictsWithDetail(activity.graph);
+        setConflicts(conflicts);
+          conflictDetails.value = conflicts;
+        }
+    };
 
     // add a conflict to the list
     const addConflict = (conflict: Conflict) => {
@@ -42,6 +55,6 @@ export const useConflictsStore = defineStore('ActivityConflicts', () => {
         setConflicts,
         getConflicts,
         updateConflict,
-        removeConflict
-    };
+        removeConflict,
+        refreshConflictList    };
 });

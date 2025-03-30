@@ -203,7 +203,9 @@ export default {
 
       activityPointStore.deactivateAllPoints();
 
+
       this.clearEditor();
+      useConflictsStore().refreshConflictList();
     },
 
     showDropdown() {
