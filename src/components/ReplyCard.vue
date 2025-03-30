@@ -1,9 +1,8 @@
 <script lang="ts" setup>
-import { defineProps, nextTick, onMounted, ref, watch } from 'vue';
-import { Button } from '@/components/ui/button';
-import { addComment, deleteComment } from '@/data/knowledge_graph/write_operations';
-import { useActivityStore } from '@/stores/activityStore';
+import { defineProps, watch } from 'vue';
+import { deleteComment } from '@/data/knowledge_graph/write_operations';
 import { useConflictsStore } from '@/stores/conflictsStore';
+import { useSessionStore } from '@/stores/sessionStore';
 
 
 const props = defineProps({
@@ -14,63 +13,8 @@ const props = defineProps({
 });
 
 // Store
-const activityStore = useActivityStore();
+const sessionStore = useSessionStore();
 const conflictStore = useConflictsStore();
-
-// Toggle for visibility of reply input field
-const replyInputVisible = ref(false);
-const newReplyText = ref('');
-const textareaRef = ref<HTMLTextAreaElement | null>(null);
-
-onMounted(() => {
-    //console.log(props.parentComment.id)
-})
-
-const toggleReplyInput = async () => {
-    replyInputVisible.value = !replyInputVisible.value;
-    if (replyInputVisible.value) {
-        await nextTick();
-        textareaRef.value?.focus();
-    }
-}
-
-// Function to save a reply
-const saveReply = async (parentCommentId: string) => {
-    // console.log(`save comment for conflict with id: ${parentCommentId}:`, newReplyText.value);
-
-    if (!newReplyText.value) return;
-
-    try {
-        await addComment(
-            // There must be a cleaner way, but I know for sure that the activity is not null since it must be set in start page
-            sessionStore.sessionActivity!.graph,
-            parentCommentId,
-            sessionStore.sessionRole!,
-            newReplyText.value
-        );
-        console.log('reply saved successfully');
-
-
-        replyInputVisible.value = false; // hide input field
-        newReplyText.value = ''; // empty the text field 
-    } catch (error) {
-        console.error('Error while saving the reply: ', error);
-    }
-
-    conflictStore.refreshConflictList();
-};
-
-watch(conflictStore, () => {
-    console.log("conflictstore: ", conflictStore.getConflicts);
-})
-
-// Function to submit via Enter key in textarea
-const handleEnterKey = (event: KeyboardEvent) => {
-    if (event.key === 'Enter' && !event.shiftKey) {
-        event.preventDefault();
-        saveReply(props.parentComment.id);
-    }
-};
 
 // help function
 const hasReplies = (comment: any) => Array.isArray(comment.replies) && comment.replies.length > 0;
@@ -85,7 +29,7 @@ const handleDelete = async (id: string, parentComment: any) => {
 
 
         // call deleteComment function
-        const response = await deleteComment(activityStore.getActivity()!.graph, id, isNestedComment);
+        const response = await deleteComment(sessionStore.sessionActivity!.graph, id, isNestedComment);
         conflictStore.refreshConflictList();
 
         if (response.status === "OK") {
@@ -110,11 +54,6 @@ const handleDelete = async (id: string, parentComment: any) => {
     }
 };
 
-const removeReply = (id: string) => {
-    if (!Array.isArray(props.parentComment.replies)) return;
-    props.parentComment.replies = props.parentComment.replies.filter(reply => reply.id !== id);
-    conflictStore.refreshConflictList();
-};
 
 </script>
 
@@ -131,11 +70,6 @@ const removeReply = (id: string) => {
             </div>
             <p class="reply-text">{{ props.parentComment.comment }}</p>
         </div>
-
-
-
-
-
     </div>
 </template>
 

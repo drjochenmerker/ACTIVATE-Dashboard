@@ -2,16 +2,17 @@ import { getAllConflictsWithDetail, getConflictDetail } from '@/data/knowledge_g
 import { Conflict } from '@/data/knowledge_graph/structures';
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
-import { useActivityStore } from './activityStore';
+import { useSessionStore } from './sessionStore';
+
 
 export const useConflictsStore = defineStore('ActivityConflicts', () => {
     let conflictDetails = ref<Conflict[]>([]);
 
-    const activityStore = useActivityStore();
-
+    
+    const sessionStore = useSessionStore();
 
     const refreshConflictList = async () => {
-        const activity = activityStore.getActivity();
+        const activity = sessionStore.sessionActivity;
         if (activity) {
           const conflicts = await getAllConflictsWithDetail(activity.graph);
         setConflicts(conflicts);

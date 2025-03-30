@@ -3,12 +3,13 @@ import { addComment, deleteComment } from '@/data/knowledge_graph/write_operatio
 import { defineProps, nextTick, ref } from 'vue';
 import Button from './ui/button/Button.vue';
 import ReplyCard from './ReplyCard.vue';
-import { useActivityStore } from '@/stores/activityStore';
+import { useSessionStore } from '@/stores/sessionStore';
+import { useConflictsStore } from '@/stores/conflictsStore';
 
 
-const activityStore = useActivityStore();
+const sessionStore = useSessionStore();
 
-const graph = activityStore.getActivity()!.graph
+const graph = sessionStore.sessionActivity!.graph
 
 const props = defineProps({
     comment: {
@@ -31,6 +32,7 @@ const handleDelete = async (id: string) => {
     try {
         //comment cant be nested because its the misc card
         await deleteComment(graph, id, false);
+        useConflictsStore().refreshConflictList();
         emit('deleteComment', id); // Event an Parent-Komponente senden
     } catch (error) {
         console.error("Error deleting conflict: ", error);
@@ -57,41 +59,36 @@ const handleEnterKey = (event: KeyboardEvent) => {
     }
 };
 
-const saveReply = async (conflictId: string) => {
-    if (!newReplyText.value[conflictId]) return;
+const saveReply = async (commentId: string) => {
+    if (!newReplyText.value[commentId]) return;
 
     try {
-        const response = await addComment(
+        await addComment(
             graph,
-            conflictId,
-            activityStore.getRole()!,
-            newReplyText.value[conflictId]
+            commentId,
+            sessionStore.sessionRole!,
+            newReplyText.value[commentId]
         );
 
-        console.log("Kommentar erfolgreich gespeichert:", response);
 
         if (conflictDetail.value) {
             if (!conflictDetail.value.replies) {
                 conflictDetail.value.replies = [];
             }
-            // Neue Referenz für `replies` zuweisen
-            conflictDetail.value.replies = [
-                ...conflictDetail.value.replies, // alte Kommentare
-                {
-                    id: Date.now().toString(),
-                    author: activityStore.getRole()!,
-                    comment: newReplyText.value[conflictId],
-                    replies: []
-                }
-            ];
+
         }
-        replyInputVisible.value[conflictId] = false;
-        newReplyText.value[conflictId] = '';
+        useConflictsStore().refreshConflictList();
+        replyInputVisible.value[commentId] = false;
+        newReplyText.value[commentId] = '';
     } catch (error) {
         console.error("Error saving comment:", error);
     }
-    console.log("conflictDetail", conflictDetail.value);
+};
 
+const removeReply = (id: string) => {
+    if (conflictDetail.value && conflictDetail.value.replies) {
+        conflictDetail.value.replies = conflictDetail.value.replies.filter((reply: { id: string; }) => reply.id !== id);
+    }
 };
 
 </script>
@@ -127,7 +124,7 @@ const saveReply = async (conflictId: string) => {
         <div v-if="conflictDetail && conflictDetail.replies && conflictDetail.replies.length > 0"
             class="reply-container">
             <ReplyCard v-for="(reply) in conflictDetail.replies" :key="reply.id" :parentComment="reply"
-                :conflictId="conflictDetail.id" />
+                :conflictId="conflictDetail.id" @deleteComment="removeReply" />
         </div>
 
     </div>

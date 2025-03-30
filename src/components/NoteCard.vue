@@ -41,6 +41,7 @@ const selectedStatus = ref<any>(props.status);
 const conflictStore = useConflictsStore();
 const sessionStore = useSessionStore();
 
+
 const textareaRef = ref<HTMLTextAreaElement | null>(null);
 
 // Set initial conflict detail
@@ -56,8 +57,8 @@ watch(() => props.conflict, (newConflict) => {
 
 // watch the selected status and update the conflict status
 watch(selectedStatus, async (newStatus) => {
-  await updateConflict(activityStore.getActivity()!.graph, props.conflict.id, conflictPredicate.status, newStatus);
-  conflictStore.updateConflict(props.conflict.id, activityStore.getActivity()!.graph,);
+  await updateConflict(sessionStore.sessionActivity!.graph, props.conflict.id, conflictPredicate.status, newStatus);
+  conflictStore.updateConflict(props.conflict.id, sessionStore.sessionActivity!.graph);
 });
 
 // toggle input field
@@ -95,9 +96,9 @@ const saveReply = async (conflictId: string) => {
 
   try {
     await addComment(
-      activityStore.getActivity()!.graph,
+      graph,
       conflictId,
-      activityStore.getRole()!,
+      role,
       newReplyText.value[conflictId] // reply text
     );
 
@@ -125,7 +126,7 @@ const handleEnterKey = (event: KeyboardEvent) => {
 // Delete conflict
 const handleDelete = async (id: string) => {
   try {
-    const response = await deleteConflict(activityStore.getActivity()!.graph, id);
+    const response = await deleteConflict(sessionStore.sessionActivity!.graph, id);
 
     conflictStore.refreshConflictList();
     if (response.status === "OK") {

@@ -5,14 +5,15 @@ import ContentTemplate from '@/components/ContentTemplate.vue';
 import { getMiscComments } from '@/data/knowledge_graph/read_operations';
 import { onMounted, ref } from 'vue';
 import NoteCardMisc from '@/components/NoteCardMisc.vue';
-import { useActivityStore } from '@/stores/activityStore';
 import { Comment } from '@/data/knowledge_graph/structures';
+import { useSessionStore } from '@/stores/sessionStore';
 
 // Define props
 const props = defineProps<{ conflicts: any[], activity: any }>();
 
 // stores
-const activityStore = useActivityStore();
+const sessionStore = useSessionStore();
+
 
 const route = useRoute();
 
@@ -23,7 +24,8 @@ type PageDataType = { id: string; title: string; number: number } | undefined;
 const pageData: PageDataType = contentData.find((item) => item.id === route.params.id);
 
 
-const graph = activityStore.getActivity()!.graph;
+
+const graph = sessionStore.sessionActivity!.graph;
 
 // Reactive variable to hold miscellaneous comments
 const miscComments = ref<Comment[]>([]);

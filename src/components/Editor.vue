@@ -8,8 +8,9 @@ import { useActivityPointsStore } from '@/stores/activityPointsStore';
 import { useConflictsStore } from '@/stores/conflictsStore';
 import { conflictStatus } from '@/data/knowledge_graph/structures';
 import { getActivities, getActivityDetail, getConflictDetail, getConflictIds } from '@/data/knowledge_graph/read_operations';
-import { addConflict } from '@/data/knowledge_graph/write_operations';
+import { addComment, addConflict } from '@/data/knowledge_graph/write_operations';
 import { useSessionStore } from '@/stores/sessionStore';
+
 
 export default {
   name: 'Editor',
@@ -132,7 +133,7 @@ export default {
       // consts
       const content = this.quill.root.innerHTML;
       const title = this.title || 'New Note';
-      const author = this.isAnonymous ? 'Anonymous' : (useActivityStore().getRole());
+      const author = this.isAnonymous ? 'Anonymous' : (useSessionStore().sessionRole);
       const participants = [];
 
       if (this.activePoints.length === 0) {
@@ -140,7 +141,7 @@ export default {
         const titleAndContent = title + '|' + content; // '|', the safest separator for now
 
         try {
-          const graph = useActivityStore().getActivity().graph;
+          const graph = useSessionStore().sessionActivity.graph;
           const response = await addComment(graph, "root", author, titleAndContent);
 
           if (response.status === "OK") {
