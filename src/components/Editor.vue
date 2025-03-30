@@ -153,6 +153,7 @@ export default {
         }
 
         this.clearEditor();
+        useConflictsStore().refreshConflictList();
         return;
       }
 

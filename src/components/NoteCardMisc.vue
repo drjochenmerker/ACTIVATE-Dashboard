@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { addComment, deleteComment } from '@/data/knowledge_graph/write_operations';
-import { defineProps, nextTick, ref } from 'vue';
+import { defineProps, nextTick, ref, watch } from 'vue';
 import Button from './ui/button/Button.vue';
 import ReplyCard from './ReplyCard.vue';
 import { useSessionStore } from '@/stores/sessionStore';
@@ -24,8 +24,11 @@ const replyInputVisible = ref<Record<string, boolean>>({});
 const newReplyText = ref<Record<string, string>>({});
 const textareaRef = ref<HTMLTextAreaElement | null>(null);
 
-const emit = defineEmits(['deleteComment']);
+const emit = defineEmits(['deleteComment', 'refresh']);
 
+watch(() => props.comment, (newConflict) => {
+    conflictDetail.value = { ...newConflict };
+}, { deep: true });
 
 // delete conflicts
 const handleDelete = async (id: string) => {
@@ -47,7 +50,7 @@ const toggleReplyInput = async (conflictId: string) => {
         textareaRef.value?.focus();
     }
     if (!replyInputVisible.value[conflictId]) {
-        newReplyText.value[conflictId] = ''; // Textfeld leeren
+        newReplyText.value[conflictId] = '';
     }
 };
 
@@ -70,14 +73,15 @@ const saveReply = async (commentId: string) => {
             newReplyText.value[commentId]
         );
 
-
         if (conflictDetail.value) {
             if (!conflictDetail.value.replies) {
                 conflictDetail.value.replies = [];
             }
-
         }
+
         useConflictsStore().refreshConflictList();
+        emit('refresh');
+
         replyInputVisible.value[commentId] = false;
         newReplyText.value[commentId] = '';
     } catch (error) {
@@ -121,8 +125,7 @@ const removeReply = (id: string) => {
             <Button @click="saveReply(props.comment.id)">Save</Button>
         </div>
 
-        <div v-if="conflictDetail && conflictDetail.replies && conflictDetail.replies.length > 0"
-            class="reply-container">
+        <div v-if="props.comment && props.comment.replies && props.comment.replies.length > 0" class="reply-container">
             <ReplyCard v-for="(reply) in conflictDetail.replies" :key="reply.id" :parentComment="reply"
                 :conflictId="conflictDetail.id" @deleteComment="removeReply" />
         </div>

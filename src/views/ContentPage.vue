@@ -14,7 +14,6 @@ const props = defineProps<{ conflicts: any[], activity: any }>();
 // stores
 const sessionStore = useSessionStore();
 
-
 const route = useRoute();
 
 
@@ -32,15 +31,21 @@ const miscComments = ref<Comment[]>([]);
 
 // Fetch miscellaneous comments on mount
 onMounted(async () => {
+    fetchMiscs();
+});
+
+const fetchMiscs = async () => {
     if (route.params.id === 'misc') {
         // Get miscellaneous comments from the graph
         miscComments.value = await getMiscComments(graph);
     }
-});
+}
+
 
 const removeComment = (id: string) => {
     miscComments.value = miscComments.value.filter(comment => comment.id !== id);
 };
+
 
 </script>
 
@@ -58,7 +63,7 @@ const removeComment = (id: string) => {
             <div v-if="miscComments.length > 0">
                 <ul>
                     <li v-for="(comment, index) in miscComments" :key="index">
-                        <NoteCardMisc :comment="comment" @deleteComment="removeComment" />
+                        <NoteCardMisc :comment="comment" @deleteComment="removeComment" @refresh="fetchMiscs" />
                     </li>
                 </ul>
             </div>
