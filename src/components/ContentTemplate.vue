@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useConflictsStore } from '@/stores/conflictsStore';
 import NoteCard from './NoteCard.vue';
+import Button from './ui/button/Button.vue';
 
 const props = defineProps({
   pageData: {
@@ -18,8 +18,12 @@ const props = defineProps({
 // Store for conflicts
 const conflictStore = useConflictsStore();
 
+// Deklariere die Daten als reaktive Daten
+const conflicts = ref(props.conflicts);
+
 // Computed property that dynamically filters conflicts based on the pageData ID.
 // This ensures that only relevant conflicts on specific tab page are displayed.
+
 const filteredConflicts = computed(() => {
   return conflictStore.getConflicts.filter(conflict => {
     return Array.isArray(conflict.participants) &&
@@ -27,21 +31,26 @@ const filteredConflicts = computed(() => {
   });
 });
 
+
+const testreplies = () => {
+  console.log(filteredConflicts.value);
+};
+
+
 </script>
 
 <template>
-
+  <Button @click="testreplies">Test</Button>
   <!-- Check if there are any filtered conflicts to display -->
   <div v-if="filteredConflicts.length > 0">
     <div v-for="conflict in filteredConflicts" :key="conflict.id">
       <div class="conflict-container">
         <div class="note-container">
-
           <!-- NoteCard component for displaying conflict details -->
           <NoteCard :conflict="conflict" :title="conflict.title" :content="conflict.description || ''"
             :author="conflict.author" :status="conflict.status" />
-
         </div>
+
       </div>
     </div>
   </div>
@@ -51,6 +60,7 @@ const filteredConflicts = computed(() => {
     <p>There are no conflicts.</p>
   </div>
 </template>
+
 
 <style scoped>
 /* Container styling for each conflict */

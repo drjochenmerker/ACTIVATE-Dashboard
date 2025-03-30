@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'; // Button-Komponente importiere
 import { addComment, deleteComment } from '@/data/knowledge_graph/write_operations';
 import { useActivityStore } from '@/stores/activityStore';
 import { getConflictDetail } from '@/data/knowledge_graph/read_operations';
+import { useConflictsStore } from '@/stores/conflictsStore';
 
 const props = defineProps({
     parentComment: {
@@ -12,8 +13,10 @@ const props = defineProps({
     },
 });
 
+
 // Store
 const activityStore = useActivityStore();
+const conflictStore = useConflictsStore();
 
 // Toggle for visibility of reply input field
 const replyInputVisible = ref(false);
@@ -61,11 +64,11 @@ const saveReply = async (parentCommentId: string, parentReply?: any) => {
                 replies: [] // empty array for possible nested replies
             }
         ];
+        await getConflictDetail(activityStore.getActivity()!.graph, parentCommentId);
 
         replyInputVisible.value = false; // hide input field
         newReplyText.value = ''; // empty the text field 
-
-        console.log(props.parentComment.comment)
+        //await nextTick();
     } catch (error) {
         console.error('Error while saving the reply: ', error);
     }
@@ -154,11 +157,11 @@ const removeReply = (id: string) => {
             <Button @click="saveReply(parentComment.id, parentComment)">Save Comment</Button>
         </div>
 
-        <!-- Show nested replies with recursive component -->
-        <div v-if="parentComment.replies && parentComment.replies.length > 0" class="nested-replies">
+        <div v-if="Array.isArray(parentComment.replies) && parentComment.replies.length" class="nested-replies">
             <ReplyCard v-for="nestedReply in parentComment.replies" :key="nestedReply.id" :parentComment="nestedReply"
                 @deleteComment="removeReply" />
         </div>
+
     </div>
 </template>
 
