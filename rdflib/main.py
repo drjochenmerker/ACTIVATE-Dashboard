@@ -1,10 +1,14 @@
-from rdflib import Dataset, URIRef
-import uvicorn
-from rdflib_endpoint import SparqlRouter
 import os
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
+from rdflib import Dataset, URIRef
+from rdflib_endpoint import SparqlRouter
+import uvicorn
 
+from lti import router as lti_router
 
 DATA_DIR = "./data"
 FILES = [file for file in os.listdir(DATA_DIR) if file.endswith(".ttl")]
@@ -23,7 +27,7 @@ for filename, graph in graphs.items():
 sparql_router = SparqlRouter(
     graph=ds,
     graphs=graphs,
-    path="/",
+    path="/sparql",
     # Metadata used for the SPARQL service description and Swagger UI:
     title="SPARQL endpoint for RDFLib graph",
     description="A SPARQL endpoint to serve machine learning models, or any other logic implemented in Python. \n[Source code](https://github.com/vemonet/rdflib-endpoint)",
@@ -33,7 +37,14 @@ sparql_router = SparqlRouter(
 )
 
 app = FastAPI()
+
+# FRONTEND_DIR = "/root/projects/activate-dashboard/dist"
+# app.mount("/static", StaticFiles(directory=FRONTEND_DIR), name="static")
+
+# API Routes
 app.include_router(sparql_router)
+app.include_router(lti_router)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -41,6 +52,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# @app.get("/")
+# async def serve_frontend():
+#     return FileResponse(os.path.join(FRONTEND_DIR, "index.html"))
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
