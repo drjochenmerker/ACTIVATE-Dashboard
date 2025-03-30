@@ -214,7 +214,6 @@ export async function addPredicate(graph: string, predicate: string, domains: Kn
  * @returns UpdateResponse Object
  */
 export async function addEntity(graph: string, entity: string, activityClass: KnowledgeGraphActivityClass): Promise<updateResponse> {
-    entity[0].toUpperCase();
     if (RDFSyntaxCheck(entity) == false) return { code: 400, status: "Error", modified: entity, action: RDFOperation.insert } as updateResponse;
     let query = await getSparqlTemplate(sparqlTemplate.addEntity);
     const mapObj = {
@@ -225,4 +224,36 @@ export async function addEntity(graph: string, entity: string, activityClass: Kn
     query = query.replaceMultiple(mapObj);
     const data = await fetchSparql(query, true);
     return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: entity, action: RDFOperation.insert } as updateResponse;
+}
+
+/**
+ * Adds a new activity to the knowledge graph
+ * @param activityName Name of the activity. This will also be parsed into the indentifer and the graph name
+ * @param activityDescription Description of the new activity
+ * @returns UpdateResponse Object
+ */
+export async function addActivity(activityName: string, activityDescription: string): Promise<updateResponse> {
+    let query = await getSparqlTemplate(sparqlTemplate.addActivity);
+    const mapObj = {
+        "{{graphName}}": CapitalizeFirstLetter(activityName.trim().replaceAll(" ", "_")),
+        "{{identifier}}": CapitalizeFirstLetter(activityName.trim().replaceAll(" ", "")),
+        "{{descriptions}}": `"${activityDescription}"`,
+        "{{name}}": `"${CapitalizeFirstLetter(activityName.trim())}"`
+    }
+    query = query.replaceMultiple(mapObj);
+    console.log(query)
+    const data = await fetchSparql(query, true);
+    return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: activityName, action: RDFOperation.insert } as updateResponse;
+}
+
+/**
+ * Irreversibly deletes an activity from the knowledge graph
+ * @param activityIdentifier Identifier of the graph of the activity
+ * @returns UpdateResponse Object
+ */
+export async function deleteActivity(graph: string): Promise<updateResponse> {
+    let query = await getSparqlTemplate(sparqlTemplate.deleteActivity);
+    query = query.replace("{{graph}}", graph);
+    const data = await fetchSparql(query, true);
+    return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: graph, action: RDFOperation.insert } as updateResponse;
 }

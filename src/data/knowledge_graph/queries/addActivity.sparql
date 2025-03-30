@@ -2,13 +2,11 @@ PREFIX : <http://activate.htwk-leipzig.de/model#>
 PREFIX graph: <http://activate.htwk-leipzig.de/graph/>
 PREFIX owl: <http://www.w3.org/2002/07/owl#> 
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> 
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> 
 
 INSERT DATA {
-	GRAPH graph:{{graph}} {
-		:{{label}} rdf:type owl:ObjectProperty ;
-			rdfs:domain {{domains}} ;
-			rdfs:range {{ranges}} ;
-            rdfs:label {{labels}} .
-	}
+    GRAPH graph:{{graphName}} {
+        :{{identifier}} rdf:type owl:NamedIndividual ;
+        :ActivityDescription {{descriptions}} ;
+        :ActivityName {{name}} .
+    }
 }

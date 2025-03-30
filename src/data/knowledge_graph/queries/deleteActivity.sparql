@@ -1,0 +1,3 @@
+PREFIX graph: <http://activate.htwk-leipzig.de/graph/>
+
+DROP GRAPH graph:{{graph}}
