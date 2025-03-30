@@ -23,7 +23,7 @@ const conflictStore = useConflictsStore();
 const replyInputVisible = ref(false);
 const newReplyText = ref('');
 const textareaRef = ref<HTMLTextAreaElement | null>(null);
-const isDeleted = ref(false); // Default to false or any initial value
+//const isDeleted = ref(false); // Default to false or any initial value
 
 watch(props.parentComment, () => {
     console.log(props.parentComment)
@@ -37,8 +37,6 @@ const toggleReplyInput = async () => {
     }
 }
 
-// local variable for parentComment
-const parentComment = ref(props.parentComment);
 
 // Function to save a reply
 const saveReply = async (parentCommentId: string, parentReply?: any) => {
@@ -54,11 +52,13 @@ const saveReply = async (parentCommentId: string, parentReply?: any) => {
             activityStore.getRole()!,
             newReplyText.value
         );
-        conflictStore.refreshConflictList();
+        console.log('reply saved successfully');
 
         if (!parentReply.replies) {
             parentReply.replies = [];
         }
+
+        useConflictsStore().refreshConflictList();
 
         replyInputVisible.value = false; // hide input field
         newReplyText.value = ''; // empty the text field 
@@ -67,6 +67,9 @@ const saveReply = async (parentCommentId: string, parentReply?: any) => {
     }
 };
 
+watch(conflictStore, () => {
+    console.log("conflictstore: ", conflictStore.getConflicts);
+})
 
 // Function to submit via Enter key in textarea
 const handleEnterKey = (event: KeyboardEvent) => {
@@ -90,12 +93,12 @@ const handleDelete = async (id: string, parentComment: any) => {
 
         // call deleteComment function
         const response = await deleteComment(activityStore.getActivity()!.graph, id, isNestedComment);
+        conflictStore.refreshConflictList();
 
         if (response.status === "OK") {
-            conflictStore.refreshConflictList();
             // inform the parent
             emit('deleteComment', id);
-            isDeleted.value = true;
+
             //parentComment.comment = "This comment is deleted.";
             // if comment is nested, remove it from the replies
             if (parentComment.replies) {
@@ -117,6 +120,7 @@ const handleDelete = async (id: string, parentComment: any) => {
 const removeReply = (id: string) => {
     if (!Array.isArray(props.parentComment.replies)) return;
     props.parentComment.replies = props.parentComment.replies.filter(reply => reply.id !== id);
+    conflictStore.refreshConflictList();
 };
 
 
@@ -134,26 +138,27 @@ const removeReply = (id: string) => {
                 </button>
 
             </div>
-            <p class="reply-text">{{ isDeleted ? "This comment is deleted." : parentComment.comment }}</p>
+            <p class="reply-text">{{ props.parentComment.comment }}</p>
         </div>
 
         <!-- Reply Button to hide input field -->
-        <div v-if="!isDeleted || parentComment.comment === 'This comment is deleted.'">
-            <Button @click="toggleReplyInput()">
-                {{ replyInputVisible ? 'Cancel' : 'Answer' }}
-            </Button>
-        </div>
+
+        <Button @click="toggleReplyInput()">
+            {{ replyInputVisible ? 'Cancel' : 'Answer' }}
+        </Button>
+
 
         <!-- Reply input field -->
         <div v-if="replyInputVisible" class="reply-input">
             <textarea ref="textareaRef" v-model="newReplyText" placeholder="Write something to answer..."
                 @keydown.enter="handleEnterKey($event)"></textarea>
-            <Button @click="saveReply(parentComment.id, parentComment)">Save Comment</Button>
+            <Button @click="saveReply(props.parentComment.id, props.parentComment)">Save Comment</Button>
         </div>
 
-        <div v-if="Array.isArray(parentComment.replies) && parentComment.replies.length" class="nested-replies">
-            <ReplyCard v-for="nestedReply in parentComment.replies" :key="nestedReply.id" :parentComment="nestedReply"
-                @deleteComment="removeReply" />
+        <div v-if="Array.isArray(props.parentComment.replies) && props.parentComment.replies.length"
+            class="nested-replies">
+            <ReplyCard v-for="nestedReply in props.parentComment.replies" :key="nestedReply.id"
+                :parentComment="nestedReply" @deleteComment="removeReply" />
         </div>
 
     </div>
