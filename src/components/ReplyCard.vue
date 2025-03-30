@@ -132,23 +132,9 @@ const removeReply = (id: string) => {
             <p class="reply-text">{{ props.parentComment.comment }}</p>
         </div>
 
-        <!-- Reply Button to hide input field -->
-        <Button @click="toggleReplyInput()">
-            {{ replyInputVisible ? 'Cancel' : 'Answer' }}
-        </Button>
 
-        <!-- Reply input field -->
-        <div v-if="replyInputVisible" class="reply-input">
-            <textarea ref="textareaRef" v-model="newReplyText" placeholder="Write something to answer..."
-                @keydown.enter="handleEnterKey($event)"></textarea>
-            <Button @click="saveReply(props.parentComment.id)">Save Comment</Button>
-        </div>
 
-        <div v-if="Array.isArray(props.parentComment.replies) && props.parentComment.replies.length"
-            class="nested-replies">
-            <ReplyCard v-for="nestedReply in props.parentComment.replies" :key="nestedReply.id"
-                :parentComment="nestedReply" @deleteComment="removeReply" />
-        </div>
+
 
     </div>
 </template>
