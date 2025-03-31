@@ -6,7 +6,7 @@ export const contentData = [
     },
     {
         id: 'object',
-        title: 'Object',
+        title: 'Object(ive)',
         number: 4,
     },
     {

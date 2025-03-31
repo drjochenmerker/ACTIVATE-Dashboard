@@ -85,7 +85,7 @@ export default defineComponent({
             { x: triangleWidth / 8, y: (triangleHeight / 8) * 7, id: "rules", label: "Rules", color: getPointColor(), active: false, highlighted: false }, // Ecke Links Unten
             { x: (triangleWidth / 8) * 7, y: (triangleHeight / 8) * 7, id: "division_of_labour", label: "Division of Labour", color: getPointColor(), active: false, highlighted: false }, // Ecke Rechts Unten
             { x: (triangleWidth / 16) * 5, y: triangleHeight / 2, id: "subject", label: "Subject", color: getPointColor(), active: false, highlighted: false }, // Links Mitte
-            { x: (triangleWidth / 16) * 11, y: triangleHeight / 2, id: "object", label: "Object/-ive", color: getPointColor(), active: false, highlighted: false }, // Rechts Mitte
+            { x: (triangleWidth / 16) * 11, y: triangleHeight / 2, id: "object", label: "Object(ive)", color: getPointColor(), active: false, highlighted: false }, // Rechts Mitte
             { x: triangleWidth / 2, y: (triangleHeight / 8) * 7, id: "community", label: "Community", color: getPointColor(), active: false, highlighted: false }, // Unten Mitte
         ]);
 
@@ -129,19 +129,19 @@ export default defineComponent({
         const hoveredTriangle = ref<{ pointIds: string[] } | null>(null);
 
         // Positions of the conflict points
-        const conflictPositions = calculateConflictPositions(conflictData, points.value, 20);
+        let conflictPositions = calculateConflictPositions(conflictData, points.value, 20);
 
         /**
          * Updates the selected points using the activityPointStore based on the active property of the points
-         */ 
+         */
         const updatePoints = () => {
             selectedPoints.value = points.value.filter((point) => point.active).map((point) => point.id);
             activityPointStore.setActivePoints(selectedPoints.value);
         };
-        
+
         /**
          * Checks if a defined point is inside a defined triangle, used for hover and click events
-         */ 
+         */
         const isPointInTriangle = (x: number, y: number, triangle: { pointIds: string[] }) => {
             const [point1, point2, point3] = triangle.pointIds.map((id) => points.value.find((p) => p.id === id));
             if (point1 && point2 && point3) {
@@ -207,7 +207,7 @@ export default defineComponent({
 
         /**
          * Deselects all points and lines, resets their colors and active states
-         */ 
+         */
         const deselectEverything = () => {
             points.value.forEach((point) => {
                 point.active = false;
@@ -223,7 +223,7 @@ export default defineComponent({
 
         /** 
          * Updates the hover state of the canvas, sets the hoveredPoint and hoveredTriangle
-         */ 
+         */
         const updateHoverState = (mouseX: number, mouseY: number) => {
             hoveredPoint.value = null;
             hoveredTriangle.value = null;
@@ -246,7 +246,7 @@ export default defineComponent({
 
         /** 
          * Applies point-colors based on current theme, updates the colors of the points and lines
-         */ 
+         */
         const updateColors = () => {
             updatePoints();
 
@@ -382,7 +382,7 @@ export default defineComponent({
 
         /**
          * Handles logic when the mouse hovers over the canvas, updates the hoverPosition and the hoveredPointData
-         */ 
+         */
         const handleHover = (event: MouseEvent) => {
             if (!canvas.value) return;
             const rect = canvas.value.getBoundingClientRect();
@@ -426,7 +426,7 @@ export default defineComponent({
 
         /**
          * Handles logic when a point on the diagram is clicked, updates the active state of the clicked point
-         */ 
+         */
         const handleClick = (event: MouseEvent) => {
             if (!canvas.value) return;
             const rect = canvas.value.getBoundingClientRect();
@@ -464,7 +464,9 @@ export default defineComponent({
         // Draws the activity diagram when mounted
         onMounted(async () => {
             activityData.value = await getActivityDetail(sessionStore.sessionActivity as Activity)
+            await conflictStore.refreshConflictList();
             conflictData = conflictStore.getConflicts;
+            conflictPositions = calculateConflictPositions(conflictData, points.value, 20);
             draw();
         });
 
@@ -499,7 +501,7 @@ export default defineComponent({
             draw();
         });
 
-        
+
 
         return {
             canvas,
