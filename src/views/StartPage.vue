@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// Import necessary dependencies and components
 import { useColorMode } from '@vueuse/core';
 import { getActivities, getActivityClassIds } from '@/data/knowledge_graph/read_operations';
 import { Activity } from '@/data/knowledge_graph/structures';
@@ -6,6 +7,7 @@ import { ref, onMounted, watch } from 'vue';
 import { useSessionStore } from '@/stores/sessionStore';
 import { Play, Loader2 } from 'lucide-vue-next';
 import { KnowledgeGraphActivityClass } from '@/data/knowledge_graph/structures';
+// UI components imports...
 import {
   Card,
   CardContent,
@@ -27,45 +29,55 @@ import Button from '@/components/ui/button/Button.vue';
 useColorMode();
 const sessionStore = useSessionStore();
 
+// State management for activities
 const selectedActivity = ref<string>();
 const allActivities = ref<Activity[]>([]);
 
+// Load all available activities on component mount
 onMounted(async () => {
   try {
     allActivities.value = await getActivities();
-
   } catch (error) {
     console.error("Fehler beim Laden der Aktivitäten:", error);
   }
 });
 
+// Update available roles when selected activity changes
 watch(selectedActivity, async () => {
   if (!selectedActivity.value) {
     return;
   }
   sessionStore.availableRoles = await getActivityClassIds(selectedActivity.value, KnowledgeGraphActivityClass.subject);
-  sessionStore.sessionRole = ''; // Unset role when activity changes
+  sessionStore.sessionRole = ''; // Reset role selection
 });
 
+// Handle session start when user clicks start button
 const handleStartSession = async () => {
   sessionStore.sessionActivity = allActivities.value.find(a => a.graph === selectedActivity.value)!;
   sessionStore.startSession();
 }
 
+// Validate if session can be started (requires both activity and role selection)
 const sessionStartAllowed = () => !selectedActivity || !sessionStore.sessionRole;
 </script>
 
 <template>
+  <!-- Main container with centered card layout -->
   <div class="flex items-center justify-center h-screen">
     <Card class="w-1/4">
+      <!-- Card header with logo -->
       <CardHeader>
         <CardTitle>
           <img src="@/assets/images/activate-logo-full.gif" class="" alt="Logo" />
         </CardTitle>
       </CardHeader>
+
+      <!-- Main form content -->
       <CardContent>
+        <!-- Activity selection dropdown -->
         <Label for="activitySelect">Activity</Label>
         <Select v-model="selectedActivity" id="activitySelect">
+          <!-- Select components... -->
           <SelectTrigger>
             <SelectValue placeholder="Select an activity for the debriefing" />
           </SelectTrigger>
@@ -76,9 +88,11 @@ const sessionStartAllowed = () => !selectedActivity || !sessionStore.sessionRole
           </SelectContent>
         </Select>
 
+        <!-- Role selection dropdown (disabled until activity is selected) -->
         <div class="mt-4">
           <Label for="roleSelect">Role</Label>
           <Select v-model="sessionStore.sessionRole" :disabled="!selectedActivity" id="roleSelect">
+            <!-- Select components... -->
             <SelectTrigger>
               <SelectValue placeholder="Select your role for the debriefing" />
             </SelectTrigger>
@@ -90,6 +104,7 @@ const sessionStartAllowed = () => !selectedActivity || !sessionStore.sessionRole
           </Select>
         </div>
 
+        <!-- Instructor mode toggle -->
         <div class="flex items-center space-x-2 mt-4">
           <Checkbox id="cbInstructorMode" :checked="sessionStore.instructorMode"
             @update:checked="sessionStore.instructorMode = $event" />
@@ -97,10 +112,12 @@ const sessionStartAllowed = () => !selectedActivity || !sessionStore.sessionRole
             Enable Instructor Mode
           </Label>
         </div>
-
       </CardContent>
+
+      <!-- Start button with dynamic state -->
       <CardFooter>
         <Button @click="handleStartSession" class="w-full" :disabled="sessionStartAllowed()">
+          <!-- Button content changes based on selection state -->
           <template v-if="sessionStartAllowed()">
             <Loader2 class="w-4 h-4 mr-2 animate-spin" />
             Select activity and role

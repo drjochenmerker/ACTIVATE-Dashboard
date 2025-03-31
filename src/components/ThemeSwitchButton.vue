@@ -9,6 +9,8 @@ import {
     TooltipTrigger,
 } from '@/components/ui/tooltip'
 
+// Component representing a button that toggles the dark/light mode
+
 const mode = useColorMode();
 
 const toggleMode = () => {
