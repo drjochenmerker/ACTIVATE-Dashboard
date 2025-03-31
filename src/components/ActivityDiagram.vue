@@ -475,6 +475,16 @@ export default defineComponent({
             updateColors();
         });
 
+        watch(() => sessionStore.outdated, async () => {
+            if (sessionStore.outdated) {
+                activityData.value = await getActivityDetail(sessionStore.sessionActivity as Activity)
+                await conflictStore.refreshConflictList();
+                conflictData = conflictStore.getConflicts;
+                sessionStore.outdated = false;
+                draw();
+            }
+        });
+
         // Watcher for the hasToBeCleared state
         watch(hasToBeCleared, () => {
             if (hasToBeCleared.value) {

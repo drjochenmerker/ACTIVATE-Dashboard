@@ -13,6 +13,8 @@ export const useSessionStore = defineStore('session', () => {
   const instructorMode = ref(false);
   const isSessionActive = ref(false);
 
+  const outdated = ref(false);
+
   const startSession = () => {
     router.push('/');
     isSessionActive.value = true;
@@ -25,5 +27,5 @@ export const useSessionStore = defineStore('session', () => {
     isSessionActive.value = false;
   }
 
-  return { startSession, endSession, sessionActivity, sessionRole, availableRoles, isSessionActive, instructorMode };
+  return { startSession, endSession, sessionActivity, sessionRole, availableRoles, isSessionActive, instructorMode, outdated };
 });
