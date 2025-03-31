@@ -4,6 +4,15 @@ import { deleteComment } from '@/data/knowledge_graph/write_operations';
 import { useConflictsStore } from '@/stores/conflictsStore';
 import { useSessionStore } from '@/stores/sessionStore';
 
+/** 
+ * ReplyCard-Component
+ * Shows a reply for a specific parent element
+ * 
+ * ToDo:
+    * Originally planned: Recursive component to show nested replies
+    * which is already implemented in the backend
+    * SEE "inProgress_ReplyCard.txt"
+ */
 
 const props = defineProps({
     parentComment: {
@@ -16,33 +25,38 @@ const props = defineProps({
 const sessionStore = useSessionStore();
 const conflictStore = useConflictsStore();
 
-// help function
+// Helper function to see if a comment has replies
 const hasReplies = (comment: any) => Array.isArray(comment.replies) && comment.replies.length > 0;
 
-
 const emit = defineEmits(['deleteComment']);
-// Delete comment
+
+/**
+ * Handles the deletion of a comment, supporting both top-level and nested comments
+ * 
+ * @param {string} id - The unique identifier of the comment to be deleted
+ * @param {any} parentComment - The parent comment object containing potential nested replies
+ * @returns {Promise<void>} Deletes the comment and updates the comment list accordingly
+ */
 const handleDelete = async (id: string, parentComment: any) => {
     try {
         // Delete the comment (is it a nested comment?)
         const isNestedComment = hasReplies(parentComment);
 
 
-        // call deleteComment function
+        // Call deleteComment function and refresh the conflict list
         const response = await deleteComment(sessionStore.sessionActivity!.graph, id, isNestedComment);
         conflictStore.refreshConflictList();
 
         if (response.status === "OK") {
-            // inform the parent
+            // Inform the parent
             emit('deleteComment', id);
 
-            //parentComment.comment = "This comment is deleted.";
-            // if comment is nested, remove it from the replies
+            // If comment is nested, remove it from the replies
             if (parentComment.replies) {
                 parentComment.replies = parentComment.replies.filter((reply: any) => reply.id !== id);
             }
 
-            // if comment is not nested, delete it directly
+            // If comment is not nested, delete it directly
             if (!parentComment.replies || parentComment.replies.length === 0) {
                 //isDeleted.value = true;
             }

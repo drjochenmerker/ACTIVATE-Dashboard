@@ -6,10 +6,14 @@ import ReplyCard from './ReplyCard.vue';
 import { useSessionStore } from '@/stores/sessionStore';
 import { useConflictsStore } from '@/stores/conflictsStore';
 
-
-const sessionStore = useSessionStore();
-
-const graph = sessionStore.sessionActivity!.graph
+/** 
+ * NoteCard for miscellaneous comments
+ * Component that is used to show the miscellaneous comments
+ * Not in the NoteCard-Component, because it's a different type of notes that 
+ * are stored as replies
+ * 
+ * Has almost the same functionalites as the NoteCard-Component
+ */
 
 const props = defineProps({
     comment: {
@@ -17,6 +21,13 @@ const props = defineProps({
         required: true,
     }
 });
+
+// store for the session
+const sessionStore = useSessionStore();
+
+const graph = sessionStore.sessionActivity!.graph
+
+
 const [extractedTitle, extractedContent] = props.comment.comment.split('|');
 
 const conflictDetail = ref(props.comment);
@@ -26,11 +37,23 @@ const textareaRef = ref<HTMLTextAreaElement | null>(null);
 
 const emit = defineEmits(['deleteComment', 'refresh']);
 
+/** 
+ * Watches for changes to the comment prop and updates the local conflictDetail reactive reference
+ * Uses deep watching to capture nested changes in the comment object
+ * Ensures the local state remains synchronized with the incoming prop
+ */
 watch(() => props.comment, (newConflict) => {
     conflictDetail.value = { ...newConflict };
 }, { deep: true });
 
-// delete conflicts
+/** 
+ * Handles deletion of a miscellaneous comment
+ * 
+ * @param {string} id - The unique identifier of the comment to be deleted
+ * @async
+ * @throws {Error} Logs any errors encountered during comment deletion
+ * @emits deleteComment Event to parent component after successful deletion
+ */
 const handleDelete = async (id: string) => {
     try {
         //comment cant be nested because its the misc card
@@ -42,7 +65,16 @@ const handleDelete = async (id: string) => {
     }
 };
 
-// replyinput
+/** 
+ * Toggles the visibility of the reply input for a specific conflict
+ * 
+ * @param {string} conflictId - The unique identifier of the conflict
+ * @async
+ * @description 
+ * - Switches the reply input visibility state for the given conflict
+ * - When shown, focuses the textarea after the next DOM update
+ * - Clears the reply text when the input is hidden
+ */
 const toggleReplyInput = async (conflictId: string) => {
     replyInputVisible.value[conflictId] = !replyInputVisible.value[conflictId];
     if (replyInputVisible.value[conflictId]) {
@@ -54,7 +86,7 @@ const toggleReplyInput = async (conflictId: string) => {
     }
 };
 
-//enter key
+// Handles the key press event for the textarea
 const handleEnterKey = (event: KeyboardEvent) => {
     if (event.key === 'Enter' && !event.shiftKey) {
         event.preventDefault();
@@ -62,6 +94,18 @@ const handleEnterKey = (event: KeyboardEvent) => {
     }
 };
 
+/** 
+ * Saves a reply to a specific comment
+ * 
+ * @param {string} commentId - The unique identifier of the parent comment
+ * @async
+ * @description
+ * - Adds a new comment using the current session role
+ * - Initializes replies array if not existing
+ * - Refreshes the conflict list and UI
+ * - Resets reply input state after successful submission
+ * @throws {Error} Logs any errors encountered during comment submission
+ */
 const saveReply = async (commentId: string) => {
     if (!newReplyText.value[commentId]) return;
 
@@ -79,6 +123,7 @@ const saveReply = async (commentId: string) => {
             }
         }
 
+        // Important to refresh the conflict list so that the UI shows the new comment immediately
         useConflictsStore().refreshConflictList();
         emit('refresh');
 
