@@ -115,13 +115,7 @@ export default {
 
     async fetchActivityDetails() {
       try {
-        const activities = await getActivities();
-        if (activities && activities.length > 0) {
-          this.activityDetails = await getActivityDetail(activities[0]);
-        } else {
-          console.warn("No activities found.");
-          this.activityDetails = {}; // Set to empty object to avoid errors
-        }
+        this.activityDetails = await getActivityDetail(useSessionStore().sessionActivity);
       } catch (error) {
         console.error("Error fetching activity details:", error);
         this.activityDetails = {}; // Set to empty object to avoid errors
