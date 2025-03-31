@@ -507,11 +507,11 @@ export default defineComponent({
         });
 
         // Watcher for the conflictsStore
-        watch(conflictStore.getConflicts, () => {
+        watch(conflictStore.getConflicts, async () => {
+            await conflictStore.refreshConflictList();
+            conflictPositions = calculateConflictPositions(conflictData, points.value, 20);
             draw();
         });
-
-
 
         return {
             canvas,
