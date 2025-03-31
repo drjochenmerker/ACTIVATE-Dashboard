@@ -1,0 +1,21 @@
+@prefix : <http://activate.htwk-leipzig.de/model#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@base <http://activate.htwk-leipzig.de/model#> .
+
+<http://www.semanticweb.org/tobia/ontologies/2025/1/Vocabulary_2025_03_13> rdf:type owl:Ontology .
+:Demo rdf:type owl:NamedIndividual ;
+                  :ActivityDescription "Demo-Fall - Leer bis auf Doctor1" ;
+                  :ActivityName "Demo" .
+
+#################################################################
+#    Individuals
+#################################################################
+
+
+###  http://activate.htwk-leipzig.de/model#Doctor1
+:Doctor1 rdf:type owl:NamedIndividual ,
+                  :Subject .
