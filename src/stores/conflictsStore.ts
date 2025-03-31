@@ -4,13 +4,23 @@ import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import { useSessionStore } from './sessionStore';
 
-
+/**
+ * Store: ActivityConflicts
+ * Manages the list of conflicts associated with the current activity
+ */
 export const useConflictsStore = defineStore('ActivityConflicts', () => {
+
+    /**
+     * Reactive list of conflicts with detailed data
+     */
     let conflictDetails = ref<Conflict[]>([]);
 
-    
+    // Access to the current session/activity context
     const sessionStore = useSessionStore();
 
+    /**
+     * Refreshes the conflict list by fetching all conflicts for the current activity
+     */
     const refreshConflictList = async () => {
         const activity = sessionStore.sessionActivity;
         if (activity) {
@@ -20,20 +30,32 @@ export const useConflictsStore = defineStore('ActivityConflicts', () => {
         }
     };
 
-    // add a conflict to the list
+    /**
+     * Adds a single conflict to the local list
+     * @param conflict - The conflict to be added
+     */
     const addConflict = (conflict: Conflict) => {
         conflictDetails.value.push(conflict);
     }
 
-    // set all the conflicts
+    /**
+     * Sets the complete list of conflicts
+     * @param conflicts - The new list of conflicts
+     */
     const setConflicts = (conflicts: Conflict[]) => {
         conflictDetails.value = conflicts;
     };
 
-    // get all conflicts
+    /**
+     * Returns the list of all currently stored conflicts
+     */
     const getConflicts = computed(() => conflictDetails.value);
 
-    // update a Conflict by its ID from graph
+    /**
+     * Updates a conflict by its ID by fetching the latest detail from the server
+     * @param conflictId - ID of the conflict to update
+     * @param graph - Graph context to fetch from
+     */
     const updateConflict = async (conflictId: string, graph: string) => {
         const updatedConflict = await getConflictDetail(graph, conflictId);
         const index = conflictDetails.value.findIndex(conflict => conflict.id === conflictId);
@@ -42,7 +64,10 @@ export const useConflictsStore = defineStore('ActivityConflicts', () => {
         }
     };
 
-    // remove a Conflict by its ID
+    /**
+     * Removes a conflict by its ID
+     * @param conflictId - ID of the conflict to remove
+     */
     const removeConflict = (conflictId: string) => {
         const index = conflictDetails.value.findIndex(conflict => conflict.id === conflictId);
         if (index !== -1) {
