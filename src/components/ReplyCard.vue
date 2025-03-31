@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { defineProps, watch } from 'vue';
+import { defineProps } from 'vue';
 import { deleteComment } from '@/data/knowledge_graph/write_operations';
 import { useConflictsStore } from '@/stores/conflictsStore';
 import { useSessionStore } from '@/stores/sessionStore';
