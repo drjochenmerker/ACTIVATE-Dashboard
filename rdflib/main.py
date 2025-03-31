@@ -27,7 +27,7 @@ for filename, graph in graphs.items():
 sparql_router = SparqlRouter(
     graph=ds,
     graphs=graphs,
-    path="/sparql",
+    path="/",
     # Metadata used for the SPARQL service description and Swagger UI:
     title="SPARQL endpoint for RDFLib graph",
     description="A SPARQL endpoint to serve machine learning models, or any other logic implemented in Python. \n[Source code](https://github.com/vemonet/rdflib-endpoint)",
