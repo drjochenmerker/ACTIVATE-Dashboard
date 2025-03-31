@@ -43,6 +43,7 @@ export default {
         rules: [],
         divisionoflabour: []
       },
+      sessionStore: useSessionStore(),
     };
   },
 
@@ -181,7 +182,6 @@ export default {
 
       try {
         const graph = useSessionStore().sessionActivity.graph;
-        console.log("note:", note);
         const addConflictResponse = await addConflict(graph, note);
 
         if (addConflictResponse.status === "OK") {
@@ -219,6 +219,14 @@ export default {
       if (this.quill && newValue !== this.quill.root.innerHTML) {
         this.quill.root.innerHTML = newValue;
       }
+    },
+    'sessionStore.outdated': {
+      handler: async function (newVal) {
+        if (useSessionStore().outdated) {
+          await this.fetchActivityDetails();
+          useSessionStore().outdated = false;
+        }
+      },
     }
   }
 };

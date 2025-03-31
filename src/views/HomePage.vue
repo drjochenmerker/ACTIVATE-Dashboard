@@ -6,6 +6,7 @@ import EntityAdditionDialog from '@/components/EntityAdditionDialog.vue';
 import Editor from '@/components/Editor.vue';
 import { useActivityPointsStore } from "@/stores/activityPointsStore";
 import { ref } from 'vue';
+import { useSessionStore } from '@/stores/sessionStore';
 
 defineProps<{ conflicts: any[], activity: any, activityGraph: string }>();
 
@@ -27,14 +28,16 @@ const isEntityAdditionDialogOpen = ref(false);
   <div class="flex w-full h-2/3 relative mx-auto gap-4">
     <div class="flex-1 min-w-[900px]">
       <ActivityDiagram/>
-      <div class="mt-4 flex gap-4">
-        <TripleAdditionDialog v-model:isOpen="isTripleAdditionDialogOpen" />
-        <EntityAdditionDialog v-model:isOpen="isEntityAdditionDialogOpen" />
-      </div>
     </div>
 
     <div class="flex-1">
+      <div class="inline-flex">
       <Editor :activePoints="getActivePoints" />
+    </div>
+          <div class="mt-4 flex gap-4" v-if="useSessionStore().instructorMode">
+        <TripleAdditionDialog v-model:isOpen="isTripleAdditionDialogOpen" />
+        <EntityAdditionDialog v-model:isOpen="isEntityAdditionDialogOpen" />
+      </div>
     </div>
   </div>
 </template>

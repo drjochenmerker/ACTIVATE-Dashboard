@@ -4,9 +4,8 @@ import Button from '@/components/ui/button/Button.vue';
 import { defineProps } from 'vue';
 import { useColorMode } from '@vueuse/core';
 import { useSessionStore } from '@/stores/sessionStore';
-import { Activity, KnowledgeGraphActivityClass } from '@/data/knowledge_graph/structures';
+import { KnowledgeGraphActivityClass } from '@/data/knowledge_graph/structures';
 import { addEntity } from '@/data/knowledge_graph/write_operations';
-import { getActivityDetail } from '@/data/knowledge_graph/read_operations';
 
 defineProps<{
     isOpen: Boolean,
@@ -27,6 +26,8 @@ const activityClassOptions = [
     { label: KnowledgeGraphActivityClass.divison_of_labour, value: KnowledgeGraphActivityClass.divison_of_labour },
     { label: KnowledgeGraphActivityClass.community, value: KnowledgeGraphActivityClass.community }
 ];
+
+const emit = defineEmits(['entityAdded']);
 
 const openDialog = async () => {
     isOpen.value = true;
@@ -52,18 +53,13 @@ const applyEntity = async () => {
         return;
     }
 
-    const response = await addEntity(
+    await addEntity(
         sessionStore.sessionActivity!.graph,
         entityName.value,
         selectedClass.value as KnowledgeGraphActivityClass
     );
 
-    const activityData = await getActivityDetail(sessionStore.sessionActivity as Activity)
-
-    // TODO: Neue Entität ist nicht hier drin...
-    console.log(activityData)
-    console.log("Entity addition response:", response);
-
+    sessionStore.outdated = true;
     closeDialog();
 };
 </script>
