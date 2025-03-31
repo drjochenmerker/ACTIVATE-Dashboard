@@ -4,7 +4,7 @@ services:
     build:
       context: ./rdflib
     ports:
-      - "8000:8000"
+      - "8002:8000"
     networks:
       - activate-network
 
@@ -12,7 +12,7 @@ services:
     build:
       context: .
     ports:
-      - "5173:80"
+      - "8001:80"
     depends_on:
       - backend
     networks:
@@ -20,4 +20,4 @@ services:
 
 networks:
   activate-network:
-    driver: bridge
+    external: true
