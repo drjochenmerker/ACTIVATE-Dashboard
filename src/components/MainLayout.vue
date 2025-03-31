@@ -32,11 +32,11 @@ onMounted(async () => {
 </script>
 
 <template>
-    <div class="flex flex-col h-screen">
-        <NavBar/>
-        <main class="flex-grow h-full p-6">
-            <router-view v-if="activity && conflictDetails.length > 0" :key="$route.path" :activity="activity" :activityGraph="activity.graph" :conflicts="conflictDetails" />
-        </main>
-    </div>
+  <div class="flex flex-col h-screen">
+    <NavBar />
+    <main class="flex-grow h-full p-6">
+      <router-view v-if="activity" :key="$route.path" :activity="activity" :activityGraph="activity.graph"
+        :conflicts="conflictDetails" />
+    </main>
+  </div>
 </template>
-
