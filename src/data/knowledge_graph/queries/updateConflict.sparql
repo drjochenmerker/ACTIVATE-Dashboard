@@ -8,7 +8,7 @@ DELETE {
 }
 INSERT {
     GRAPH graph:{{graph}} {
-        :{{conflictId}} :{{predicate}} "{{newValue}}" .
+        :{{conflictId}} :{{predicate}} '{{newValue}}' .
     }
 }
 WHERE {

@@ -28,11 +28,11 @@ export async function addConflict(graph: string, conflict: Conflict): Promise<up
         "{{graph}}": graph,
         "{{conflictId}}": conflictId,
         "{{participants}}": participantString,
-        "{{description}}": conflict.description ? conflict.description : "",
-        "{{author}}": conflict.author,
+        "{{description}}": conflict.description ? conflict.description.replaceAll("'", "") : "",
+        "{{author}}": conflict.author.replaceAll("'", ""),
         "{{status}}": conflict.status,
         "{{created}}": timestamp,
-        "{{title}}": conflict.title
+        "{{title}}": conflict.title.replaceAll("'", "")
     };
     query = query.replaceMultiple(mapObj);
     // Exeucte Query in update mode
@@ -106,12 +106,12 @@ export async function updateConflictParticipants(graph: string, conflictId: stri
  * @param comment Comment as string
  * @returns 
  */
-export async function addComment( parentId: string,  comment: string): Promise<updateResponse> {
+export async function addComment(parentId: string, comment: string): Promise<updateResponse> {
     const sessionStore = useSessionStore();
     const graph = sessionStore.sessionActivity!.graph;
     const author = sessionStore.sessionRole || '';
 
-     // Create unique hash as a conflict ID
+    // Create unique hash as a conflict ID
     const timestamp = new Date().toISOString();
     const commentId = hash({
         conflictId: parentId,
@@ -123,9 +123,9 @@ export async function addComment( parentId: string,  comment: string): Promise<u
     let query = await getSparqlTemplate(sparqlTemplate.addComment);
     const mapObj = {
         '{{graph}}': graph,
-        '{{author}}': author,
+        '{{author}}': author.replaceAll("'", ""),
         '{{commentId}}': commentId,
-        '{{comment}}': comment,
+        '{{comment}}': comment.replaceAll("'", ""),
         '{{created}}': timestamp,
         '{{parentId}}': parentId
     };
