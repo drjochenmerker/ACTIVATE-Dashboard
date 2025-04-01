@@ -12,18 +12,18 @@ export async function addExampleConflictData(graph: string): Promise<string[]> {
         status: conflictStatus.inDiscussion,
         description: "Der Patient fühlte sich nicht ernst genommen."
     });
-    /*await addComment(graph, conflict1Res.modified, "Felix", "Hahaha!");
-    const commentRes = await addComment(graph, conflict1Res.modified, "Christin", "Das geht ja garnicht!");
-    const commentResInner = await addComment(graph, commentRes.modified, "Clemens", "Sehe ich auch so :(");
-    await addComment(graph, commentResInner.modified, "Christin", "Okay");
-    await addComment(graph, conflict1Res.modified, "Kenn", "Frech!");
+    await addComment(conflict1Res.modified, "Hahaha!");
+    const commentRes = await addComment( conflict1Res.modified, "Das geht ja garnicht!");
+    const commentResInner = await addComment(commentRes.modified,"Sehe ich auch so :(");
+    await addComment( commentResInner.modified, "Okay");
+    await addComment(conflict1Res.modified,"Frech!");
     const conflict2Res = await addConflict(graph, {
         title: "Patient verträgt Verband nicht",
         participants: [{ id: "Patient1", type: "Subject" }, { id: "Patient1Health", type: "Object" }],
         author: "Prof. Asklepios",
         status: conflictStatus.open,
     });
-    const commentRes2Inner = await addComment(graph, conflict2Res.modified, "Kenn", "Mehr Infos in der Beschreibung wären gut!");
-    await addComment(graph, commentRes2Inner.modified, "Felix", "Ja, das wäre hilfreich!");
-    return [conflict1Res.modified, conflict2Res.modified];*/
+    const commentRes2Inner = await addComment(conflict2Res.modified, "Mehr Infos in der Beschreibung wären gut!");
+    await addComment( commentRes2Inner.modified, "Ja, das wäre hilfreich!");
+    return [conflict1Res.modified, conflict2Res.modified];
 }
