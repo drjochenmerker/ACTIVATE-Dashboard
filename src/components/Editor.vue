@@ -173,7 +173,7 @@ export default {
           const graph = useSessionStore().sessionActivity.graph;
           // 'root' is the root node of the graph for misc comments as they are saved
           // just like replies without a title and status
-          const response = await addComment(graph, "root", author, titleAndContent);
+          const response = await addComment("root", titleAndContent);
 
           if (response.status === "OK") {
           } else {

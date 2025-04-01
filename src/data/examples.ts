@@ -12,7 +12,7 @@ export async function addExampleConflictData(graph: string): Promise<string[]> {
         status: conflictStatus.inDiscussion,
         description: "Der Patient fühlte sich nicht ernst genommen."
     });
-    await addComment(graph, conflict1Res.modified, "Felix", "Hahaha!");
+    /*await addComment(graph, conflict1Res.modified, "Felix", "Hahaha!");
     const commentRes = await addComment(graph, conflict1Res.modified, "Christin", "Das geht ja garnicht!");
     const commentResInner = await addComment(graph, commentRes.modified, "Clemens", "Sehe ich auch so :(");
     await addComment(graph, commentResInner.modified, "Christin", "Okay");
@@ -25,5 +25,5 @@ export async function addExampleConflictData(graph: string): Promise<string[]> {
     });
     const commentRes2Inner = await addComment(graph, conflict2Res.modified, "Kenn", "Mehr Infos in der Beschreibung wären gut!");
     await addComment(graph, commentRes2Inner.modified, "Felix", "Ja, das wäre hilfreich!");
-    return [conflict1Res.modified, conflict2Res.modified];
+    return [conflict1Res.modified, conflict2Res.modified];*/
 }

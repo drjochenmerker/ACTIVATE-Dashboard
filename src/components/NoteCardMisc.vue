@@ -111,9 +111,7 @@ const saveReply = async (commentId: string) => {
 
     try {
         await addComment(
-            graph,
             commentId,
-            sessionStore.sessionRole!,
             newReplyText.value[commentId]
         );
 

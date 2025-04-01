@@ -108,15 +108,11 @@ const groupedParticipants = computed(() => {
  * @returns {Promise<void>} A promise that resolves when the comment is saved and UI is updated
  */
 const saveReply = async (conflictId: string) => {
-  const graph = sessionStore.sessionActivity!.graph;
-  const role = sessionStore.sessionRole!;
   if (!newReplyText.value[conflictId]) return;
 
   try {
     await addComment(
-      graph,
       conflictId,
-      role,
       newReplyText.value[conflictId] // Reply text
     );
 
