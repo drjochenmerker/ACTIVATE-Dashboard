@@ -25,6 +25,7 @@ const sessionStore = useSessionStore();
                 </router-link>
             </a>
 
+            <!-- Links to the different pages of the activity classes providing the conflict views -->
             <div class="flex items-center gap-6 whitespace-nowrap">
                 <router-link v-for="item in contentData" :key="item.id" :to="`/${item.id}`" :class="$route.path === `/${item.id}` ? 'font-semibold' : 'text-muted-foreground hover:text-foreground'
                     ">
@@ -34,6 +35,7 @@ const sessionStore = useSessionStore();
 
             <div class="flex items-center gap-6 flex-1 justify-end">
                 <div class="flex flex-row gap-2 items-center my-2">
+                    <!-- Either present a select for the all the roles (instructor mode), or just the role chosen at login -->
                     <template v-if="sessionStore.instructorMode">
                         <Users />
                         <Select v-model="sessionStore.sessionRole" id="roleSelect">
@@ -58,8 +60,6 @@ const sessionStore = useSessionStore();
             </div>
             </div>
         </nav>
-
-        <!-- TODO: Add mobile menu and make responsive -->
     </header>
 </template>
 

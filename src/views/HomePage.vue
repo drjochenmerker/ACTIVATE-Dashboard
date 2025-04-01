@@ -13,11 +13,8 @@ defineProps<{ conflicts: any[], activity: any, activityGraph: string }>();
 const activityPointStore = useActivityPointsStore();
 const { getActivePoints } = storeToRefs(activityPointStore);
 
-
-
 const isTripleAdditionDialogOpen = ref(false);
 const isEntityAdditionDialogOpen = ref(false);
-
 </script>
 
 <template>

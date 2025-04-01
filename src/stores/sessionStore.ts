@@ -4,6 +4,27 @@ import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
+/**
+ * A Pinia store for managing session-related state and operations.
+ * 
+ * @remarks
+ * This store handles session management including activity, roles, and navigation.
+ * 
+ * @returns An object containing:
+ * - startSession: Function to initiate a new session
+ * - endSession: Function to terminate current session
+ * - sessionActivity: Reference to the current activity
+ * - sessionRole: Reference to the current role
+ * - availableRoles: Reference to array of available roles
+ * - isSessionActive: Reference indicating if session is active
+ * - instructorMode: Reference indicating if instructor mode is enabled
+ * 
+ * @example
+ * ```typescript
+ * const sessionStore = useSessionStore();
+ * sessionStore.startSession();
+ * ```
+ */
 export const useSessionStore = defineStore('session', () => {
   const router = useRouter();
   
@@ -18,6 +39,7 @@ export const useSessionStore = defineStore('session', () => {
   const startSession = () => {
     router.push('/');
     isSessionActive.value = true;
+    // TODO: Later this should communicate with the backend to actually implement session behavior
   }
 
   const endSession = () => {
