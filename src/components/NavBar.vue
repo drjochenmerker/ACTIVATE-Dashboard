@@ -1,22 +1,31 @@
 <script setup lang="ts">
 import { contentData } from '@/data/contentData';
 import ThemeSwitchButton from './ThemeSwitchButton.vue';
-import { User } from 'lucide-vue-next';
-import { useActivityStore } from '@/stores/activityStore';
+import { User, Users } from 'lucide-vue-next';
+import { useSessionStore } from '@/stores/sessionStore';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import LogoutButton from './LogoutButton.vue';
 
-const role = useActivityStore().getRole();
+const sessionStore = useSessionStore();
 </script>
 
 <template>
-    <header class="flex h-16 items-center border-b bg-background px-6">
-        <nav class="flex justify-between w-full">
-            <a>
+    <header class="flex h-16 border-b bg-background px-6">
+        <nav class="flex justify-between items-center w-full">
+            <a class="flex-1">
                 <router-link class="flex items-center gap-2 font-semibold" to="/">
                     <img src="@/assets/images/activate-logo-small.png" class="w-10 h-10 rounded-xl" alt="Logo" />
                     <span>Dashboard</span>
                 </router-link>
             </a>
 
+            <!-- Links to the different pages of the activity classes providing the conflict views -->
             <div class="flex items-center gap-6 whitespace-nowrap">
                 <router-link v-for="item in contentData" :key="item.id" :to="`/${item.id}`" :class="$route.path === `/${item.id}` ? 'font-semibold' : 'text-muted-foreground hover:text-foreground'
                     ">
@@ -24,16 +33,33 @@ const role = useActivityStore().getRole();
                 </router-link>
             </div>
 
-            <div class="flex items-center gap-6">
-                <div class="flex flex-row gap-1">
-                <User />
-                <span>{{role}}</span>
+            <div class="flex items-center gap-6 flex-1 justify-end">
+                <div class="flex flex-row gap-2 items-center my-2">
+                    <!-- Either present a select for the all the roles (instructor mode), or just the role chosen at login -->
+                    <template v-if="sessionStore.instructorMode">
+                        <Users />
+                        <Select v-model="sessionStore.sessionRole" id="roleSelect">
+                            <SelectTrigger>
+                                <SelectValue placeholder="Select your role" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem v-for="role in sessionStore.availableRoles" :value="role">
+                                    {{ role }}
+                                </SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </template>
+                    <template v-else>
+                        <User />
+                        <span>{{ sessionStore.sessionRole }}</span>
+                    </template>
                 </div>
+                <div class="flex flex-row gap-1">
+                <LogoutButton />
                 <ThemeSwitchButton />
             </div>
+            </div>
         </nav>
-
-        <!-- TODO: Add mobile menu and make responsive -->
     </header>
 </template>
 

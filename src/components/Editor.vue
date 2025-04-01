@@ -3,13 +3,19 @@ import Quill from 'quill';
 import 'quill/dist/quill.snow.css';
 import Button from '@/components/ui/button/Button.vue';
 import Dropdown from './Dropdown.vue';
+
 import { useActivityPointsStore } from '@/stores/activityPointsStore';
 import { useConflictsStore } from '@/stores/conflictsStore';
 import { conflictStatus } from '@/data/knowledge_graph/structures';
 import { getActivities, getActivityDetail, getConflictDetail, getConflictIds } from '@/data/knowledge_graph/read_operations';
-import { addConflict } from '@/data/knowledge_graph/write_operations';
-import { useActivityStore } from '@/stores/activityStore';
+import { addComment, addConflict } from '@/data/knowledge_graph/write_operations';
+import { useSessionStore } from '@/stores/sessionStore';
 
+/** 
+ * Editor-Component
+ * Component for the editor of the activity diagram
+ * Allows to add new conflicts and miscellaneous comments to the graph
+ */
 export default {
   name: 'Editor',
   components: {
@@ -21,11 +27,13 @@ export default {
       type: String,
       default: ''
     },
+    // Active participants of the activity
     activePoints: {
       type: Array,
       default: () => []
     }
   },
+  // Emit event for when the editor content changes
   emits: ['input', 'transfer'],
   data() {
     return {
@@ -41,42 +49,64 @@ export default {
         rules: [],
         divisionoflabour: []
       },
+      sessionStore: useSessionStore(),
     };
   },
 
   async mounted() {
     this.initQuill();
-    await this.fetchActivityDetails(); // Fetch activity details on mount
+    // Fetch activity details on mount
+    await this.fetchActivityDetails();
   },
   computed: {
     pointData() {
+      // Return empty object if activityDetails is not yet loaded
       if (!this.activityDetails) {
-        return {}; // Return empty object if activityDetails is not yet loaded
+        return {};
       }
 
+      // constant array to save the point data
       const pointData = {};
 
       for (const key in this.activityDetails) {
         if (Array.isArray(this.activityDetails[key])) {
           pointData[key] = this.activityDetails[key].map(item => ({ label: item.label }));
         } else {
-          pointData[key] = []; // Ensure it's an array even if no data
+          // Ensure it's an array even with no data:
+          pointData[key] = [];
         }
       }
 
       return pointData;
     },
+
+    /**
+     * Checks if a specific point type is currently active
+     * @param {string} pointType - The type of point to check for activity
+     * @returns {boolean} Whether the point type is included in active points
+     */
     isActivePoint() {
       return (pointType) => this.activePoints.includes(pointType);
     },
+    /**
+     * Determines whether the transfer/done button should be disabled
+     * @returns {boolean} True if any active point lacks a selection, false otherwise
+     */
     isDoneDisabled() {
       return this.activePoints.some(point => {
         const value = this.selectedPoints[point];
-        return !value || value.length === 0; // Check if any selection is made for each active point
+
+        // Check if any selection is made for each active point:
+        return !value || value.length === 0;
       });
     }
   },
   methods: {
+    /**
+     * Initializes the Quill rich text editor with predefined configuration
+     * Sets up toolbar options, placeholder text, and event handling for text changes
+     * Populates initial editor content and emits input events when text is modified
+     */
     initQuill() {
       this.quill = new Quill(this.$refs.editorContainer, {
         theme: 'snow',
@@ -96,57 +126,88 @@ export default {
       });
     },
 
+    /**
+     * Clear the editor and reset the state
+     */
     clearEditor() {
       if (this.quill) {
-        this.quill.root.innerHTML = ''; // Clear Quill editor content
+        this.quill.root.innerHTML = '';
       }
-      this.isAnonymous = false; // Reset the anonymous checkbox
-
-      // Clear the selected values in the dropdowns
+      this.isAnonymous = false;
+      this.title = '';
       for (const point in this.selectedPoints) {
-        this.selectedPoints[point] = []; // Reset to empty arrays
+        this.selectedPoints[point] = [];
       }
     },
 
+    /**
+     * Method to get the activity details from the graph
+     */
     async fetchActivityDetails() {
       try {
-        const activities = await getActivities();
-        if (activities && activities.length > 0) {
-          this.activityDetails = await getActivityDetail(activities[0]);
-        } else {
-          console.warn("No activities found.");
-          this.activityDetails = {}; // Set to empty object to avoid errors
-        }
+        this.activityDetails = await getActivityDetail(useSessionStore().sessionActivity);
       } catch (error) {
         console.error("Error fetching activity details:", error);
         this.activityDetails = {}; // Set to empty object to avoid errors
       }
     },
 
+    /**
+     * Transfers text from the editor to the graph, creating either a miscellaneous comment or a conflict
+     * depending on the number of active points. Handles adding comments or conflicts to the graph,
+     * updates the conflicts store, and resets the editor state.
+     */
     async transferText() {
+      // consts
+      const content = this.quill.root.innerHTML;
+      const title = this.title || 'New Note';
+      const author = this.isAnonymous ? 'Anonymous' : (useSessionStore().sessionRole);
+      const participants = [];
+
+      if (this.activePoints.length === 0) {
+        // WORKAROUND: merge title and content to later separate in miscellaneous comment section
+        // as the misc comments are stores without a title and only content
+        const titleAndContent = title + '|' + content; // '|', the safest separator for now
+
+        try {
+          const graph = useSessionStore().sessionActivity.graph;
+          // 'root' is the root node of the graph for misc comments as they are saved
+          // just like replies without a title and status
+          const response = await addComment("root", titleAndContent);
+
+          if (response.status === "OK") {
+          } else {
+            console.warn("Error saving the comment: ", response);
+          }
+        } catch (error) {
+          console.error("Error with API call: ", error);
+        }
+
+        this.clearEditor();
+        useConflictsStore().refreshConflictList();
+        return;
+      }
+
+
       if (!this.activityDetails) {
         console.warn("Activity details not loaded yet. Please try again.");
         return; // Exit the function if data is not ready
       }
-
-      const content = this.quill.root.innerHTML;
-      const title = this.title || 'New Note';
-      const author = this.isAnonymous ? 'Anonymous' : 'Author übergeben';
-
-      const participants = [];
 
       this.activePoints.forEach(point => {
         const selectedValues = this.selectedPoints[point] || [];
 
         selectedValues.forEach(item => {
           participants.push({
-            id: item.label,  // every entry stays a separate participant (important for the graph)
+            // every entry stays a separate participant (important for the graph)
+            id: item.label,
             type: point.charAt(0).toUpperCase() + point.slice(1)
           });
         });
       });
 
 
+      // temporary save note object
       const note = {
         title: title,
         timestamp: new Date().toISOString(),
@@ -156,12 +217,13 @@ export default {
         description: content,
       };
 
+      // Add conflict to the graph 
       try {
-        const graph = useActivityStore().getActivity().graph;
-        console.log("note:", note);
+        const graph = useSessionStore().sessionActivity.graph;
         const addConflictResponse = await addConflict(graph, note);
 
         if (addConflictResponse.status === "OK") {
+          // Add the conflict to the conflictStore as well
           const conflictId = addConflictResponse.modified;
           const conflictDetail = await getConflictDetail(graph, conflictId);
           const conflictsStore = useConflictsStore();
@@ -170,39 +232,65 @@ export default {
           console.warn("Error adding conflict.");
         }
       } catch (error) {
-        console.error("Error adding conflict:", error);
+        console.error("Error adding conflict: ", error);
       }
 
+      // Deactivate all of the active points
       const activityPointStore = useActivityPointsStore();
-      
       activityPointStore.deactivateAllPoints();
 
+
       this.clearEditor();
+      useConflictsStore().refreshConflictList();
     },
 
+    /**
+     * Displays the dropdown and dynamically adjusts its z-index to ensure it appears on top
+     * Increments z-index based on the dropdown's position in the active points list
+     */
     showDropdown() {
       this.showDropdown = true;
       this.$nextTick(() => {
-        // dynamically increase Z-Index when dropdown is opened
+        // dynamically increase Z-Index when dropdown is opened to make sure it's on top
         const dropdownList = this.$el.querySelector('.dropdown-list');
         dropdownList.style.zIndex = 1001 + this.$parent.activePoints.indexOf(this.label);
       });
     }
   },
+
+  /**
+   * Watchers for the Editor component to handle dynamic updates
+   * - Synchronizes the Quill editor's content with the component's value
+   * - Manages session store updates and triggers activity details fetching
+   */
   watch: {
     value(newValue) {
       if (this.quill && newValue !== this.quill.root.innerHTML) {
         this.quill.root.innerHTML = newValue;
       }
+    },
+    'sessionStore.outdated': {
+      handler: async function (newVal) {
+        if (useSessionStore().outdated) {
+          await this.fetchActivityDetails();
+          useSessionStore().outdated = false;
+        }
+      },
     }
   }
 };
+
 </script>
 
 
 <template>
   <div class="editor-container">
-    <button class="clear-button" @click="clearEditor">Clear Editor</button>
+    <div class="icon-container">
+
+      <button class="icon-button" @click="clearEditor">
+        <span class="material-symbols-outlined">delete</span>
+      </button>
+    </div>
 
     <h3>Add Note to selected Points:</h3>
     <!-- dropdown: -->
@@ -212,6 +300,7 @@ export default {
         <Dropdown :label="point" :options="pointData[point] || []" v-model="selectedPoints[point]" />
       </div>
     </div>
+
     <!-- title: -->
     <div>
       <h3>Add a title:</h3>
@@ -239,7 +328,6 @@ export default {
 .editor-container {
   display: flex;
   flex-direction: column;
-  align-items: left;
   background-color: #ffffff;
   padding: 20px;
   border: 1px solid #e0e0e0;
@@ -249,10 +337,32 @@ export default {
   max-width: 600px;
   margin: 0 auto;
   overflow: visible;
-  /* Verhindert das Abschneiden */
   position: relative;
-  /* Stellt sicher, dass das absolute Positionieren funktioniert */
 
+}
+
+/*icon button*/
+.icon-container {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  /* Align the icon button to the right */
+  margin-bottom: 10px;
+  /* Optional, adds space between the icon and the rest of the content */
+}
+
+/* icon */
+.icon-button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  font-size: 24px;
+  color: red;
+}
+
+.icon-button:hover {
+  color: darkred;
 }
 
 

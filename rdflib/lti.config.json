@@ -1,0 +1,6 @@
+{
+    "client_id": "<client_id, provided by the LMS>",
+    "jwks_url": "<keys, provided by the LMS, e.g. https://bildungsportal.sachsen.de/opal/restapi/lti/keys>",
+    "redirect_uri": "<uri, where user gets redirected after verification https://activate.app.org/lti/launch>",
+    "auth_url": "<auth_uri, provided by the LMS: https://bildungsportal.sachsen.de/opal/ltiauth/"
+}

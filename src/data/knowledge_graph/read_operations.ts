@@ -46,14 +46,11 @@ export async function getActivityDetail(activity: Activity): Promise<ActivityDet
     const objectIndexInList = (activityDetail[label] as Object[]).findIndex((obj: Object) => obj.label == item.entity.value.split("#").pop());
     // Object not in list yet
     if (objectIndexInList < 0) {
-      if (item.target.value.split("#").pop() === "DivisionOfLabour") {
+      if (item.property.value.split("#").pop() === "type") {
         activityDetail[label].push({
           label: item.entity.value.split("#").pop(),
           properties: [] as Action[]
         } as Object);
-      }
-      else if (item.property.value.split("#").pop() === "type") {
-        return;
       }
       else {
         activityDetail[label].push({

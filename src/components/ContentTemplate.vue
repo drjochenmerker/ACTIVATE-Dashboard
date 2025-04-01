@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-import { computed, toRaw } from 'vue';
+import { computed } from 'vue';
 import NoteCard from './NoteCard.vue';
+import { useConflictsStore } from '@/stores/conflictsStore';
 
 const props = defineProps({
   pageData: {
@@ -8,42 +9,59 @@ const props = defineProps({
     required: true,
   },
   conflicts: {
-    type: Object,
+    type: Array,
     required: true,
   },
 });
 
-//filtered conflicts based on id of "pageData"
+// Store for conflicts
+const conflictStore = useConflictsStore();
+
+/**
+ * Computes a filtered list of conflicts specific to the current page.
+ * Filters conflicts based on whether their participants include the current page's ID
+ * which leads to the fitting conflicts being displayed.
+ * 
+ * @returns {Array} An array of conflicts relevant to the current page context
+ */
 const filteredConflicts = computed(() => {
-  return toRaw(props.conflicts).filter((conflict: { participants: any[] }) => {
+  return conflictStore.getConflicts.filter(conflict => {
     return Array.isArray(conflict.participants) &&
       conflict.participants.some(participant => participant.type === props.pageData.id);
   });
 });
+
 </script>
 
 <template>
+  <!-- Check if there are any filtered conflicts to display -->
   <div v-if="filteredConflicts.length > 0">
-    <div v-for="(conflict) in filteredConflicts" :key="conflict.id">
+    <div v-for="conflict in filteredConflicts" :key="conflict.id">
       <div class="conflict-container">
         <div class="note-container">
-          <NoteCard :conflict="conflict" :title="conflict.title" :content="conflict.description"
+          <!-- NoteCard component for displaying conflict details -->
+          <NoteCard :conflict="conflict" :title="conflict.title" :content="conflict.description || ''"
             :author="conflict.author" :status="conflict.status" />
         </div>
+
       </div>
     </div>
   </div>
 
+  <!-- Display a message if there are no conflicts -->
   <div v-else>
     <p>There are no conflicts.</p>
   </div>
 </template>
 
+
 <style scoped>
+/* Container styling for each conflict */
 .conflict-container {
   margin-bottom: 20px;
 }
 
+/* Styling for the comment section */
 .note-comment-section {
   display: flex;
   justify-content: flex-end;

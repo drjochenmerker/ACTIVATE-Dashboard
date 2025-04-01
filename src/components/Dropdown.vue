@@ -1,26 +1,10 @@
-<template>
-    <div class="dropdown" ref="dropdownContainer">
-        <h3>{{ label }}:</h3>
-        <div class="search-container">
-            <!-- Anzeige der ausgewählten Optionen -->
-            <div v-for="option in selectedOptions" :key="option.label" class="selected-item">
-                {{ option.label }}
-                <span class="remove-icon" @click="removeOption(option)">✕</span>
-            </div>
-            <!-- Eingabefeld für die Suche -->
-            <input type="text" v-model="search" @focus="showDropdown = true" @input="updateSearch"
-                placeholder="Suchen..." />
-        </div>
-        <!-- Dropdown-Liste -->
-        <ul v-if="showDropdown" class="dropdown-list">
-            <li v-for="option in filteredOptions" :key="option.label" @mousedown.prevent="selectOption(option)">
-                {{ option.label }}
-            </li>
-        </ul>
-    </div>
-</template>
-
 <script>
+/** 
+ * Dropdown-Component
+ * Component that is used in the Editor component to display a dropdown menu
+ * Allows to select from a given list of options 
+ * Is used to show the possible explicit participants of an activity
+ */
 export default {
     name: 'Dropdown',
     props: {
@@ -46,6 +30,11 @@ export default {
         };
     },
     computed: {
+        /** 
+         * Filters available options based on search input and currently selected options
+         * Returns options that match the search term and have not already been selected
+         * @returns {Array} Filtered list of dropdown options
+         */
         filteredOptions() {
             return this.options.filter(
                 option =>
@@ -70,10 +59,19 @@ export default {
                 }
             });
         },
+        /**
+         * Removes a specific option from the list of selected options
+         * Updates the component's selected options and emits an update event
+         * @param {Object} option - The option to be removed from the selected options
+         */
         removeOption(option) {
             this.selectedOptions = this.selectedOptions.filter(o => o !== option);
             this.$emit('update:modelValue', this.selectedOptions);
         },
+        /**
+         * Handles clicks outside the dropdown container to close the dropdown
+         * @param {Event} event - The click event triggered outside the dropdown
+         */
         handleClickOutside(event) {
             // test if the click was inside or outside the dropdown container
             if (this.$refs.dropdownContainer && !this.$refs.dropdownContainer.contains(event.target)) {
@@ -85,10 +83,18 @@ export default {
         // global click listener
         document.addEventListener('click', this.handleClickOutside);
     },
+    /**
+     * Removes the global click event listener when the component is about to be unmounted
+     * Prevents memory leaks by cleaning up event listeners
+     */
     beforeUnmount() {
-        // remove the global click listener
         document.removeEventListener('click', this.handleClickOutside);
     },
+    /**
+     * Watches for changes to the modelValue prop and updates the selectedOptions accordingly
+     * Ensures the component's internal state reflects the latest prop value
+     * @param {Array} newValue - The new value of the modelValue prop
+     */
     watch: {
         modelValue(newValue) {
             this.selectedOptions = newValue;
@@ -96,6 +102,32 @@ export default {
     }
 };
 </script>
+
+<template>
+    <div class="dropdown" ref="dropdownContainer">
+        <h3>{{ label }}:</h3>
+        <div class="search-container">
+
+            <!-- Show selected options -->
+            <div v-for="option in selectedOptions" :key="option.label" class="selected-item">
+                {{ option.label }}
+                <span class="remove-icon" @click="removeOption(option)">✕</span>
+            </div>
+
+            <!-- Input field for searching -->
+            <input type="text" v-model="search" @focus="showDropdown = true" @input="updateSearch"
+                placeholder="Suchen..." />
+        </div>
+
+        <!-- Dropdown list -->
+        <ul v-if="showDropdown" class="dropdown-list">
+            <li v-for="option in filteredOptions" :key="option.label" @mousedown.prevent="selectOption(option)">
+                {{ option.label }}
+            </li>
+        </ul>
+    </div>
+</template>
+
 
 <style scoped>
 .dropdown {

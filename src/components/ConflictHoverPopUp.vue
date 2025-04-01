@@ -2,13 +2,19 @@
 import { useColorMode } from '@vueuse/core';
 import { computed, nextTick, onMounted, ref, watch } from 'vue';
 
-// Data Structure for the participants of a conflict
+/**
+ * Participant Interface
+ * Data structure for a conflict participant
+ */
 interface Participant {
   id: string;
   type: string;
 }
 
-// Data Structure for a conflict
+/**
+ * Conflict Interface
+ * Data structure representing a conflict including participants and metadata
+ */
 interface Conflict {
   title: string;
   description?: string;
@@ -19,23 +25,32 @@ interface Conflict {
   replies?: any[];
 }
 
-// Props of the popup
+/**
+ * Props of the ConflictHoverPopUp component
+ * @property hoveredConflictPoint - Data of the conflict that is currently hovered
+ * @property position - Position of the cursor to position the popup
+ */
 const props = defineProps<{
   hoveredConflictPoint: Conflict;
   position: { x: number; y: number };
 }>();
 
+// Current color mode (Light- or Dark-Mode)
 const mode = useColorMode();
 
-// Everything that follows is nescessary to prevent overlapping and placement outside the viewport:
-
-// Ref for the Popup-Element
+/**
+ * Ref to the popup element
+ * Used to measure the height dynamically
+ */
 const popupRef = ref<HTMLElement | null>(null);
 
-// Height of the popup
+// Dynamically stored height of the popup
 const popupHeight = ref(0);
 
-// Height gets measured again on mount and when the popup changes
+/**
+ * Updates the height of the popup box after DOM update
+ * Uses nextTick to ensure accurate measurement
+ */
 const updatePopupHeight = () => {
   nextTick(() => {
     if (popupRef.value) {
@@ -44,17 +59,31 @@ const updatePopupHeight = () => {
   });
 };
 
+
+/**
+ * On mount:
+ * - Strips HTML tags from description to avoid rendering
+ * - Measures popup height
+ */
 onMounted(() => {
   props.hoveredConflictPoint.description = props.hoveredConflictPoint.description?.replace(/<\/?[^>]+(>|$)/g, "");
   updatePopupHeight();
 });
 
-// Measure new Height
+/**
+ * Watchers:
+ * - Recalculate height on conflict change or position change
+ */
 watch(() => props.hoveredConflictPoint, updatePopupHeight);
 watch(() => props.position, updatePopupHeight);
 
-// Adjusts the position of the popup to prevent palcement outside the current viewport
-// TODO: The +120 in the if-statement is because of the height of the navbar (currently the viewportHeigth is only the height of the canvas), it would be great when there is a better dynamic solution for this
+/**
+ * Adjusted Position of the popup
+ * Prevents overflow below the visible viewport
+ * @returns updated top and left coordinates
+ *
+ * TODO: Replace hardcoded navbar offset (120px) with dynamic value
+ */
 const adjustedPosition = computed(() => {
   let top = props.position.y;
   const left = props.position.x;

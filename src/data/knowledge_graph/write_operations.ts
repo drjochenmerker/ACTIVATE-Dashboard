@@ -1,6 +1,7 @@
 import hash from "object-hash";
 import { CapitalizeFirstLetter, fetchSparql, getSparqlTemplate, RDFSyntaxCheck } from "./utils";
 import { Conflict, conflictPredicate, conflictStatus, KnowledgeGraphActivityClass, LanguageLabel, RDFOperation, RDFTriple, sparqlTemplate, updateResponse } from "./structures";
+import { useSessionStore } from "@/stores/sessionStore";
 
 /**
  * Adds a new conflict to the sparql database
@@ -102,12 +103,15 @@ export async function updateConflictParticipants(graph: string, conflictId: stri
 /**
  * Adds a comment to a conflict or another comment
  * @param parentId Id of the parent element. Can be a conflict id, another comment id or "root" for parentless comments
- * @param author Author of the comment
  * @param comment Comment as string
  * @returns 
  */
-export async function addComment(graph: string, parentId: string, author: string, comment: string): Promise<updateResponse> {
-    // Create unique hash as a conflict ID
+export async function addComment( parentId: string,  comment: string): Promise<updateResponse> {
+    const sessionStore = useSessionStore();
+    const graph = sessionStore.sessionActivity!.graph;
+    const author = sessionStore.sessionRole || '';
+
+     // Create unique hash as a conflict ID
     const timestamp = new Date().toISOString();
     const commentId = hash({
         conflictId: parentId,
@@ -115,14 +119,15 @@ export async function addComment(graph: string, parentId: string, author: string
         comment: comment,
         created: timestamp
     });
+
     let query = await getSparqlTemplate(sparqlTemplate.addComment);
     const mapObj = {
-        "{{graph}}": graph,
-        "{{author}}": author,
-        "{{commentId}}": commentId,
-        "{{comment}}": comment,
-        "{{created}}": timestamp,
-        "{{parentId}}": parentId
+        '{{graph}}': graph,
+        '{{author}}': author,
+        '{{commentId}}': commentId,
+        '{{comment}}': comment,
+        '{{created}}': timestamp,
+        '{{parentId}}': parentId
     };
     query = query.replaceMultiple(mapObj);
     // Exeucte Query in update mode
