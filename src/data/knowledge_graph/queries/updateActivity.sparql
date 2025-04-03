@@ -1,0 +1,21 @@
+PREFIX : <http://activate.htwk-leipzig.de/model#> 
+PREFIX graph: <http://activate.htwk-leipzig.de/graph/>
+
+DELETE { 
+    GRAPH graph:{{graph}} {
+        ?s :ActivityName ?name .
+        ?s :ActivityDescription ?desc .
+    }
+}
+INSERT {
+    GRAPH graph:{{graph}} {
+        ?s :ActivityName '{{activityName}}' .
+        ?s :ActivityDescription '{{activityDescription}}' .
+    }
+}
+WHERE {
+    GRAPH graph:{{graph}} {
+        ?s :ActivityName ?name .
+        ?s :ActivityDescription ?desc .
+    }
+}

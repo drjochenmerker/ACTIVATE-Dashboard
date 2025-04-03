@@ -43,6 +43,8 @@ export enum sparqlTemplate {
     addActivity = "addActivity",
     deleteActivity = "deleteActivity",
     getDiagramVocab = "getDiagramVocab",
+    updateActivity = "updateActivity",
+    cloneActivity = "cloneActivity",
 }
 
 /**

@@ -1,0 +1,9 @@
+@prefix : <http://activate.htwk-leipzig.de/model#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+
+:Demo a owl:NamedIndividual ;
+    :ActivityDescription "Demo-Fall - Leer bis auf Doctor1" ;
+    :ActivityName "Demo" .
+
+:Doctor1 a :Subject,
+        owl:NamedIndividual .

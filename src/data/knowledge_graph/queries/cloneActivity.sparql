@@ -1,0 +1,12 @@
+PREFIX : <http://activate.htwk-leipzig.de/model#> 
+PREFIX graph: <http://activate.htwk-leipzig.de/graph/>
+
+INSERT {
+  GRAPH graph:{{newName}} {
+  	?s ?p ?o .
+  }
+} WHERE {
+  GRAPH graph:{{graph}} {
+  	?s ?p ?o .
+  }
+}
