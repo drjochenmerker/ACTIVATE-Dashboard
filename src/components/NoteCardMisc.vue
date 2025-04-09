@@ -6,6 +6,8 @@ import ReplyCard from './ReplyCard.vue';
 import { useSessionStore } from '@/stores/sessionStore';
 import { useConflictsStore } from '@/stores/conflictsStore';
 
+import { useColorMode } from '@vueuse/core';
+
 /** 
  * NoteCard for miscellaneous comments
  * Component that is used to show the miscellaneous comments
@@ -21,6 +23,9 @@ const props = defineProps({
         required: true,
     }
 });
+
+const colorMode = useColorMode();
+
 
 // store for the session
 const sessionStore = useSessionStore();
@@ -141,7 +146,7 @@ const removeReply = (id: string) => {
 </script>
 
 <template>
-    <div class="misc-note-card">
+    <div class="misc-note-card" :class="{ 'dark': colorMode === 'dark' }">
         <div class="misc-note-header">
             <span class="misc-note-author">Author: {{ props.comment.author || 'Unknown' }}</span>
             <div>
@@ -188,6 +193,12 @@ const removeReply = (id: string) => {
     width: 100%;
 }
 
+.dark .misc-note-card {
+    background-color: #222;
+    border: 1px solid #444;
+    color: #fff;
+}
+
 .misc-note-header {
     display: flex;
     justify-content: space-between;
@@ -200,6 +211,10 @@ const removeReply = (id: string) => {
     font-size: 14px;
     font-weight: bold;
     color: #333;
+}
+
+.dark .misc-note-author {
+    color: #fff;
 }
 
 .misc-note-divider {
@@ -225,6 +240,10 @@ const removeReply = (id: string) => {
 /* comment input */
 .comment-input {
     margin-top: 10px;
+}
+
+.dark .comment-input {
+    color: #1e1e1e;
 }
 
 .comment-input textarea {

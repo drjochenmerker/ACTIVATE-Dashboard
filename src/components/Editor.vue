@@ -4,12 +4,17 @@ import 'quill/dist/quill.snow.css';
 import Button from '@/components/ui/button/Button.vue';
 import Dropdown from './Dropdown.vue';
 
+import { useToast } from 'vue-toastification';
+import 'vue-toastification/dist/index.css';
+
 import { useActivityPointsStore } from '@/stores/activityPointsStore';
 import { useConflictsStore } from '@/stores/conflictsStore';
 import { conflictStatus } from '@/data/knowledge_graph/structures';
 import { getActivities, getActivityDetail, getConflictDetail, getConflictIds } from '@/data/knowledge_graph/read_operations';
 import { addComment, addConflict } from '@/data/knowledge_graph/write_operations';
 import { useSessionStore } from '@/stores/sessionStore';
+
+import { useColorMode } from '@vueuse/core';
 
 /** 
  * Editor-Component
@@ -50,6 +55,8 @@ export default {
         divisionoflabour: []
       },
       sessionStore: useSessionStore(),
+      useColorMode,
+      toast: useToast(),
     };
   },
 
@@ -176,18 +183,30 @@ export default {
           const response = await addComment("root", titleAndContent);
 
           if (response.status === "OK") {
+            // Zeige Toast-Nachricht bei erfolgreicher Speicherung
+            this.toast.success("Comment added", {
+              description: "Your comment was successfully saved.",
+              icon: "📝",
+            });
           } else {
             console.warn("Error saving the comment: ", response);
+            this.toast.error("Error", {
+              description: "There was an error saving your comment.",
+              icon: "⚠️",
+            });
           }
         } catch (error) {
           console.error("Error with API call: ", error);
+          this.toast.error("Error", {
+            description: "An unexpected error occurred.",
+            icon: "⚠️",
+          });
         }
 
         this.clearEditor();
         useConflictsStore().refreshConflictList();
         return;
       }
-
 
       if (!this.activityDetails) {
         console.warn("Activity details not loaded yet. Please try again.");
@@ -205,7 +224,6 @@ export default {
           });
         });
       });
-
 
       // temporary save note object
       const note = {
@@ -228,21 +246,35 @@ export default {
           const conflictDetail = await getConflictDetail(graph, conflictId);
           const conflictsStore = useConflictsStore();
           conflictsStore.addConflict(conflictDetail);
+
+          // Zeige Toast-Nachricht nach erfolgreichem Hinzufügen des Konflikts
+          this.toast.success("Conflict added", {
+            description: "Your conflict was successfully saved.",
+            icon: "⚖️",
+          });
         } else {
           console.warn("Error adding conflict.");
+          this.toast.error("Error", {
+            description: "There was an error adding your conflict.",
+            icon: "⚠️",
+          });
         }
       } catch (error) {
         console.error("Error adding conflict: ", error);
+        this.toast.error("Error", {
+          description: "An unexpected error occurred while adding your conflict.",
+          icon: "⚠️",
+        });
       }
 
       // Deactivate all of the active points
       const activityPointStore = useActivityPointsStore();
       activityPointStore.deactivateAllPoints();
 
-
       this.clearEditor();
       useConflictsStore().refreshConflictList();
     },
+
 
     /**
      * Displays the dropdown and dynamically adjusts its z-index to ensure it appears on top
@@ -284,7 +316,8 @@ export default {
 
 
 <template>
-  <div class="editor-container">
+  <div class="editor-container" :class="{ 'dark': colorMode === 'dark' }">
+
     <div class="icon-container">
 
       <button class="icon-button" @click="clearEditor">
@@ -304,19 +337,23 @@ export default {
     <!-- title: -->
     <div>
       <h3>Add a title:</h3>
-      <div class="title-field">
+      <div>
         <input type="text" v-model="title" placeholder="Title" class="title-input" />
       </div>
     </div>
 
-    <!-- editor: -->
-    <div ref="editorContainer" placeholder="Description" class="quill-editor"></div>
+    <!-- description: -->
+    <div ref="editorContainer" class="quill-editor">
 
+    </div>
+
+    <!-- anonymous checkbox: -->
     <label class="anonymous-checkbox">
       <input type="checkbox" v-model="isAnonymous" />
       Send anonymously
     </label>
 
+    <Toaster />
     <Button variant="primary" size="large" class="transfer-button" @click="transferText" :disabled="isDoneDisabled">
       Done
     </Button>
@@ -339,7 +376,25 @@ export default {
   overflow: visible;
   position: relative;
 
+  background-color: #ffffff;
+  color: #000000;
 }
+
+.dark .editor-container {
+  background-color: #1e1e1e;
+  color: #ffffff;
+}
+
+.title-input {
+  background-color: #ffffff;
+  color: black;
+}
+
+.dark .title-input {
+  background-color: #1e1e1e;
+  color: #ffffff;
+}
+
 
 /*icon button*/
 .icon-container {
@@ -417,6 +472,12 @@ input {
   background-color: #f9f9f9;
 }
 
+.dark .quill-editor {
+  background-color: #1e1e1e;
+  color: #ffffff;
+}
+
+
 .anonymous-checkbox {
   margin-top: 20px;
   display: flex;
@@ -425,7 +486,6 @@ input {
   align-items: left;
   font-size: 14px;
 }
-
 
 .transfer-button {
   margin-top: 20px;
@@ -439,7 +499,6 @@ input {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: background-color 0.3s ease;
 }
-
 
 .transfer-button:hover {
   background-color: #323232;
@@ -464,5 +523,12 @@ input {
   margin-top: 15px;
   font-style: italic;
   color: #888;
+}
+</style>
+
+<style>
+.dark .quill-editor .ql-editor::before {
+  color: #ffffff !important;
+  opacity: 0.6;
 }
 </style>

@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button';
 import { useConflictsStore } from '@/stores/conflictsStore';
 import { useSessionStore } from '@/stores/sessionStore';
 
+import { useColorMode } from '@vueuse/core';
+
 const props = defineProps({
   conflict: {
     type: Object,
@@ -39,6 +41,8 @@ const props = defineProps({
 const conflictDetail = ref<any>(null);
 const replyInputVisible = ref<Record<string, boolean>>({});
 const newReplyText = ref<Record<string, string>>({});
+
+const colorMode = useColorMode();
 
 
 // Set status from props
@@ -166,67 +170,70 @@ const removeReply = (id: string) => {
 </script>
 
 <template>
-  <div class="note-card" :class="selectedStatus">
-    <div class="note-card-header">
-      <!-- Author-->
-      <span class="note-card-author">
-        Author: {{ props.author }}
-      </span>
-      <!-- Status selector -->
-      <div class="status-selector">
-        <select v-model="selectedStatus">
-          <option :value="conflictStatus.open">{{ conflictStatus.open }}</option>
-          <option :value="conflictStatus.inDiscussion">{{ conflictStatus.inDiscussion }}</option>
-          <option :value="conflictStatus.resolved">{{ conflictStatus.resolved }}</option>
-        </select>
+  <div :class="{ 'dark': colorMode === 'dark' }">
+
+
+    <div class="note-card" :class="selectedStatus">
+      <div class="note-card-header">
+        <!-- Author-->
+        <span class="note-card-author">
+          Author: {{ props.author }}
+        </span>
+        <!-- Status selector -->
+        <div class="status-selector">
+          <select v-model="selectedStatus">
+            <option :value="conflictStatus.open">{{ conflictStatus.open }}</option>
+            <option :value="conflictStatus.inDiscussion">{{ conflictStatus.inDiscussion }}</option>
+            <option :value="conflictStatus.resolved">{{ conflictStatus.resolved }}</option>
+          </select>
+        </div>
+        <!-- Delete button -->
+        <button class="icon-button" @click="handleDelete(props.conflict.id)">
+          <span class="material-symbols-outlined">delete</span>
+        </button>
       </div>
-      <!-- Delete button -->
-      <button class="icon-button" @click="handleDelete(props.conflict.id)">
-        <span class="material-symbols-outlined">delete</span>
-      </button>
-    </div>
 
-    <hr class="note-divider" />
+      <hr class="note-divider" />
 
-    <div class="note-card-content">
-      <!-- Note title -->
-      <div class="note-title" v-html="props.title"></div>
+      <div class="note-card-content">
+        <!-- Note title -->
+        <div class="note-title" v-html="props.title"></div>
 
-      <!-- Participants grouped by type -->
-      <div class="note-participants">
-        <div v-for="(group, type) in groupedParticipants" :key="type" class="participant-group">
-          <div class="participant-group-box">
-            <strong class="participant-group-title">{{ type }}:</strong>
-            <div class="participant-tag-container">
-              <span v-for="id in group" :key="id" class="participant-tag">
-                {{ id }}
-              </span>
+        <!-- Participants grouped by type -->
+        <div class="note-participants">
+          <div v-for="(group, type) in groupedParticipants" :key="type" class="participant-group">
+            <div class="participant-group-box">
+              <strong class="participant-group-title">{{ type }}:</strong>
+              <div class="participant-tag-container">
+                <span v-for="id in group" :key="id" class="participant-tag">
+                  {{ id }}
+                </span>
+              </div>
             </div>
           </div>
         </div>
+
+        <!-- Content -->
+        <div class="note-content" v-html="props.content"></div>
       </div>
 
-      <!-- Content -->
-      <div class="note-content" v-html="props.content"></div>
-    </div>
+      <!-- Note comment section starting with add comment button -->
+      <div class="note-comment-section">
+        <Button @click="toggleReplyInput(conflict.id)"> Add comment </Button>
+      </div>
 
-    <!-- Note comment section starting with add comment button -->
-    <div class="note-comment-section">
-      <Button @click="toggleReplyInput(conflict.id)"> Add comment </Button>
-    </div>
+      <div v-if="replyInputVisible[conflict.id]" class="comment-input">
+        <textarea ref="textareaRef" v-model="newReplyText[conflict.id]" placeholder="Write a reply..."
+          @keydown.enter="handleEnterKey($event)" />
+        <Button @click="saveReply(conflict.id)">Save</Button>
+      </div>
 
-    <div v-if="replyInputVisible[conflict.id]" class="comment-input">
-      <textarea ref="textareaRef" v-model="newReplyText[conflict.id]" placeholder="Write a reply..."
-        @keydown.enter="handleEnterKey($event)" />
-      <Button @click="saveReply(conflict.id)">Save</Button>
-    </div>
-
-    <div v-if="conflictDetail && conflictDetail.replies && conflictDetail.replies.length > 0" class="reply-container">
-      <ReplyCard v-for="(reply) in conflictDetail.replies" :key="reply.id" :parentComment="reply"
-        :conflictId="conflict.id" @deleteComment="removeReply" />
+      <div v-if="conflictDetail && conflictDetail.replies && conflictDetail.replies.length > 0" class="reply-container">
+        <ReplyCard v-for="(reply) in conflictDetail.replies" :key="reply.id" :parentComment="reply"
+          :conflictId="conflict.id" @deleteComment="removeReply" />
+      </div>
     </div>
   </div>
-
 </template>
 
 
@@ -243,21 +250,12 @@ const removeReply = (id: string) => {
   transition: box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
-/* dynamic colors based on status */
-.note-card.red {
-  box-shadow: 0 2px 8px rgba(255, 182, 193, 0.5);
-  border-color: rgba(255, 182, 193, 0.7);
+.dark .note-card {
+  background-color: #2b2b2b;
+  border-color: #444;
+  color: #e0e0e0;
 }
 
-.note-card.yellow {
-  box-shadow: 0 2px 8px rgba(253, 253, 150, 0.5);
-  border-color: rgba(253, 253, 150, 0.7);
-}
-
-.note-card.green {
-  box-shadow: 0 2px 8px rgba(152, 251, 152, 0.5);
-  border-color: rgba(152, 251, 152, 0.7);
-}
 
 /* icon */
 .icon-button {
@@ -276,6 +274,11 @@ const removeReply = (id: string) => {
 /* comment input */
 .comment-input {
   margin-top: 10px;
+}
+
+.dark .comment-input {
+
+  color: #1e1e1e;
 }
 
 .comment-input textarea {
@@ -301,6 +304,10 @@ const removeReply = (id: string) => {
   font-size: 14px;
   font-weight: bold;
   color: #333;
+}
+
+.dark .note-card-author {
+  color: #f7f7f7;
 }
 
 /* participants */
@@ -354,9 +361,19 @@ const removeReply = (id: string) => {
   transition: background-color 0.2s ease;
 }
 
+.dark .status-selector select {
+  background-color: #1e1e1e;
+  color: #ffffff;
+}
+
 .status-selector select:focus {
   outline: none;
   background-color: #f1f1f1;
+}
+
+.dark .status-selector select:focus {
+  background-color: #1e1e1e;
+  color: #ffffff;
 }
 
 .note-divider {

@@ -1,4 +1,5 @@
 <script>
+import { useColorMode } from '@vueuse/core';
 /** 
  * Dropdown-Component
  * Component that is used in the Editor component to display a dropdown menu
@@ -26,7 +27,8 @@ export default {
         return {
             search: '',
             showDropdown: false,
-            selectedOptions: this.modelValue
+            selectedOptions: this.modelValue,
+            useColorMode,
         };
     },
     computed: {
@@ -104,7 +106,7 @@ export default {
 </script>
 
 <template>
-    <div class="dropdown" ref="dropdownContainer">
+    <div class="dropdown" :class="{ 'dark': colorMode === 'dark' }" ref="dropdownContainer">
         <h3>{{ label }}:</h3>
         <div class="search-container">
 
@@ -116,7 +118,7 @@ export default {
 
             <!-- Input field for searching -->
             <input type="text" v-model="search" @focus="showDropdown = true" @input="updateSearch"
-                placeholder="Suchen..." />
+                placeholder="Suchen..." class="input-search" />
         </div>
 
         <!-- Dropdown list -->
@@ -135,6 +137,12 @@ export default {
     width: 100%;
 }
 
+.dark .dropdown {
+    background-color: #1e1e1e;
+    color: #ffffff;
+}
+
+
 .search-container {
     display: flex;
     flex-wrap: wrap;
@@ -145,12 +153,27 @@ export default {
     border-radius: 4px;
 }
 
+.dark .search-container {
+    background-color: #1e1e1e;
+    color: #ffffff;
+}
+
 .selected-item {
     display: flex;
     align-items: center;
     background-color: #e0e0e0;
     padding: 5px;
     border-radius: 4px;
+}
+
+.dark .selected-item {
+    background-color: #ffffff;
+    color: #1e1e1e;
+}
+
+.dark .input-search {
+    background-color: #1e1e1e;
+    color: #ffffff;
 }
 
 .remove-icon {
@@ -184,6 +207,16 @@ input:focus {
     overflow-y: auto;
     z-index: 1001;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.dark .dropdown-list {
+    background-color: #1e1e1e;
+    color: #ffffff;
+}
+
+.dark .dropdown-list li:hover {
+    background-color: #333;
+    color: #ffffff;
 }
 
 .dropdown-list li {
