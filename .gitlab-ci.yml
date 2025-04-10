@@ -11,7 +11,7 @@ build:
   stage: build
   image: node:lts-bookworm-slim
   script:
-    - npm ci
+    - npm i
     - npm run build
   artifacts:
     paths:
