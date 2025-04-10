@@ -21,8 +21,8 @@ deploy:
   stage: deploy
   only:
     - prod
-script:
-    - mkdir -p ~/.ssh
-    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_ed25519
-    - chmod 600 ~/.ssh/id_ed25519
-    - ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "cd /infrastructure/apps/activate-dashboard && git pull origin prod"
+  script:
+      - mkdir -p ~/.ssh
+      - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_ed25519
+      - chmod 600 ~/.ssh/id_ed25519
+      - ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "cd /infrastructure/apps/activate-dashboard && git pull origin prod"
