@@ -392,7 +392,7 @@ export async function getMiscComments(graph: string): Promise<Comment[]> {
  * @param activityClass class to be fetched
  * @returns list of ids
  */
-export async function getActivityClassIds(graph: string, activityClass: KnowledgeGraphActivityClass): Promise<string[]> {
+export async function getActivityClassIds(graph: string, activityClass: KnowledgeGraphActivityClass): Promise<Record<string, { id: string, label: string }[]>> {
   let query = await getSparqlTemplate(sparqlTemplate.getActivityClassIds);
   const mapObj = {
     "{{graph}}": graph,
@@ -400,9 +400,15 @@ export async function getActivityClassIds(graph: string, activityClass: Knowledg
   };
   query = query.replaceMultiple(mapObj);
   const data = await fetchSparql(query);
-  let result = [] as string[];
+  let result: Record<string, { id: string, label: string }[]> = {};
   data.map((item: StringAccessObject) => {
-    result.push(item.entity.value.split("#").pop());
+    let key = "default";
+    if (item.label !== undefined) { key = item.label["xml:lang"] }
+    if (result[key] === undefined) { result[key] = [] };
+    result[key].push({
+      id: item.entity.value.split("#").pop(),
+      label: item.label?.value ? item.label.value : item.entity.value.split("#").pop()
+    });
   })
   return result;
 }

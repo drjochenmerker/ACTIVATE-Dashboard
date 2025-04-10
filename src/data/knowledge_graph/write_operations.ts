@@ -1,5 +1,5 @@
 import hash from "object-hash";
-import { CapitalizeFirstLetter, fetchSparql, getSparqlTemplate, RDFSyntaxCheck } from "./utils";
+import { CapitalizeFirstLetter, fetchSparql, getSparqlTemplate, RDFSyntaxCheck, EscapeSparqlStringLiteral } from "./utils";
 import { Activity, Conflict, conflictPredicate, conflictStatus, KnowledgeGraphActivityClass, LanguageLabel, RDFOperation, RDFTriple, sparqlTemplate, updateResponse } from "./structures";
 import { useSessionStore } from "@/stores/sessionStore";
 
@@ -28,11 +28,11 @@ export async function addConflict(graph: string, conflict: Conflict): Promise<up
         "{{graph}}": graph,
         "{{conflictId}}": conflictId,
         "{{participants}}": participantString,
-        "{{description}}": conflict.description ? conflict.description.replaceAll("'", "") : "",
-        "{{author}}": conflict.author.replaceAll("'", ""),
+        "{{description}}": conflict.description ? EscapeSparqlStringLiteral(conflict.description) : "",
+        "{{author}}": EscapeSparqlStringLiteral(conflict.author),
         "{{status}}": conflict.status,
         "{{created}}": timestamp,
-        "{{title}}": conflict.title.replaceAll("'", "")
+        "{{title}}": EscapeSparqlStringLiteral(conflict.title)
     };
     query = query.replaceMultiple(mapObj);
     // Exeucte Query in update mode
@@ -81,7 +81,7 @@ export async function updateConflict(graph: string, conflictId: string, predicat
         "{{graph}}": graph,
         "{{conflictId}}": conflictId,
         "{{predicate}}": predicate,
-        "{{newValue}}": newValue
+        "{{newValue}}": EscapeSparqlStringLiteral(newValue)
     };
     query = query.replaceMultiple(mapObj);
     const data = await fetchSparql(query, true);
@@ -123,13 +123,14 @@ export async function addComment(parentId: string, comment: string): Promise<upd
     let query = await getSparqlTemplate(sparqlTemplate.addComment);
     const mapObj = {
         '{{graph}}': graph,
-        '{{author}}': author.replaceAll("'", ""),
+        '{{author}}': EscapeSparqlStringLiteral(author),
         '{{commentId}}': commentId,
-        '{{comment}}': comment.replaceAll("'", ""),
+        '{{comment}}': EscapeSparqlStringLiteral(comment),
         '{{created}}': timestamp,
         '{{parentId}}': parentId
     };
     query = query.replaceMultiple(mapObj);
+    console.log(query)
     // Exeucte Query in update mode
     const data = await fetchSparql(query, true);
     return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: commentId, action: RDFOperation.insert } as updateResponse;
@@ -246,7 +247,6 @@ export async function addActivity(activityName: string, activityDescription: str
         "{{name}}": `"${CapitalizeFirstLetter(activityName.trim())}"`
     }
     query = query.replaceMultiple(mapObj);
-    console.log(query)
     const data = await fetchSparql(query, true);
     return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: activityName, action: RDFOperation.insert } as updateResponse;
 }
@@ -269,16 +269,16 @@ export async function deleteActivity(graph: string): Promise<updateResponse> {
  * @param activity Activity object containing changes
  * @returns updateResponse Object
  */
-export async function updateActivity(graph: string, activity: Activity): Promise<updateResponse> {
+export async function updateActivity(activity: Activity): Promise<updateResponse> {
     let query = await getSparqlTemplate(sparqlTemplate.updateActivity);
     const mapObj = {
-        "{{graph}}": graph,
-        "{{activityName}}": activity.name.replaceAll("'", ""),
-        "{{activityDescription}}": activity.description ? activity.description.replaceAll("'", "") : "No description given",
+        "{{graph}}": activity.graph,
+        "{{activityName}}": EscapeSparqlStringLiteral(activity.name),
+        "{{activityDescription}}": activity.description ? EscapeSparqlStringLiteral(activity.description) : "No description given",
     }
     query = query.replaceMultiple(mapObj);
     const data = await fetchSparql(query, true);
-    return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: graph, action: RDFOperation.insert } as updateResponse;
+    return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: activity.graph, action: RDFOperation.insert } as updateResponse;
 }
 
 /**
@@ -287,14 +287,18 @@ export async function updateActivity(graph: string, activity: Activity): Promise
  * @param newName new name of the cloned activity (optional)
  * @returns updateResponse Object
  */
-export async function cloneActivity(graph: string, newName: string = ""): Promise<updateResponse> {
-    if (newName.trim() == "") newName = graph + "_copy";
+export async function cloneActivity(activity: Activity): Promise<updateResponse> {
+    if (activity.name.trim() == "") activity.name = activity.graph + "_copy";
+    if (activity.description?.trim() == "") activity.description = "No description given";
+    // Clone activity
     let query = await getSparqlTemplate(sparqlTemplate.cloneActivity);
     const mapObj = {
-        "{{graph}}": graph,
-        "{{newName}}": CapitalizeFirstLetter(newName.trim().replaceAll(" ", "_")),
+        "{{graph}}": activity.graph,
+        "{{newName}}": CapitalizeFirstLetter(activity.name.trim().replaceAll(" ", "_")),
     }
     query = query.replaceMultiple(mapObj);
     const data = await fetchSparql(query, true);
-    return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: graph, action: RDFOperation.insert } as updateResponse;
+    // Update name and description
+    await updateActivity(activity);
+    return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: activity.graph, action: RDFOperation.insert } as updateResponse;
 }
