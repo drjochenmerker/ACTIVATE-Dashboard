@@ -11,7 +11,11 @@ import { getActivities, getActivityDetail, getConflictDetail, getConflictIds } f
 import { addComment, addConflict } from '@/data/knowledge_graph/write_operations';
 import { useSessionStore } from '@/stores/sessionStore';
 
-
+/** 
+ * Editor-Component
+ * Component for the editor of the activity diagram
+ * Allows to add new conflicts and miscellaneous comments to the graph
+ */
 export default {
   name: 'Editor',
   components: {
@@ -23,11 +27,13 @@ export default {
       type: String,
       default: ''
     },
+    // Active participants of the activity
     activePoints: {
       type: Array,
       default: () => []
     }
   },
+  // Emit event for when the editor content changes
   emits: ['input', 'transfer'],
   data() {
     return {
@@ -54,10 +60,12 @@ export default {
   },
   computed: {
     pointData() {
+      // Return empty object if activityDetails is not yet loaded
       if (!this.activityDetails) {
-        return {}; // Return empty object if activityDetails is not yet loaded
+        return {};
       }
 
+      // constant array to save the point data
       const pointData = {};
 
       for (const key in this.activityDetails) {
@@ -71,9 +79,19 @@ export default {
 
       return pointData;
     },
+
+    /**
+     * Checks if a specific point type is currently active
+     * @param {string} pointType - The type of point to check for activity
+     * @returns {boolean} Whether the point type is included in active points
+     */
     isActivePoint() {
       return (pointType) => this.activePoints.includes(pointType);
     },
+    /**
+     * Determines whether the transfer/done button should be disabled
+     * @returns {boolean} True if any active point lacks a selection, false otherwise
+     */
     isDoneDisabled() {
       return this.activePoints.some(point => {
         const value = this.selectedPoints[point];
@@ -84,6 +102,11 @@ export default {
     }
   },
   methods: {
+    /**
+     * Initializes the Quill rich text editor with predefined configuration
+     * Sets up toolbar options, placeholder text, and event handling for text changes
+     * Populates initial editor content and emits input events when text is modified
+     */
     initQuill() {
       this.quill = new Quill(this.$refs.editorContainer, {
         theme: 'snow',
@@ -103,17 +126,23 @@ export default {
       });
     },
 
+    /**
+     * Clear the editor and reset the state
+     */
     clearEditor() {
       if (this.quill) {
-        this.quill.root.innerHTML = ''; // Clear the content
+        this.quill.root.innerHTML = '';
       }
-      this.isAnonymous = false; // Reset the anonymous checkbox
-      this.title = ''; // Clear the title
-      for (const point in this.selectedPoints) { // Clear the selected values in the dropdowns / reset to empty arrays
+      this.isAnonymous = false;
+      this.title = '';
+      for (const point in this.selectedPoints) {
         this.selectedPoints[point] = [];
       }
     },
 
+    /**
+     * Method to get the activity details from the graph
+     */
     async fetchActivityDetails() {
       try {
         this.activityDetails = await getActivityDetail(useSessionStore().sessionActivity);
@@ -123,7 +152,11 @@ export default {
       }
     },
 
-
+    /**
+     * Transfers text from the editor to the graph, creating either a miscellaneous comment or a conflict
+     * depending on the number of active points. Handles adding comments or conflicts to the graph,
+     * updates the conflicts store, and resets the editor state.
+     */
     async transferText() {
       // consts
       const content = this.quill.root.innerHTML;
@@ -133,11 +166,14 @@ export default {
 
       if (this.activePoints.length === 0) {
         // WORKAROUND: merge title and content to later separate in miscellaneous comment section
+        // as the misc comments are stores without a title and only content
         const titleAndContent = title + '|' + content; // '|', the safest separator for now
 
         try {
           const graph = useSessionStore().sessionActivity.graph;
-          const response = await addComment(graph, "root", author, titleAndContent);
+          // 'root' is the root node of the graph for misc comments as they are saved
+          // just like replies without a title and status
+          const response = await addComment("root", titleAndContent);
 
           if (response.status === "OK") {
           } else {
@@ -163,14 +199,15 @@ export default {
 
         selectedValues.forEach(item => {
           participants.push({
-            id: item.label,  // every entry stays a separate participant (important for the graph)
+            // every entry stays a separate participant (important for the graph)
+            id: item.label,
             type: point.charAt(0).toUpperCase() + point.slice(1)
           });
         });
       });
 
 
-      // temporary save note object ot then try and add it to the graph
+      // temporary save note object
       const note = {
         title: title,
         timestamp: new Date().toISOString(),
@@ -180,11 +217,13 @@ export default {
         description: content,
       };
 
+      // Add conflict to the graph 
       try {
         const graph = useSessionStore().sessionActivity.graph;
         const addConflictResponse = await addConflict(graph, note);
 
         if (addConflictResponse.status === "OK") {
+          // Add the conflict to the conflictStore as well
           const conflictId = addConflictResponse.modified;
           const conflictDetail = await getConflictDetail(graph, conflictId);
           const conflictsStore = useConflictsStore();
@@ -196,8 +235,8 @@ export default {
         console.error("Error adding conflict: ", error);
       }
 
+      // Deactivate all of the active points
       const activityPointStore = useActivityPointsStore();
-
       activityPointStore.deactivateAllPoints();
 
 
@@ -205,6 +244,10 @@ export default {
       useConflictsStore().refreshConflictList();
     },
 
+    /**
+     * Displays the dropdown and dynamically adjusts its z-index to ensure it appears on top
+     * Increments z-index based on the dropdown's position in the active points list
+     */
     showDropdown() {
       this.showDropdown = true;
       this.$nextTick(() => {
@@ -214,6 +257,12 @@ export default {
       });
     }
   },
+
+  /**
+   * Watchers for the Editor component to handle dynamic updates
+   * - Synchronizes the Quill editor's content with the component's value
+   * - Manages session store updates and triggers activity details fetching
+   */
   watch: {
     value(newValue) {
       if (this.quill && newValue !== this.quill.root.innerHTML) {
@@ -230,6 +279,7 @@ export default {
     }
   }
 };
+
 </script>
 
 

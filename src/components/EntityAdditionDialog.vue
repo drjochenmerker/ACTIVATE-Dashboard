@@ -7,17 +7,31 @@ import { useSessionStore } from '@/stores/sessionStore';
 import { KnowledgeGraphActivityClass } from '@/data/knowledge_graph/structures';
 import { addEntity } from '@/data/knowledge_graph/write_operations';
 
+
+/**
+ * Props of the AddEntityModal component
+ * @property isOpen - Indicates if the modal is open (passed from parent)
+ */
 defineProps<{
     isOpen: Boolean,
 }>();
 
+// Current color mode (Light- or Dark-Mode)
 const mode = useColorMode();
+
+// Session store to access and modify current activity data
 const sessionStore = useSessionStore();
 
+// Local state for modal visibility and input values
 const isOpen = ref(false);
 const entityName = ref('');
 const selectedClass = ref<KnowledgeGraphActivityClass | ''>('');
 
+
+/**
+ * Options for the activity class dropdown
+ * Includes label and value for each supported activity class
+ */
 const activityClassOptions = [
     { label: KnowledgeGraphActivityClass.subject, value: KnowledgeGraphActivityClass.subject },
     { label: KnowledgeGraphActivityClass.object, value: KnowledgeGraphActivityClass.object },
@@ -27,22 +41,33 @@ const activityClassOptions = [
     { label: KnowledgeGraphActivityClass.community, value: KnowledgeGraphActivityClass.community }
 ];
 
-const emit = defineEmits(['entityAdded']);
-
+/**
+ * Opens the modal dialog
+ */
 const openDialog = async () => {
     isOpen.value = true;
 };
 
+/**
+ * Closes the modal and resets the input fields
+ */
 const closeDialog = () => {
     isOpen.value = false;
     resetInputs();
 };
 
+/**
+ * Resets input fields to default values
+ */
 const resetInputs = () => {
     entityName.value = '';
     selectedClass.value = '';
 };
 
+/**
+ * Applies the entity creation logic
+ * Validates inputs and adds the entity to the knowledge graph
+ */
 const applyEntity = async () => {
     if (!entityName.value.trim()) {
         alert("Please enter an entity name.");
@@ -59,6 +84,7 @@ const applyEntity = async () => {
         selectedClass.value as KnowledgeGraphActivityClass
     );
 
+    // Notify other components that data is outdated
     sessionStore.outdated = true;
     closeDialog();
 };

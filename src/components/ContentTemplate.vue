@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
-import { useConflictsStore } from '@/stores/conflictsStore';
 import NoteCard from './NoteCard.vue';
+import { useConflictsStore } from '@/stores/conflictsStore';
 
 const props = defineProps({
   pageData: {
@@ -17,14 +17,19 @@ const props = defineProps({
 // Store for conflicts
 const conflictStore = useConflictsStore();
 
-// Filter conflicts based on the page data
+/**
+ * Computes a filtered list of conflicts specific to the current page.
+ * Filters conflicts based on whether their participants include the current page's ID
+ * which leads to the fitting conflicts being displayed.
+ * 
+ * @returns {Array} An array of conflicts relevant to the current page context
+ */
 const filteredConflicts = computed(() => {
   return conflictStore.getConflicts.filter(conflict => {
     return Array.isArray(conflict.participants) &&
       conflict.participants.some(participant => participant.type === props.pageData.id);
   });
 });
-
 
 </script>
 

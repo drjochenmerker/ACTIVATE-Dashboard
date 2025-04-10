@@ -2,6 +2,8 @@
 import { Skeleton } from '@/components/ui/skeleton';
 </script>
 
+<!-- Placeholder-Component to mock new pages, useful for development -->
+
 <template>
     <div class="space-y-6">
         <div class="space-y-2">

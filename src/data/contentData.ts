@@ -1,3 +1,7 @@
+/** 
+ * contentData is an array of objects that contain id, title and number
+ * of the activity diagram participants
+ */
 export const contentData = [
     {
         id: 'subject',

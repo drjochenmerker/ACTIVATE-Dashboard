@@ -9,18 +9,20 @@ import { Activity, KnowledgeGraphActivityClass, LanguageCode, LanguageLabel, Pre
 import { getActivityDetail, getPredicateObject } from '@/data/knowledge_graph/read_operations';
 import { useSessionStore } from '@/stores/sessionStore';
 
+
+/**
+ * Props of the RDFTripleAdder component
+ * @property isOpen - Determines if the modal is open (controlled from parent)
+ */
 defineProps<{
     isOpen: Boolean,
 }>();
 
+// Global state
 const sessionStore = useSessionStore()
-
 const mode = useColorMode();
 
-const activityParticipants = ref([] as Array<{ label: string }>);
-const activityPredicates = ref<PredicateDict | null>(null);
-const predicateOptions = ref([] as Array<{ label: string }>);
-const predicates = ref([] as Array<{ predicate: string }>)
+// State variables
 const isOpen = ref(false);
 const subject = ref('');
 const predicate = ref('');
@@ -29,7 +31,15 @@ const selectedDuplicateClass = ref(false)
 const noExistingPredicates = ref(false)
 const noValidParticipants = ref(false)
 
+// Participants and predicates
+const activityParticipants = ref([] as Array<{ label: string }>);
+const activityPredicates = ref<PredicateDict | null>(null);
+const predicateOptions = ref([] as Array<{ label: string }>);
+const predicates = ref([] as Array<{ predicate: string }>)
 
+/**
+ * Validation Computeds
+ */
 const isSubjectValid = computed(() => {
     return activityParticipants.value.some(item => item.label === subject.value);
 });
@@ -53,6 +63,10 @@ const isApplyEnabled = computed(() => {
     );
 });
 
+/**
+ * Opens the modal dialog
+ * Fetches current activity detail to populate participants
+ */
 const openDialog = async () => {
     isOpen.value = true;
     activityParticipants.value = [];
@@ -70,11 +84,18 @@ const openDialog = async () => {
     });
 };
 
+/**
+ * Extracts the activity class from a label string
+ * Format expected: "Entity Label (class)"
+ */
 const extractClass = (str: string): string | null => {
     const match = str.match(/\(([^)]+)\)/);
     return match ? match[1] : null;
 };
 
+/**
+ * Load predicates on component mount
+ */
 onMounted(async () => {
     selectedDuplicateClass.value = false;
     noExistingPredicates.value = false;
@@ -82,6 +103,9 @@ onMounted(async () => {
     activityPredicates.value = await getPredicateObject(sessionStore.sessionActivity!.graph);
 });
 
+/**
+ * Watch subject/object input to determine valid predicates
+ */
 watch([subject, object], () => {
     predicate.value = '';
     selectedDuplicateClass.value = false;
@@ -115,21 +139,30 @@ watch([subject, object], () => {
     }
 });
 
-const closeDialog = () => {
-    isOpen.value = false;
-    resetInputs();
-};
-
-const resetInputs = () => {
+/**
+ * Resets form and closes dialog
+ */
+ const resetInputs = () => {
     subject.value = '';
     object.value = '';
     predicate.value = '';
 };
 
+const closeDialog = () => {
+    isOpen.value = false;
+    resetInputs();
+};
+
+/**
+ * Removes classes from a label string
+ */
 const cleanLabel = (label: string): string => {
     return label.replace(/\s*\(.*?\)\s*/g, '').replace(/\s+/g, '');
 };
 
+/**
+ * Converts string to KnowledgeGraphActivityClass enum
+ */
 function mapToActivityClass(str: string): KnowledgeGraphActivityClass | undefined {
     switch (str.toLowerCase()) {
         case "subject":
@@ -149,6 +182,9 @@ function mapToActivityClass(str: string): KnowledgeGraphActivityClass | undefine
     }
 }
 
+/**
+ * Applies the RDF triple by calling write operations
+ */
 const applyTriple = async () => {
     const subjectString = cleanLabel(subject.value);
     const objectString = cleanLabel(object.value);

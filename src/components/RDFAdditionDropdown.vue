@@ -3,6 +3,14 @@ import { Delete, DeleteIcon } from 'lucide-vue-next';
 
 export default {
   name: 'Dropdown',
+
+  /**
+   * Props of the Dropdown component
+   * @property label - Label for the input field
+   * @property options - List of selectable options (each with a label)
+   * @property modelValue - Bound value from parent for v-model
+   * @property disabled - Whether the input and dropdown should be disabled
+   */
   props: {
     label: {
       type: String,
@@ -22,6 +30,12 @@ export default {
     }
   },
   emits: ['update:modelValue'],
+
+  /**
+   * Component's local state
+   * @property search - Current search input value
+   * @property showDropdown - Controls visibility of the dropdown list
+   */
   data() {
     return {
       search: this.modelValue,
@@ -29,6 +43,9 @@ export default {
     };
   },
   computed: {
+    /**
+     * Returns options filtered based on current search input
+     */
     filteredOptions() {
       return this.options.filter(option =>
         option.label.toLowerCase().includes(this.search.toLowerCase())
@@ -36,17 +53,30 @@ export default {
     }
   },
   methods: {
+    /**
+     * Handles user input in the text field
+     * Emits the new value to the parent and opens the dropdown
+     */
     handleInput(event) {
       if (this.disabled) return;
       this.search = event.target.value;
       this.$emit('update:modelValue', this.search);
       this.showDropdown = true;
     },
+
+    /**
+     * Selects an option from the dropdown
+     * Sets the search to the selected label and closes the dropdown
+     */
     selectOption(option) {
       this.search = option.label;
       this.$emit('update:modelValue', this.search);
       this.showDropdown = false;
     },
+
+    /**
+     * Closes dropdown if the user clicks outside the component
+     */
     handleClickOutside(event) {
       if (
         this.$refs.dropdownContainer &&
@@ -55,6 +85,10 @@ export default {
         this.showDropdown = false;
       }
     },
+
+    /**
+     * Clears the current input value and hides the dropdown
+     */
     clearInput() {
       this.search = '';
       this.$emit('update:modelValue', '');
@@ -62,6 +96,9 @@ export default {
     }
   },
   watch: {
+    /**
+     * Updates local search value when modelValue prop changes
+     */
     modelValue(newVal) {
       this.search = newVal;
     }

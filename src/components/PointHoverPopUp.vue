@@ -2,7 +2,11 @@
 import { useColorMode } from '@vueuse/core';
 import { defineProps } from 'vue';
 
-
+/**
+ * Props of the PointHoverPopUp component
+ * @property hoveredPoint - Information about the hovered point, including its label and details
+ * @property position - Position of the mouse cursor to position the popup accordingly
+ */
 defineProps<{
   hoveredPoint: {
     label: string;
@@ -15,6 +19,7 @@ defineProps<{
 
 }>();
 
+// Current color mode (Light- or Dark-Mode)
 const mode = useColorMode()
 
 </script>

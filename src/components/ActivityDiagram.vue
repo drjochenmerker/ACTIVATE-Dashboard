@@ -475,6 +475,7 @@ export default defineComponent({
             updateColors();
         });
 
+        // Watcher for the sessionStore to update diagram when the activityData changes
         watch(() => sessionStore.outdated, async () => {
             if (sessionStore.outdated) {
                 activityData.value = await getActivityDetail(sessionStore.sessionActivity as Activity)

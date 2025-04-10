@@ -30,6 +30,12 @@ const props = defineProps({
   }
 });
 
+/** 
+ * Reactive references for managing conflict details and reply input state
+ * - conflictDetail: Stores the current conflict's details
+ * - replyInputVisible: Tracks visibility of reply input for each conflict
+ * - newReplyText: Stores temporary reply text for each conflict
+ */
 const conflictDetail = ref<any>(null);
 const replyInputVisible = ref<Record<string, boolean>>({});
 const newReplyText = ref<Record<string, string>>({});
@@ -38,6 +44,7 @@ const newReplyText = ref<Record<string, string>>({});
 // Set status from props
 const selectedStatus = ref<any>(props.status);
 
+// Stores for the conflicts and the session
 const conflictStore = useConflictsStore();
 const sessionStore = useSessionStore();
 
@@ -49,19 +56,18 @@ onMounted(() => {
   conflictDetail.value = { ...props.conflict };
 });
 
-// watch for props.conflict in case it changes externally (e.g. through store updates)
+// Watcher for props.conflict that adds the new conflict
 watch(() => props.conflict, (newConflict) => {
   conflictDetail.value = { ...newConflict };
 }, { deep: true });
 
-
-// watch the selected status and update the conflict status
+// Watcher for the selected status that causes the update of the conflict status
 watch(selectedStatus, async (newStatus) => {
   await updateConflict(sessionStore.sessionActivity!.graph, props.conflict.id, conflictPredicate.status, newStatus);
   conflictStore.updateConflict(props.conflict.id, sessionStore.sessionActivity!.graph);
 });
 
-// toggle input field
+// Toggle for the input field
 const toggleReplyInput = async (conflictId: string) => {
   replyInputVisible.value[conflictId] = !replyInputVisible.value[conflictId];
   if (replyInputVisible.value[conflictId]) {
@@ -69,11 +75,18 @@ const toggleReplyInput = async (conflictId: string) => {
     textareaRef.value?.focus();
   }
   if (!replyInputVisible.value[conflictId]) {
-    newReplyText.value[conflictId] = ''; // Textfeld leeren
+    newReplyText.value[conflictId] = '';
   }
 };
 
-// Grouped participants to see which participants are included in the conflict
+/**
+ * Computes a grouped collection of participants by their type from the conflict.
+ * Groups participants into an object where keys are participant types and values are arrays of participant IDs.
+ * Returns an empty object if no participants are present.
+ * Is used to show the participating parties of each conflict in the conflict card/NoteCard.
+ * 
+ * @returns {Record<string, string[]>} A record of participant types mapped to their corresponding participant IDs
+ */
 const groupedParticipants = computed(() => {
   const groups: Record<string, string[]> = {};
   if (!props.conflict.participants) return groups;
@@ -88,18 +101,19 @@ const groupedParticipants = computed(() => {
   return groups;
 });
 
-// Function to save a reply to a conflict
+/**
+ * Saves a reply to a specific conflict by adding a comment and updating the UI state.
+ * 
+ * @param {string} conflictId - The unique identifier of the conflict to which the reply is being added
+ * @returns {Promise<void>} A promise that resolves when the comment is saved and UI is updated
+ */
 const saveReply = async (conflictId: string) => {
-  const graph = sessionStore.sessionActivity!.graph;
-  const role = sessionStore.sessionRole!;
   if (!newReplyText.value[conflictId]) return;
 
   try {
     await addComment(
-      graph,
       conflictId,
-      role,
-      newReplyText.value[conflictId] // reply text
+      newReplyText.value[conflictId] // Reply text
     );
 
     if (conflictDetail.value) {
@@ -107,6 +121,7 @@ const saveReply = async (conflictId: string) => {
         conflictDetail.value.replies = [];
       }
     }
+    // Important to refresh the conflict list so that the UI shows the new comment immediately
     useConflictsStore().refreshConflictList();
     replyInputVisible.value[conflictId] = false;
     newReplyText.value[conflictId] = '';
@@ -123,12 +138,17 @@ const handleEnterKey = (event: KeyboardEvent) => {
   }
 };
 
-// Delete conflict
+/**
+ * Deletes a specific conflict from the conflict store and updates the conflict list.
+ * 
+ * @param {string} id - The unique identifier of the conflict to be deleted
+ * @returns {Promise<void>} A promise that resolves when the conflict is deleted and the list is refreshed
+ */
 const handleDelete = async (id: string) => {
   try {
     const response = await deleteConflict(sessionStore.sessionActivity!.graph, id);
 
-    conflictStore.refreshConflictList();
+    conflictStore.refreshConflictList(); // important to see result immediately as the conflicts are shown from the store
     if (response.status === "OK") {
       conflictStore.removeConflict(id); // delete conflict from store
     }
@@ -142,7 +162,6 @@ const removeReply = (id: string) => {
     conflictDetail.value.replies = conflictDetail.value.replies.filter((reply: { id: string; }) => reply.id !== id);
   }
 };
-
 
 </script>
 

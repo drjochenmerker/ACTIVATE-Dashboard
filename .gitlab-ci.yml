@@ -11,21 +11,18 @@ build:
   stage: build
   image: node:lts-bookworm-slim
   script:
-    - npm ci
+    - npm i
     - npm run build
   artifacts:
     paths:
       - dist/
-  when: manual
 
-pages:
+deploy:
   stage: deploy
-  script:
-    - mkdir -p public
-    - cp -r dist/* public
-  artifacts:
-    paths:
-      - public
   only:
-    - main
-  when: manual
+    - prod
+  script:
+      - mkdir -p ~/.ssh
+      - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_ed25519
+      - chmod 600 ~/.ssh/id_ed25519
+      - ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "cd /infrastructure/apps/activate-dashboard && git pull origin prod"
