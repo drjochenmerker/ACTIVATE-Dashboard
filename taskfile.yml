@@ -1,0 +1,34 @@
+version: '3'
+tasks:
+  create:
+    cmds:
+      - podman compose down
+      - podman compose up -d 
+      - podman ps | grep activate-dashboard
+
+  start:
+    cmds:
+      - podman compose up -d 
+      - podman ps | grep activate-dashboard
+
+  stop:
+    cmds:
+      - podman compose stop 
+      - podman ps -a | grep activate-dashboard
+
+  down:
+    cmds:
+      - podman compose down
+      - podman ps -a | grep activate-dashboard
+
+  update:
+    cmds:
+      - task create
+
+  up:
+    cmds:
+      - task create
+      
+  reload-nginx:
+    cmds:
+      - podman exec -it proxy_service-proxy_1 service nginx reload
