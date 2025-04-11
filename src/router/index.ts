@@ -26,11 +26,11 @@ const router = createRouter({
     routes,
 });
 
-router.beforeEach((to) => {  
-const sessionStore = useSessionStore();
+router.beforeEach((to) => {
+    const sessionStore = useSessionStore();
     if (!sessionStore.isSessionActive && to.path !== '/start') {
-      return '/start';
+        return '/start';
     }
-  });
+});
 
 export default router;

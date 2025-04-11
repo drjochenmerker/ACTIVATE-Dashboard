@@ -1,29 +1,7 @@
 <script setup lang="ts">
+import { Conflict } from '@/data/knowledge_graph/structures';
 import { useColorMode } from '@vueuse/core';
 import { computed, nextTick, onMounted, ref, watch } from 'vue';
-
-/**
- * Participant Interface
- * Data structure for a conflict participant
- */
-interface Participant {
-  id: string;
-  type: string;
-}
-
-/**
- * Conflict Interface
- * Data structure representing a conflict including participants and metadata
- */
-interface Conflict {
-  title: string;
-  description?: string;
-  author: string;
-  timestamp?: Date;
-  status: string;
-  participants: Participant[];
-  replies?: any[];
-}
 
 /**
  * Props of the ConflictHoverPopUp component

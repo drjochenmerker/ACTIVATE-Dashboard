@@ -131,40 +131,10 @@ export async function getConflictDetail(graph: string, conflictId: string): Prom
   };
   query = query.replaceMultiple(mapObj);
   const data = await fetchSparql(query);
-  let parsedConflict = { id: conflictId } as Conflict;
-  // Round 1: Build references
-  data.map((item: StringAccessObject) => {
-    // Conflict Data
-    if (item.conflict_p && item.conflict_p.value.split("#").pop() == "HasComment") {
-      if (parsedConflict.replies === undefined) { parsedConflict.replies = [] };
-      parsedConflict.replies.push({
-        id: item.conflict_o.value.split("#").pop()
-      });
-    }
-    // Comment Data
-    else if (item.p && item.p.value.split("#").pop() == "HasComment") {
-      const replyIndex = parsedConflict.replies?.find(reply => reply.id == item.s.value.split("#").pop());
-      if (replyIndex) {
-        // Add empty list if first comment
-        if (replyIndex.replies === undefined) { replyIndex.replies = [] };
-        replyIndex.replies.push({
-          id: item.o.value.split("#").pop()
-        });
-      }
-      // Comment nested in another comment
-      else {
-        const nestedComment = findNestedComment(item.s.value.split("#").pop(), parsedConflict);
-        if (nestedComment) {
-          // Add empty list if first nested comment
-          if (nestedComment.replies === undefined) { nestedComment.replies = [] };
-          nestedComment.replies.push({
-            id: item.o.value.split("#").pop()
-          });
-        }
-      }
-    }
-  });
-  // Round 2: Fill in the details
+  const parsedConflict = { id: conflictId, replies: [] as Comment[] } as Conflict;
+  const lookupMap = new Map();
+  const rootReplyIds = [] as string[];
+  // Round 1: Build isolated data items
   data.map((item: StringAccessObject) => {
     // Conflict Data
     if (item.conflict_p) {
@@ -183,7 +153,6 @@ export async function getConflictDetail(graph: string, conflictId: string): Prom
           break;
         case "HasParticipant":
           if (parsedConflict.participants === undefined) { parsedConflict.participants = [] as Participant[] };
-          //HERE
           if (item.object_type === undefined) { item.object_type = { value: "miscellaneous" } }
           let type = camelToSnakeCase(item.object_type.value.split("#").pop());
           if (type === "rule" || type === "instrument") {
@@ -195,6 +164,7 @@ export async function getConflictDetail(graph: string, conflictId: string): Prom
           parsedConflict.status = item.conflict_o.value;
           break;
         case "HasComment":
+          rootReplyIds.push(item.conflict_o.value.split("#").pop());
           break;
         default:
           if (item.conflict_p !== undefined) {
@@ -204,49 +174,56 @@ export async function getConflictDetail(graph: string, conflictId: string): Prom
       }
     }
     // Comment Data
-    else {
-      let replyIndex;
+    else if (item.p) {
       switch (item.p.value.split("#").pop()) {
         case "WrittenBy":
-          replyIndex = parsedConflict.replies?.find(reply => reply.id == item.s.value.split("#").pop());
-          // console.log("Looking for", item.s.value.split("/").pop(), "in", parsedConflict.replies, "found", replyIndex);
-          if (replyIndex) {
-            replyIndex.author = item.o.value;
+          if (lookupMap.has(item.s.value.split("#").pop())) {
+            lookupMap.get(item.s.value.split("#").pop()).author = item.o.value;
           }
           else {
-            const nestedComment = findNestedComment(item.s.value.split("#").pop(), parsedConflict);
-            if (nestedComment) {
-              nestedComment.author = item.o.value;
-            }
+            lookupMap.set(item.s.value.split("#").pop(), {
+              id: item.s.value.split("#").pop(),
+              author: item.o.value
+            } as Comment)
           }
           break;
         case "CommentDescription":
-          replyIndex = parsedConflict.replies?.find(reply => reply.id == item.s.value.split("#").pop());
-          // console.log("Looking for", item.s.value.split("/").pop(), "in", parsedConflict.replies, "found", replyIndex);
-          if (replyIndex) {
-            replyIndex.comment = item.o.value;
+          if (lookupMap.has(item.s.value.split("#").pop())) {
+            lookupMap.get(item.s.value.split("#").pop()).comment = item.o.value;
           }
           else {
-            const nestedComment = findNestedComment(item.s.value.split("#").pop(), parsedConflict);
-            if (nestedComment) {
-              nestedComment.comment = item.o.value;
-            }
+            lookupMap.set(item.s.value.split("#").pop(), {
+              id: item.s.value.split("#").pop(),
+              comment: item.o.value
+            } as Comment)
           }
           break;
         case "CreationDate":
-          replyIndex = parsedConflict.replies?.find(reply => reply.id == item.s.value.split("#").pop());
-          // console.log("Looking for", item.s.value.split("/").pop(), "in", parsedConflict.replies, "found", replyIndex);
-          if (replyIndex) {
-            replyIndex.timestamp = new Date(item.o.value);
+          if (lookupMap.has(item.s.value.split("#").pop())) {
+            lookupMap.get(item.s.value.split("#").pop()).timestamp = new Date(item.o.value);
           }
           else {
-            const nestedComment = findNestedComment(item.s.value.split("#").pop(), parsedConflict);
-            if (nestedComment) {
-              nestedComment.timestamp = new Date(item.o.value);
-            }
+            lookupMap.set(item.s.value.split("#").pop(), {
+              id: item.s.value.split("#").pop(),
+              timestamp: new Date(item.o.value)
+            } as Comment)
           }
           break;
         case "HasComment":
+          if (lookupMap.has(item.s.value.split("#").pop())) {
+            if (lookupMap.get(item.s.value.split("#").pop()).replies === undefined) {
+              lookupMap.get(item.s.value.split("#").pop()).replies = [item.o.value.split("#").pop()] as Comment[];
+            }
+            else {
+              lookupMap.get(item.s.value.split("#").pop()).replies.push(item.o.value.split("#").pop());
+            }
+          }
+          else {
+            lookupMap.set(item.s.value.split("#").pop(), {
+              id: item.s.value.split("#").pop(),
+              replies: [item.o.value.split("#").pop()]
+            } as Comment)
+          }
           break;
         default:
           if (item.p !== undefined) {
@@ -255,7 +232,31 @@ export async function getConflictDetail(graph: string, conflictId: string): Prom
           break;
       }
     }
-  })
+  });
+  // Round 2: Link isolated items
+  // Link comments
+  for (const [_, value] of lookupMap.entries()) {
+    const node = lookupMap.get(value.id);
+    const replies = value.replies ? [...value.replies] : [];
+    for (const replyId of replies) {
+      const reply = lookupMap.get(replyId);
+      if (reply) {
+        node.replies!.splice(node.replies!.indexOf(replyId), 1);
+        node.replies!.push(reply);
+      }
+      else {
+        console.log("Error in Database - reply not found in lookup map", replyId, lookupMap);
+      }
+    }
+  }
+  // Link conflict and root level
+  for (const rootId of rootReplyIds) {
+    const comment = lookupMap.get(rootId);
+    if (comment) {
+      parsedConflict.replies!.push(comment);
+    }
+  }
+  console.log("DONE")
   return parsedConflict;
 }
 

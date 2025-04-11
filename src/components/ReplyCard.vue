@@ -1,18 +1,10 @@
 <script lang="ts" setup>
-import { defineProps } from 'vue';
-import { deleteComment } from '@/data/knowledge_graph/write_operations';
+import { defineProps, nextTick, onMounted, ref, watch } from 'vue';
+import { Button } from '@/components/ui/button';
+import { addComment, deleteComment } from '@/data/knowledge_graph/write_operations';
 import { useConflictsStore } from '@/stores/conflictsStore';
 import { useSessionStore } from '@/stores/sessionStore';
 
-/** 
- * ReplyCard-Component
- * Shows a reply for a specific parent element
- * 
- * ToDo:
-    * Originally planned: Recursive component to show nested replies
-    * which is already implemented in the backend
-    * SEE "inProgress_ReplyCard.txt"
- */
 
 const props = defineProps({
     parentComment: {
@@ -25,38 +17,83 @@ const props = defineProps({
 const sessionStore = useSessionStore();
 const conflictStore = useConflictsStore();
 
-// Helper function to see if a comment has replies
+// Toggle for visibility of reply input field
+const replyInputVisible = ref(false);
+const newReplyText = ref('');
+const textareaRef = ref<HTMLTextAreaElement | null>(null);
+
+onMounted(() => {
+    console.log(props.parentComment)
+})
+
+const toggleReplyInput = async () => {
+    replyInputVisible.value = !replyInputVisible.value;
+    if (replyInputVisible.value) {
+        await nextTick();
+        textareaRef.value?.focus();
+    }
+}
+
+// Function to save a reply
+const saveReply = async (parentCommentId: string) => {
+    // console.log(`save comment for conflict with id: ${parentCommentId}:`, newReplyText.value);
+    if (!newReplyText.value) return;
+    try {
+        await addComment(
+            parentCommentId,
+            newReplyText.value
+        );
+        console.log('reply saved successfully');
+
+
+        replyInputVisible.value = false; // hide input field
+        newReplyText.value = ''; // empty the text field 
+    } catch (error) {
+        console.error('Error while saving the reply: ', error);
+    }
+
+    await conflictStore.refreshConflictList();
+};
+
+watch(conflictStore, () => {
+    console.log("conflictstore: ", conflictStore.getConflicts);
+})
+
+// Function to submit via Enter key in textarea
+const handleEnterKey = (event: KeyboardEvent) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        saveReply(props.parentComment.id);
+    }
+};
+
+// help function
 const hasReplies = (comment: any) => Array.isArray(comment.replies) && comment.replies.length > 0;
 
-const emit = defineEmits(['deleteComment']);
 
-/**
- * Handles the deletion of a comment, supporting both top-level and nested comments
- * 
- * @param {string} id - The unique identifier of the comment to be deleted
- * @param {any} parentComment - The parent comment object containing potential nested replies
- * @returns {Promise<void>} Deletes the comment and updates the comment list accordingly
- */
+const emit = defineEmits(['deleteComment']);
+// Delete comment
 const handleDelete = async (id: string, parentComment: any) => {
     try {
         // Delete the comment (is it a nested comment?)
         const isNestedComment = hasReplies(parentComment);
 
 
-        // Call deleteComment function and refresh the conflict list
+        // call deleteComment function
         const response = await deleteComment(sessionStore.sessionActivity!.graph, id, isNestedComment);
         conflictStore.refreshConflictList();
 
         if (response.status === "OK") {
-            // Inform the parent
+            // inform the parent
             emit('deleteComment', id);
 
-            // If comment is nested, remove it from the replies
+            //parentComment.comment = "This comment is deleted.";
+            // if comment is nested, remove it from the replies
             if (parentComment.replies) {
                 parentComment.replies = parentComment.replies.filter((reply: any) => reply.id !== id);
             }
 
-            // If comment is not nested, delete it directly
+            // if comment is not nested, delete it directly
             if (!parentComment.replies || parentComment.replies.length === 0) {
                 //isDeleted.value = true;
             }
@@ -68,6 +105,11 @@ const handleDelete = async (id: string, parentComment: any) => {
     }
 };
 
+const removeReply = (id: string) => {
+    if (!Array.isArray(props.parentComment.replies)) return;
+    props.parentComment.replies = props.parentComment.replies.filter(reply => reply.id !== id);
+    conflictStore.refreshConflictList();
+};
 
 </script>
 
@@ -84,6 +126,25 @@ const handleDelete = async (id: string, parentComment: any) => {
             </div>
             <p class="reply-text">{{ props.parentComment.comment }}</p>
         </div>
+
+        <!-- Reply Button to hide input field -->
+        <Button @click="toggleReplyInput()">
+            {{ replyInputVisible ? 'Cancel' : 'Answer' }}
+        </Button>
+
+        <!-- Reply input field -->
+        <div v-if="replyInputVisible" class="reply-input">
+            <textarea ref="textareaRef" v-model="newReplyText" placeholder="Write something to answer..."
+                @keydown.enter="handleEnterKey($event)"></textarea>
+            <Button @click="saveReply(props.parentComment.id)">Save Comment</Button>
+        </div>
+
+        <div v-if="Array.isArray(props.parentComment.replies) && props.parentComment.replies.length"
+            class="nested-replies">
+            <ReplyCard v-for="nestedReply in props.parentComment.replies" :key="nestedReply.id"
+                :parentComment="nestedReply" @deleteComment="removeReply" />
+        </div>
+
     </div>
 </template>
 
