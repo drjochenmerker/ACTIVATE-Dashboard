@@ -5,26 +5,24 @@ import { getActivities, getActivityClassIds } from '@/data/knowledge_graph/read_
 import { Activity } from '@/data/knowledge_graph/structures';
 import { ref, onMounted, watch } from 'vue';
 import { useSessionStore } from '@/stores/sessionStore';
-import { Play, Loader2 } from 'lucide-vue-next';
 import { KnowledgeGraphActivityClass } from '@/data/knowledge_graph/structures';
 // UI components imports...
 import {
   Card,
-  CardContent,
   CardHeader,
-  CardTitle,
-  CardFooter
+  CardTitle
 } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import ActivityCard from '@/components/ActivityCard.vue';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import Label from '@/components/ui/label/Label.vue';
-import Checkbox from '@/components/ui/checkbox/Checkbox.vue';
-import Button from '@/components/ui/button/Button.vue';
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogTrigger,
+} from '@/components/ui/dialog'
+import { addActivity, addEntity } from '@/data/knowledge_graph/write_operations';
 
 useColorMode();
 const sessionStore = useSessionStore();
@@ -32,6 +30,10 @@ const sessionStore = useSessionStore();
 // State management for activities
 const selectedActivity = ref<string>();
 const allActivities = ref<Activity[]>([]);
+
+let newTitle = '';
+let newDescription = '';
+let defaultRole = '';
 
 // Load all available activities on component mount
 onMounted(async () => {
@@ -51,83 +53,58 @@ watch(selectedActivity, async () => {
   sessionStore.sessionRole = ''; // Reset role selection
 });
 
-// Handle session start when user clicks start button
-const handleStartSession = async () => {
-  sessionStore.sessionActivity = allActivities.value.find(a => a.graph === selectedActivity.value)!;
-  sessionStore.startSession();
+const addNewActivity = async () => {
+  await addActivity(newTitle, newDescription);
+  //await addEntity(newTitle, defaultRole, KnowledgeGraphActivityClass.subject);
+  // Implement logic to add a new activity
+  console.log('New activity added');
 }
 
-// Validate if session can be started (requires both activity and role selection)
-const sessionStartAllowed = () => !selectedActivity || !sessionStore.sessionRole;
+
 </script>
 
 <template>
   <!-- Main container with centered card layout -->
   <div class="flex items-center justify-center h-screen">
-    <Card class="w-1/4">
+    <Card>
       <!-- Card header with logo -->
       <CardHeader>
         <CardTitle>
-          <img src="@/assets/images/activate-logo-full.gif" class="" alt="Logo" />
+          <img src=" @/assets/images/activate-logo-full.gif" class="" alt="Logo" />
         </CardTitle>
       </CardHeader>
 
-      <!-- Main form content -->
-      <CardContent>
-        <!-- Activity selection dropdown -->
-        <Label for="activitySelect">Activity</Label>
-        <Select v-model="selectedActivity" id="activitySelect">
-          <!-- Select components... -->
-          <SelectTrigger>
-            <SelectValue placeholder="Select an activity for the debriefing" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem v-for="activity in allActivities" :value="activity.graph">
-              {{ activity.graph }}
-            </SelectItem>
-          </SelectContent>
-        </Select>
+      <div>
 
-        <!-- Role selection dropdown (disabled until activity is selected) -->
-        <div class="mt-4">
-          <Label for="roleSelect">Role</Label>
-          <Select v-model="sessionStore.sessionRole" :disabled="!selectedActivity" id="roleSelect">
-            <!-- Select components... -->
-            <SelectTrigger>
-              <SelectValue placeholder="Select your role for the debriefing" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem v-for="role in sessionStore.availableRoles" :value="role">
-                {{ role }}
-              </SelectItem>
-            </SelectContent>
-          </Select>
+        <div class="delete-activity-button">
+          <Dialog>
+            <DialogTrigger as-child>
+              <Button variant="outline">
+                <Delete />
+              </Button>
+            </DialogTrigger>
+            <DialogContent class="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Create new Activity</DialogTitle>
+                <DialogDescription>Enter Title
+                </DialogDescription>
+                <textarea v-model="newTitle" />
+                <DialogDescription>Enter Description</DialogDescription>
+                <textarea v-model="newDescription" />
+                <DialogDescription>Enter default role</DialogDescription>
+                <textarea v-model="defaultRole" />
+
+                <Button @click="() => addNewActivity()">Done</Button>
+              </DialogHeader>
+            </DialogContent>
+          </Dialog>
         </div>
 
-        <!-- Instructor mode toggle -->
-        <div class="flex items-center space-x-2 mt-4">
-          <Checkbox id="cbInstructorMode" :checked="sessionStore.instructorMode"
-            @update:checked="sessionStore.instructorMode = $event" />
-          <Label for="cbInstructorMode" class="text-sm font-normal">
-            Enable Instructor Mode
-          </Label>
+        <div class="w-full max-w-md" v-for="activity in allActivities">
+          <ActivityCard :activity="activity" />
         </div>
-      </CardContent>
+      </div>
 
-      <!-- Start button with dynamic state -->
-      <CardFooter>
-        <Button @click="handleStartSession" class="w-full" :disabled="sessionStartAllowed()">
-          <!-- Button content changes based on selection state -->
-          <template v-if="sessionStartAllowed()">
-            <Loader2 class="w-4 h-4 mr-2 animate-spin" />
-            Select activity and role
-          </template>
-          <template v-else>
-            <Play />
-            Start debriefing
-          </template>
-        </Button>
-      </CardFooter>
     </Card>
   </div>
 </template>
