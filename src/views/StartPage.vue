@@ -25,6 +25,7 @@ import {
 import Label from '@/components/ui/label/Label.vue';
 import Checkbox from '@/components/ui/checkbox/Checkbox.vue';
 import Button from '@/components/ui/button/Button.vue';
+import { buildTreeStructByLang } from '@/data/knowledge_graph/utils';
 
 useColorMode();
 const sessionStore = useSessionStore();
@@ -48,6 +49,8 @@ watch(selectedActivity, async () => {
     return;
   }
   sessionStore.availableRoles = await getActivityClassIds(selectedActivity.value, KnowledgeGraphActivityClass.subject);
+  console.log('Available roles:', sessionStore.availableRoles);
+  console.log('TEST',buildTreeStructByLang(sessionStore.availableRoles, sessionStore.activeLanguage))
   sessionStore.sessionRole = ''; // Reset role selection
 });
 
@@ -97,8 +100,8 @@ const sessionStartAllowed = () => !selectedActivity || !sessionStore.sessionRole
               <SelectValue placeholder="Select your role for the debriefing" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem v-for="role in sessionStore.availableRoles" :value="role">
-                {{ role }}
+              <SelectItem v-for="role in sessionStore.availableRoles" :value="role.id">
+                {{ role.labels[sessionStore.activeLanguage] ? role.labels[sessionStore.activeLanguage] : Object.values(role.labels)[0] }}
               </SelectItem>
             </SelectContent>
           </Select>

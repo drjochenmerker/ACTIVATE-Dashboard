@@ -62,9 +62,9 @@ export type Action = {
 }
 
 /**
- * Object in the knowledge graph
+ * Objective in the knowledge graph
  */
-export type Object = {
+export type Objective = {
     label: string;
     type: string;
     properties: Action[];
@@ -74,7 +74,7 @@ export type Object = {
  * Detail of an activity in the knowledge graph
  */
 export class ActivityDetail {
-    [key: string]: Object[];
+    [key: string]: Objective[];
 }
 
 /**
@@ -195,6 +195,24 @@ export enum KnowledgeGraphActivityClass {
     instruments = "Instrument",
     divison_of_labour = "DivisonOfLabour",
     community = "Community"
+}
+
+/**
+ * MultiLangObject that allows the usage of multiple languages
+ */
+export type MultiLangObject = {
+    id: string,
+    labels: Record<string, string>,
+    value?: string
+}
+
+/**
+ * NestedMultiLangObject that allows the usage of multiple languages
+ */
+export type NestedMultiLangObject = {
+    level: string,
+    values?: MultiLangObject[],
+    next?: NestedMultiLangObject[]
 }
 
 /**
