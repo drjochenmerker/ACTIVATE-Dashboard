@@ -3,7 +3,7 @@ tasks:
   create:
     cmds:
       - podman compose down
-      - podman compose up -d 
+      - podman compose up -d --build
       - podman ps | grep activate-dashboard
 
   start:
