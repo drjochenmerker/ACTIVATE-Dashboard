@@ -6,11 +6,11 @@ import { useSessionStore } from '@/stores/sessionStore';
 import {
     Select,
     SelectContent,
-    SelectItem,
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
 import LogoutButton from './LogoutButton.vue';
+import RecursiveSelect from './RecursiveSelect.vue';
 
 const sessionStore = useSessionStore();
 </script>
@@ -43,9 +43,7 @@ const sessionStore = useSessionStore();
                                 <SelectValue placeholder="Select your role" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem v-for="role in sessionStore.availableRoles" :value="role">
-                                    {{ role }}
-                                </SelectItem>
+                                <RecursiveSelect :node="sessionStore.availableRoles" />
                             </SelectContent>
                         </Select>
                     </template>
