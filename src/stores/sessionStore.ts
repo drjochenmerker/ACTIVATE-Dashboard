@@ -1,5 +1,5 @@
 // src/stores/activityStore.ts
-import { Activity, MultiLangObject } from '@/data/knowledge_graph/structures';
+import { Activity, NestedMultiLangObject } from '@/data/knowledge_graph/structures';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
@@ -30,10 +30,10 @@ export const useSessionStore = defineStore('session', () => {
 
   const sessionActivity = ref<Activity | undefined>(undefined);
   const sessionRole = ref<string | undefined>(undefined);
-  const availableRoles = ref<MultiLangObject[]>([]);
+  const availableRoles = ref<NestedMultiLangObject>({} as NestedMultiLangObject);
   const instructorMode = ref(false);
   const isSessionActive = ref(false);
-  const activeLanguage = ref('en');
+  const activeLanguage = ref('de');
 
   const outdated = ref(false);
 

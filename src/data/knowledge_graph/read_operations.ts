@@ -427,6 +427,5 @@ export async function getActivityClassIds(graph: string, activityClass: Knowledg
       entry.labels = { default: entry.labels[lang] };
     }
   }
-  console.log(result)
   return result;
 }

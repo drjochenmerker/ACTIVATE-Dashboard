@@ -20,12 +20,13 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
+  SelectValue
 } from '@/components/ui/select';
 import Label from '@/components/ui/label/Label.vue';
 import Checkbox from '@/components/ui/checkbox/Checkbox.vue';
 import Button from '@/components/ui/button/Button.vue';
 import { buildTreeStructByLang } from '@/data/knowledge_graph/utils';
+import RecursiveSelect from '@/components/RecursiveSelect.vue';
 
 useColorMode();
 const sessionStore = useSessionStore();
@@ -48,9 +49,9 @@ watch(selectedActivity, async () => {
   if (!selectedActivity.value) {
     return;
   }
-  sessionStore.availableRoles = await getActivityClassIds(selectedActivity.value, KnowledgeGraphActivityClass.subject);
-  console.log('Available roles:', sessionStore.availableRoles);
-  console.log('TEST',buildTreeStructByLang(sessionStore.availableRoles, sessionStore.activeLanguage))
+  sessionStore.availableRoles = buildTreeStructByLang(
+    await getActivityClassIds(selectedActivity.value, KnowledgeGraphActivityClass.subject),
+    sessionStore.activeLanguage);
   sessionStore.sessionRole = ''; // Reset role selection
 });
 
@@ -100,9 +101,7 @@ const sessionStartAllowed = () => !selectedActivity || !sessionStore.sessionRole
               <SelectValue placeholder="Select your role for the debriefing" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem v-for="role in sessionStore.availableRoles" :value="role.id">
-                {{ role.labels[sessionStore.activeLanguage] ? role.labels[sessionStore.activeLanguage] : Object.values(role.labels)[0] }}
-              </SelectItem>
+              <RecursiveSelect :node="sessionStore.availableRoles" />
             </SelectContent>
           </Select>
         </div>
