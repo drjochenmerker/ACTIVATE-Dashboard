@@ -4,13 +4,14 @@ import PointHoverPopUp from '@/components/PointHoverPopUp.vue';
 import { useColorMode } from "@vueuse/core";
 import { Button } from '@/components/ui/button';
 import { useActivityPointsStore } from "@/stores/activityPointsStore";
-import { Activity, Conflict } from "@/data/knowledge_graph/structures";
+import { Activity, Conflict, conflictStatus } from "@/data/knowledge_graph/structures";
 import ConflictHoverPopUp from "./ConflictHoverPopUp.vue";
 import { useConflictsStore } from "@/stores/conflictsStore";
 import { calculateConflictPositions } from "@/composables/calculateConflictPositions";
 import { useSessionStore } from "@/stores/sessionStore";
 import { getActivityDetail } from "@/data/knowledge_graph/read_operations";
 import { useRouter } from "vue-router";
+import { activateTerms } from "@/data/contentData";
 
 /** 
  * Activity-Diagram-Component
@@ -80,13 +81,13 @@ export default defineComponent({
          * @property {boolean} active: Specifies if the point is active at the moment.
          * @property {boolean} highlighted: Specifies if the point is highlighted at the moment.
          */
-        const points = ref([
-            { x: triangleWidth / 2, y: triangleHeight / 8, id: "instruments", label: "Instruments", color: getPointColor(), active: false, highlighted: false }, // Ecke oben
-            { x: triangleWidth / 8, y: (triangleHeight / 8) * 7, id: "rules", label: "Rules", color: getPointColor(), active: false, highlighted: false }, // Ecke Links Unten
-            { x: (triangleWidth / 8) * 7, y: (triangleHeight / 8) * 7, id: "division_of_labour", label: "Division of Labour", color: getPointColor(), active: false, highlighted: false }, // Ecke Rechts Unten
-            { x: (triangleWidth / 16) * 5, y: triangleHeight / 2, id: "subject", label: "Subject", color: getPointColor(), active: false, highlighted: false }, // Links Mitte
-            { x: (triangleWidth / 16) * 11, y: triangleHeight / 2, id: "object", label: "Object(ive)", color: getPointColor(), active: false, highlighted: false }, // Rechts Mitte
-            { x: triangleWidth / 2, y: (triangleHeight / 8) * 7, id: "community", label: "Community", color: getPointColor(), active: false, highlighted: false }, // Unten Mitte
+        let points = ref([
+            { x: triangleWidth / 2, y: triangleHeight / 8, id: "instruments", label: activateTerms[sessionStore.activeLanguage].instruments, color: getPointColor(), active: false, highlighted: false }, // Ecke oben
+            { x: triangleWidth / 8, y: (triangleHeight / 8) * 7, id: "rules", label: activateTerms[sessionStore.activeLanguage].rules, color: getPointColor(), active: false, highlighted: false }, // Ecke Links Unten
+            { x: (triangleWidth / 8) * 7, y: (triangleHeight / 8) * 7, id: "division_of_labour", label: activateTerms[sessionStore.activeLanguage].division_of_labour, color: getPointColor(), active: false, highlighted: false }, // Ecke Rechts Unten
+            { x: (triangleWidth / 16) * 5, y: triangleHeight / 2, id: "subject", label: activateTerms[sessionStore.activeLanguage].subject, color: getPointColor(), active: false, highlighted: false }, // Links Mitte
+            { x: (triangleWidth / 16) * 11, y: triangleHeight / 2, id: "object", label: activateTerms[sessionStore.activeLanguage].object, color: getPointColor(), active: false, highlighted: false }, // Rechts Mitte
+            { x: triangleWidth / 2, y: (triangleHeight / 8) * 7, id: "community", label: activateTerms[sessionStore.activeLanguage].community, color: getPointColor(), active: false, highlighted: false }, // Unten Mitte
         ]);
 
         /**
@@ -359,6 +360,7 @@ export default defineComponent({
                 ctx.fillStyle = mode.value === "dark" ? "white" : "black";
                 point.active ? ctx.font = `bold ${triangleHeight / 40}px Arial` : ctx.font = `${triangleHeight / 40}px Arial`;
                 ctx.textAlign = "center";
+                // TODO Dynamic Positioning depending on language
                 if (point.id === "rules" || point.id === "community" || point.id === "division_of_labour") ctx.fillText(point.label, point.x, point.y + triangleHeight / 20);
                 if (point.id === "instruments") ctx.fillText(point.label, point.x, point.y - triangleHeight / 30);
                 if (point.id === "subject") ctx.fillText(point.label, point.x - triangleWidth / 30, point.y - triangleHeight / 30);
@@ -371,7 +373,7 @@ export default defineComponent({
                 conflictPositions.value.forEach((conflict: any) => {
                     ctx.beginPath();
                     ctx.arc(conflict.x, conflict.y, triangleHeight / 80, 0, 2 * Math.PI);
-                    ctx.fillStyle = conflict.status == "gelöst" ? "green" : conflict.status == "in Besprechung" ? "yellow" : "red";
+                    ctx.fillStyle = conflict.status == conflictStatus.open ? "green" : conflict.status == conflictStatus.inDiscussion ? "yellow" : "red";
                     ctx.fill();
                     ctx.strokeStyle = "black";
                     ctx.lineWidth = 1;
@@ -401,7 +403,7 @@ export default defineComponent({
 
                     // Adjust hoverPosition for cases in which the hoverPopUp would be outside the canvas
                     // TODO: Maybe find a better dynamic way to adjust the hoverPosition
-                    if (foundPoint.label === "Rules" || foundPoint.label === "Community" || foundPoint.label === "Division of Labour") {
+                    if (foundPoint.label === activateTerms[sessionStore.activeLanguage].rules || foundPoint.label === activateTerms[sessionStore.activeLanguage].community || foundPoint.label === activateTerms[sessionStore.activeLanguage].division_of_labour) {
                         hoverPosition.value.y -= 100
                     }
                 }
@@ -478,6 +480,14 @@ export default defineComponent({
         // Watcher for the sessionStore to update diagram when the activityData changes
         watch(() => sessionStore.outdated, async () => {
             if (sessionStore.outdated) {
+                points = ref([
+                    { x: triangleWidth / 2, y: triangleHeight / 8, id: "instruments", label: activateTerms[sessionStore.activeLanguage].instruments, color: getPointColor(), active: false, highlighted: false }, // Ecke oben
+                    { x: triangleWidth / 8, y: (triangleHeight / 8) * 7, id: "rules", label: activateTerms[sessionStore.activeLanguage].rules, color: getPointColor(), active: false, highlighted: false }, // Ecke Links Unten
+                    { x: (triangleWidth / 8) * 7, y: (triangleHeight / 8) * 7, id: "division_of_labour", label: activateTerms[sessionStore.activeLanguage].division_of_labour, color: getPointColor(), active: false, highlighted: false }, // Ecke Rechts Unten
+                    { x: (triangleWidth / 16) * 5, y: triangleHeight / 2, id: "subject", label: activateTerms[sessionStore.activeLanguage].subject, color: getPointColor(), active: false, highlighted: false }, // Links Mitte
+                    { x: (triangleWidth / 16) * 11, y: triangleHeight / 2, id: "object", label: activateTerms[sessionStore.activeLanguage].object, color: getPointColor(), active: false, highlighted: false }, // Rechts Mitte
+                    { x: triangleWidth / 2, y: (triangleHeight / 8) * 7, id: "community", label: activateTerms[sessionStore.activeLanguage].community, color: getPointColor(), active: false, highlighted: false }, // Unten Mitte
+                ]);
                 activityData.value = await getActivityDetail(sessionStore.sessionActivity as Activity)
                 await conflictStore.refreshConflictList();
                 conflictData = conflictStore.getConflicts;

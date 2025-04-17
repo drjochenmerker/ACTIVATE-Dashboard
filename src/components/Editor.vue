@@ -10,6 +10,7 @@ import { conflictStatus } from '@/data/knowledge_graph/structures';
 import { getActivities, getActivityDetail, getConflictDetail, getConflictIds } from '@/data/knowledge_graph/read_operations';
 import { addComment, addConflict } from '@/data/knowledge_graph/write_operations';
 import { useSessionStore } from '@/stores/sessionStore';
+import { staticContent } from '@/data/contentData';
 
 /** 
  * Editor-Component
@@ -48,8 +49,7 @@ export default {
         community: [],
         rules: [],
         divisionoflabour: []
-      },
-      sessionStore: useSessionStore(),
+      }
     };
   },
 
@@ -99,6 +99,13 @@ export default {
         // Check if any selection is made for each active point:
         return !value || value.length === 0;
       });
+    },
+    // Correclty link sessionStore and staticContent to allow dynamix texts
+    sessionStore() {
+      return useSessionStore();
+    },
+    staticContent() {
+      return staticContent;
     }
   },
   methods: {
@@ -110,7 +117,7 @@ export default {
     initQuill() {
       this.quill = new Quill(this.$refs.editorContainer, {
         theme: 'snow',
-        placeholder: 'Description...',
+        placeholder: "Description...",
         modules: {
           toolbar: [
             ['bold', 'italic', 'underline'],
@@ -292,7 +299,7 @@ export default {
       </button>
     </div>
 
-    <h3>Add Note to selected Points:</h3>
+    <h3>Add Note to selected points:</h3>
     <!-- dropdown: -->
     <div class="dropdown-container">
       <div v-for="point in activePoints" :key="point">

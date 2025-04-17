@@ -7,6 +7,7 @@ import Editor from '@/components/Editor.vue';
 import { useActivityPointsStore } from "@/stores/activityPointsStore";
 import { ref } from 'vue';
 import { useSessionStore } from '@/stores/sessionStore';
+import { staticContent } from '@/data/contentData';
 
 defineProps<{ conflicts: any[], activity: any }>();
 
@@ -15,11 +16,13 @@ const { getActivePoints } = storeToRefs(activityPointStore);
 
 const isTripleAdditionDialogOpen = ref(false);
 const isEntityAdditionDialogOpen = ref(false);
+
+const sessionStore = useSessionStore();
 </script>
 
 <template>
   <div class="flex justify-between w-1/2 items-center mb-4">
-    <h1 class="text-2xl font-semibold mb-4">Setting: {{ activity.name ? activity.graph : "Can't Load Activity Name" }}</h1>
+    <h1 class="text-2xl font-semibold mb-4">{{ staticContent.terms.setting[sessionStore.activeLanguage] }}: {{ activity.name ? activity.graph : staticContent.errors.activityNameLoad[sessionStore.activeLanguage] }}</h1>
   </div>
 
   <div class="flex w-full h-2/3 relative mx-auto gap-4">

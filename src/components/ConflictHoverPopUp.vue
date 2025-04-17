@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import { staticContent } from '@/data/contentData';
 import { Conflict } from '@/data/knowledge_graph/structures';
+import { useSessionStore } from '@/stores/sessionStore';
 import { useColorMode } from '@vueuse/core';
 import { computed, nextTick, onMounted, ref, watch } from 'vue';
 
@@ -37,6 +39,7 @@ const updatePopupHeight = () => {
   });
 };
 
+const sessionStore = useSessionStore();
 
 /**
  * On mount:
@@ -87,14 +90,14 @@ const adjustedPosition = computed(() => {
     <p v-if="hoveredConflictPoint.description">
       {{ hoveredConflictPoint.description }}
     </p>
-    <p><strong>Author:</strong> {{ hoveredConflictPoint.author }}</p>
+    <p><strong>{{staticContent.terms.author[sessionStore.activeLanguage]}}:</strong> {{ hoveredConflictPoint.author }}</p>
     <p>
-      <strong>Timestamp:</strong>
-      {{ hoveredConflictPoint.timestamp ? new Date(hoveredConflictPoint.timestamp).toLocaleString() : 'No timestamp available' }}
+      <strong>{{staticContent.terms.timestamp[sessionStore.activeLanguage]}}:</strong>
+      {{ hoveredConflictPoint.timestamp ? new Date(hoveredConflictPoint.timestamp).toLocaleString() : staticContent.errors.timestampLoad[sessionStore.activeLanguage] }}
     </p>
-    <p><strong>Status:</strong> {{ hoveredConflictPoint.status }}</p>
+    <p><strong>{{staticContent.terms.status[sessionStore.activeLanguage]}}:</strong> {{ staticContent.terms.conflictStatus[hoveredConflictPoint.status][sessionStore.activeLanguage] }}</p>
     <div v-if="hoveredConflictPoint.participants.length">
-      <p><strong>Participants:</strong></p>
+      <p><strong>{{staticContent.terms.participants[sessionStore.activeLanguage]}}:</strong></p>
       <ul class="custom-list">
         <li
           v-for="(participant, index) in hoveredConflictPoint.participants"
@@ -104,7 +107,7 @@ const adjustedPosition = computed(() => {
         </li>
       </ul>
     </div>
-    <p v-if="hoveredConflictPoint.replies"><strong>Replies:</strong> {{ hoveredConflictPoint.replies.length }}</p>
+    <p v-if="hoveredConflictPoint.replies"><strong>{{staticContent.terms.replies[sessionStore.activeLanguage]}}:</strong> {{ hoveredConflictPoint.replies.length }}</p>
   </div>
 </template>
 

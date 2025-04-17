@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { contentData } from '@/data/contentData';
+import { activateTerms, contentData } from '@/data/contentData';
 import ThemeSwitchButton from './ThemeSwitchButton.vue';
 import { User, Users } from 'lucide-vue-next';
 import { useSessionStore } from '@/stores/sessionStore';
@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/select';
 import LogoutButton from './LogoutButton.vue';
 import RecursiveSelect from './RecursiveSelect.vue';
+import LanguageSelect from './LanguageSelect.vue';
 
 const sessionStore = useSessionStore();
 </script>
@@ -29,17 +30,17 @@ const sessionStore = useSessionStore();
             <div class="flex items-center gap-6 whitespace-nowrap">
                 <router-link v-for="item in contentData" :key="item.id" :to="`/${item.id}`" :class="$route.path === `/${item.id}` ? 'font-semibold' : 'text-muted-foreground hover:text-foreground'
                     ">
-                    {{ item.title }}
+                    {{ activateTerms[sessionStore.activeLanguage][item.id] }}
                 </router-link>
             </div>
 
-            <div class="flex items-center gap-6 flex-1 justify-end">
-                <div class="flex flex-row gap-2 items-center my-2">
+            <div class="flex items-center flex-1 gap-2 justify-end">
+                <div class="flex flex-row gap-2 items-center my-2 w-32">
                     <!-- Either present a select for the all the roles (instructor mode), or just the role chosen at login -->
                     <template v-if="sessionStore.instructorMode">
-                        <Users />
+                        <Users class="w-1/3" />
                         <Select v-model="sessionStore.sessionRole" id="roleSelect">
-                            <SelectTrigger>
+                            <SelectTrigger class="w-[180px] overflow-hidden whitespace-nowrap truncate">
                                 <SelectValue placeholder="Select your role" />
                             </SelectTrigger>
                             <SelectContent>
@@ -52,10 +53,9 @@ const sessionStore = useSessionStore();
                         <span>{{ sessionStore.sessionRole }}</span>
                     </template>
                 </div>
-                <div class="flex flex-row gap-1">
+                <LanguageSelect/>
                 <LogoutButton />
                 <ThemeSwitchButton />
-            </div>
             </div>
         </nav>
     </header>

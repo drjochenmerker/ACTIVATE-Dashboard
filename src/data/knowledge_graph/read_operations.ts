@@ -158,7 +158,8 @@ export async function getConflictDetail(graph: string, conflictId: string): Prom
           if (type === "rule" || type === "instrument") {
             type += "s";
           }
-          parsedConflict.participants.push({ id: item.conflict_o.value.split("#").pop(), type: type });
+          // TODO Properly load participants
+          parsedConflict.participants.push({ id: item.conflict_o.value.split("#").pop(), name: "", type: type });
           break;
         case "ConflictState":
           parsedConflict.status = item.conflict_o.value;

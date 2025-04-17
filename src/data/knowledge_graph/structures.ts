@@ -92,6 +92,7 @@ export interface updateResponse {
  */
 export interface Participant {
     id: string,
+    name: string,
     type: string
 }
 
@@ -124,9 +125,9 @@ export type Comment = {
  * Enum for conflict status management
  */
 export enum conflictStatus {
-    open = "offen",
-    inDiscussion = "in Besprechung",
-    resolved = "gelöst"
+    open = "open",
+    inDiscussion = "inDiscussion",
+    resolved = "resolved"
 }
 
 /**
@@ -170,9 +171,9 @@ export type Predicate = {
  * WARNING: Should be replaced with a better solution later on
  */
 export enum LanguageCode {
-    german = "de",
-    english = "en",
-    swedish = "sv"
+    Deutsch = "de",
+    English = "en",
+    Svenska = "sv"
 }
 
 /**

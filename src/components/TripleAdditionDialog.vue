@@ -193,9 +193,9 @@ const applyTriple = async () => {
     const objectClass = mapToActivityClass(extractClass(object.value) || '');
 
     const languageLabelDummy: LanguageLabel[] = [
-        { label: predicate.value, language: LanguageCode.german },
-        { label: predicate.value, language: LanguageCode.english },
-        { label: predicate.value, language: LanguageCode.swedish }
+        { label: predicate.value, language: LanguageCode.Deutsch },
+        { label: predicate.value, language: LanguageCode.English },
+        { label: predicate.value, language: LanguageCode.Svenska }
     ];
 
     if (predicates.value.length === 0 || !predicates.value.some(item => item.predicate === predicate.value)) {

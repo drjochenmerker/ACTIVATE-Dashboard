@@ -2,11 +2,10 @@
 // Import necessary dependencies and components
 import { useColorMode } from '@vueuse/core';
 import { getActivities, getActivityClassIds } from '@/data/knowledge_graph/read_operations';
-import { Activity } from '@/data/knowledge_graph/structures';
+import { Activity, KnowledgeGraphActivityClass } from '@/data/knowledge_graph/structures';
 import { ref, onMounted, watch } from 'vue';
 import { useSessionStore } from '@/stores/sessionStore';
 import { Play, Loader2 } from 'lucide-vue-next';
-import { KnowledgeGraphActivityClass } from '@/data/knowledge_graph/structures';
 // UI components imports...
 import {
   Card,
@@ -39,9 +38,8 @@ const allActivities = ref<Activity[]>([]);
 onMounted(async () => {
   try {
     allActivities.value = await getActivities();
-    console.log("Aktivitäten geladen:", allActivities.value);
   } catch (error) {
-    console.error("Fehler beim Laden der Aktivitäten:", error);
+    console.error("Failed to load activities:", error);
   }
 });
 

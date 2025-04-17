@@ -2,6 +2,8 @@
 import { computed } from 'vue';
 import NoteCard from './NoteCard.vue';
 import { useConflictsStore } from '@/stores/conflictsStore';
+import { staticContent } from '@/data/contentData';
+import { useSessionStore } from '@/stores/sessionStore';
 
 const props = defineProps({
   pageData: {
@@ -16,6 +18,7 @@ const props = defineProps({
 
 // Store for conflicts
 const conflictStore = useConflictsStore();
+const sessionStore = useSessionStore();
 
 /**
  * Computes a filtered list of conflicts specific to the current page.
@@ -50,7 +53,7 @@ const filteredConflicts = computed(() => {
 
   <!-- Display a message if there are no conflicts -->
   <div v-else>
-    <p>There are no conflicts.</p>
+    <p>{{staticContent.errors.noConflicts[sessionStore.activeLanguage]}}</p>
   </div>
 </template>
 
