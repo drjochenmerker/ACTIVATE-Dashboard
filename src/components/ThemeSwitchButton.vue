@@ -22,7 +22,7 @@ const toggleMode = () => {
     <TooltipProvider>
         <Tooltip>
             <TooltipTrigger as-child>
-                <Button size="icon" class="rounded-full" @click="toggleMode">
+                <Button size="icon" class="rounded-full" variant="secondary" @click="toggleMode">
                     <Sun v-if="mode === 'dark'" />
                     <Moon v-else />
                 </Button>

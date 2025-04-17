@@ -39,6 +39,7 @@ const allActivities = ref<Activity[]>([]);
 onMounted(async () => {
   try {
     allActivities.value = await getActivities();
+    console.log("Aktivitäten geladen:", allActivities.value);
   } catch (error) {
     console.error("Fehler beim Laden der Aktivitäten:", error);
   }
@@ -87,7 +88,7 @@ const sessionStartAllowed = () => !selectedActivity || !sessionStore.sessionRole
           </SelectTrigger>
           <SelectContent>
             <SelectItem v-for="activity in allActivities" :value="activity.graph">
-              {{ activity.graph }}
+              {{ activity.name }}
             </SelectItem>
           </SelectContent>
         </Select>

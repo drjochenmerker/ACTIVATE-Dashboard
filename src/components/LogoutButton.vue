@@ -21,7 +21,7 @@ const logout = () => {
     <TooltipProvider>
         <Tooltip>
             <TooltipTrigger as-child>
-                <Button size="icon" class="rounded-full" @click="logout">
+                <Button size="icon" class="rounded-full" variant="secondary" @click="logout">
                     <LogOut />
                 </Button>
             </TooltipTrigger>
