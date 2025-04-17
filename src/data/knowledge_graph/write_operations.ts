@@ -41,29 +41,38 @@ export async function addConflict(graph: string, conflict: Conflict): Promise<up
 }
 
 /**
- * Deletes a conflict and all nested comments. Currently doesn't work
- * properly due to the testing sparql solution being a piece of shit that doesn't accept
- * any solution I tried and me refusing to delete everything triple by triple. Nested comments
- * will remain in the RDF-Triple-Store as of now without any references to them wasting memory
+ * Deletes a conflict and all nested comments
  * @param conflictId 
  * @returns 
  */
 export async function deleteConflict(graph: string, conflictId: string): Promise<updateResponse> {
-    // let query = await getSparqlTemplate(sparqlTemplate.getNestedCommentIds);
-    // query = query.replace("{{conflict}}", conflictId);
-    // const commentIds = await fetchSparql(query, false);
-    let query = await getSparqlTemplate(sparqlTemplate.deleteTriples);
+    // Fetch all nested commentIDs related to conflictId
+    let commentQuery = await getSparqlTemplate(sparqlTemplate.getNestedCommentIds);
+    const commentMapObj = {
+        "{{graph}}": graph,
+        "{{conflict}}": conflictId
+    };
+    commentQuery = commentQuery.replaceMultiple(commentMapObj);
+    const commentIds = (await fetchSparql(commentQuery, false)).map((res: any) => {
+        return res.s.value ? res.s.value.split("#").pop() : null;
+    });
+    // Remove Conflict
+    const deleteQueryBase = await getSparqlTemplate(sparqlTemplate.deleteTriples);
     const mapObj = {
         "{{graph}}": graph,
         "{{subject}}": conflictId
     };
-    query = query.replaceMultiple(mapObj);
-    const data = await fetchSparql(query, true);
-    // let tripleString = `\t"${conflictId}",`;
-    // for (let id in commentIds) {
-    //     tripleString += `"${commentIds[id].s.value.split("/").pop()}",\n`;
-    // }
-    // query = query.replace("{{tripleString}}", tripleString.slice(0, -2));
+    const deleteQuery = deleteQueryBase.replaceMultiple(mapObj);
+    const data = await fetchSparql(deleteQuery, true);
+    // Delete all nested comments
+    for (const id of commentIds) {
+        const innerMapObj = {
+            "{{graph}}": graph,
+            "{{subject}}": id
+        };
+        const innerQuery = deleteQueryBase.replaceMultiple(innerMapObj);
+        await fetchSparql(innerQuery, true);
+    }
     return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: conflictId, action: RDFOperation.delete } as updateResponse;
 }
 
@@ -283,22 +292,28 @@ export async function updateActivity(activity: Activity): Promise<updateResponse
 
 /**
  * Clones an existing activity
- * @param graph graph of the activity
- * @param newName new name of the cloned activity (optional)
+ * @param activity Activity object containing the old graph identifier as well as optionallly a new name and description
  * @returns updateResponse Object
  */
 export async function cloneActivity(activity: Activity): Promise<updateResponse> {
+    // Handle missing props
     if (activity.name.trim() == "") activity.name = activity.graph + "_copy";
     if (activity.description?.trim() == "") activity.description = "No description given";
     // Clone activity
     let query = await getSparqlTemplate(sparqlTemplate.cloneActivity);
+    const cloneHash = hash(activity)
+    const newGraphID = EscapeSparqlStringLiteral(CapitalizeFirstLetter(activity.name.trim().replaceAll(" ", "_") + "_" + cloneHash))
     const mapObj = {
         "{{graph}}": activity.graph,
-        "{{newName}}": CapitalizeFirstLetter(activity.name.trim().replaceAll(" ", "_")),
+        "{{newName}}": newGraphID
     }
     query = query.replaceMultiple(mapObj);
     const data = await fetchSparql(query, true);
     // Update name and description
-    await updateActivity(activity);
+    await updateActivity({
+        graph: newGraphID,
+        name: activity.name,
+        description: activity.description
+    });
     return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: activity.graph, action: RDFOperation.insert } as updateResponse;
 }
