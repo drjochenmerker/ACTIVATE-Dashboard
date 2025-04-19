@@ -54,57 +54,66 @@ watch(selectedActivity, async () => {
 });
 
 const addNewActivity = async () => {
-  await addActivity(newTitle, newDescription);
-  //await addEntity(newTitle, defaultRole, KnowledgeGraphActivityClass.subject);
+  const activity = await addActivity(newTitle, newDescription);
   // Implement logic to add a new activity
-  console.log('New activity added');
+  console.log('New activity added: ', activity);
+  await addEntity(newTitle, defaultRole, KnowledgeGraphActivityClass.subject);
+  const rolle = await getActivityClassIds(newTitle, KnowledgeGraphActivityClass.subject);
+  console.log("eingefügte rolle: ", rolle)
 }
 
 
 </script>
 
 <template>
-  <!-- Main container with centered card layout -->
-  <div class="flex items-center justify-center h-screen">
-    <Card>
+  <!-- Main container with centered layout -->
+  <div class="flex flex-col items-center justify-center py-10 px-4">
+    <Card class="w-full max-w-5xl">
       <!-- Card header with logo -->
-      <CardHeader>
+      <CardHeader class="flex justify-center">
         <CardTitle>
-          <img src=" @/assets/images/activate-logo-full.gif" class="" alt="Logo" />
+          <img src="@/assets/images/activate-logo-full.gif" alt="Logo" />
         </CardTitle>
       </CardHeader>
 
-      <div>
+      <!-- Add Button in der Mitte und größer -->
+      <div class="flex justify-center my-6">
+        <Dialog>
+          <DialogTrigger as-child>
+            <Button class="text-3xl px-6 py-3 rounded-full">
+              +
+            </Button>
+          </DialogTrigger>
+          <DialogContent class="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Create new Activity</DialogTitle>
 
-        <div class="delete-activity-button">
-          <Dialog>
-            <DialogTrigger as-child>
-              <Button variant="outline">
-                <Delete />
-              </Button>
-            </DialogTrigger>
-            <DialogContent class="sm:max-w-[425px]">
-              <DialogHeader>
-                <DialogTitle>Create new Activity</DialogTitle>
-                <DialogDescription>Enter Title
-                </DialogDescription>
-                <textarea v-model="newTitle" />
-                <DialogDescription>Enter Description</DialogDescription>
-                <textarea v-model="newDescription" />
-                <DialogDescription>Enter default role</DialogDescription>
-                <textarea v-model="defaultRole" />
+              <DialogDescription>Enter Title</DialogDescription>
+              <textarea v-model="newTitle" class="w-full border rounded p-2 mb-2" />
 
-                <Button @click="() => addNewActivity()">Done</Button>
-              </DialogHeader>
-            </DialogContent>
-          </Dialog>
-        </div>
+              <DialogDescription>Enter Description</DialogDescription>
+              <textarea v-model="newDescription" class="w-full border rounded p-2 mb-2" />
 
-        <div class="w-full max-w-md" v-for="activity in allActivities">
-          <ActivityCard :activity="activity" />
-        </div>
+              <DialogDescription>Enter default role</DialogDescription>
+              <textarea v-model="defaultRole" class="w-full border rounded p-2 mb-4" />
+
+              <Button @click="() => addNewActivity()">Done</Button>
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
       </div>
 
+      <!-- Activities Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 px-6 pb-6">
+        <ActivityCard v-for="activity in allActivities" :key="activity.id" :activity="activity" />
+      </div>
     </Card>
   </div>
 </template>
+
+
+<style scoped>
+.delete-activity-button {
+  flex-direction: column;
+}
+</style>

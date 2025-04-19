@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { defineProps, onMounted } from 'vue';
+import { defineProps, ref } from 'vue';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import { Button } from '@/components/ui/button';
 import {
@@ -22,8 +22,9 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-
-import { Delete, BookCopy, Play, Loader2 } from 'lucide-vue-next';
+import Label from '@/components/ui/label/Label.vue';
+import Checkbox from '@/components/ui/checkbox/Checkbox.vue';
+import { BookCopy, Play, Loader2 } from 'lucide-vue-next';
 import { cloneActivity, deleteActivity } from '@/data/knowledge_graph/write_operations';
 
 useColorMode();
@@ -34,8 +35,26 @@ const props = defineProps({
         required: true,
     },
 });
-let newTitle = '';
 const graph = props.activity.graph;
+
+let newTitle = '';
+
+// Refs for dialog interaction
+const isDialogOpen = ref(false);
+const isDeleteDialogOpen = ref(false);
+const isCloneDialogOpen = ref(false);
+
+
+const onDialogOpen = (open: boolean) => {
+    isDialogOpen.value = open;
+
+    if (open) {
+        setTimeout(async () => {
+            await getRoles();
+        }, 50);
+    }
+};
+
 
 // Handle session start when user clicks start button
 const handleStartSession = async () => {
@@ -44,126 +63,132 @@ const handleStartSession = async () => {
 };
 
 const cloneThisActivity = async (newTitle: string) => {
-
     await cloneActivity(graph, newTitle);
-    console.log('Activity cloned');
+    isCloneDialogOpen.value = false;
 }
-
 const deleteThisActivity = async () => {
     await deleteActivity(graph);
-    console.log('Activity deleted');
+    isDeleteDialogOpen.value = false;
+}
+
+const getRoles = async () => {
+    sessionStore.availableRoles = await getActivityClassIds(graph, KnowledgeGraphActivityClass.subject);
 }
 
 const sessionStartAllowed = () => !sessionStore.sessionRole;
 
-onMounted(async () => {
-    try {
-        sessionStore.availableRoles = await getActivityClassIds(props.activity.graph, KnowledgeGraphActivityClass.subject);
-        sessionStore.sessionRole = ''; // Reset role selection
-    } catch (error) {
-        console.error("Fehler beim Laden der Aktivitäten:", error);
-    }
-});
-
 </script>
-
 <template>
-    <div class="card">
+    <div class="rounded-xl shadow-md border bg-white dark:bg-gray-900 p-4 transition-all hover:shadow-lg">
         <Accordion type="single" class="w-full" collapsible>
             <AccordionItem :value="props.activity.graph">
-                <AccordionTrigger class="accordion-title">{{ props.activity.name }}</AccordionTrigger>
-                <AccordionContent>
-                    <div>
-                        {{ props.activity.description }}
-                    </div>
-                    <div class="buttons">
-                        <div class="delete-activity-button">
-                            <Dialog>
-                                <DialogTrigger as-child>
-                                    <Button variant="outline">
-                                        <Delete />
+                <AccordionTrigger class="text-lg font-semibold hover:underline">
+                    {{ props.activity.name }}
+                </AccordionTrigger>
+
+
+                <AccordionContent class="pt-4 space-y-4 text-sm text-gray-600 dark:text-gray-300">
+                    <p>{{ props.activity.description }}</p>
+
+                    <div class="flex justify-between items-center gap-4 flex-wrap">
+                        <!-- Delete Button -->
+                        <Dialog v-model:open="isDeleteDialogOpen">
+                            <DialogTrigger as-child>
+                                <button class="icon-button">
+                                    <span class="material-symbols-outlined">delete</span>
+                                </button>
+                            </DialogTrigger>
+                            <DialogContent>
+                                <DialogHeader>
+                                    <DialogTitle>Delete Activity</DialogTitle>
+                                    <DialogDescription>
+                                        Are you sure you want to delete this Activity?
+                                    </DialogDescription>
+                                </DialogHeader>
+                                <DialogFooter>
+                                    <Button @click="() => deleteThisActivity()">Delete</Button>
+                                </DialogFooter>
+                            </DialogContent>
+                        </Dialog>
+
+                        <!-- Clone Button -->
+                        <Dialog v-model:open="isCloneDialogOpen">
+                            <DialogTrigger as-child>
+                                <Button variant="secondary" size="icon">
+                                    <BookCopy class="w-4 h-4" />
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent>
+                                <DialogHeader>
+                                    <DialogTitle>Clone Activity</DialogTitle>
+                                    <DialogDescription>Set a new title:</DialogDescription>
+                                    <textarea v-model="newTitle" class="w-full border rounded p-2 my-2"
+                                        placeholder="New title" />
+                                </DialogHeader>
+                                <DialogFooter>
+                                    <Button @click="() => cloneThisActivity(newTitle)">Clone</Button>
+                                </DialogFooter>
+                            </DialogContent>
+                        </Dialog>
+
+                        <!-- Start Session Button -->
+                        <Dialog>
+                            <DialogTrigger as-child>
+                                <Button variant="default" size="icon">
+                                    <Play class="w-4 h-4" />
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent>
+                                <DialogHeader>
+                                    <DialogTitle>Role Selection</DialogTitle>
+                                    <DialogDescription>Select your role for the debriefing:</DialogDescription>
+                                </DialogHeader>
+
+                                <!-- Select a role-->
+                                <Select v-model="sessionStore.sessionRole" id="roleSelect" class="my-4"
+                                    @update:open="(isOpen) => { if (isOpen) getRoles(); }">
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select a role" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem v-for="role in sessionStore.availableRoles" :value="role"
+                                            :key="role">
+                                            {{ role }}
+                                        </SelectItem>
+                                    </SelectContent>
+
+                                </Select>
+                                <!-- Instructor mode toggle -->
+                                <div class="flex items-center space-x-2 mt-4">
+                                    <Checkbox id="cbInstructorMode" :checked="sessionStore.instructorMode"
+                                        @update:checked="sessionStore.instructorMode = $event" />
+                                    <Label for="cbInstructorMode" class="text-sm font-normal">
+                                        Enable Instructor Mode
+                                    </Label>
+                                </div>
+
+
+                                <DialogFooter>
+                                    <Button type="submit" @click="() => handleStartSession()">
+                                        <template v-if="sessionStartAllowed()">
+                                            <Loader2 class="w-4 h-4 mr-2 animate-spin" />
+                                            Select activity and role
+                                        </template>
+                                        <template v-else>
+                                            <Play class="w-4 h-4 mr-2" />
+                                            Start Debriefing
+                                        </template>
                                     </Button>
-                                </DialogTrigger>
-                                <DialogContent class="sm:max-w-[425px]">
-                                    <DialogHeader>
-                                        <DialogTitle>Delete Activity</DialogTitle>
-                                        <DialogDescription>Are you sure you want to delete this Activity?
-                                        </DialogDescription>
-                                        <Button @click="() => deleteThisActivity()"> delete </Button>
-                                    </DialogHeader>
-                                </DialogContent>
-                            </Dialog>
-                        </div>
-
-                        <div class="clone-activity-button">
-                            <Dialog>
-                                <DialogTrigger as-child>
-                                    <Button variant="outline">
-                                        <BookCopy />
-                                    </Button>
-                                </DialogTrigger>
-                                <DialogContent class="sm:max-w-[425px]">
-                                    <DialogHeader>
-                                        <DialogTitle>Clone Activity</DialogTitle>
-                                        <DialogDescription>Set new title</DialogDescription>
-                                        <textarea v-model="newTitle" />
-                                        <Button @click="() => cloneThisActivity(newTitle)"> clone </Button>
-                                    </DialogHeader>
-                                </DialogContent>
-                            </Dialog>
-                        </div>
-
-                        <div class="start-session-button">
-                            <!-- Dialog to select role -->
-                            <Dialog>
-                                <DialogTrigger as-child>
-                                    <Button variant="outline">
-                                        <Play />
-                                    </Button>
-                                </DialogTrigger>
-                                <DialogContent class="sm:max-w-[425px]">
-                                    <DialogHeader>
-                                        <DialogTitle>Select your role for the debriefing.</DialogTitle>
-                                        <DialogDescription>
-                                            Please select your role for the debriefing.
-                                        </DialogDescription>
-                                    </DialogHeader>
-
-                                    <!-- Select Role -->
-                                    <!-- todo: show real roles lol-->
-                                    <Select v-model="sessionStore.sessionRole" id="roleSelect">
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Click to select a role" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem v-for="role in sessionStore.availableRoles" :value="role">
-                                                {{ role }}
-                                            </SelectItem>
-                                        </SelectContent>
-
-                                        <DialogFooter>
-                                            <Button type="submit" @click="() => handleStartSession()">
-                                                <!-- Button content changes based on selection state -->
-                                                <template v-if="sessionStartAllowed()">
-                                                    <Loader2 class="w-4 h-4 mr-2 animate-spin" />
-                                                    Select activity and role
-                                                </template>
-                                                <template v-else>
-                                                    <Play />
-                                                    Start debriefing
-                                                </template>
-                                            </Button>
-                                        </DialogFooter>
-                                    </Select>
-                                </DialogContent>
-                            </Dialog>
-                        </div>
+                                </DialogFooter>
+                            </DialogContent>
+                        </Dialog>
                     </div>
                 </AccordionContent>
             </AccordionItem>
         </Accordion>
     </div>
 </template>
+
 
 <style scoped>
 .card {
@@ -176,5 +201,14 @@ onMounted(async () => {
     justify-content: space-between;
     align-items: center;
     margin: 5px;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 60px;
+}
+
+textarea::placeholder {
+    color: #888;
 }
 </style>

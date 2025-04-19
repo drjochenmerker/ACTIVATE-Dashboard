@@ -23,12 +23,15 @@ export default {
         }
     },
     emits: ['update:modelValue'],
+    setup() {
+        const { colorMode } = useColorMode();
+        return { colorMode }; // macht colorMode in template und allen Options API properties verfügbar
+    },
     data() {
         return {
             search: '',
             showDropdown: false,
             selectedOptions: this.modelValue,
-            useColorMode,
         };
     },
     computed: {
@@ -123,10 +126,14 @@ export default {
 
         <!-- Dropdown list -->
         <ul v-if="showDropdown" class="dropdown-list">
-            <li v-for="option in filteredOptions" :key="option.label" @mousedown.prevent="selectOption(option)">
+            <li v-if="filteredOptions.length === 0" class="no-options">
+                no elements to select from
+            </li>
+            <li v-else v-for="option in filteredOptions" :key="option.label" @mousedown.prevent="selectOption(option)">
                 {{ option.label }}
             </li>
         </ul>
+
     </div>
 </template>
 

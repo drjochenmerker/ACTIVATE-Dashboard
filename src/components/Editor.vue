@@ -55,8 +55,9 @@ export default {
         divisionoflabour: []
       },
       sessionStore: useSessionStore(),
-      useColorMode,
+      colorMode: useColorMode,
       toast: useToast(),
+
     };
   },
 
@@ -353,7 +354,7 @@ export default {
       Send anonymously
     </label>
 
-    <Toaster />
+
     <Button variant="primary" size="large" class="transfer-button" @click="transferText" :disabled="isDoneDisabled">
       Done
     </Button>
