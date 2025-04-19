@@ -49,7 +49,11 @@ watch(selectedActivity, async () => {
   if (!selectedActivity.value) {
     return;
   }
-  sessionStore.availableRoles = await getActivityClassIds(selectedActivity.value, KnowledgeGraphActivityClass.subject);
+  // WARNING: Temporary solution. The label field might contain hierarchical a string like medical professional/doctor which would allow
+  // multi-level dropdowns. This is not implemented yet. The results are also sorted by languages. If no language has been provided, "default" is
+  // used as a fallback key. This is not used yet but implemented to allow language selection in the future. 
+  const res = await getActivityClassIds(selectedActivity.value, KnowledgeGraphActivityClass.subject)
+  sessionStore.availableRoles = res[Object.keys(res)[0]].map((role: {id:string, label: string}) => role.id);
   sessionStore.sessionRole = ''; // Reset role selection
 });
 

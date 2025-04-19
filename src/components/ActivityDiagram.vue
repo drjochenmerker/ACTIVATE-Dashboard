@@ -62,6 +62,7 @@ export default defineComponent({
 
         // Conflict Data
         let conflictData = conflictStore.getConflicts;
+        console.log(conflictData)
         const activityData = ref<any>(null);
 
         // Checks if the Activity-Diagram has to be cleared when a Comment is sent by the editor

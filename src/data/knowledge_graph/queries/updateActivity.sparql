@@ -9,8 +9,8 @@ DELETE {
 }
 INSERT {
     GRAPH graph:{{graph}} {
-        ?s :ActivityName '{{activityName}}' .
-        ?s :ActivityDescription '{{activityDescription}}' .
+        ?s :ActivityName """{{activityName}}""" .
+        ?s :ActivityDescription """{{activityDescription}}""" .
     }
 }
 WHERE {

@@ -112,3 +112,12 @@ export function RDFSyntaxCheck(input: RDFTriple | string): boolean {
 export function CapitalizeFirstLetter(input: string): string {
     return input.charAt(0).toUpperCase() + input.slice(1);
 }
+
+export function EscapeSparqlStringLiteral(input: string): string {
+    return input
+        .replace(/\\/g, '\\\\')
+        .replace(/"/g, '\\"')
+        .replace(/\n/g, '\\n')
+        .replace(/\r/g, '\\r')
+        .replace(/\t/g, '\\t');
+}
