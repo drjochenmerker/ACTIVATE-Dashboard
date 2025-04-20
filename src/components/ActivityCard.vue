@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/dialog'
 import { useColorMode } from '@vueuse/core';
 import { useSessionStore } from '@/stores/sessionStore';
-import { getActivityClassIds } from '@/data/knowledge_graph/read_operations';
+import { getActivityClassIds, getActivityDetail } from '@/data/knowledge_graph/read_operations';
 import { KnowledgeGraphActivityClass } from '@/data/knowledge_graph/structures';
 import {
     Select,
@@ -37,7 +37,9 @@ const props = defineProps({
 });
 const graph = props.activity.graph;
 
+
 let newTitle = '';
+let newDescription = '';
 
 // Refs for dialog interaction
 const isDialogOpen = ref(false);
@@ -62,8 +64,11 @@ const handleStartSession = async () => {
     sessionStore.startSession();
 };
 
-const cloneThisActivity = async (newTitle: string) => {
-    await cloneActivity(graph, newTitle);
+const cloneThisActivity = async (newTitle: string, newDescription: string) => {
+    props.activity.name = newTitle;
+    props.activity.description = newDescription;
+    await cloneActivity(props.activity);
+    console.log(props.activity)
     isCloneDialogOpen.value = false;
 }
 const deleteThisActivity = async () => {
@@ -124,9 +129,12 @@ const sessionStartAllowed = () => !sessionStore.sessionRole;
                                     <DialogDescription>Set a new title:</DialogDescription>
                                     <textarea v-model="newTitle" class="w-full border rounded p-2 my-2"
                                         placeholder="New title" />
+                                    <DialogDescription>Set a new description:</DialogDescription>
+                                    <textarea v-model="newDescription" class="w-full border rounded p-2 my-2"
+                                        placeholder="Set new description (optional)" />
                                 </DialogHeader>
                                 <DialogFooter>
-                                    <Button @click="() => cloneThisActivity(newTitle)">Clone</Button>
+                                    <Button @click="() => cloneThisActivity(newTitle, newDescription)">Clone</Button>
                                 </DialogFooter>
                             </DialogContent>
                         </Dialog>
