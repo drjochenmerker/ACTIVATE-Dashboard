@@ -4,7 +4,7 @@
 
 :88063a5be9c10efd0beb4645fa76711613ea01ad a :Conflict ;
     :ConflictDescription "<p>Beschreibung hier</p>" ;
-    :ConflictState "offen" ;
+    :ConflictState "open" ;
     :ConflictTitle "Test-Konflikt" ;
     :CreationDate "2025-04-14T07:50:02.369Z" ;
     :HasParticipant :Conviction,
@@ -406,7 +406,7 @@
 
 :Template a owl:NamedIndividual ;
     :ActivityDescription "Activity Template" ;
-    :ActivityName "Template" .
+    :ActivityName "Multi-Language Template" .
 
 :Time_allocation a :Rule,
         owl:NamedIndividual ;

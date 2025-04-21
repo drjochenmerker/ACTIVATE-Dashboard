@@ -1,4 +1,7 @@
 <script>
+import { staticContent } from '@/data/contentData';
+import { useSessionStore } from '@/stores/sessionStore';
+
 /** 
  * Dropdown-Component
  * Component that is used in the Editor component to display a dropdown menu
@@ -26,7 +29,9 @@ export default {
         return {
             search: '',
             showDropdown: false,
-            selectedOptions: this.modelValue
+            selectedOptions: this.modelValue,
+            sessionStore: useSessionStore(),
+            staticContent: staticContent
         };
     },
     computed: {
@@ -41,6 +46,10 @@ export default {
                     option.label.toLowerCase().includes(this.search.toLowerCase()) &&
                     !this.selectedOptions.some(selected => selected.label === option.label)
             );
+        },
+            placeholderText() {
+            const lang = this.sessionStore.activeLanguage || "en";
+            return this.staticContent.terms.placeholders.search[lang] 
         }
     },
     methods: {
@@ -116,7 +125,7 @@ export default {
 
             <!-- Input field for searching -->
             <input type="text" v-model="search" @focus="showDropdown = true" @input="updateSearch"
-                placeholder="Suchen..." />
+                :placeholder="placeholderText" />
         </div>
 
         <!-- Dropdown list -->

@@ -8,6 +8,7 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from '@/components/ui/tooltip'
+import { staticContent } from '@/data/contentData';
 
 const sessionStore = useSessionStore();
 
@@ -26,7 +27,7 @@ const logout = () => {
                 </Button>
             </TooltipTrigger>
             <TooltipContent>
-                <p>End session</p>
+                <p>{{staticContent.terms.endSession[sessionStore.activeLanguage]}}</p>
             </TooltipContent>
         </Tooltip>
     </TooltipProvider>

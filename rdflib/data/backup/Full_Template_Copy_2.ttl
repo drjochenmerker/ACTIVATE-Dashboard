@@ -9,7 +9,7 @@
 
 :Template a owl:NamedIndividual ;
     :ActivityDescription "Activity Template" ;
-    :ActivityName "Template" .
+    :ActivityName "Template Copy 2" .
 
 
 #################################################################

@@ -49,7 +49,9 @@ export default {
         community: [],
         rules: [],
         divisionoflabour: []
-      }
+      },
+      sessionStore: useSessionStore(),
+      staticContent: staticContent
     };
   },
 
@@ -59,6 +61,9 @@ export default {
     await this.fetchActivityDetails();
   },
   computed: {
+    titlePlaceholder() {
+      return this.staticContent.terms.placeholders.title[this.sessionStore.activeLanguage] || this.staticContent.terms.placeholders.title.en;
+    },
     pointData() {
       // Return empty object if activityDetails is not yet loaded
       if (!this.activityDetails) {
@@ -99,13 +104,6 @@ export default {
         // Check if any selection is made for each active point:
         return !value || value.length === 0;
       });
-    },
-    // Correclty link sessionStore and staticContent to allow dynamix texts
-    sessionStore() {
-      return useSessionStore();
-    },
-    staticContent() {
-      return staticContent;
     }
   },
   methods: {
@@ -117,7 +115,7 @@ export default {
     initQuill() {
       this.quill = new Quill(this.$refs.editorContainer, {
         theme: 'snow',
-        placeholder: "Description...",
+        placeholder: this.staticContent.terms.placeholders.description[this.sessionStore.activeLanguage] || this.staticContent.terms.placeholders.description.en,
         modules: {
           toolbar: [
             ['bold', 'italic', 'underline'],
@@ -139,6 +137,7 @@ export default {
     clearEditor() {
       if (this.quill) {
         this.quill.root.innerHTML = '';
+        this.quill.placeholder = this.staticContent.terms.placeholders.description[this.sessionStore.activeLanguage] || this.staticContent.terms.placeholders.description.en;
       }
       this.isAnonymous = false;
       this.title = '';
@@ -283,7 +282,7 @@ export default {
           useSessionStore().outdated = false;
         }
       },
-    }
+    },
   }
 };
 
@@ -292,14 +291,16 @@ export default {
 
 <template>
   <div class="editor-container">
-    <div class="icon-container">
-
+    <!-- Top-Container -->
+    <div class="top-container">
+      <p class="font-bold justify-start">{{ this.staticContent.editor.header[this.sessionStore.activeLanguage] || this.staticContent.editor.header.en }}</p>
       <button class="icon-button" @click="clearEditor">
         <span class="material-symbols-outlined">delete</span>
       </button>
     </div>
-
-    <h3>Add Note to selected points:</h3>
+    <!-- Separator -->
+    <hr
+  class="my-4 h-px border-t-0 bg-transparent bg-gradient-to-r from-transparent via-neutral-900 to-transparent opacity-70 dark:via-neutral-700" />
     <!-- dropdown: -->
     <div class="dropdown-container">
       <div v-for="point in activePoints" :key="point">
@@ -310,9 +311,9 @@ export default {
 
     <!-- title: -->
     <div>
-      <h3>Add a title:</h3>
+      <!-- <h3>{{ this.staticContent.editor.addTitle[this.sessionStore.activeLanguage] || this.staticContent.editor.addTitle.en }}</h3> -->
       <div class="title-field">
-        <input type="text" v-model="title" placeholder="Title" class="title-input" />
+        <input type="text" v-model="title" :placeholder="titlePlaceholder" class="title-input" />
       </div>
     </div>
 
@@ -321,11 +322,11 @@ export default {
 
     <label class="anonymous-checkbox">
       <input type="checkbox" v-model="isAnonymous" />
-      Send anonymously
+      {{ this.staticContent.editor.anonymous[this.sessionStore.activeLanguage] || this.staticContent.editor.anonymous.en }}
     </label>
 
     <Button variant="primary" size="large" class="transfer-button" @click="transferText" :disabled="isDoneDisabled">
-      Done
+      {{ this.staticContent.terms.done[this.sessionStore.activeLanguage] || this.staticContent.terms.done.en }}
     </Button>
 
   </div>
@@ -349,13 +350,11 @@ export default {
 }
 
 /*icon button*/
-.icon-container {
+.top-container {
   width: 100%;
   display: flex;
-  justify-content: flex-end;
-  /* Align the icon button to the right */
-  margin-bottom: 10px;
-  /* Optional, adds space between the icon and the rest of the content */
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 /* icon */
@@ -366,6 +365,7 @@ export default {
   padding: 5px;
   font-size: 24px;
   color: red;
+  margin-top: -2%;
 }
 
 .icon-button:hover {
