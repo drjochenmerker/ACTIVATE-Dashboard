@@ -26,7 +26,6 @@ import Label from '@/components/ui/label/Label.vue';
 import Checkbox from '@/components/ui/checkbox/Checkbox.vue';
 import { BookCopy, Play, Loader2 } from 'lucide-vue-next';
 import { cloneActivity, deleteActivity } from '@/data/knowledge_graph/write_operations';
-import { watch } from 'fs';
 
 useColorMode();
 const sessionStore = useSessionStore();
@@ -71,6 +70,10 @@ const deleteThisActivity = async () => {
  */
 const getRoles = async () => {
     const roles = await getActivityClassIds(graph, KnowledgeGraphActivityClass.subject);
+
+    // test log
+    console.log("test log: ", roles);
+
     sessionStore.availableRoles = Object.values(roles).flatMap(role => role.map(r => r.id));
 }
 
@@ -156,9 +159,9 @@ const sessionStartAllowed = () => !sessionStore.sessionRole;
                                         <SelectItem v-for="role in sessionStore.availableRoles" :value="role"
                                             :key="role">
                                             {{ role }}
+                                            <span>{{ console.log(role) }}</span>
                                         </SelectItem>
                                     </SelectContent>
-
 
                                 </Select>
 
@@ -174,7 +177,8 @@ const sessionStartAllowed = () => !sessionStore.sessionRole;
 
 
                                 <DialogFooter>
-                                    <Button type="submit" @click="() => handleStartSession()">
+                                    <Button type="submit" :disabled="sessionStartAllowed()"
+                                        @click="() => handleStartSession()">
                                         <template v-if="sessionStartAllowed()">
                                             <Loader2 class="w-4 h-4 mr-2 animate-spin" />
                                             Select activity and role

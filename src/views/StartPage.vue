@@ -27,6 +27,9 @@ import { addActivity, addEntity } from '@/data/knowledge_graph/write_operations'
 useColorMode();
 const sessionStore = useSessionStore();
 
+// refs
+const dialogOpen = ref(false);
+
 // State management for activities
 const selectedActivity = ref<string>();
 const allActivities = ref<Activity[]>([]);
@@ -58,13 +61,27 @@ watch(selectedActivity, async () => {
 });
 
 const addNewActivity = async () => {
-  await addActivity(newTitle, newDescription);
-  // Implement logic to add a new activity
-  await addEntity(newTitle, defaultRole, KnowledgeGraphActivityClass.subject);
-  const rolle = await getActivityClassIds(newTitle, KnowledgeGraphActivityClass.subject);
-  console.log("eingefuegte rolle: ", rolle);
-}
+  try {
+    await addActivity(newTitle, newDescription);
+    await addEntity(newTitle, defaultRole, KnowledgeGraphActivityClass.subject);
 
+    // test log to see if activity and default role have been added correctly
+    // console.log(await getActivities())
+    //console.log(await getActivityClassIds(newTitle, KnowledgeGraphActivityClass.subject))
+
+    // Reload activities after adding a new one
+    allActivities.value = await getActivities();
+    //close dialog
+    dialogOpen.value = false;
+
+    // reset form fields
+    newTitle = '';
+    newDescription = '';
+    defaultRole = '';
+  } catch (error) {
+    console.error("Fehler beim Hinzufügen einer Aktivität:", error);
+  }
+}
 
 </script>
 
@@ -72,6 +89,7 @@ const addNewActivity = async () => {
   <!-- Main container with centered layout -->
   <div class="flex flex-col items-center justify-center py-10 px-4">
     <Card class="w-full max-w-5xl">
+
       <!-- Card header with logo -->
       <CardHeader class="flex justify-center">
         <CardTitle>
@@ -79,9 +97,9 @@ const addNewActivity = async () => {
         </CardTitle>
       </CardHeader>
 
-      <!-- Add Button in der Mitte und größer -->
+      <!-- add button in the middle -->
       <div class="flex justify-center my-6">
-        <Dialog>
+        <Dialog v-model:open="dialogOpen">
           <DialogTrigger as-child>
             <Button class="text-3xl px-6 py-3 rounded-full">
               +
