@@ -67,7 +67,7 @@ const addNewActivity = async () => {
 
     // test log to see if activity and default role have been added correctly
     // console.log(await getActivities())
-    //console.log(await getActivityClassIds(newTitle, KnowledgeGraphActivityClass.subject))
+    //    console.log(await getActivityClassIds(newTitle, KnowledgeGraphActivityClass.subject))
 
     // Reload activities after adding a new one
     allActivities.value = await getActivities();
@@ -126,7 +126,7 @@ const addNewActivity = async () => {
 
       <!-- Activities Grid -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 px-6 pb-6">
-        <ActivityCard v-for="activity in allActivities" :key="activity" :activity="activity" />
+        <ActivityCard v-for="activity in allActivities" :key="activity.name" :activity="activity" />
       </div>
     </Card>
   </div>

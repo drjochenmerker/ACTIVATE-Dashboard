@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/dialog'
 import { useColorMode } from '@vueuse/core';
 import { useSessionStore } from '@/stores/sessionStore';
-import { getActivityClassIds, getActivityDetail } from '@/data/knowledge_graph/read_operations';
+import { getActivityClassIds } from '@/data/knowledge_graph/read_operations';
 import { KnowledgeGraphActivityClass } from '@/data/knowledge_graph/structures';
 import {
     Select,
@@ -37,7 +37,7 @@ const props = defineProps({
 });
 const graph = props.activity.graph;
 
-sessionStore.availableRoles = null;
+sessionStore.availableRoles = [];
 let newTitle = '';
 let newDescription = '';
 
@@ -49,14 +49,20 @@ const isCloneDialogOpen = ref(false);
 
 // Handle session start when user clicks start button
 const handleStartSession = async () => {
-    sessionStore.sessionActivity = props.activity;
+    sessionStore.sessionActivity = {
+        graph: props.activity.graph,
+        name: props.activity.name,
+        description: props.activity.description
+    };
     sessionStore.startSession();
 };
-
 const cloneThisActivity = async (newTitle: string, newDescription: string) => {
-    props.activity.name = newTitle;
-    props.activity.description = newDescription;
-    await cloneActivity(props.activity);
+    const clonedActivity = {
+        graph: props.activity.graph,
+        name: newTitle,
+        description: newDescription
+    };
+    await cloneActivity(clonedActivity);
     isCloneDialogOpen.value = false;
 }
 const deleteThisActivity = async () => {
@@ -64,15 +70,19 @@ const deleteThisActivity = async () => {
     isDeleteDialogOpen.value = false;
 }
 
+
 /**
  * Retrieves available roles for the current activity graph.
  * Fetches subject class IDs from the knowledge graph and populates the session store's available roles.
  */
 const getRoles = async () => {
-    const roles = await getActivityClassIds(graph, KnowledgeGraphActivityClass.subject);
+    const roles = await getActivityClassIds(props.activity.graph, KnowledgeGraphActivityClass.subject);
 
     // test log
-    console.log("test log: ", roles);
+    // TODO: remove this after testing
+    // TODO PROBLEM: this is not working because the roles are not available yet when this function is called
+    // console.log("activity: ", props.activity)
+    //console.log("roles for: ", graph, ": ", roles);
 
     sessionStore.availableRoles = Object.values(roles).flatMap(role => role.map(r => r.id));
 }
@@ -88,11 +98,11 @@ const sessionStartAllowed = () => !sessionStore.sessionRole;
                     {{ props.activity.name }}
                 </AccordionTrigger>
 
-
                 <AccordionContent class="pt-4 space-y-4 text-sm text-gray-600 dark:text-gray-300">
                     <p>{{ props.activity.description }}</p>
 
                     <div class="flex justify-between items-center gap-4 flex-wrap">
+
                         <!-- Delete Button -->
                         <Dialog v-model:open="isDeleteDialogOpen">
                             <DialogTrigger as-child>
