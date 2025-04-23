@@ -53,17 +53,16 @@ watch(selectedActivity, async () => {
   // multi-level dropdowns. This is not implemented yet. The results are also sorted by languages. If no language has been provided, "default" is
   // used as a fallback key. This is not used yet but implemented to allow language selection in the future. 
   const res = await getActivityClassIds(selectedActivity.value, KnowledgeGraphActivityClass.subject)
-  sessionStore.availableRoles = res[Object.keys(res)[0]].map((role: {id:string, label: string}) => role.id);
+  sessionStore.availableRoles = res[Object.keys(res)[0]].map((role: { id: string, label: string }) => role.id);
   sessionStore.sessionRole = ''; // Reset role selection
 });
 
 const addNewActivity = async () => {
-  const activity = await addActivity(newTitle, newDescription);
+  await addActivity(newTitle, newDescription);
   // Implement logic to add a new activity
-  console.log('New activity added: ', activity);
   await addEntity(newTitle, defaultRole, KnowledgeGraphActivityClass.subject);
   const rolle = await getActivityClassIds(newTitle, KnowledgeGraphActivityClass.subject);
-  console.log("eingefügte rolle: ", rolle)
+  console.log("eingefuegte rolle: ", rolle);
 }
 
 
@@ -109,7 +108,7 @@ const addNewActivity = async () => {
 
       <!-- Activities Grid -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 px-6 pb-6">
-        <ActivityCard v-for="activity in allActivities" :key="activity.id" :activity="activity" />
+        <ActivityCard v-for="activity in allActivities" :key="activity" :activity="activity" />
       </div>
     </Card>
   </div>

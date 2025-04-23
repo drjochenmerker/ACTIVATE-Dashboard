@@ -26,6 +26,7 @@ import Label from '@/components/ui/label/Label.vue';
 import Checkbox from '@/components/ui/checkbox/Checkbox.vue';
 import { BookCopy, Play, Loader2 } from 'lucide-vue-next';
 import { cloneActivity, deleteActivity } from '@/data/knowledge_graph/write_operations';
+import { watch } from 'fs';
 
 useColorMode();
 const sessionStore = useSessionStore();
@@ -37,25 +38,14 @@ const props = defineProps({
 });
 const graph = props.activity.graph;
 
-
+sessionStore.availableRoles = null;
 let newTitle = '';
 let newDescription = '';
 
 // Refs for dialog interaction
-const isDialogOpen = ref(false);
 const isDeleteDialogOpen = ref(false);
 const isCloneDialogOpen = ref(false);
 
-
-const onDialogOpen = (open: boolean) => {
-    isDialogOpen.value = open;
-
-    if (open) {
-        setTimeout(async () => {
-            await getRoles();
-        }, 50);
-    }
-};
 
 
 // Handle session start when user clicks start button
@@ -68,7 +58,6 @@ const cloneThisActivity = async (newTitle: string, newDescription: string) => {
     props.activity.name = newTitle;
     props.activity.description = newDescription;
     await cloneActivity(props.activity);
-    console.log(props.activity)
     isCloneDialogOpen.value = false;
 }
 const deleteThisActivity = async () => {
@@ -76,8 +65,13 @@ const deleteThisActivity = async () => {
     isDeleteDialogOpen.value = false;
 }
 
+/**
+ * Retrieves available roles for the current activity graph.
+ * Fetches subject class IDs from the knowledge graph and populates the session store's available roles.
+ */
 const getRoles = async () => {
-    sessionStore.availableRoles = await getActivityClassIds(graph, KnowledgeGraphActivityClass.subject);
+    const roles = await getActivityClassIds(graph, KnowledgeGraphActivityClass.subject);
+    sessionStore.availableRoles = Object.values(roles).flatMap(role => role.map(r => r.id));
 }
 
 const sessionStartAllowed = () => !sessionStore.sessionRole;
@@ -165,7 +159,10 @@ const sessionStartAllowed = () => !sessionStore.sessionRole;
                                         </SelectItem>
                                     </SelectContent>
 
+
                                 </Select>
+
+
                                 <!-- Instructor mode toggle -->
                                 <div class="flex items-center space-x-2 mt-4">
                                     <Checkbox id="cbInstructorMode" :checked="sessionStore.instructorMode"
