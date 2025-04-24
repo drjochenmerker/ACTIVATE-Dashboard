@@ -1,9 +1,9 @@
 <script setup lang="ts">
 // Import necessary dependencies and components
 import { useColorMode } from '@vueuse/core';
-import { getActivities, getActivityClassIds } from '@/data/knowledge_graph/read_operations';
+import { getActivities, getActivityClassIds, getActivityDetail } from '@/data/knowledge_graph/read_operations';
 import { Activity } from '@/data/knowledge_graph/structures';
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch, computed } from 'vue';
 import { useSessionStore } from '@/stores/sessionStore';
 import { KnowledgeGraphActivityClass } from '@/data/knowledge_graph/structures';
 // UI components imports...
@@ -23,6 +23,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { addActivity, addEntity } from '@/data/knowledge_graph/write_operations';
+import { useActivityStore } from '@/stores/activityStore';
 
 useColorMode();
 const sessionStore = useSessionStore();
@@ -32,7 +33,8 @@ const dialogOpen = ref(false);
 
 // State management for activities
 const selectedActivity = ref<string>();
-const allActivities = ref<Activity[]>([]);
+const activityStore = useActivityStore();
+const activities = computed(() => activityStore.activityList);
 
 let newTitle = '';
 let newDescription = '';
@@ -41,12 +43,11 @@ let defaultRole = '';
 // Load all available activities on component mount
 onMounted(async () => {
   try {
-    allActivities.value = await getActivities();
+    await activityStore.getAllActivities();
   } catch (error) {
     console.error("Fehler beim Laden der Aktivitäten:", error);
   }
 });
-
 // Update available roles when selected activity changes
 watch(selectedActivity, async () => {
   if (!selectedActivity.value) {
@@ -60,20 +61,20 @@ watch(selectedActivity, async () => {
   sessionStore.sessionRole = ''; // Reset role selection
 });
 
+
+
 const addNewActivity = async () => {
   try {
     await addActivity(newTitle, newDescription);
     await addEntity(newTitle, defaultRole, KnowledgeGraphActivityClass.subject);
 
-    // test log to see if activity and default role have been added correctly
-    // console.log(await getActivities())
-    //    console.log(await getActivityClassIds(newTitle, KnowledgeGraphActivityClass.subject))
+    // TODO rollen hinzufügen funktioniert noch nicht korrekt
 
     // Reload activities after adding a new one
-    allActivities.value = await getActivities();
+    activities.value = await activityStore.getAllActivities();
+
     //close dialog
     dialogOpen.value = false;
-
     // reset form fields
     newTitle = '';
     newDescription = '';
@@ -82,6 +83,10 @@ const addNewActivity = async () => {
     console.error("Fehler beim Hinzufügen einer Aktivität:", error);
   }
 }
+
+const removeActivity = async () => {
+  //
+};
 
 </script>
 
@@ -97,7 +102,7 @@ const addNewActivity = async () => {
         </CardTitle>
       </CardHeader>
 
-      <!-- add button in the middle -->
+      <!-- "add button" in the middle -->
       <div class="flex justify-center my-6">
         <Dialog v-model:open="dialogOpen">
           <DialogTrigger as-child>
@@ -126,7 +131,7 @@ const addNewActivity = async () => {
 
       <!-- Activities Grid -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 px-6 pb-6">
-        <ActivityCard v-for="activity in allActivities" :key="activity.name" :activity="activity" />
+        <ActivityCard v-for="activity in activities" :key="activity.name" :activity="activity" />
       </div>
     </Card>
   </div>

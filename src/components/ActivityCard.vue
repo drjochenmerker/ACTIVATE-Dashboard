@@ -1,33 +1,21 @@
 <script lang="ts" setup>
-import { defineProps, ref } from 'vue';
+import { defineProps, onMounted, ref } from 'vue';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import { Button } from '@/components/ui/button';
-import {
-    Dialog,
-    DialogContent,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogDescription,
-    DialogTrigger,
-} from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog'
 import { useColorMode } from '@vueuse/core';
 import { useSessionStore } from '@/stores/sessionStore';
 import { getActivityClassIds } from '@/data/knowledge_graph/read_operations';
-import { KnowledgeGraphActivityClass } from '@/data/knowledge_graph/structures';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
+import { Activity, KnowledgeGraphActivityClass } from '@/data/knowledge_graph/structures';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import Label from '@/components/ui/label/Label.vue';
 import Checkbox from '@/components/ui/checkbox/Checkbox.vue';
 import { BookCopy, Play, Loader2 } from 'lucide-vue-next';
-import { cloneActivity, deleteActivity } from '@/data/knowledge_graph/write_operations';
+import { useActivityStore } from '@/stores/activityStore';
 
 useColorMode();
+
+// consts and props defintion
 const sessionStore = useSessionStore();
 const props = defineProps({
     activity: {
@@ -37,6 +25,7 @@ const props = defineProps({
 });
 const graph = props.activity.graph;
 
+//  state management for available roles
 sessionStore.availableRoles = [];
 let newTitle = '';
 let newDescription = '';
@@ -45,7 +34,15 @@ let newDescription = '';
 const isDeleteDialogOpen = ref(false);
 const isCloneDialogOpen = ref(false);
 
+// activity store management
+const activityStore = useActivityStore();
+let activities = ref<Activity[]>([]);
 
+// load all activities on component mount
+onMounted(async () => {
+    activities.value = await activityStore.getAllActivities();
+    //console.log("activities: ", activities.value);
+});
 
 // Handle session start when user clicks start button
 const handleStartSession = async () => {
@@ -56,20 +53,27 @@ const handleStartSession = async () => {
     };
     sessionStore.startSession();
 };
+
+// clone activity function
 const cloneThisActivity = async (newTitle: string, newDescription: string) => {
     const clonedActivity = {
         graph: props.activity.graph,
         name: newTitle,
         description: newDescription
     };
-    await cloneActivity(clonedActivity);
+    activityStore.cloneThisActivity(clonedActivity);
+    activityStore.refreshActivityList();
+
     isCloneDialogOpen.value = false;
 }
+
+//delete activity function
 const deleteThisActivity = async () => {
-    await deleteActivity(graph);
+    activityStore.removeActivity(graph);
+    activityStore.refreshActivityList();
+
     isDeleteDialogOpen.value = false;
 }
-
 
 /**
  * Retrieves available roles for the current activity graph.
@@ -81,8 +85,8 @@ const getRoles = async () => {
 }
 
 const sessionStartAllowed = () => !sessionStore.sessionRole;
-
 </script>
+
 <template>
     <div class="rounded-xl shadow-md border bg-white dark:bg-gray-900 p-4 transition-all hover:shadow-lg">
         <Accordion type="single" class="w-full" collapsible>
@@ -199,7 +203,6 @@ const sessionStartAllowed = () => !sessionStore.sessionRole;
         </Accordion>
     </div>
 </template>
-
 
 <style scoped>
 .card {
