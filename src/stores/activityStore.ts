@@ -1,4 +1,4 @@
-import { getActivities, getActivityDetail } from '@/data/knowledge_graph/read_operations';
+import { getActivities } from '@/data/knowledge_graph/read_operations';
 import { Activity } from '@/data/knowledge_graph/structures';
 import { cloneActivity, deleteActivity } from '@/data/knowledge_graph/write_operations';
 import { defineStore } from 'pinia';
@@ -44,16 +44,16 @@ export const useActivityStore = defineStore('ActivityStore', () => {
     const cloneThisActivity = async (clonedActivity: Activity) => {
         const savedClone = await cloneActivity(clonedActivity);
         if (savedClone.status === "OK") {
-            console.log("Cloned activity successfully.")
+           // console.log("Cloned activity successfully.")
         } else {
             console.log("Cloning failed.")
         }
         refreshActivityList();
     }
     const removeActivity = async (activity: Activity) => {
-        const deletion = await deleteActivity(activity);
+        const deletion = await deleteActivity(activity); // nicht activity.graph sondern activity
         if (deletion.status === "OK") {
-            console.log("Deleted activity successfully.")
+            //console.log("Deleted activity successfully.")
         } else {
             console.log("Deletion failed.")
         }

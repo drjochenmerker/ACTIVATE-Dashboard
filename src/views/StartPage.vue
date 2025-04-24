@@ -1,8 +1,7 @@
 <script setup lang="ts">
 // Import necessary dependencies and components
 import { useColorMode } from '@vueuse/core';
-import { getActivities, getActivityClassIds, getActivityDetail } from '@/data/knowledge_graph/read_operations';
-import { Activity } from '@/data/knowledge_graph/structures';
+import { getActivityClassIds } from '@/data/knowledge_graph/read_operations';
 import { ref, onMounted, watch, computed } from 'vue';
 import { useSessionStore } from '@/stores/sessionStore';
 import { KnowledgeGraphActivityClass } from '@/data/knowledge_graph/structures';
@@ -65,13 +64,14 @@ watch(selectedActivity, async () => {
 
 const addNewActivity = async () => {
   try {
-    await addActivity(newTitle, newDescription);
-    await addEntity(newTitle, defaultRole, KnowledgeGraphActivityClass.subject);
+    const res = await addActivity(newTitle, newDescription);
+    await addEntity(res.modified, defaultRole, KnowledgeGraphActivityClass.subject);
 
     // TODO rollen hinzufügen funktioniert noch nicht korrekt
 
     // Reload activities after adding a new one
-    activities.value = await activityStore.getAllActivities();
+    //activities.value = await activityStore.getAllActivities();
+    await activityStore.refreshActivityList();
 
     //close dialog
     dialogOpen.value = false;
@@ -83,10 +83,6 @@ const addNewActivity = async () => {
     console.error("Fehler beim Hinzufügen einer Aktivität:", error);
   }
 }
-
-const removeActivity = async () => {
-  //
-};
 
 </script>
 

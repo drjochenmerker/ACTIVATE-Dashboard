@@ -139,7 +139,7 @@ export async function addComment(parentId: string, comment: string): Promise<upd
         '{{parentId}}': parentId
     };
     query = query.replaceMultiple(mapObj);
-    console.log(query)
+    //console.log(query)
     // Exeucte Query in update mode
     const data = await fetchSparql(query, true);
     return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: commentId, action: RDFOperation.insert } as updateResponse;
