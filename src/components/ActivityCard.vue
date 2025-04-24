@@ -77,13 +77,6 @@ const deleteThisActivity = async () => {
  */
 const getRoles = async () => {
     const roles = await getActivityClassIds(props.activity.graph, KnowledgeGraphActivityClass.subject);
-
-    // test log
-    // TODO: remove this after testing
-    // TODO PROBLEM: this is not working because the roles are not available yet when this function is called
-    // console.log("activity: ", props.activity)
-    //console.log("roles for: ", graph, ": ", roles);
-
     sessionStore.availableRoles = Object.values(roles).flatMap(role => role.map(r => r.id));
 }
 
@@ -94,7 +87,7 @@ const sessionStartAllowed = () => !sessionStore.sessionRole;
     <div class="rounded-xl shadow-md border bg-white dark:bg-gray-900 p-4 transition-all hover:shadow-lg">
         <Accordion type="single" class="w-full" collapsible>
             <AccordionItem :value="props.activity.graph">
-                <AccordionTrigger class="text-lg font-semibold hover:underline">
+                <AccordionTrigger class="text-lg font-semibold hover:underline" @click="getRoles">
                     {{ props.activity.name }}
                 </AccordionTrigger>
 
@@ -160,8 +153,7 @@ const sessionStartAllowed = () => !sessionStore.sessionRole;
                                 </DialogHeader>
 
                                 <!-- Select a role-->
-                                <Select v-model="sessionStore.sessionRole" id="roleSelect" class="my-4"
-                                    @update:open="(isOpen) => { if (isOpen) getRoles(); }">
+                                <Select v-model="sessionStore.sessionRole" id="roleSelect" class="my-4">
                                     <SelectTrigger>
                                         <SelectValue placeholder="Select a role" />
                                     </SelectTrigger>
@@ -169,7 +161,7 @@ const sessionStartAllowed = () => !sessionStore.sessionRole;
                                         <SelectItem v-for="role in sessionStore.availableRoles" :value="role"
                                             :key="role">
                                             {{ role }}
-                                            <span>{{ console.log(role) }}</span>
+
                                         </SelectItem>
                                     </SelectContent>
 
