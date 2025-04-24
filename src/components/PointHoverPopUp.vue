@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { useColorMode } from '@vueuse/core';
-import { defineProps } from 'vue';
+import { defineProps, nextTick, ref, watch } from 'vue';
 
 /**
  * Props of the PointHoverPopUp component
  * @property hoveredPoint - Information about the hovered point, including its label and details
  * @property position - Position of the mouse cursor to position the popup accordingly
  */
-defineProps<{
+const props = defineProps<{
   hoveredPoint: {
     label: string;
     content: Array<{label: string; value?: string}>;
@@ -19,13 +19,30 @@ defineProps<{
 
 }>();
 
+const popupRef = ref<HTMLElement | null>(null);
+const popupStyle = ref({ top: props.position.x + "px", left: props.position.y + 'px' });
+
+watch(() => props.position, async (pos) => {
+  await nextTick();
+  if (popupRef.value) {
+    const rect = popupRef.value.getBoundingClientRect();
+    if (pos.y + rect.height > window.innerHeight - 10) {
+      pos.y = window.innerHeight - rect.height - 10;
+    }
+    popupStyle.value = {
+      top: `${pos.y}px`,
+      left: `${pos.x - rect.width - 10}px`
+    };
+  }
+});
+
 // Current color mode (Light- or Dark-Mode)
 const mode = useColorMode()
 
 </script>
 
 <template>
-  <div class="popup" :class="{'popup-dark' : mode === 'dark'}" :style="{ top: `${position.y}px`, left: `${position.x}px` }">
+  <div ref="popupRef" class="popup" :class="{'popup-dark' : mode === 'dark'}" :style="popupStyle">
     <b>{{ hoveredPoint.label }}:</b>
     <ul class="custom-list">
       <li v-for="(item, index) in hoveredPoint.content" :key="index">

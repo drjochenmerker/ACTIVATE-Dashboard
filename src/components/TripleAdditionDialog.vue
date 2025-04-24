@@ -67,12 +67,13 @@ const isApplyEnabled = computed(() => {
 /**
  * Opens the modal dialog
  * Fetches current activity detail to populate participants
+ * 
+ * TODO Fix loading of participants
  */
 const openDialog = async () => {
     isOpen.value = true;
     activityParticipants.value = [];
     const activityData = await getActivityDetail(sessionStore.sessionActivity as Activity)
-
     Object.keys(activityData).forEach(key => {
         const items = activityData[key];
         if (Array.isArray(items)) {

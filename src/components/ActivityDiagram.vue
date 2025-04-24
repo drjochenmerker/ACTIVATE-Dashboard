@@ -373,7 +373,7 @@ export default defineComponent({
                 conflictPositions.value.forEach((conflict: any) => {
                     ctx.beginPath();
                     ctx.arc(conflict.x, conflict.y, triangleHeight / 80, 0, 2 * Math.PI);
-                    ctx.fillStyle = conflict.status == conflictStatus.open ? "green" : conflict.status == conflictStatus.inDiscussion ? "yellow" : "red";
+                    ctx.fillStyle = conflict.status == conflictStatus.open ? "red" : conflict.status == conflictStatus.inDiscussion ? "yellow" : "green";
                     ctx.fill();
                     ctx.strokeStyle = "black";
                     ctx.lineWidth = 1;
@@ -391,7 +391,7 @@ export default defineComponent({
             const mouseX = event.clientX - rect.left;
             const mouseY = event.clientY - rect.top;
 
-            hoverPosition.value = { x: mouseX + 10, y: mouseY + 10 };
+            hoverPosition.value = { x: event.clientX, y: event.clientY };
 
             let foundPoint: { label: string; content: Array<string>; } | null = null;
 
@@ -400,12 +400,6 @@ export default defineComponent({
                 const distance = Math.sqrt((mouseX - point.x) ** 2 + (mouseY - point.y) ** 2);
                 if (distance < triangleHeight / 40) {
                     foundPoint = { label: point.label, content: activityData.value[point.id] || [] };
-
-                    // Adjust hoverPosition for cases in which the hoverPopUp would be outside the canvas
-                    // TODO: Maybe find a better dynamic way to adjust the hoverPosition
-                    if (foundPoint.label === activateTerms[sessionStore.activeLanguage].rules || foundPoint.label === activateTerms[sessionStore.activeLanguage].community || foundPoint.label === activateTerms[sessionStore.activeLanguage].division_of_labour) {
-                        hoverPosition.value.y -= 100
-                    }
                 }
             });
 

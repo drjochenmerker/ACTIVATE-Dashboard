@@ -159,22 +159,32 @@ export const staticContent = {
                 sv: "Löst",
             }
         },
-        placeholders: {
-            search: {
-                en: "Search...",
-                de: "Suche...",
-                sv: "Sök...",
-            },
-            description: {
-                en: "Description...",
-                de: "Beschreibung...",
-                sv: "Beskrivning...",
-            },
-            title: {
-                en: "Title...",
-                de: "Titel...",
-                sv: "Titel...",
-            }
+    },
+    placeholders: {
+        search: {
+            en: "Search...",
+            de: "Suche...",
+            sv: "Sök...",
+        },
+        description: {
+            en: "Description...",
+            de: "Beschreibung...",
+            sv: "Beskrivning...",
+        },
+        title: {
+            en: "Title...",
+            de: "Titel...",
+            sv: "Titel...",
+        },
+        answer: {
+            en: "Answer...",
+            de: "Antwort...",
+            sv: "Svar...",
+        },
+        reply: {
+            en: "Reply...",
+            de: "Antwort...",
+            sv: "Svar...",
         },
     },
     editor: {
@@ -284,4 +294,31 @@ export const staticContent = {
                 lägga till ett nytt genom att skriva in det i predikatets textfält`,
         }
     },
+    noteCards: {
+        addComment: {
+            en: "Add comment",
+            de: "Kommentar hinzufügen",
+            sv: "Lägg till kommentar",
+        },
+        save: {
+            en: "Save",
+            de: "Speichern",
+            sv: "Spara",
+        },
+        cancel: {
+            en: "Cancel",
+            de: "Abbrechen",
+            sv: "Avbryt",
+        },
+        answer: {
+            en: "Answer",
+            de: "Antworten",
+            sv: "Svar",
+        },
+        saveComment: {
+            en: "Save comment",
+            de: "Kommentar speichern",
+            sv: "Spara kommentar",
+        },
+    }
 }

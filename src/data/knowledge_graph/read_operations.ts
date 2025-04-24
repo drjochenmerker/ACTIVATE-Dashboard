@@ -158,8 +158,20 @@ export async function getConflictDetail(graph: string, conflictId: string): Prom
           if (type === "rule" || type === "instrument") {
             type += "s";
           }
-          // TODO Properly load participants
-          parsedConflict.participants.push({ id: item.conflict_o.value.split("#").pop(), name: "", type: type });
+          // Handle labels
+          if (item.participant_o && item.participant_p.value.split("#").pop() === "label") {
+            const existingParticipant = parsedConflict.participants.find(participant => participant.id == item.conflict_o.value.split("#").pop());
+            const langTag = item.participant_o["xml:lang"];
+            if (existingParticipant) {
+              existingParticipant.label[langTag] = item.participant_o.value;
+            }
+            else {
+              parsedConflict.participants.push({ id: item.conflict_o.value.split("#").pop(), label: { [langTag]: item.participant_o.value }, type: type });
+            }
+          }
+          else {
+            parsedConflict.participants.push({ id: item.conflict_o.value.split("#").pop(), label: { default: item.conflict_o.value.split("#").pop() }, type: type });
+          }
           break;
         case "ConflictState":
           parsedConflict.status = item.conflict_o.value;
@@ -257,6 +269,7 @@ export async function getConflictDetail(graph: string, conflictId: string): Prom
       parsedConflict.replies!.push(comment);
     }
   }
+  console.log("Parsed Conflict", parsedConflict);
   return parsedConflict;
 }
 

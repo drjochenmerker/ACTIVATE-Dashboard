@@ -57,7 +57,7 @@ export default {
     },
     placeholderText() {
       const lang = this.sessionStore.activeLanguage || 'en';
-      return this.staticContent.terms.placeholders.search[lang];
+      return this.staticContent.placeholders.search[lang];
     }
   },
   methods: {

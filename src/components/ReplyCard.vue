@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { addComment, deleteComment } from '@/data/knowledge_graph/write_operations';
 import { useConflictsStore } from '@/stores/conflictsStore';
 import { useSessionStore } from '@/stores/sessionStore';
+import { staticContent } from '@/data/contentData';
 
 
 const props = defineProps({
@@ -129,14 +130,14 @@ const removeReply = (id: string) => {
 
         <!-- Reply Button to hide input field -->
         <Button @click="toggleReplyInput()">
-            {{ replyInputVisible ? 'Cancel' : 'Answer' }}
+            {{ replyInputVisible ? staticContent.noteCards.cancel[sessionStore.activeLanguage] : staticContent.noteCards.answer[sessionStore.activeLanguage] }}
         </Button>
 
         <!-- Reply input field -->
         <div v-if="replyInputVisible" class="reply-input">
-            <textarea ref="textareaRef" v-model="newReplyText" placeholder="Write something to answer..."
+            <textarea ref="textareaRef" v-model="newReplyText" :placeholder="staticContent.placeholders.answer[sessionStore.activeLanguage]"
                 @keydown.enter="handleEnterKey($event)"></textarea>
-            <Button @click="saveReply(props.parentComment.id)">Save Comment</Button>
+            <Button @click="saveReply(props.parentComment.id)">{{staticContent.noteCards.saveComment[sessionStore.activeLanguage]}}</Button>
         </div>
 
         <div v-if="Array.isArray(props.parentComment.replies) && props.parentComment.replies.length"

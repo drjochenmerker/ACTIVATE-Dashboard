@@ -62,7 +62,7 @@ export default {
   },
   computed: {
     titlePlaceholder() {
-      return this.staticContent.terms.placeholders.title[this.sessionStore.activeLanguage] || this.staticContent.terms.placeholders.title.en;
+      return this.staticContent.placeholders.title[this.sessionStore.activeLanguage] || this.staticContent.placeholders.title.en;
     },
     pointData() {
       // Return empty object if activityDetails is not yet loaded
@@ -115,7 +115,7 @@ export default {
     initQuill() {
       this.quill = new Quill(this.$refs.editorContainer, {
         theme: 'snow',
-        placeholder: this.staticContent.terms.placeholders.description[this.sessionStore.activeLanguage] || this.staticContent.terms.placeholders.description.en,
+        placeholder: this.staticContent.placeholders.description[this.sessionStore.activeLanguage] || this.staticContent.placeholders.description.en,
         modules: {
           toolbar: [
             ['bold', 'italic', 'underline'],
@@ -137,7 +137,7 @@ export default {
     clearEditor() {
       if (this.quill) {
         this.quill.root.innerHTML = '';
-        this.quill.placeholder = this.staticContent.terms.placeholders.description[this.sessionStore.activeLanguage] || this.staticContent.terms.placeholders.description.en;
+        this.quill.placeholder = this.staticContent.placeholders.description[this.sessionStore.activeLanguage] || this.staticContent.placeholders.description.en;
       }
       this.isAnonymous = false;
       this.title = '';
@@ -204,6 +204,7 @@ export default {
         const selectedValues = this.selectedPoints[point] || [];
 
         selectedValues.forEach(item => {
+          console.log("Selected item: ", item);
           participants.push({
             // every entry stays a separate participant (important for the graph)
             id: item.label,
@@ -283,6 +284,11 @@ export default {
         }
       },
     },
+    'sessionStore.activeLanguage': {
+      handler: function (newVal) {
+        this.quill.root.dataset.placeholder = this.staticContent.placeholders.title[newVal] || this.staticContent.placeholders.title.en;
+      },
+    },
   }
 };
 
@@ -308,7 +314,11 @@ export default {
         <Dropdown :label="point" :options="pointData[point] || []" v-model="selectedPoints[point]" />
       </div>
     </div>
-
+    <!-- Second Separator TODO: Figure out why Tailwind won't render the separator when three points are selected and mt and mb are even -->
+    <hr v-if="activePoints.length > 0 && activePoints.length < 3"
+    class="mt-4 mb-4 h-px border-t-0 bg-transparent bg-gradient-to-r from-transparent via-neutral-900 to-transparent opacity-70 dark:via-neutral-700" />
+    <hr v-if="activePoints.length == 3"
+    class="mt-4 mb-5 h-px border-t-0 bg-transparent bg-gradient-to-r from-transparent via-neutral-900 to-transparent opacity-70 dark:via-neutral-700" />
     <!-- title: -->
     <div>
       <!-- <h3>{{ this.staticContent.editor.addTitle[this.sessionStore.activeLanguage] || this.staticContent.editor.addTitle.en }}</h3> -->

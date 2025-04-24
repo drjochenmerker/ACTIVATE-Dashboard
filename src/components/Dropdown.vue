@@ -1,5 +1,5 @@
 <script>
-import { staticContent } from '@/data/contentData';
+import { activateTerms, staticContent } from '@/data/contentData';
 import { useSessionStore } from '@/stores/sessionStore';
 
 /** 
@@ -31,7 +31,8 @@ export default {
             showDropdown: false,
             selectedOptions: this.modelValue,
             sessionStore: useSessionStore(),
-            staticContent: staticContent
+            staticContent: staticContent,
+            activateTerms: activateTerms
         };
     },
     computed: {
@@ -49,7 +50,7 @@ export default {
         },
             placeholderText() {
             const lang = this.sessionStore.activeLanguage || "en";
-            return this.staticContent.terms.placeholders.search[lang] 
+            return this.staticContent.placeholders.search[lang] 
         }
     },
     methods: {
@@ -114,7 +115,7 @@ export default {
 
 <template>
     <div class="dropdown" ref="dropdownContainer">
-        <h3>{{ label }}:</h3>
+        <h3>{{ activateTerms[sessionStore.activeLanguage][label] }}:</h3>
         <div class="search-container">
 
             <!-- Show selected options -->
@@ -142,6 +143,7 @@ export default {
 .dropdown {
     position: relative;
     width: 100%;
+    margin-bottom: 0.5em;
 }
 
 .search-container {

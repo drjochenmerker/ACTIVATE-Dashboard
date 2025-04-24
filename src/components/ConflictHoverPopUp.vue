@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { staticContent } from '@/data/contentData';
+import { activateTerms, staticContent } from '@/data/contentData';
 import { Conflict } from '@/data/knowledge_graph/structures';
 import { useSessionStore } from '@/stores/sessionStore';
 import { useColorMode } from '@vueuse/core';
-import { computed, nextTick, onMounted, ref, watch } from 'vue';
+import { nextTick, onMounted, ref, watch } from 'vue';
 
 /**
  * Props of the ConflictHoverPopUp component
@@ -23,18 +23,23 @@ const mode = useColorMode();
  * Used to measure the height dynamically
  */
 const popupRef = ref<HTMLElement | null>(null);
-
-// Dynamically stored height of the popup
-const popupHeight = ref(0);
+const popupStyle = ref({ top: props.position.x + "px", left: props.position.y + 'px' });
 
 /**
  * Updates the height of the popup box after DOM update
  * Uses nextTick to ensure accurate measurement
  */
-const updatePopupHeight = () => {
+const updatePopupHeight = (pos : any) => {
   nextTick(() => {
     if (popupRef.value) {
-      popupHeight.value = popupRef.value.offsetHeight;
+      const rect = popupRef.value.getBoundingClientRect();
+      if (pos.y + rect.height > window.innerHeight - 10) {
+        pos.y = window.innerHeight - rect.height - 10;
+      }
+      popupStyle.value = {
+        top: `${pos.y}px`,
+        left: `${pos.x - rect.width - 10}px`
+      };
     }
   });
 };
@@ -48,7 +53,7 @@ const sessionStore = useSessionStore();
  */
 onMounted(() => {
   props.hoveredConflictPoint.description = props.hoveredConflictPoint.description?.replace(/<\/?[^>]+(>|$)/g, "");
-  updatePopupHeight();
+  updatePopupHeight({});
 });
 
 /**
@@ -58,25 +63,6 @@ onMounted(() => {
 watch(() => props.hoveredConflictPoint, updatePopupHeight);
 watch(() => props.position, updatePopupHeight);
 
-/**
- * Adjusted Position of the popup
- * Prevents overflow below the visible viewport
- * @returns updated top and left coordinates
- *
- * TODO: Replace hardcoded navbar offset (120px) with dynamic value
- */
-const adjustedPosition = computed(() => {
-  let top = props.position.y;
-  const left = props.position.x;
-  const viewportHeight = window.innerHeight;
-
-  if (top + 120 + popupHeight.value > viewportHeight) {
-    top = props.position.y - popupHeight.value - 10;
-  }
-
-  return { x: left, y: top };
-});
-
 </script>
 
 <template>
@@ -84,7 +70,7 @@ const adjustedPosition = computed(() => {
     ref="popupRef"
     class="popup"
     :class="{'popup-dark' : mode === 'dark'}"
-    :style="{ top: `${adjustedPosition.y}px`, left: `${adjustedPosition.x}px`}"
+    :style="popupStyle"
   >
     <b>{{ hoveredConflictPoint.title }}</b>
     <p v-if="hoveredConflictPoint.description">
@@ -103,7 +89,7 @@ const adjustedPosition = computed(() => {
           v-for="(participant, index) in hoveredConflictPoint.participants"
           :key="index"
         >
-          {{ participant.id }} - {{ participant.type }}
+          {{ participant.label[sessionStore.activeLanguage] ? participant.label[sessionStore.activeLanguage].split("/").pop() : participant.label["en"] ? participant.label["en"].split("/").pop() : participant.label ? participant.label[Object.keys(participant.label)[0]] : participant.id }} - {{ activateTerms[sessionStore.activeLanguage][participant.type] }}
         </li>
       </ul>
     </div>
