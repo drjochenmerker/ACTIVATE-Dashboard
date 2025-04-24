@@ -249,15 +249,18 @@ export async function addEntity(graph: string, entity: string, activityClass: Kn
  */
 export async function addActivity(activityName: string, activityDescription: string): Promise<updateResponse> {
     let query = await getSparqlTemplate(sparqlTemplate.addActivity);
+    const graphID = EscapeSparqlStringLiteral(CapitalizeFirstLetter(activityName.trim().replaceAll(" ", "_")));
+    const activityID = EscapeSparqlStringLiteral(CapitalizeFirstLetter(activityName.trim().replaceAll(" ", "")));
+    activityName = EscapeSparqlStringLiteral(CapitalizeFirstLetter(activityName.trim()));
     const mapObj = {
-        "{{graphName}}": CapitalizeFirstLetter(activityName.trim().replaceAll(" ", "_")),
-        "{{identifier}}": CapitalizeFirstLetter(activityName.trim().replaceAll(" ", "")),
-        "{{descriptions}}": `"${activityDescription}"`,
-        "{{name}}": `"${CapitalizeFirstLetter(activityName.trim())}"`
+        "{{graphName}}": graphID,
+        "{{identifier}}": activityID,
+        "{{descriptions}}": `"${EscapeSparqlStringLiteral(activityDescription)}"`,
+        "{{name}}": activityName
     }
     query = query.replaceMultiple(mapObj);
     const data = await fetchSparql(query, true);
-    return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: activityName, action: RDFOperation.insert } as updateResponse;
+    return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: graphID, action: RDFOperation.insert } as updateResponse;
 }
 
 /**
