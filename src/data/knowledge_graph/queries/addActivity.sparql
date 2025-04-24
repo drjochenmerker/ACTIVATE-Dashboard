@@ -7,6 +7,6 @@ INSERT DATA {
     GRAPH graph:{{graphName}} {
         :{{identifier}} rdf:type owl:NamedIndividual ;
         :ActivityDescription {{descriptions}} ;
-        :ActivityName {{name}} .
+        :ActivityName """{{name}}""" .
     }
 }
