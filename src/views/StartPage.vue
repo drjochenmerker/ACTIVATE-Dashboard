@@ -1,48 +1,53 @@
 <script setup lang="ts">
 // Import necessary dependencies and components
 import { useColorMode } from '@vueuse/core';
-import { getActivities, getActivityClassIds } from '@/data/knowledge_graph/read_operations';
-import { Activity, KnowledgeGraphActivityClass } from '@/data/knowledge_graph/structures';
-import { ref, onMounted, watch } from 'vue';
+import { getActivityClassIds } from '@/data/knowledge_graph/read_operations';
+import { ref, onMounted, watch, computed } from 'vue';
 import { useSessionStore } from '@/stores/sessionStore';
-import { Play, Loader2 } from 'lucide-vue-next';
+import { KnowledgeGraphActivityClass } from '@/data/knowledge_graph/structures';
 // UI components imports...
 import {
   Card,
-  CardContent,
   CardHeader,
-  CardTitle,
-  CardFooter
+  CardTitle
 } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import ActivityCard from '@/components/ActivityCard.vue';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select';
-import Label from '@/components/ui/label/Label.vue';
-import Checkbox from '@/components/ui/checkbox/Checkbox.vue';
-import Button from '@/components/ui/button/Button.vue';
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogTrigger,
+} from '@/components/ui/dialog'
+import { addActivity, addEntity } from '@/data/knowledge_graph/write_operations';
+import { useActivityStore } from '@/stores/activityStore';
 import { buildTreeStructByLang } from '@/data/knowledge_graph/utils';
-import RecursiveSelect from '@/components/RecursiveSelect.vue';
 
 useColorMode();
 const sessionStore = useSessionStore();
 
+// refs
+const dialogOpen = ref(false);
+
 // State management for activities
 const selectedActivity = ref<string>();
-const allActivities = ref<Activity[]>([]);
+const activityStore = useActivityStore();
+const activities = computed(() => activityStore.activityList);
+
+let newTitle = '';
+let newDescription = '';
+let defaultRole = '';
 
 // Load all available activities on component mount
 onMounted(async () => {
   try {
-    allActivities.value = await getActivities();
+    await activityStore.getAllActivities();
   } catch (error) {
     console.error("Failed to load activities:", error);
   }
 });
-
 // Update available roles when selected activity changes
 watch(selectedActivity, async () => {
   if (!selectedActivity.value) {
@@ -54,81 +59,82 @@ watch(selectedActivity, async () => {
   sessionStore.sessionRole = ''; // Reset role selection
 });
 
-// Handle session start when user clicks start button
-const handleStartSession = async () => {
-  sessionStore.sessionActivity = allActivities.value.find(a => a.graph === selectedActivity.value)!;
-  sessionStore.startSession();
+
+
+const addNewActivity = async () => {
+  try {
+    const res = await addActivity(newTitle, newDescription);
+    await addEntity(res.modified, defaultRole, KnowledgeGraphActivityClass.subject);
+
+    // TODO rollen hinzufügen funktioniert noch nicht korrekt
+
+    // Reload activities after adding a new one
+    //activities.value = await activityStore.getAllActivities();
+    await activityStore.refreshActivityList();
+
+    //close dialog
+    dialogOpen.value = false;
+    // reset form fields
+    newTitle = '';
+    newDescription = '';
+    defaultRole = '';
+  } catch (error) {
+    console.error("Fehler beim Hinzufügen einer Aktivität:", error);
+  }
 }
 
-// Validate if session can be started (requires both activity and role selection)
-const sessionStartAllowed = () => !selectedActivity || !sessionStore.sessionRole;
 </script>
 
 <template>
-  <!-- Main container with centered card layout -->
-  <div class="flex items-center justify-center h-screen">
-    <Card class="w-1/4">
+  <!-- Main container with centered layout -->
+  <div class="flex flex-col items-center justify-center py-10 px-4">
+    <Card class="w-full max-w-5xl">
+
       <!-- Card header with logo -->
-      <CardHeader>
+      <CardHeader class="flex justify-center">
         <CardTitle>
-          <img src="@/assets/images/activate-logo-full.gif" class="" alt="Logo" />
+          <img src="@/assets/images/activate-logo-full.gif" alt="Logo" />
         </CardTitle>
       </CardHeader>
 
-      <!-- Main form content -->
-      <CardContent>
-        <!-- Activity selection dropdown -->
-        <Label for="activitySelect">Activity</Label>
-        <Select v-model="selectedActivity" id="activitySelect">
-          <!-- Select components... -->
-          <SelectTrigger>
-            <SelectValue placeholder="Select an activity for the debriefing" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem v-for="activity in allActivities" :value="activity.graph">
-              {{ activity.name }}
-            </SelectItem>
-          </SelectContent>
-        </Select>
+      <!-- "add button" in the middle -->
+      <div class="flex justify-center my-6">
+        <Dialog v-model:open="dialogOpen">
+          <DialogTrigger as-child>
+            <Button class="text-3xl px-6 py-3 rounded-full">
+              +
+            </Button>
+          </DialogTrigger>
+          <DialogContent class="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Create new Activity</DialogTitle>
 
-        <!-- Role selection dropdown (disabled until activity is selected) -->
-        <div class="mt-4">
-          <Label for="roleSelect">Role</Label>
-          <Select v-model="sessionStore.sessionRole" :disabled="!selectedActivity" id="roleSelect">
-            <!-- Select components... -->
-            <SelectTrigger>
-              <SelectValue placeholder="Select your role for the debriefing" />
-            </SelectTrigger>
-            <SelectContent>
-              <RecursiveSelect :node="sessionStore.availableRoles" />
-            </SelectContent>
-          </Select>
-        </div>
+              <DialogDescription>Enter Title</DialogDescription>
+              <textarea v-model="newTitle" class="w-full border rounded p-2 mb-2" />
 
-        <!-- Instructor mode toggle -->
-        <div class="flex items-center space-x-2 mt-4">
-          <Checkbox id="cbInstructorMode" :checked="sessionStore.instructorMode"
-            @update:checked="sessionStore.instructorMode = $event" />
-          <Label for="cbInstructorMode" class="text-sm font-normal">
-            Enable Instructor Mode
-          </Label>
-        </div>
-      </CardContent>
+              <DialogDescription>Enter Description</DialogDescription>
+              <textarea v-model="newDescription" class="w-full border rounded p-2 mb-2" />
 
-      <!-- Start button with dynamic state -->
-      <CardFooter>
-        <Button @click="handleStartSession" class="w-full" :disabled="sessionStartAllowed()">
-          <!-- Button content changes based on selection state -->
-          <template v-if="sessionStartAllowed()">
-            <Loader2 class="w-4 h-4 mr-2 animate-spin" />
-            Select activity and role
-          </template>
-          <template v-else>
-            <Play />
-            Start debriefing
-          </template>
-        </Button>
-      </CardFooter>
+              <DialogDescription>Enter default role</DialogDescription>
+              <textarea v-model="defaultRole" class="w-full border rounded p-2 mb-4" />
+
+              <Button @click="() => addNewActivity()">Done</Button>
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      <!-- Activities Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 px-6 pb-6">
+        <ActivityCard v-for="activity in activities" :key="activity.name" :activity="activity" />
+      </div>
     </Card>
   </div>
 </template>
+
+
+<style scoped>
+.delete-activity-button {
+  flex-direction: column;
+}
+</style>

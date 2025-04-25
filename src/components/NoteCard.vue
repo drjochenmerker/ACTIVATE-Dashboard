@@ -41,7 +41,6 @@ const conflictDetail = ref<any>(null);
 const replyInputVisible = ref<Record<string, boolean>>({});
 const newReplyText = ref<Record<string, string>>({});
 
-
 // Set status from props
 const selectedStatus = ref<any>(props.status);
 
@@ -231,6 +230,7 @@ const removeReply = (id: string) => {
 </template>
 
 
+
 <style scoped>
 .note-card {
   background-color: #f9f9f9;
@@ -244,21 +244,12 @@ const removeReply = (id: string) => {
   transition: box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
-/* dynamic colors based on status */
-.note-card.red {
-  box-shadow: 0 2px 8px rgba(255, 182, 193, 0.5);
-  border-color: rgba(255, 182, 193, 0.7);
+.dark .note-card {
+  background-color: #2b2b2b;
+  border-color: #444;
+  color: #e0e0e0;
 }
 
-.note-card.yellow {
-  box-shadow: 0 2px 8px rgba(253, 253, 150, 0.5);
-  border-color: rgba(253, 253, 150, 0.7);
-}
-
-.note-card.green {
-  box-shadow: 0 2px 8px rgba(152, 251, 152, 0.5);
-  border-color: rgba(152, 251, 152, 0.7);
-}
 
 /* icon */
 .icon-button {
@@ -277,6 +268,11 @@ const removeReply = (id: string) => {
 /* comment input */
 .comment-input {
   margin-top: 10px;
+}
+
+.dark .comment-input {
+
+  color: #1e1e1e;
 }
 
 .comment-input textarea {
@@ -302,6 +298,10 @@ const removeReply = (id: string) => {
   font-size: 14px;
   font-weight: bold;
   color: #333;
+}
+
+.dark .note-card-author {
+  color: #f7f7f7;
 }
 
 /* participants */
@@ -355,9 +355,19 @@ const removeReply = (id: string) => {
   transition: background-color 0.2s ease;
 }
 
+.dark .status-selector select {
+  background-color: #1e1e1e;
+  color: #ffffff;
+}
+
 .status-selector select:focus {
   outline: none;
   background-color: #f1f1f1;
+}
+
+.dark .status-selector select:focus {
+  background-color: #1e1e1e;
+  color: #ffffff;
 }
 
 .note-divider {

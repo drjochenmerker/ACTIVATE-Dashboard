@@ -5,7 +5,12 @@ import { addComment, deleteComment } from '@/data/knowledge_graph/write_operatio
 import { useConflictsStore } from '@/stores/conflictsStore';
 import { useSessionStore } from '@/stores/sessionStore';
 import { staticContent } from '@/data/contentData';
+import { useColorMode } from '@vueuse/core';
 
+/** 
+ * ReplyCard-Component
+ * Shows a reply for a specific parent element
+ */
 
 const props = defineProps({
     parentComment: {
@@ -13,6 +18,8 @@ const props = defineProps({
         required: true,
     },
 });
+
+const colorMode = useColorMode();
 
 // Store
 const sessionStore = useSessionStore();
@@ -115,7 +122,7 @@ const removeReply = (id: string) => {
 </script>
 
 <template>
-    <div class="reply-card">
+    <div class="reply-card" :class="{ 'dark': colorMode === 'dark' }">
 
         <div class="reply-content">
             <div class="reply-head">
@@ -164,6 +171,11 @@ const removeReply = (id: string) => {
     background-color: #f9f9f9;
     padding: 10px;
     border-radius: 5px;
+}
+
+.dark .reply-content {
+    background-color: #222;
+    color: #fff;
 }
 
 .reply-head {

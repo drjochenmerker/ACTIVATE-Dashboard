@@ -6,10 +6,10 @@ INSERT DATA {
 	GRAPH graph:{{graph}} {
 		:{{conflictId}} rdf:type :Conflict ;
 {{participants}}
-		:ConflictDescription "{{description}}" ;
-		:ConflictTitle "{{title}}" ;
-		:WrittenBy "{{author}}" ;
-		:ConflictState "{{status}}" ;
-		:CreationDate "{{created}}" .
+		:ConflictDescription """{{description}}""" ;
+		:ConflictTitle """{{title}}""" ;
+		:WrittenBy """{{author}}""" ;
+		:ConflictState """{{status}}""" ;
+		:CreationDate """{{created}}""" .
 	}
 }

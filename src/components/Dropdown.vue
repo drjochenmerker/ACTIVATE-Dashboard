@@ -131,10 +131,14 @@ export default {
 
         <!-- Dropdown list -->
         <ul v-if="showDropdown" class="dropdown-list">
-            <li v-for="option in filteredOptions" :key="option.label" @mousedown.prevent="selectOption(option)">
+            <li v-if="filteredOptions.length === 0" class="no-options">
+                no elements to select from
+            </li>
+            <li v-else v-for="option in filteredOptions" :key="option.label" @mousedown.prevent="selectOption(option)">
                 {{ option.label }}
             </li>
         </ul>
+
     </div>
 </template>
 
@@ -146,6 +150,12 @@ export default {
     margin-bottom: 0.5em;
 }
 
+.dark .dropdown {
+    background-color: #1e1e1e;
+    color: #ffffff;
+}
+
+
 .search-container {
     display: flex;
     flex-wrap: wrap;
@@ -156,12 +166,27 @@ export default {
     border-radius: 4px;
 }
 
+.dark .search-container {
+    background-color: #1e1e1e;
+    color: #ffffff;
+}
+
 .selected-item {
     display: flex;
     align-items: center;
     background-color: #e0e0e0;
     padding: 5px;
     border-radius: 4px;
+}
+
+.dark .selected-item {
+    background-color: #ffffff;
+    color: #1e1e1e;
+}
+
+.dark .input-search {
+    background-color: #1e1e1e;
+    color: #ffffff;
 }
 
 .remove-icon {
@@ -195,6 +220,16 @@ input:focus {
     overflow-y: auto;
     z-index: 1001;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.dark .dropdown-list {
+    background-color: #1e1e1e;
+    color: #ffffff;
+}
+
+.dark .dropdown-list li:hover {
+    background-color: #333;
+    color: #ffffff;
 }
 
 .dropdown-list li {

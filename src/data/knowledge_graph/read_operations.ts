@@ -443,3 +443,32 @@ export async function getActivityClassIds(graph: string, activityClass: Knowledg
   }
   return result;
 }
+
+/**
+ * Fetches the terms of each available language for the diagram vocabulary
+ */
+export async function getDiagramVocab(): Promise<Record<string, Record<string, object>>> {
+  const query = await getSparqlTemplate(sparqlTemplate.getDiagramVocab);
+  const data = await fetchSparql(query);
+  let vocab: Record<string, Record<string, object>> = {};
+  data.map((item: StringAccessObject) => {
+    // Adapt types to frontend terms
+    let correctedType: string = item.type.value.split("#").pop().toLowerCase();
+    if (correctedType in ["rule", "instrument"]) {
+      correctedType += "s";
+    }
+    else if (correctedType === "divisionoflabour") {
+      correctedType = "division_of_labour";
+    }
+    // Init type if it doesn't exist yet
+    if (vocab[correctedType] === undefined) {
+      vocab[correctedType] = {};
+    }
+    // Add the language to the type
+    vocab[correctedType][item.label["xml:lang"]] = {
+      label: item.label.value,
+      descripton: item.description.value
+    };
+  })
+  return vocab
+}
