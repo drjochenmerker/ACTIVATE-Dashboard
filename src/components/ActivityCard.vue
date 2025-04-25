@@ -59,7 +59,7 @@ const cloneThisActivity = async (newTitle: string, newDescription: string) => {
     const clonedActivity = {
         graph: props.activity.graph,
         name: newTitle,
-        description: newDescription
+        description: newDescription || props.activity.description,
     };
     activityStore.cloneThisActivity(clonedActivity);
     activityStore.refreshActivityList();
