@@ -1,4 +1,7 @@
 <script>
+import { activateTerms, staticContent } from '@/data/contentData';
+import { useSessionStore } from '@/stores/sessionStore';
+
 /** 
  * Dropdown-Component
  * Component that is used in the Editor component to display a dropdown menu
@@ -26,7 +29,10 @@ export default {
         return {
             search: '',
             showDropdown: false,
-            selectedOptions: this.modelValue
+            selectedOptions: this.modelValue,
+            sessionStore: useSessionStore(),
+            staticContent: staticContent,
+            activateTerms: activateTerms
         };
     },
     computed: {
@@ -41,6 +47,10 @@ export default {
                     option.label.toLowerCase().includes(this.search.toLowerCase()) &&
                     !this.selectedOptions.some(selected => selected.label === option.label)
             );
+        },
+            placeholderText() {
+            const lang = this.sessionStore.activeLanguage || "en";
+            return this.staticContent.placeholders.search[lang] 
         }
     },
     methods: {
@@ -105,7 +115,7 @@ export default {
 
 <template>
     <div class="dropdown" ref="dropdownContainer">
-        <h3>{{ label }}:</h3>
+        <h3>{{ activateTerms[sessionStore.activeLanguage][label] }}:</h3>
         <div class="search-container">
 
             <!-- Show selected options -->
@@ -116,15 +126,19 @@ export default {
 
             <!-- Input field for searching -->
             <input type="text" v-model="search" @focus="showDropdown = true" @input="updateSearch"
-                placeholder="Suchen..." />
+                :placeholder="placeholderText" />
         </div>
 
         <!-- Dropdown list -->
         <ul v-if="showDropdown" class="dropdown-list">
-            <li v-for="option in filteredOptions" :key="option.label" @mousedown.prevent="selectOption(option)">
+            <li v-if="filteredOptions.length === 0" class="no-options">
+                no elements to select from
+            </li>
+            <li v-else v-for="option in filteredOptions" :key="option.label" @mousedown.prevent="selectOption(option)">
                 {{ option.label }}
             </li>
         </ul>
+
     </div>
 </template>
 
@@ -133,7 +147,14 @@ export default {
 .dropdown {
     position: relative;
     width: 100%;
+    margin-bottom: 0.5em;
 }
+
+.dark .dropdown {
+    background-color: #1e1e1e;
+    color: #ffffff;
+}
+
 
 .search-container {
     display: flex;
@@ -145,12 +166,27 @@ export default {
     border-radius: 4px;
 }
 
+.dark .search-container {
+    background-color: #1e1e1e;
+    color: #ffffff;
+}
+
 .selected-item {
     display: flex;
     align-items: center;
     background-color: #e0e0e0;
     padding: 5px;
     border-radius: 4px;
+}
+
+.dark .selected-item {
+    background-color: #ffffff;
+    color: #1e1e1e;
+}
+
+.dark .input-search {
+    background-color: #1e1e1e;
+    color: #ffffff;
 }
 
 .remove-icon {
@@ -184,6 +220,16 @@ input:focus {
     overflow-y: auto;
     z-index: 1001;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.dark .dropdown-list {
+    background-color: #1e1e1e;
+    color: #ffffff;
+}
+
+.dark .dropdown-list li:hover {
+    background-color: #333;
+    color: #ffffff;
 }
 
 .dropdown-list li {

@@ -2,7 +2,7 @@
 import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import NoteCardMisc from '@/components/NoteCardMisc.vue';
-import { contentData } from '@/data/contentData';
+import { activateTerms, contentData, staticContent } from '@/data/contentData';
 import ContentTemplate from '@/components/ContentTemplate.vue';
 import { Comment } from '@/data/knowledge_graph/structures';
 import { useSessionStore } from '@/stores/sessionStore';
@@ -19,7 +19,7 @@ const sessionStore = useSessionStore();
 
 
 // Define the expected structure of pageData
-type PageDataType = { id: string; title: string; number: number } | undefined;
+type PageDataType = { id: string; number: number } | undefined;
 // Assign pageData with a proper type
 const pageData: PageDataType = contentData.find((item) => item.id === route.params.id);
 
@@ -57,7 +57,7 @@ const removeComment = (id: string) => {
 
 <template>
     <div>
-        <h1 class="text-2xl font-semibold mb-4">{{ pageData?.title }}</h1>
+        <h1 class="text-2xl font-semibold mb-4">{{ activateTerms[sessionStore.activeLanguage][pageData!.id] }}</h1>
 
         <!-- When not on misc page, show the content -->
         <ContentTemplate v-if="route.params.id !== 'misc' && pageData" :pageData="pageData"
@@ -75,7 +75,7 @@ const removeComment = (id: string) => {
             </div>
 
             <div v-else>
-                There are no miscellaneous comments.
+                {{ staticContent.errors.noMisc[sessionStore.activeLanguage] }}
             </div>
         </div>
 

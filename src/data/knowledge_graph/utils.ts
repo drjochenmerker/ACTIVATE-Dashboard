@@ -1,4 +1,4 @@
-import type { Comment, Conflict, RDFTriple, sparqlTemplate, StringAccessObject } from "./structures";
+import type { Comment, Conflict, MultiLangObject, NestedMultiLangObject, RDFTriple, sparqlTemplate, StringAccessObject } from "./structures";
 
 /**
  * Internal function that allows to load a SPARQL query template from the filesystem
@@ -92,16 +92,18 @@ export function camelToSnakeCase(str: string) {
  * @returns 
  */
 export function RDFSyntaxCheck(input: RDFTriple | string): boolean {
+    const umlautRegex = /^[A-Za-z0-9äöüßÄÖÜ]+$/;
+    const camelCaseRegex = /^[A-Za-zäöüßÄÖÜ]+(?:[A-Z0-9][a-z0-9äöüß]*)*$/;
+
     if (typeof input == "string") {
-        if (!/^[A-Za-z0-9]+$/.test(input)) return false;
+        if (!umlautRegex.test(input)) return false;
         if (input.includes(" ")) return false;
-        return /^[A-Za-z]+(?:[A-Z0-9][a-z0-9]*)*$/.test(input);
-    }
-    else {
+        return camelCaseRegex.test(input);
+    } else {
         for (const [_, value] of Object.entries(input)) {
-            if (!/^[A-Za-z0-9]+$/.test(value)) return false;
+            if (!umlautRegex.test(value)) return false;
             if (value.includes(" ")) return false;
-            if (!/^[A-Za-z]+(?:[A-Z0-9][a-z0-9]*)*$/.test(value)) return false;
+            if (!camelCaseRegex.test(value)) return false;
         }
     }
     return true;
@@ -109,4 +111,56 @@ export function RDFSyntaxCheck(input: RDFTriple | string): boolean {
 
 export function CapitalizeFirstLetter(input: string): string {
     return input.charAt(0).toUpperCase() + input.slice(1);
+}
+
+export function EscapeSparqlStringLiteral(input: string): string {
+    return input
+        .replace(/\\/g, '\\\\')
+        .replace(/"/g, '\\"')
+        .replace(/\n/g, '\\n')
+        .replace(/\r/g, '\\r')
+        .replace(/\t/g, '\\t');
+}
+
+function pushNestedValue(obj: NestedMultiLangObject, nestingPath: string[], newValue: MultiLangObject): void {
+    // Case 1: empty nestingPath
+    if (nestingPath.length == 0) {
+        !obj.values ? obj.values = [newValue] : obj.values.push(newValue);
+        return;
+    }
+    // Case 2 nestingPath not empty
+    let currentObj: NestedMultiLangObject = obj;
+    for (const levelPath of nestingPath) {
+        !currentObj.next ? currentObj.next = [] : null;
+        // Find next level object
+        let nextLevelObj = currentObj.next.find((item) => item.level == levelPath);
+        if (nextLevelObj) {
+            currentObj = nextLevelObj;
+        }
+        else {
+            const newLevelObj = { level: levelPath };
+            currentObj.next.push(newLevelObj);
+            currentObj = newLevelObj;
+        }
+    }
+    if (!currentObj.values) {
+        currentObj.values = [];
+    }
+    currentObj.values.push(newValue);
+}
+
+export function buildTreeStructByLang(input: MultiLangObject[], lang: string): NestedMultiLangObject {
+    const result: NestedMultiLangObject = { level: "root" };
+    for (const item of input) {
+        const label = item.labels[lang] || item.labels["default"] || Object.values(item.labels)[0];
+        const nestingPath = label.split("/");
+        const finalValue = nestingPath.pop();
+        const currentObj: MultiLangObject = {
+            id: item.id,
+            labels: {},
+            value: finalValue
+        };
+        pushNestedValue(result, nestingPath, currentObj);
+    }
+    return result;
 }

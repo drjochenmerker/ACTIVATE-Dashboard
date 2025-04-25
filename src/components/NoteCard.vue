@@ -1,11 +1,12 @@
 <script lang="ts" setup>
 import { defineProps, ref, onMounted, nextTick, computed, watch } from 'vue';
-import { conflictPredicate, conflictStatus } from '@/data/knowledge_graph/structures';
+import { conflictPredicate, conflictStatus, Participant } from '@/data/knowledge_graph/structures';
 import ReplyCard from './ReplyCard.vue';
 import { addComment, deleteConflict, updateConflict } from "@/data/knowledge_graph/write_operations";
 import { Button } from '@/components/ui/button';
 import { useConflictsStore } from '@/stores/conflictsStore';
 import { useSessionStore } from '@/stores/sessionStore';
+import { activateTerms, staticContent } from '@/data/contentData';
 
 const props = defineProps({
   conflict: {
@@ -39,7 +40,6 @@ const props = defineProps({
 const conflictDetail = ref<any>(null);
 const replyInputVisible = ref<Record<string, boolean>>({});
 const newReplyText = ref<Record<string, string>>({});
-
 
 // Set status from props
 const selectedStatus = ref<any>(props.status);
@@ -88,14 +88,14 @@ const toggleReplyInput = async (conflictId: string) => {
  * @returns {Record<string, string[]>} A record of participant types mapped to their corresponding participant IDs
  */
 const groupedParticipants = computed(() => {
-  const groups: Record<string, string[]> = {};
+  const groups: Record<string, Participant[]> = {};
   if (!props.conflict.participants) return groups;
 
-  props.conflict.participants.forEach((participant: { type: string | number; id: string; }) => {
+  props.conflict.participants.forEach((participant: Participant) => {
     if (!groups[participant.type]) {
       groups[participant.type] = [];
     }
-    groups[participant.type].push(participant.id);
+    groups[participant.type].push(participant);
   });
 
   return groups;
@@ -170,14 +170,14 @@ const removeReply = (id: string) => {
     <div class="note-card-header">
       <!-- Author-->
       <span class="note-card-author">
-        Author: {{ props.author }}
+        {{staticContent.terms.author[sessionStore.activeLanguage]}}: {{ props.author }}
       </span>
       <!-- Status selector -->
       <div class="status-selector">
         <select v-model="selectedStatus">
-          <option :value="conflictStatus.open">{{ conflictStatus.open }}</option>
-          <option :value="conflictStatus.inDiscussion">{{ conflictStatus.inDiscussion }}</option>
-          <option :value="conflictStatus.resolved">{{ conflictStatus.resolved }}</option>
+          <option :value="conflictStatus.open">{{ staticContent.terms.conflictStatus.open[sessionStore.activeLanguage] }}</option>
+          <option :value="conflictStatus.inDiscussion">{{ staticContent.terms.conflictStatus.inDiscussion[sessionStore.activeLanguage] }}</option>
+          <option :value="conflictStatus.resolved">{{ staticContent.terms.conflictStatus.resolved[sessionStore.activeLanguage] }}</option>
         </select>
       </div>
       <!-- Delete button -->
@@ -196,10 +196,10 @@ const removeReply = (id: string) => {
       <div class="note-participants">
         <div v-for="(group, type) in groupedParticipants" :key="type" class="participant-group">
           <div class="participant-group-box">
-            <strong class="participant-group-title">{{ type }}:</strong>
+            <strong class="participant-group-title">{{ activateTerms[sessionStore.activeLanguage][type] }}:</strong>
             <div class="participant-tag-container">
-              <span v-for="id in group" :key="id" class="participant-tag">
-                {{ id }}
+              <span v-for="participant in group" :key="participant.id" class="participant-tag">
+                {{ participant.label[sessionStore.activeLanguage] ? participant.label[sessionStore.activeLanguage].split("/").pop() : participant.label["en"] ? participant.label["en"].split("/").pop() : participant.label ? participant.label[Object.keys(participant.label)[0]] : participant.id }}
               </span>
             </div>
           </div>
@@ -212,13 +212,13 @@ const removeReply = (id: string) => {
 
     <!-- Note comment section starting with add comment button -->
     <div class="note-comment-section">
-      <Button @click="toggleReplyInput(conflict.id)"> Add comment </Button>
+      <Button @click="toggleReplyInput(conflict.id)"> {{staticContent.noteCards.addComment[sessionStore.activeLanguage]}} </Button>
     </div>
 
     <div v-if="replyInputVisible[conflict.id]" class="comment-input">
-      <textarea ref="textareaRef" v-model="newReplyText[conflict.id]" placeholder="Write a reply..."
+      <textarea ref="textareaRef" v-model="newReplyText[conflict.id]" :placeholder="staticContent.placeholders.reply[sessionStore.activeLanguage]"
         @keydown.enter="handleEnterKey($event)" />
-      <Button @click="saveReply(conflict.id)">Save</Button>
+      <Button @click="saveReply(conflict.id)">{{staticContent.noteCards.save[sessionStore.activeLanguage]}}</Button>
     </div>
 
     <div v-if="conflictDetail && conflictDetail.replies && conflictDetail.replies.length > 0" class="reply-container">
@@ -228,6 +228,7 @@ const removeReply = (id: string) => {
   </div>
 
 </template>
+
 
 
 <style scoped>
@@ -243,21 +244,12 @@ const removeReply = (id: string) => {
   transition: box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
-/* dynamic colors based on status */
-.note-card.red {
-  box-shadow: 0 2px 8px rgba(255, 182, 193, 0.5);
-  border-color: rgba(255, 182, 193, 0.7);
+.dark .note-card {
+  background-color: #2b2b2b;
+  border-color: #444;
+  color: #e0e0e0;
 }
 
-.note-card.yellow {
-  box-shadow: 0 2px 8px rgba(253, 253, 150, 0.5);
-  border-color: rgba(253, 253, 150, 0.7);
-}
-
-.note-card.green {
-  box-shadow: 0 2px 8px rgba(152, 251, 152, 0.5);
-  border-color: rgba(152, 251, 152, 0.7);
-}
 
 /* icon */
 .icon-button {
@@ -276,6 +268,11 @@ const removeReply = (id: string) => {
 /* comment input */
 .comment-input {
   margin-top: 10px;
+}
+
+.dark .comment-input {
+
+  color: #1e1e1e;
 }
 
 .comment-input textarea {
@@ -301,6 +298,10 @@ const removeReply = (id: string) => {
   font-size: 14px;
   font-weight: bold;
   color: #333;
+}
+
+.dark .note-card-author {
+  color: #f7f7f7;
 }
 
 /* participants */
@@ -354,9 +355,19 @@ const removeReply = (id: string) => {
   transition: background-color 0.2s ease;
 }
 
+.dark .status-selector select {
+  background-color: #1e1e1e;
+  color: #ffffff;
+}
+
 .status-selector select:focus {
   outline: none;
   background-color: #f1f1f1;
+}
+
+.dark .status-selector select:focus {
+  background-color: #1e1e1e;
+  color: #ffffff;
 }
 
 .note-divider {

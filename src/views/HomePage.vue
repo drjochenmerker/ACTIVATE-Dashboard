@@ -7,31 +7,30 @@ import Editor from '@/components/Editor.vue';
 import { useActivityPointsStore } from "@/stores/activityPointsStore";
 import { ref } from 'vue';
 import { useSessionStore } from '@/stores/sessionStore';
+import { staticContent } from '@/data/contentData';
 
-defineProps<{ conflicts: any[], activity: any, activityGraph: string }>();
+defineProps<{ conflicts: any[], activity: any }>();
 
 const activityPointStore = useActivityPointsStore();
 const { getActivePoints } = storeToRefs(activityPointStore);
 
 const isTripleAdditionDialogOpen = ref(false);
 const isEntityAdditionDialogOpen = ref(false);
+
+const sessionStore = useSessionStore();
 </script>
 
 <template>
-  <div class="flex justify-between w-1/2 items-center mb-4">
-    <h1 class="text-2xl font-semibold mb-4">Dashboard ({{ activityGraph ? activityGraph : "Can't Load Activity Name" }})</h1>
-  </div>
-
-  <div class="flex w-full h-2/3 relative mx-auto gap-4">
-    <div class="flex-1 min-w-[900px]">
-      <ActivityDiagram/>
-    </div>
-
-    <div class="flex-1">
-      <div class="inline-flex">
+  <h1 class="text-2xl font-semibold mb-4 text-center">{{ staticContent.terms.setting[sessionStore.activeLanguage] }}: {{ activity.name ? activity.name : `${staticContent.errors.activityNameLoad[sessionStore.activeLanguage]} - Graph-ID: ${activity.graph}` }}</h1>
+  <hr
+  class="mt-4 h-px border-t-0 bg-transparent bg-gradient-to-r from-transparent via-neutral-900 to-transparent opacity-70 dark:via-neutral-400" />
+  <div class="flex w-full h-5/6 items-center justify-evenly mx-auto gap-4">
+    <ActivityDiagram/>
+    <div
+    class=" h-auto w-px self-stretch bg-gradient-to-tr from-transparent via-neutral-900 to-transparent opacity-70 dark:via-neutral-400"></div>
+    <div class="flex flex-col">
       <Editor :activePoints="getActivePoints" />
-    </div>
-          <div class="mt-4 flex gap-4" v-if="useSessionStore().instructorMode">
+      <div class="flex justify-center w-full mt-4 gap-4" v-if="useSessionStore().instructorMode">
         <TripleAdditionDialog v-model:isOpen="isTripleAdditionDialogOpen" />
         <EntityAdditionDialog v-model:isOpen="isEntityAdditionDialogOpen" />
       </div>

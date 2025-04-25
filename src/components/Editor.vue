@@ -4,12 +4,16 @@ import 'quill/dist/quill.snow.css';
 import Button from '@/components/ui/button/Button.vue';
 import Dropdown from './Dropdown.vue';
 
+import { useToast } from 'vue-toastification';
+import 'vue-toastification/dist/index.css';
+
 import { useActivityPointsStore } from '@/stores/activityPointsStore';
 import { useConflictsStore } from '@/stores/conflictsStore';
 import { conflictStatus } from '@/data/knowledge_graph/structures';
 import { getActivities, getActivityDetail, getConflictDetail, getConflictIds } from '@/data/knowledge_graph/read_operations';
 import { addComment, addConflict } from '@/data/knowledge_graph/write_operations';
 import { useSessionStore } from '@/stores/sessionStore';
+import { staticContent } from '@/data/contentData';
 
 /** 
  * Editor-Component
@@ -50,6 +54,9 @@ export default {
         divisionoflabour: []
       },
       sessionStore: useSessionStore(),
+      staticContent: staticContent,
+      toast: useToast(),
+
     };
   },
 
@@ -59,6 +66,9 @@ export default {
     await this.fetchActivityDetails();
   },
   computed: {
+    titlePlaceholder() {
+      return this.staticContent.placeholders.title[this.sessionStore.activeLanguage] || this.staticContent.placeholders.title.en;
+    },
     pointData() {
       // Return empty object if activityDetails is not yet loaded
       if (!this.activityDetails) {
@@ -110,7 +120,7 @@ export default {
     initQuill() {
       this.quill = new Quill(this.$refs.editorContainer, {
         theme: 'snow',
-        placeholder: 'Description...',
+        placeholder: this.staticContent.placeholders.description[this.sessionStore.activeLanguage] || this.staticContent.placeholders.description.en,
         modules: {
           toolbar: [
             ['bold', 'italic', 'underline'],
@@ -132,6 +142,7 @@ export default {
     clearEditor() {
       if (this.quill) {
         this.quill.root.innerHTML = '';
+        this.quill.placeholder = this.staticContent.placeholders.description[this.sessionStore.activeLanguage] || this.staticContent.placeholders.description.en;
       }
       this.isAnonymous = false;
       this.title = '';
@@ -176,18 +187,30 @@ export default {
           const response = await addComment("root", titleAndContent);
 
           if (response.status === "OK") {
+            // Zeige Toast-Nachricht bei erfolgreicher Speicherung
+            this.toast.success("Comment added", {
+              description: "Your comment was successfully saved.",
+              icon: "📝",
+            });
           } else {
             console.warn("Error saving the comment: ", response);
+            this.toast.error("Error", {
+              description: "There was an error saving your comment.",
+              icon: "⚠️",
+            });
           }
         } catch (error) {
           console.error("Error with API call: ", error);
+          this.toast.error("Error", {
+            description: "An unexpected error occurred.",
+            icon: "⚠️",
+          });
         }
 
         this.clearEditor();
         useConflictsStore().refreshConflictList();
         return;
       }
-
 
       if (!this.activityDetails) {
         console.warn("Activity details not loaded yet. Please try again.");
@@ -198,6 +221,7 @@ export default {
         const selectedValues = this.selectedPoints[point] || [];
 
         selectedValues.forEach(item => {
+          console.log("Selected item: ", item);
           participants.push({
             // every entry stays a separate participant (important for the graph)
             id: item.label,
@@ -205,7 +229,6 @@ export default {
           });
         });
       });
-
 
       // temporary save note object
       const note = {
@@ -228,21 +251,35 @@ export default {
           const conflictDetail = await getConflictDetail(graph, conflictId);
           const conflictsStore = useConflictsStore();
           conflictsStore.addConflict(conflictDetail);
+
+          // Zeige Toast-Nachricht nach erfolgreichem Hinzufügen des Konflikts
+          this.toast.success("Conflict added", {
+            description: "Your conflict was successfully saved.",
+            icon: "⚖️",
+          });
         } else {
           console.warn("Error adding conflict.");
+          this.toast.error("Error", {
+            description: "There was an error adding your conflict.",
+            icon: "⚠️",
+          });
         }
       } catch (error) {
         console.error("Error adding conflict: ", error);
+        this.toast.error("Error", {
+          description: "An unexpected error occurred while adding your conflict.",
+          icon: "⚠️",
+        });
       }
 
       // Deactivate all of the active points
       const activityPointStore = useActivityPointsStore();
       activityPointStore.deactivateAllPoints();
 
-
       this.clearEditor();
       useConflictsStore().refreshConflictList();
     },
+
 
     /**
      * Displays the dropdown and dynamically adjusts its z-index to ensure it appears on top
@@ -276,7 +313,12 @@ export default {
           useSessionStore().outdated = false;
         }
       },
-    }
+    },
+    'sessionStore.activeLanguage': {
+      handler: function (newVal) {
+        this.quill.root.dataset.placeholder = this.staticContent.placeholders.title[newVal] || this.staticContent.placeholders.title.en;
+      },
+    },
   }
 };
 
@@ -285,14 +327,16 @@ export default {
 
 <template>
   <div class="editor-container">
-    <div class="icon-container">
-
+    <!-- Top-Container -->
+    <div class="top-container">
+      <p class="font-bold justify-start">{{ this.staticContent.editor.header[this.sessionStore.activeLanguage] || this.staticContent.editor.header.en }}</p>
       <button class="icon-button" @click="clearEditor">
         <span class="material-symbols-outlined">delete</span>
       </button>
     </div>
-
-    <h3>Add Note to selected Points:</h3>
+    <!-- Separator -->
+    <hr
+  class="my-4 h-px border-t-0 bg-transparent bg-gradient-to-r from-transparent via-neutral-900 to-transparent opacity-70 dark:via-neutral-700" />
     <!-- dropdown: -->
     <div class="dropdown-container">
       <div v-for="point in activePoints" :key="point">
@@ -300,25 +344,33 @@ export default {
         <Dropdown :label="point" :options="pointData[point] || []" v-model="selectedPoints[point]" />
       </div>
     </div>
-
+    <!-- Second Separator TODO: Figure out why Tailwind won't render the separator when three points are selected and mt and mb are even -->
+    <hr v-if="activePoints.length > 0 && activePoints.length < 3"
+    class="mt-4 mb-4 h-px border-t-0 bg-transparent bg-gradient-to-r from-transparent via-neutral-900 to-transparent opacity-70 dark:via-neutral-700" />
+    <hr v-if="activePoints.length == 3"
+    class="mt-4 mb-5 h-px border-t-0 bg-transparent bg-gradient-to-r from-transparent via-neutral-900 to-transparent opacity-70 dark:via-neutral-700" />
     <!-- title: -->
     <div>
-      <h3>Add a title:</h3>
+      <!-- <h3>{{ this.staticContent.editor.addTitle[this.sessionStore.activeLanguage] || this.staticContent.editor.addTitle.en }}</h3> -->
       <div class="title-field">
-        <input type="text" v-model="title" placeholder="Title" class="title-input" />
+        <input type="text" v-model="title" :placeholder="titlePlaceholder" class="title-input" />
       </div>
     </div>
 
-    <!-- editor: -->
-    <div ref="editorContainer" placeholder="Description" class="quill-editor"></div>
+    <!-- description: -->
+    <div ref="editorContainer" class="quill-editor">
 
+    </div>
+
+    <!-- anonymous checkbox: -->
     <label class="anonymous-checkbox">
       <input type="checkbox" v-model="isAnonymous" />
-      Send anonymously
+      {{ this.staticContent.editor.anonymous[this.sessionStore.activeLanguage] || this.staticContent.editor.anonymous.en }}
     </label>
 
+
     <Button variant="primary" size="large" class="transfer-button" @click="transferText" :disabled="isDoneDisabled">
-      Done
+      {{ this.staticContent.terms.done[this.sessionStore.activeLanguage] || this.staticContent.terms.done.en }}
     </Button>
 
   </div>
@@ -339,16 +391,32 @@ export default {
   overflow: visible;
   position: relative;
 
+  background-color: #ffffff;
+  color: #000000;
 }
 
+.dark .editor-container {
+  background-color: #1e1e1e;
+  color: #ffffff;
+}
+
+.title-input {
+  background-color: #ffffff;
+  color: black;
+}
+
+.dark .title-input {
+  background-color: #1e1e1e;
+  color: #ffffff;
+}
+
+
 /*icon button*/
-.icon-container {
+.top-container {
   width: 100%;
   display: flex;
-  justify-content: flex-end;
-  /* Align the icon button to the right */
-  margin-bottom: 10px;
-  /* Optional, adds space between the icon and the rest of the content */
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 /* icon */
@@ -359,6 +427,7 @@ export default {
   padding: 5px;
   font-size: 24px;
   color: red;
+  margin-top: -2%;
 }
 
 .icon-button:hover {
@@ -417,6 +486,12 @@ input {
   background-color: #f9f9f9;
 }
 
+.dark .quill-editor {
+  background-color: #1e1e1e;
+  color: #ffffff;
+}
+
+
 .anonymous-checkbox {
   margin-top: 20px;
   display: flex;
@@ -425,7 +500,6 @@ input {
   align-items: left;
   font-size: 14px;
 }
-
 
 .transfer-button {
   margin-top: 20px;
@@ -439,7 +513,6 @@ input {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: background-color 0.3s ease;
 }
-
 
 .transfer-button:hover {
   background-color: #323232;
@@ -464,5 +537,12 @@ input {
   margin-top: 15px;
   font-style: italic;
   color: #888;
+}
+</style>
+
+<style>
+.dark .quill-editor .ql-editor::before {
+  color: #ffffff !important;
+  opacity: 0.6;
 }
 </style>
