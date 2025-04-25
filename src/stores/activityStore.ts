@@ -50,8 +50,8 @@ export const useActivityStore = defineStore('ActivityStore', () => {
         }
         refreshActivityList();
     }
-    const removeActivity = async (activity: Activity) => {
-        const deletion = await deleteActivity(activity); // nicht activity.graph sondern activity
+    const removeActivity = async (graph: string) => {
+        const deletion = await deleteActivity(graph);
         if (deletion.status === "OK") {
             //console.log("Deleted activity successfully.")
         } else {
