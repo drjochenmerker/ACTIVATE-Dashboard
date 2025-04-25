@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import Button from '@/components/ui/button/Button.vue';
 import { defineProps } from 'vue';
 import { useColorMode } from '@vueuse/core';
 import { useSessionStore } from '@/stores/sessionStore';
 import { KnowledgeGraphActivityClass } from '@/data/knowledge_graph/structures';
 import { addEntity } from '@/data/knowledge_graph/write_operations';
+import { activateTerms, staticContent } from '@/data/contentData';
 
 
 /**
@@ -32,14 +33,25 @@ const selectedClass = ref<KnowledgeGraphActivityClass | ''>('');
  * Options for the activity class dropdown
  * Includes label and value for each supported activity class
  */
-const activityClassOptions = [
-    { label: KnowledgeGraphActivityClass.subject, value: KnowledgeGraphActivityClass.subject },
-    { label: KnowledgeGraphActivityClass.object, value: KnowledgeGraphActivityClass.object },
-    { label: KnowledgeGraphActivityClass.rules, value: KnowledgeGraphActivityClass.rules },
-    { label: KnowledgeGraphActivityClass.instruments, value: KnowledgeGraphActivityClass.instruments },
-    { label: KnowledgeGraphActivityClass.divison_of_labour, value: KnowledgeGraphActivityClass.divison_of_labour },
-    { label: KnowledgeGraphActivityClass.community, value: KnowledgeGraphActivityClass.community }
+let activityClassOptions = [
+    { label: activateTerms[sessionStore.activeLanguage].subject, value: KnowledgeGraphActivityClass.subject },
+    { label: activateTerms[sessionStore.activeLanguage].object, value: KnowledgeGraphActivityClass.object },
+    { label: activateTerms[sessionStore.activeLanguage].rules, value: KnowledgeGraphActivityClass.rules },
+    { label: activateTerms[sessionStore.activeLanguage].instruments, value: KnowledgeGraphActivityClass.instruments },
+    { label: activateTerms[sessionStore.activeLanguage].division_of_labour, value: KnowledgeGraphActivityClass.divison_of_labour },
+    { label: activateTerms[sessionStore.activeLanguage].community, value: KnowledgeGraphActivityClass.community }
 ];
+
+watch(() => sessionStore.activeLanguage, () => {
+  activityClassOptions = [
+    { label: activateTerms[sessionStore.activeLanguage].subject, value: KnowledgeGraphActivityClass.subject },
+    { label: activateTerms[sessionStore.activeLanguage].object, value: KnowledgeGraphActivityClass.object },
+    { label: activateTerms[sessionStore.activeLanguage].rules, value: KnowledgeGraphActivityClass.rules },
+    { label: activateTerms[sessionStore.activeLanguage].instruments, value: KnowledgeGraphActivityClass.instruments },
+    { label: activateTerms[sessionStore.activeLanguage].division_of_labour, value: KnowledgeGraphActivityClass.divison_of_labour },
+    { label: activateTerms[sessionStore.activeLanguage].community, value: KnowledgeGraphActivityClass.community }
+];
+});
 
 /**
  * Opens the modal dialog
@@ -70,11 +82,11 @@ const resetInputs = () => {
  */
 const applyEntity = async () => {
     if (!entityName.value.trim()) {
-        alert("Please enter an entity name.");
+        alert(staticContent.alerts.entityEnter[sessionStore.activeLanguage]);
         return;
     }
     if (!selectedClass.value) {
-        alert("Please select an activity class.");
+        alert(staticContent.alerts.activityClassSelect[sessionStore.activeLanguage]);
         return;
     }
 
@@ -92,7 +104,7 @@ const applyEntity = async () => {
 
 <template>
     <Button class="mb-4" @click="openDialog">
-        Add New Entity
+        {{ staticContent.entitiyAdd.addButton[sessionStore.activeLanguage]}}
     </Button>
 
     <div v-if="isOpen" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
@@ -100,20 +112,20 @@ const applyEntity = async () => {
     <div :class="mode === 'dark' ? 'modal-container dark' : 'modal-container light'">
       <button class="close-btn" @click="closeDialog">×</button>
       <div class="header-container flex items-center mb-4">
-        <h2 class="text-xl font-bold">Add New Entity</h2>
+        <h2 class="text-xl font-bold">{{ staticContent.entitiyAdd.addButton[sessionStore.activeLanguage]}}</h2>
       </div>
 
       <!-- Side-by-side inputs for entity name and activity class -->
       <div class="inputs-container mb-4">
         <div class="input-group">
-          <label for="entityName" class="input-label">Entity Name</label>
-          <input id="entityName" type="text" v-model="entityName" placeholder="Enter entity name" class="input-field" />
+          <label for="entityName" class="input-label">{{staticContent.entitiyAdd.entityName[sessionStore.activeLanguage]}}</label>
+          <input id="entityName" type="text" v-model="entityName" :placeholder="staticContent.alerts.entityEnter[sessionStore.activeLanguage]" class="input-field" />
         </div>
         <div class="input-group">
-          <label for="entityClass" class="input-label">Activity Class</label>
+          <label for="entityClass" class="input-label">{{ staticContent.entitiyAdd.activityClass[sessionStore.activeLanguage] }}</label>
           <select id="entityClass" v-model="selectedClass" class="input-field">
-            <option disabled value="">Select a class</option>
-            <option v-for="option in activityClassOptions" :key="option.value" :value="option.value">
+            <option disabled value="">{{ staticContent.entitiyAdd.selectClass[sessionStore.activeLanguage] }}</option>
+            <option v-for="option in activityClassOptions" :key="option.label" :value="option.value">
               {{ option.label }}
             </option>
           </select>
@@ -121,7 +133,7 @@ const applyEntity = async () => {
       </div>
 
       <div class="flex gap-4">
-        <Button class="w-full" @click="applyEntity">Apply</Button>
+        <Button class="w-full" @click="applyEntity">{{ staticContent.terms.add[sessionStore.activeLanguage] }}</Button>
       </div>
     </div>
   </div>

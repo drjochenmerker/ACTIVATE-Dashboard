@@ -8,6 +8,7 @@ import { addPredicate, updateTriple } from '@/data/knowledge_graph/write_operati
 import { Activity, KnowledgeGraphActivityClass, LanguageCode, LanguageLabel, PredicateDict, RDFOperation } from '@/data/knowledge_graph/structures';
 import { getActivityDetail, getPredicateObject } from '@/data/knowledge_graph/read_operations';
 import { useSessionStore } from '@/stores/sessionStore';
+import { staticContent } from '@/data/contentData';
 
 
 /**
@@ -66,12 +67,13 @@ const isApplyEnabled = computed(() => {
 /**
  * Opens the modal dialog
  * Fetches current activity detail to populate participants
+ * 
+ * TODO Fix loading of participants
  */
 const openDialog = async () => {
     isOpen.value = true;
     activityParticipants.value = [];
     const activityData = await getActivityDetail(sessionStore.sessionActivity as Activity)
-
     Object.keys(activityData).forEach(key => {
         const items = activityData[key];
         if (Array.isArray(items)) {
@@ -193,9 +195,9 @@ const applyTriple = async () => {
     const objectClass = mapToActivityClass(extractClass(object.value) || '');
 
     const languageLabelDummy: LanguageLabel[] = [
-        { label: predicate.value, language: LanguageCode.german },
-        { label: predicate.value, language: LanguageCode.english },
-        { label: predicate.value, language: LanguageCode.swedish }
+        { label: predicate.value, language: LanguageCode.Deutsch },
+        { label: predicate.value, language: LanguageCode.English },
+        { label: predicate.value, language: LanguageCode.Svenska }
     ];
 
     if (predicates.value.length === 0 || !predicates.value.some(item => item.predicate === predicate.value)) {
@@ -211,7 +213,7 @@ const applyTriple = async () => {
 
 <template>
     <Button class="mb-4" @click="openDialog">
-        Add RDF Triple
+        {{ staticContent.tripleAdd.addTripleText[sessionStore.activeLanguage] }}
     </Button>
 
     <div v-if="isOpen" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
@@ -221,32 +223,24 @@ const applyTriple = async () => {
 
             <button class="close-btn" @click="closeDialog">×</button>
             <div class="header-container flex items-center mb-4">
-                <h2 class="text-xl font-bold">Add New RDF-Triple</h2>
+                <h2 class="text-xl font-bold">{{ staticContent.tripleAdd.addTripleText[sessionStore.activeLanguage] }}</h2>
                 <div class="alert-container">
                     <p v-if="selectedDuplicateClass" class="alert-message">
-                        Subject and Object cannot be from the same class.
+                        {{staticContent.tripleAdd.alertDuplicateClass[sessionStore.activeLanguage]}}
                     </p>
                     <p v-else-if="noExistingPredicates" class="alert-message">
-                        No predicates available for the selected classes.
+                        {{staticContent.tripleAdd.alertNoExistingPredicates[sessionStore.activeLanguage]}}
                     </p>
                     <p v-else-if="noValidParticipants" class="alert-message">
-                        Please choose a valid agent and target to see associated predicates.
+                        {{ staticContent.tripleAdd.alertNoValidParticipants[sessionStore.activeLanguage] }}
                     </p>
                     <p v-else-if="isObjectValid && isSubjectValid && !isPredicateValid" class="alert-message">
-                        Predicate can only contain letters without spaces, numbers, or special characters.
+                        {{staticContent.tripleAdd.invalidPredicate[sessionStore.activeLanguage]}}
                     </p>
 
                 </div>
             </div>
-            <p class="mb-4">This component lets you easily add new RDF triples to your knowledge graph. Simply select an
-                agent (subject) and a target (object) from the
-                provided lists. If the two are valid and belong to different categories, a list of applicable predicates
-                (relationships) will appear for you
-                to choose from. Please note that if the agent and target come from the same category or if no predicates
-                are available for the chosen
-                combination, a warning message will be displayed. If there are no existing predicates between the chosen
-                agent and target you can simply
-                add a new one by typing it into the predicate textfield</p>
+            <p class="mb-4">{{ staticContent.tripleAdd.mainText[sessionStore.activeLanguage] }}</p>
 
             <div class="flex space-x-4 mb-6">
 
@@ -270,7 +264,7 @@ const applyTriple = async () => {
             </div>
 
             <div class="flex gap-4">
-                <Button class="w-full" :disabled="!isApplyEnabled" @click="applyTriple">Apply</Button>
+                <Button class="w-full" :disabled="!isApplyEnabled" @click="applyTriple">{{staticContent.tripleAdd.addTripleText[sessionStore.activeLanguage]}}</Button>
             </div>
         </div>
     </div>

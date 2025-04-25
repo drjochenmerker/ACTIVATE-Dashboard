@@ -1,4 +1,4 @@
-import { Action, Activity, ActivityDetail, Conflict, Comment, StringAccessObject, Object, sparqlTemplate, Participant, PredicateDict, KnowledgeGraphActivityClass } from "./structures";
+import { Action, Activity, ActivityDetail, Conflict, Comment, StringAccessObject, sparqlTemplate, Participant, PredicateDict, KnowledgeGraphActivityClass, Objective, MultiLangObject } from "./structures";
 import { fetchSparql, findNestedComment, getSparqlTemplate, camelToSnakeCase } from "./utils";
 
 /**
@@ -43,14 +43,14 @@ export async function getActivityDetail(activity: Activity): Promise<ActivityDet
       activityDetail[label] = [];
     }
     // Check if entity is already in the list
-    const objectIndexInList = (activityDetail[label] as Object[]).findIndex((obj: Object) => obj.label == item.entity.value.split("#").pop());
+    const objectIndexInList = (activityDetail[label] as Objective[]).findIndex((obj: Objective) => obj.label == item.entity.value.split("#").pop());
     // Object not in list yet
     if (objectIndexInList < 0) {
       if (item.property.value.split("#").pop() === "type") {
         activityDetail[label].push({
           label: item.entity.value.split("#").pop(),
           properties: [] as Action[]
-        } as Object);
+        } as Objective);
       }
       else {
         activityDetail[label].push({
@@ -61,7 +61,7 @@ export async function getActivityDetail(activity: Activity): Promise<ActivityDet
               [item.language.value]: item.target.value.split("#").pop()
             } as StringAccessObject : item.target.value.split("#").pop()
           } as Action]
-        } as Object);
+        } as Objective);
       }
     }
     // Object already in list
@@ -158,7 +158,20 @@ export async function getConflictDetail(graph: string, conflictId: string): Prom
           if (type === "rule" || type === "instrument") {
             type += "s";
           }
-          parsedConflict.participants.push({ id: item.conflict_o.value.split("#").pop(), type: type });
+          // Handle labels
+          if (item.participant_o && item.participant_p.value.split("#").pop() === "label") {
+            const existingParticipant = parsedConflict.participants.find(participant => participant.id == item.conflict_o.value.split("#").pop());
+            const langTag = item.participant_o["xml:lang"];
+            if (existingParticipant) {
+              existingParticipant.label[langTag] = item.participant_o.value;
+            }
+            else {
+              parsedConflict.participants.push({ id: item.conflict_o.value.split("#").pop(), label: { [langTag]: item.participant_o.value }, type: type });
+            }
+          }
+          else {
+            parsedConflict.participants.push({ id: item.conflict_o.value.split("#").pop(), label: { default: item.conflict_o.value.split("#").pop() }, type: type });
+          }
           break;
         case "ConflictState":
           parsedConflict.status = item.conflict_o.value;
@@ -256,7 +269,7 @@ export async function getConflictDetail(graph: string, conflictId: string): Prom
       parsedConflict.replies!.push(comment);
     }
   }
-  console.log("DONE")
+  console.log("Parsed Conflict", parsedConflict);
   return parsedConflict;
 }
 
@@ -387,7 +400,7 @@ export async function getMiscComments(graph: string): Promise<Comment[]> {
   return parsedComments;
 }
 
-export async function getActivityClassIds(graph: string, activityClass: KnowledgeGraphActivityClass): Promise<string[]> {
+export async function getActivityClassIds(graph: string, activityClass: KnowledgeGraphActivityClass): Promise<MultiLangObject[]> {
   let query = await getSparqlTemplate(sparqlTemplate.getActivityClassIds);
   const mapObj = {
     "{{graph}}": graph,
@@ -395,9 +408,38 @@ export async function getActivityClassIds(graph: string, activityClass: Knowledg
   };
   query = query.replaceMultiple(mapObj);
   const data = await fetchSparql(query);
-  let result = [] as string[];
+  let result = [] as MultiLangObject[];
   data.map((item: StringAccessObject) => {
-    result.push(item.entity.value.split("#").pop());
+    const index = result.findIndex((entry: MultiLangObject) => entry.id == item.entity.value.split("#").pop());
+    // Add new entry to list
+    if (index < 0) {
+      try {
+        result.push({
+          id: item.entity.value.split("#").pop(),
+          labels: { [item.label["xml:lang"]]: item.label.value }
+        } as MultiLangObject);
+      } catch {
+        result.push({
+          id: item.entity.value.split("#").pop(),
+          labels: { default: item.entity.value.split("#").pop() }
+        } as MultiLangObject);
+      }
+    }
+    // Item already in list (Multiple languages available)
+    else {
+      try {
+        result[index].labels[item.label["xml:lang"]] = item.label.value;
+      } catch {
+        result[index].labels.default = item.entity.value.split("#").pop();
+      }
+    }
   })
+  // Check if there is only one language available for some. In this case set "default" als key
+  for (const entry of result) {
+    if (Object.keys(entry.labels).length === 1) {
+      const lang = Object.keys(entry.labels)[0];
+      entry.labels = { default: entry.labels[lang] };
+    }
+  }
   return result;
 }

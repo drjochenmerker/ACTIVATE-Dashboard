@@ -10,6 +10,7 @@ import { conflictStatus } from '@/data/knowledge_graph/structures';
 import { getActivities, getActivityDetail, getConflictDetail, getConflictIds } from '@/data/knowledge_graph/read_operations';
 import { addComment, addConflict } from '@/data/knowledge_graph/write_operations';
 import { useSessionStore } from '@/stores/sessionStore';
+import { staticContent } from '@/data/contentData';
 
 /** 
  * Editor-Component
@@ -50,6 +51,7 @@ export default {
         divisionoflabour: []
       },
       sessionStore: useSessionStore(),
+      staticContent: staticContent
     };
   },
 
@@ -59,6 +61,9 @@ export default {
     await this.fetchActivityDetails();
   },
   computed: {
+    titlePlaceholder() {
+      return this.staticContent.placeholders.title[this.sessionStore.activeLanguage] || this.staticContent.placeholders.title.en;
+    },
     pointData() {
       // Return empty object if activityDetails is not yet loaded
       if (!this.activityDetails) {
@@ -110,7 +115,7 @@ export default {
     initQuill() {
       this.quill = new Quill(this.$refs.editorContainer, {
         theme: 'snow',
-        placeholder: 'Description...',
+        placeholder: this.staticContent.placeholders.description[this.sessionStore.activeLanguage] || this.staticContent.placeholders.description.en,
         modules: {
           toolbar: [
             ['bold', 'italic', 'underline'],
@@ -132,6 +137,7 @@ export default {
     clearEditor() {
       if (this.quill) {
         this.quill.root.innerHTML = '';
+        this.quill.placeholder = this.staticContent.placeholders.description[this.sessionStore.activeLanguage] || this.staticContent.placeholders.description.en;
       }
       this.isAnonymous = false;
       this.title = '';
@@ -198,6 +204,7 @@ export default {
         const selectedValues = this.selectedPoints[point] || [];
 
         selectedValues.forEach(item => {
+          console.log("Selected item: ", item);
           participants.push({
             // every entry stays a separate participant (important for the graph)
             id: item.label,
@@ -276,7 +283,12 @@ export default {
           useSessionStore().outdated = false;
         }
       },
-    }
+    },
+    'sessionStore.activeLanguage': {
+      handler: function (newVal) {
+        this.quill.root.dataset.placeholder = this.staticContent.placeholders.title[newVal] || this.staticContent.placeholders.title.en;
+      },
+    },
   }
 };
 
@@ -285,14 +297,16 @@ export default {
 
 <template>
   <div class="editor-container">
-    <div class="icon-container">
-
+    <!-- Top-Container -->
+    <div class="top-container">
+      <p class="font-bold justify-start">{{ this.staticContent.editor.header[this.sessionStore.activeLanguage] || this.staticContent.editor.header.en }}</p>
       <button class="icon-button" @click="clearEditor">
         <span class="material-symbols-outlined">delete</span>
       </button>
     </div>
-
-    <h3>Add Note to selected Points:</h3>
+    <!-- Separator -->
+    <hr
+  class="my-4 h-px border-t-0 bg-transparent bg-gradient-to-r from-transparent via-neutral-900 to-transparent opacity-70 dark:via-neutral-700" />
     <!-- dropdown: -->
     <div class="dropdown-container">
       <div v-for="point in activePoints" :key="point">
@@ -300,12 +314,16 @@ export default {
         <Dropdown :label="point" :options="pointData[point] || []" v-model="selectedPoints[point]" />
       </div>
     </div>
-
+    <!-- Second Separator TODO: Figure out why Tailwind won't render the separator when three points are selected and mt and mb are even -->
+    <hr v-if="activePoints.length > 0 && activePoints.length < 3"
+    class="mt-4 mb-4 h-px border-t-0 bg-transparent bg-gradient-to-r from-transparent via-neutral-900 to-transparent opacity-70 dark:via-neutral-700" />
+    <hr v-if="activePoints.length == 3"
+    class="mt-4 mb-5 h-px border-t-0 bg-transparent bg-gradient-to-r from-transparent via-neutral-900 to-transparent opacity-70 dark:via-neutral-700" />
     <!-- title: -->
     <div>
-      <h3>Add a title:</h3>
+      <!-- <h3>{{ this.staticContent.editor.addTitle[this.sessionStore.activeLanguage] || this.staticContent.editor.addTitle.en }}</h3> -->
       <div class="title-field">
-        <input type="text" v-model="title" placeholder="Title" class="title-input" />
+        <input type="text" v-model="title" :placeholder="titlePlaceholder" class="title-input" />
       </div>
     </div>
 
@@ -314,11 +332,11 @@ export default {
 
     <label class="anonymous-checkbox">
       <input type="checkbox" v-model="isAnonymous" />
-      Send anonymously
+      {{ this.staticContent.editor.anonymous[this.sessionStore.activeLanguage] || this.staticContent.editor.anonymous.en }}
     </label>
 
     <Button variant="primary" size="large" class="transfer-button" @click="transferText" :disabled="isDoneDisabled">
-      Done
+      {{ this.staticContent.terms.done[this.sessionStore.activeLanguage] || this.staticContent.terms.done.en }}
     </Button>
 
   </div>
@@ -342,13 +360,11 @@ export default {
 }
 
 /*icon button*/
-.icon-container {
+.top-container {
   width: 100%;
   display: flex;
-  justify-content: flex-end;
-  /* Align the icon button to the right */
-  margin-bottom: 10px;
-  /* Optional, adds space between the icon and the rest of the content */
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 /* icon */
@@ -359,6 +375,7 @@ export default {
   padding: 5px;
   font-size: 24px;
   color: red;
+  margin-top: -2%;
 }
 
 .icon-button:hover {

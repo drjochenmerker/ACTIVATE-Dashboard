@@ -2,11 +2,10 @@
 // Import necessary dependencies and components
 import { useColorMode } from '@vueuse/core';
 import { getActivities, getActivityClassIds } from '@/data/knowledge_graph/read_operations';
-import { Activity } from '@/data/knowledge_graph/structures';
+import { Activity, KnowledgeGraphActivityClass } from '@/data/knowledge_graph/structures';
 import { ref, onMounted, watch } from 'vue';
 import { useSessionStore } from '@/stores/sessionStore';
 import { Play, Loader2 } from 'lucide-vue-next';
-import { KnowledgeGraphActivityClass } from '@/data/knowledge_graph/structures';
 // UI components imports...
 import {
   Card,
@@ -20,11 +19,13 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
+  SelectValue
 } from '@/components/ui/select';
 import Label from '@/components/ui/label/Label.vue';
 import Checkbox from '@/components/ui/checkbox/Checkbox.vue';
 import Button from '@/components/ui/button/Button.vue';
+import { buildTreeStructByLang } from '@/data/knowledge_graph/utils';
+import RecursiveSelect from '@/components/RecursiveSelect.vue';
 
 useColorMode();
 const sessionStore = useSessionStore();
@@ -38,7 +39,7 @@ onMounted(async () => {
   try {
     allActivities.value = await getActivities();
   } catch (error) {
-    console.error("Fehler beim Laden der Aktivitäten:", error);
+    console.error("Failed to load activities:", error);
   }
 });
 
@@ -47,7 +48,9 @@ watch(selectedActivity, async () => {
   if (!selectedActivity.value) {
     return;
   }
-  sessionStore.availableRoles = await getActivityClassIds(selectedActivity.value, KnowledgeGraphActivityClass.subject);
+  sessionStore.availableRoles = buildTreeStructByLang(
+    await getActivityClassIds(selectedActivity.value, KnowledgeGraphActivityClass.subject),
+    sessionStore.activeLanguage);
   sessionStore.sessionRole = ''; // Reset role selection
 });
 
@@ -83,7 +86,7 @@ const sessionStartAllowed = () => !selectedActivity || !sessionStore.sessionRole
           </SelectTrigger>
           <SelectContent>
             <SelectItem v-for="activity in allActivities" :value="activity.graph">
-              {{ activity.graph }}
+              {{ activity.name }}
             </SelectItem>
           </SelectContent>
         </Select>
@@ -97,9 +100,7 @@ const sessionStartAllowed = () => !selectedActivity || !sessionStore.sessionRole
               <SelectValue placeholder="Select your role for the debriefing" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem v-for="role in sessionStore.availableRoles" :value="role">
-                {{ role }}
-              </SelectItem>
+              <RecursiveSelect :node="sessionStore.availableRoles" />
             </SelectContent>
           </Select>
         </div>

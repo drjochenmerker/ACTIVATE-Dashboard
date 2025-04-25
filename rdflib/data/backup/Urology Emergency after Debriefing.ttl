@@ -141,7 +141,7 @@
                      :Conflict ;
             :HasComment :76c5927235efe9d651c1267109c2e995a63b0459 ,
                  :6011717f8793006aa7ea1db7007032e633afd467 ;
-            :ConflictState "gelöst" ;
+            :ConflictState "resolved" ;
             :ConflictTitle "VVK Problem" ;
             :ConflictDescription "Es gibt mehrere Probleme mit der Venenverweilkanüle." ;
             :WrittenBy "Anonym" ;

@@ -62,9 +62,9 @@ export type Action = {
 }
 
 /**
- * Object in the knowledge graph
+ * Objective in the knowledge graph
  */
-export type Object = {
+export type Objective = {
     label: string;
     type: string;
     properties: Action[];
@@ -74,7 +74,7 @@ export type Object = {
  * Detail of an activity in the knowledge graph
  */
 export class ActivityDetail {
-    [key: string]: Object[];
+    [key: string]: Objective[];
 }
 
 /**
@@ -92,6 +92,7 @@ export interface updateResponse {
  */
 export interface Participant {
     id: string,
+    label: Record<string, string>,
     type: string
 }
 
@@ -124,9 +125,9 @@ export type Comment = {
  * Enum for conflict status management
  */
 export enum conflictStatus {
-    open = "offen",
-    inDiscussion = "in Besprechung",
-    resolved = "gelöst"
+    open = "open",
+    inDiscussion = "inDiscussion",
+    resolved = "resolved"
 }
 
 /**
@@ -170,9 +171,9 @@ export type Predicate = {
  * WARNING: Should be replaced with a better solution later on
  */
 export enum LanguageCode {
-    german = "de",
-    english = "en",
-    swedish = "sv"
+    Deutsch = "de",
+    English = "en",
+    Svenska = "sv"
 }
 
 /**
@@ -195,6 +196,24 @@ export enum KnowledgeGraphActivityClass {
     instruments = "Instrument",
     divison_of_labour = "DivisonOfLabour",
     community = "Community"
+}
+
+/**
+ * MultiLangObject that allows the usage of multiple languages
+ */
+export type MultiLangObject = {
+    id: string,
+    labels: Record<string, string>,
+    value?: string
+}
+
+/**
+ * NestedMultiLangObject that allows the usage of multiple languages
+ */
+export type NestedMultiLangObject = {
+    level: string,
+    values?: MultiLangObject[],
+    next?: NestedMultiLangObject[]
 }
 
 /**

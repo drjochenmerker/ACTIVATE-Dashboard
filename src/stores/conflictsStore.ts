@@ -24,9 +24,9 @@ export const useConflictsStore = defineStore('ActivityConflicts', () => {
     const refreshConflictList = async () => {
         const activity = sessionStore.sessionActivity;
         if (activity) {
-          const conflicts = await getAllConflictsWithDetail(activity.graph);
-        setConflicts(conflicts);
-          conflictDetails.value = conflicts;
+            const conflicts = await getAllConflictsWithDetail(activity.graph);
+            setConflicts(conflicts);
+            conflictDetails.value = conflicts;
         }
     };
 
@@ -49,7 +49,9 @@ export const useConflictsStore = defineStore('ActivityConflicts', () => {
     /**
      * Returns the list of all currently stored conflicts
      */
-    const getConflicts = computed(() => conflictDetails.value);
+    const getConflicts = computed(() => {
+        return conflictDetails.value
+    });
 
     /**
      * Updates a conflict by its ID by fetching the latest detail from the server
@@ -82,5 +84,6 @@ export const useConflictsStore = defineStore('ActivityConflicts', () => {
         getConflicts,
         updateConflict,
         removeConflict,
-        refreshConflictList    };
+        refreshConflictList
+    };
 });

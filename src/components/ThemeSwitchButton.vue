@@ -8,11 +8,14 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from '@/components/ui/tooltip'
+import { useSessionStore } from '@/stores/sessionStore';
+import { staticContent } from '@/data/contentData';
 
 // Component representing a button that toggles the dark/light mode
 
 const mode = useColorMode();
 
+const sessionStore = useSessionStore();
 const toggleMode = () => {
     mode.value = mode.value === 'dark' ? 'light' : 'dark';
 };
@@ -22,13 +25,13 @@ const toggleMode = () => {
     <TooltipProvider>
         <Tooltip>
             <TooltipTrigger as-child>
-                <Button size="icon" class="rounded-full" @click="toggleMode">
+                <Button size="icon" class="rounded-full" variant="secondary" @click="toggleMode">
                     <Sun v-if="mode === 'dark'" />
                     <Moon v-else />
                 </Button>
             </TooltipTrigger>
             <TooltipContent>
-                <p>Change theme</p>
+                <p>{{staticContent.terms.changeTheme[sessionStore.activeLanguage]}}</p>
             </TooltipContent>
         </Tooltip>
     </TooltipProvider>

@@ -1,4 +1,6 @@
 <script>
+import { staticContent } from '@/data/contentData';
+import { useSessionStore } from '@/stores/sessionStore';
 import { Delete, DeleteIcon } from 'lucide-vue-next';
 
 export default {
@@ -39,7 +41,9 @@ export default {
   data() {
     return {
       search: this.modelValue,
-      showDropdown: false
+      showDropdown: false,
+      sessionStore: useSessionStore(),
+      staticContent: staticContent
     };
   },
   computed: {
@@ -50,6 +54,10 @@ export default {
       return this.options.filter(option =>
         option.label.toLowerCase().includes(this.search.toLowerCase())
       );
+    },
+    placeholderText() {
+      const lang = this.sessionStore.activeLanguage || 'en';
+      return this.staticContent.placeholders.search[lang];
     }
   },
   methods: {
@@ -117,7 +125,7 @@ export default {
     <h3 class="label" :class="{ disabled: disabled }">{{ label }}:</h3>
     <div class="search-container" :class="{ disabled: disabled }">
       <input class="text-input" :class="{ disabled: disabled }" type="text" v-model="search"
-        @focus="!disabled && (showDropdown = true)" @input="handleInput" placeholder="Suchen..." :disabled="disabled" />
+        @focus="!disabled && (showDropdown = true)" @input="handleInput" :placeholder="placeholderText" :disabled="disabled" />
       <button v-if="search" type="button" class="clear-btn" @click="clearInput">×</button>
     </div>
 

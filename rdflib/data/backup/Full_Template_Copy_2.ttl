@@ -6,14 +6,11 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @base <http://activate.htwk-leipzig.de/model#> .
 
-#################################################################
-#    Activity Metadata
-#################################################################
 
-<http://www.semanticweb.org/tobia/ontologies/2025/1/Vocabulary_2025_03_13> rdf:type owl:Ontology .
-:Template rdf:type owl:NamedIndividual ;
-                  :ActivityDescription "Most recent activity template containing many entities" ;
-                  :ActivityName "Template Updated" .
+:Template a owl:NamedIndividual ;
+    :ActivityDescription "Activity Template" ;
+    :ActivityName "Template Copy 2" .
+
 
 #################################################################
 #    Individuals
@@ -23,24 +20,6 @@
 :Age rdf:type owl:NamedIndividual ,
               :Object ;
      rdfs:label "Patient Profile/Age"@en .
-
-
-###  http://activate.htwk-leipzig.de/model#Alleviate_Suffering
-:Alleviate_Suffering rdf:type owl:NamedIndividual ,
-               :Object ;
-      rdfs:label "Goal/Care/Promotion_Quality_Of_Life/Alleviate_Suffering"@en .
-
-
-###  http://activate.htwk-leipzig.de/model#Appreciation
-:Appreciation rdf:type owl:NamedIndividual ,
-                  :Community ;
-         rdfs:label "Culture/Appreciation"@en .
-
-
-###  http://activate.htwk-leipzig.de/model#Awareness
-:Awareness rdf:type owl:NamedIndividual ,
-			:Rule ;
-               rdfs:label "Interaction/Awareness"@en .
 
 
 ###  http://activate.htwk-leipzig.de/model#COPD
@@ -64,13 +43,21 @@
 ###  http://activate.htwk-leipzig.de/model#Consultation
 :Consultation rdf:type owl:NamedIndividual ,
                        :DivisionOfLabour ;
-              rdfs:label "Regulations/Responsibility/Consultation"@en .
+              rdfs:label "Responsibility/Consultation"@en .
 
 
 ###  http://activate.htwk-leipzig.de/model#Cultural_Background
 :Cultural_Background rdf:type owl:NamedIndividual ,
                               :Object ;
                      rdfs:label "Patient Profile/Cultural Background"@en .
+
+
+###  http://activate.htwk-leipzig.de/model#Culture
+:Culture rdf:type owl:NamedIndividual ,
+                  :Community ;
+         rdfs:label "Culture"@en ,
+                    "Kultur"@de ,
+                    "Kultur"@sv .
 
 
 ###  http://activate.htwk-leipzig.de/model#Cure
@@ -157,16 +144,10 @@
               rdfs:label "Medical Practitioners/Specialist/Geriatrician"@en .
 
 
-###  http://activate.htwk-leipzig.de/model#Habitual_Practice
-:Habitual_Practice rdf:type owl:NamedIndividual ,
-                  :Community ;
-         rdfs:label "Culture/Habitual_Practice"@en .
-
-
 ###  http://activate.htwk-leipzig.de/model#Hierarchy
 :Hierarchy rdf:type owl:NamedIndividual ,
                     :DivisionOfLabour ;
-           rdfs:label "Regulations/Hierarchy"@en .
+           rdfs:label "Hierarchy"@en .
 
 
 ###  http://activate.htwk-leipzig.de/model#Home
@@ -203,12 +184,6 @@
 :Informedness rdf:type owl:NamedIndividual ,
                        :Object ;
               rdfs:label "Patient Profile/Informedness"@en .
-
-
-###  http://activate.htwk-leipzig.de/model#Interest
-:Interest rdf:type owl:NamedIndividual ,
-                       :DivisionOfLabour ;
-              rdfs:label "Feelings/Interest"@en .
 
 
 ###  http://activate.htwk-leipzig.de/model#Known_or_Unknown
@@ -274,7 +249,7 @@
 ###  http://activate.htwk-leipzig.de/model#Shared_Care
 :Shared_Care rdf:type owl:NamedIndividual ,
                       :DivisionOfLabour ;
-             rdfs:label "Regulations/Responsibility/Shared Care"@en .
+             rdfs:label "Responsibility/Shared Care"@en .
 
 
 ###  http://activate.htwk-leipzig.de/model#Single_carer
@@ -292,25 +267,13 @@
 ###  http://activate.htwk-leipzig.de/model#Substitution
 :Substitution rdf:type owl:NamedIndividual ,
                        :DivisionOfLabour ;
-              rdfs:label "Regulations/Responsibility/Substitution"@en .
+              rdfs:label "Responsibility/Substitution"@en .
 
 
 ###  http://activate.htwk-leipzig.de/model#Surgeon
 :Surgeon rdf:type owl:NamedIndividual ,
                   :Subject ;
          rdfs:label "Medical Practitioners/Specialist/Surgeon"@en .
-
-
-###  http://activate.htwk-leipzig.de/model#Territorial_Attitude
-:Territorial_Attitude rdf:type owl:NamedIndividual ,
-                    :DivisionOfLabour ;
-           rdfs:label "Regulations/Territorial_Attitude"@en .
-
-
-###  http://activate.htwk-leipzig.de/model#Territorial_Attitude
-:Territorial_Attitude rdf:type owl:NamedIndividual ,
-                    :Instrument ;
-           rdfs:label "Attitude/Territorial_Attitude"@en .
 
 
 ###  http://activate.htwk-leipzig.de/model#Transfer
@@ -547,12 +510,6 @@
                rdfs:label "Other Healthcare Professionals/Social Worker"@en .
 
 
-###  http://activate.htwk-leipzig.de/model#Sprititual_Carer
-:Sprititual_Carer rdf:type owl:NamedIndividual ,
-                        :Subject ;
-               rdfs:label "Other Healthcare Professionals/Sprititual_Carer"@en .
-
-
 ###  http://activate.htwk-leipzig.de/model#Team_Meeting
 :Team_Meeting rdf:type owl:NamedIndividual ,
                        :Instrument ;
@@ -583,22 +540,16 @@
                  rdfs:label "Communication/Means/Documentation/Trannsfer Letter"@en .
 
 
-###  http://activate.htwk-leipzig.de/model#Trust
-:Trust rdf:type owl:NamedIndividual ,
+###  http://activate.htwk-leipzig.de/model#Uncomfortable
+:Uncomfortable rdf:type owl:NamedIndividual ,
                         :Subject ;
-               rdfs:label "Perceptions/Trust"@en .
+               rdfs:label "Perceptions/Uncomfortable"@en .
 
 
-###  http://activate.htwk-leipzig.de/model#Unconfortable
-:Unconfortable rdf:type owl:NamedIndividual ,
-                        :Subject ;
-               rdfs:label "Perceptions/Unconfortable"@en .
-
-
-###  http://activate.htwk-leipzig.de/model#Unsuccesful
-:Unsuccesful rdf:type owl:NamedIndividual ,
+###  http://activate.htwk-leipzig.de/model#Unsuccessful
+:Unsuccessful rdf:type owl:NamedIndividual ,
                       :Subject ;
-             rdfs:label "Perceptions/Unsuccesful"@en .
+             rdfs:label "Perceptions/Unsuccessful"@en .
 
 
 ###  http://activate.htwk-leipzig.de/model#Unsure
@@ -634,7 +585,7 @@
 ###  http://activate.htwk-leipzig.de/model#Psychosocial–Spiritual_Issues
 :Psychosocial-Spiritual_Issues rdf:type owl:NamedIndividual ,
                                            :Object ;
-                               rdfs:label "Goal/Care/Psychosocial–Spiritual Issues"@en .
+                               rdfs:label "Goal/Psychosocial–Spiritual Issues"@en .
 
 ###  http://activate.htwk-leipzig.de/model#Co-Location
 :Co-Location rdf:type owl:NamedIndividual ,
@@ -714,12 +665,6 @@
             rdfs:label "Organisation/Scheduling"@en .
 
 
-###  http://activate.htwk-leipzig.de/model#Stereotypes
-:Stereotypes rdf:type owl:NamedIndividual ,
-                  :Community ;
-         rdfs:label "Culture/Conception/Stereotypes"@en .
-
-
 ###  http://activate.htwk-leipzig.de/model#Stock
 :Stock rdf:type owl:NamedIndividual ,
 			:Rule ;
@@ -748,12 +693,6 @@
 :Timing_And_Timeliness rdf:type owl:NamedIndividual ,
 			:Rule ;
                        rdfs:label "Action/Timing And Timeliness"@en .
-
-
-###  http://activate.htwk-leipzig.de/model#Trust
-:Trust rdf:type owl:NamedIndividual ,
-                       :DivisionOfLabour ;
-              rdfs:label "Feelings/Trust"@en .
 
 
 ###  http://activate.htwk-leipzig.de/model#Understanding
