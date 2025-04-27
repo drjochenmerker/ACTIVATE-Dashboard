@@ -28,10 +28,16 @@ const graph = props.activity.graph;
 sessionStore.availableRoles = {} as NestedMultiLangObject;
 let newTitle = '';
 let newDescription = '';
+// tmp 
+const editTitle = ref('');
+const editDescription = ref('');
+
 
 // Refs for dialog interaction
 const isDeleteDialogOpen = ref(false);
 const isCloneDialogOpen = ref(false);
+const isEditDialogOpen = ref(false);
+
 
 // activity store management
 const activityStore = useActivityStore();
@@ -74,14 +80,34 @@ const deleteThisActivity = async () => {
     isDeleteDialogOpen.value = false;
 }
 
+// edit activity:
+//      first step
+const openEditDialog = () => {
+    editTitle.value = props.activity.name;
+    editDescription.value = props.activity.description;
+    isEditDialogOpen.value = true;
+}
+
+//      second step
+const updateActivity = async (newTitle: string, newDescription: string) => {
+    const updatedActivity = {
+        graph: props.activity.graph,
+        name: newTitle,
+        description: newDescription || props.activity.description,
+    };
+    activityStore.editActivity(updatedActivity);
+
+    activityStore.refreshActivityList();
+}
+
 /**
  * Retrieves available roles for the current activity graph.
  * Fetches subject class IDs from the knowledge graph and populates the session store's available roles.
  */
 const getRoles = async () => {
     sessionStore.availableRoles = buildTreeStructByLang(
-    await getActivityClassIds(props.activity.graph, KnowledgeGraphActivityClass.subject),
-    sessionStore.activeLanguage);
+        await getActivityClassIds(props.activity.graph, KnowledgeGraphActivityClass.subject),
+        sessionStore.activeLanguage);
 }
 
 const sessionStartAllowed = () => !sessionStore.sessionRole;
@@ -119,6 +145,32 @@ const sessionStartAllowed = () => !sessionStore.sessionRole;
                                 </DialogFooter>
                             </DialogContent>
                         </Dialog>
+
+                        <!-- Edit Button -->
+                        <Dialog v-model:open="isEditDialogOpen">
+
+                            <DialogTrigger as-child>
+                                <Button variant="secondary" size="icon" @click="openEditDialog">
+                                    <span class="material-symbols-outlined">edit</span>
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent>
+                                <DialogHeader>
+                                    <DialogTitle>Edit Activity</DialogTitle>
+                                    <DialogDescription>Edit title:</DialogDescription>
+                                    <textarea v-model="editTitle" class="w-full border rounded p-2 my-2"
+                                        placeholder="Edit title" />
+                                    <DialogDescription>Edit description:</DialogDescription>
+                                    <textarea v-model="editDescription" class="w-full border rounded p-2 my-2"
+                                        placeholder="Edit description" />
+                                </DialogHeader>
+                                <DialogFooter>
+                                    <Button @click="() => updateActivity(editTitle, editDescription)">Save
+                                        Changes</Button>
+                                </DialogFooter>
+                            </DialogContent>
+                        </Dialog>
+
 
                         <!-- Clone Button -->
                         <Dialog v-model:open="isCloneDialogOpen">

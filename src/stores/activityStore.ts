@@ -1,6 +1,6 @@
 import { getActivities } from '@/data/knowledge_graph/read_operations';
 import { Activity } from '@/data/knowledge_graph/structures';
-import { cloneActivity, deleteActivity } from '@/data/knowledge_graph/write_operations';
+import { cloneActivity, deleteActivity, updateActivity } from '@/data/knowledge_graph/write_operations';
 import { defineStore } from 'pinia';
 import { ref} from 'vue';
 
@@ -38,6 +38,16 @@ export const useActivityStore = defineStore('ActivityStore', () => {
             activityList.value = activities
         }
     };
+    const editActivity = async (activity: Activity) => {
+        const updatedActivity = await updateActivity(activity);
+        if (updatedActivity.status === "OK") {
+            //console.log("Updated activity successfully.")
+        } else {
+            console.log("Update failed.")
+        }
+        refreshActivityList();
+    };
+    
     const addActivity = (activity: Activity) => {
         activityList.value.push(activity);
     };
@@ -64,6 +74,7 @@ export const useActivityStore = defineStore('ActivityStore', () => {
     return {
         activityList,
         refreshActivityList,
+        editActivity,
         addActivity,
         setActivities,
         cloneThisActivity,
