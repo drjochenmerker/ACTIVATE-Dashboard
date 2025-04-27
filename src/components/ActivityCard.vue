@@ -135,6 +135,7 @@ const getRoles = async () => {
 }
 
 const sessionStartAllowed = () => !sessionStore.sessionRole;
+
 </script>
 
 <template>
@@ -145,138 +146,150 @@ const sessionStartAllowed = () => !sessionStore.sessionRole;
                     {{ props.activity.name }}
                 </AccordionTrigger>
 
+                <!--- I WANT A LINE HERE IF THE ACCORDION IS OPENED-->
+
                 <AccordionContent class="pt-4 space-y-4 text-sm text-gray-600 dark:text-gray-300">
                     <p>{{ props.activity.description }}</p>
 
                     <div class="flex justify-between items-center gap-4 flex-wrap">
 
                         <!-- Delete Button -->
-                        <Dialog v-model:open="isDeleteDialogOpen">
-                            <DialogTrigger as-child>
-                                <button class="icon-button">
-                                    <span class="material-symbols-outlined">delete</span>
-                                </button>
-                            </DialogTrigger>
-                            <DialogContent>
-                                <DialogHeader>
-                                    <DialogTitle>Delete Activity</DialogTitle>
-                                    <DialogDescription>
-                                        Are you sure you want to delete this Activity?
-                                    </DialogDescription>
-                                </DialogHeader>
-                                <DialogFooter>
-                                    <Button @click="() => deleteThisActivity()">Delete</Button>
-                                </DialogFooter>
-                            </DialogContent>
-                        </Dialog>
+                        <div>
+                            <Dialog v-model:open="isDeleteDialogOpen">
+                                <DialogTrigger as-child>
+                                    <button class="icon-button">
+                                        <span class="material-symbols-outlined">delete</span>
+                                    </button>
+                                </DialogTrigger>
+                                <DialogContent>
+                                    <DialogHeader>
+                                        <DialogTitle>Delete Activity</DialogTitle>
+                                        <DialogDescription>
+                                            Are you sure you want to delete this Activity?
+                                        </DialogDescription>
+                                    </DialogHeader>
+                                    <DialogFooter>
+                                        <Button @click="() => deleteThisActivity()">Delete</Button>
+                                    </DialogFooter>
+                                </DialogContent>
+                            </Dialog>
+                        </div>
 
                         <!-- Edit Button -->
-                        <Dialog v-model:open="isEditDialogOpen">
+                        <div>
+                            <Dialog v-model:open="isEditDialogOpen">
+                                <DialogTrigger as-child>
+                                    <Button variant="secondary" size="icon" @click="openEditDialog">
+                                        <span class="material-symbols-outlined">edit</span>
+                                    </Button>
+                                </DialogTrigger>
+                                <DialogContent>
+                                    <DialogHeader>
+                                        <DialogTitle>Edit Activity</DialogTitle>
+                                        <DialogDescription>Edit title:</DialogDescription>
+                                        <textarea v-model="editTitle" :class="[
+                                            'w-full border rounded p-2 my-2',
+                                            editTitleError ? 'border-red-500' : 'border-gray-300'
+                                        ]" placeholder="Edit title" />
+                                        <p v-if="editTitleError" class="text-red-500 text-sm mb-2">Title is required.
+                                        </p>
 
-                            <DialogTrigger as-child>
-                                <Button variant="secondary" size="icon" @click="openEditDialog">
-                                    <span class="material-symbols-outlined">edit</span>
-                                </Button>
-                            </DialogTrigger>
-                            <DialogContent>
-                                <DialogHeader>
-                                    <DialogTitle>Edit Activity</DialogTitle>
-                                    <DialogDescription>Edit title:</DialogDescription>
-                                    <textarea v-model="editTitle" :class="[
-                                        'w-full border rounded p-2 my-2',
-                                        editTitleError ? 'border-red-500' : 'border-gray-300'
-                                    ]" placeholder="Edit title" />
-                                    <p v-if="editTitleError" class="text-red-500 text-sm mb-2">Title is required.</p>
-
-                                    <DialogDescription>Edit description:</DialogDescription>
-                                    <textarea v-model="editDescription" class="w-full border rounded p-2 my-2"
-                                        placeholder="Edit description" />
-                                </DialogHeader>
-                                <DialogFooter>
-                                    <Button @click="() => updateActivity(editTitle, editDescription)">Save
-                                        Changes</Button>
-                                </DialogFooter>
-                            </DialogContent>
-                        </Dialog>
+                                        <DialogDescription>Edit description:</DialogDescription>
+                                        <textarea v-model="editDescription" class="w-full border rounded p-2 my-2"
+                                            placeholder="Edit description" />
+                                    </DialogHeader>
+                                    <DialogFooter>
+                                        <Button @click="() => updateActivity(editTitle, editDescription)">Save
+                                            Changes</Button>
+                                    </DialogFooter>
+                                </DialogContent>
+                            </Dialog>
+                        </div>
 
 
                         <!-- Clone Button -->
-                        <Dialog v-model:open="isCloneDialogOpen">
-                            <DialogTrigger as-child>
-                                <Button variant="secondary" size="icon" @click="openCloneDialog">
-                                    <BookCopy class="w-4 h-4" />
-                                </Button>
+                        <div>
+                            <Dialog v-model:open="isCloneDialogOpen">
+                                <DialogTrigger as-child>
+                                    <Button variant="secondary" size="icon" @click="openCloneDialog">
+                                        <BookCopy class="w-4 h-4" />
+                                    </Button>
 
-                            </DialogTrigger>
-                            <DialogContent>
-                                <DialogHeader>
-                                    <DialogTitle>Clone Activity</DialogTitle>
-                                    <textarea v-model="newTitle" :class="[
-                                        'w-full border rounded p-2 my-2',
-                                        cloneTitleError ? 'border-red-500' : 'border-gray-300'
-                                    ]" placeholder="New title" />
-                                    <p v-if="cloneTitleError" class="text-red-500 text-sm mb-2">Title is required.</p>
-                                    <DialogDescription>Set a new description or use the existing one:
-                                    </DialogDescription>
-                                    <textarea v-model="newDescription" class="w-full border rounded p-2 my-2"
-                                        placeholder="Set new description (optional)" />
-                                </DialogHeader>
-                                <DialogFooter>
-                                    <Button @click="cloneThisActivity(newTitle, newDescription)">Clone</Button>
-                                </DialogFooter>
-                            </DialogContent>
-                        </Dialog>
+                                </DialogTrigger>
+                                <DialogContent>
+                                    <DialogHeader>
+                                        <DialogTitle>Clone Activity</DialogTitle>
+                                        <textarea v-model="newTitle" :class="[
+                                            'w-full border rounded p-2 my-2',
+                                            cloneTitleError ? 'border-red-500' : 'border-gray-300'
+                                        ]" placeholder="New title" />
+                                        <p v-if="cloneTitleError" class="text-red-500 text-sm mb-2">Title is required.
+                                        </p>
+                                        <DialogDescription>Set a new description or use the existing one:
+                                        </DialogDescription>
+                                        <textarea v-model="newDescription" class="w-full border rounded p-2 my-2"
+                                            placeholder="Set new description (optional)" />
+                                    </DialogHeader>
+                                    <DialogFooter>
+                                        <Button @click="cloneThisActivity(newTitle, newDescription)">Clone</Button>
+                                    </DialogFooter>
+                                </DialogContent>
+                            </Dialog>
+                        </div>
 
                         <!-- Start Session Button -->
-                        <Dialog>
-                            <DialogTrigger as-child>
-                                <Button variant="default" size="icon">
-                                    <Play class="w-4 h-4" />
-                                </Button>
-                            </DialogTrigger>
-                            <DialogContent>
-                                <DialogHeader>
-                                    <DialogTitle>Role Selection</DialogTitle>
-                                    <DialogDescription>Select your role for the debriefing:</DialogDescription>
-                                </DialogHeader>
-
-                                <!-- Select a role-->
-                                <Select v-model="sessionStore.sessionRole" id="roleSelect" class="my-4">
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select a role" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <RecursiveSelect :node="sessionStore.availableRoles" />
-                                    </SelectContent>
-
-                                </Select>
-
-
-                                <!-- Instructor mode toggle -->
-                                <div class="flex items-center space-x-2 mt-4">
-                                    <Checkbox id="cbInstructorMode" :checked="sessionStore.instructorMode"
-                                        @update:checked="sessionStore.instructorMode = $event" />
-                                    <Label for="cbInstructorMode" class="text-sm font-normal">
-                                        Enable Instructor Mode
-                                    </Label>
-                                </div>
-
-
-                                <DialogFooter>
-                                    <Button type="submit" :disabled="sessionStartAllowed()"
-                                        @click="() => handleStartSession()">
-                                        <template v-if="sessionStartAllowed()">
-                                            <Loader2 class="w-4 h-4 mr-2 animate-spin" />
-                                            Select activity and role
-                                        </template>
-                                        <template v-else>
-                                            <Play class="w-4 h-4 mr-2" />
-                                            Start Debriefing
-                                        </template>
+                        <div>
+                            <Dialog>
+                                <DialogTrigger as-child>
+                                    <Button variant="default" size="icon">
+                                        <Play class="w-4 h-4" />
                                     </Button>
-                                </DialogFooter>
-                            </DialogContent>
-                        </Dialog>
+                                </DialogTrigger>
+                                <DialogContent>
+                                    <DialogHeader>
+                                        <DialogTitle>Role Selection</DialogTitle>
+                                        <DialogDescription>Select your role for the debriefing:</DialogDescription>
+                                    </DialogHeader>
+
+                                    <!-- Select a role-->
+                                    <Select v-model="sessionStore.sessionRole" id="roleSelect" class="my-4">
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select a role" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <RecursiveSelect :node="sessionStore.availableRoles" />
+                                        </SelectContent>
+
+                                    </Select>
+
+
+                                    <!-- Instructor mode toggle -->
+                                    <div class="flex items-center space-x-2 mt-4">
+                                        <Checkbox id="cbInstructorMode" :checked="sessionStore.instructorMode"
+                                            @update:checked="sessionStore.instructorMode = $event" />
+                                        <Label for="cbInstructorMode" class="text-sm font-normal">
+                                            Enable Instructor Mode
+                                        </Label>
+                                    </div>
+
+
+                                    <DialogFooter>
+                                        <Button type="submit" :disabled="sessionStartAllowed()"
+                                            @click="() => handleStartSession()">
+                                            <template v-if="sessionStartAllowed()">
+                                                <Loader2 class="w-4 h-4 mr-2 animate-spin" />
+                                                Select activity and role
+                                            </template>
+                                            <template v-else>
+                                                <Play class="w-4 h-4 mr-2" />
+                                                Start Debriefing
+                                            </template>
+                                        </Button>
+                                    </DialogFooter>
+                                </DialogContent>
+                            </Dialog>
+                        </div>
+
                     </div>
                 </AccordionContent>
             </AccordionItem>
@@ -288,6 +301,11 @@ const sessionStartAllowed = () => !sessionStore.sessionRole;
 .card {
     border: 1px solid #ccc;
     padding: 5px;
+}
+
+
+.dark .accordion-item[data-state="open"] {
+    border-bottom: 1px solid #374151;
 }
 
 .buttons {

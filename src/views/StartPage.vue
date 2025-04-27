@@ -24,6 +24,7 @@ import {
 import { addActivity, addEntity } from '@/data/knowledge_graph/write_operations';
 import { useActivityStore } from '@/stores/activityStore';
 import { buildTreeStructByLang } from '@/data/knowledge_graph/utils';
+import { PlusIcon } from 'lucide-vue-next';
 
 useColorMode();
 const sessionStore = useSessionStore();
@@ -107,9 +108,9 @@ const addNewActivity = async () => {
     <Card class="w-full max-w-5xl">
 
       <!-- Card header with logo -->
-      <CardHeader class="flex justify-center">
-        <CardTitle>
-          <img src="@/assets/images/activate-logo-full.gif" alt="Logo" />
+      <CardHeader class="flex justify-center items-center">
+        <CardTitle class="flex justify-center w-full">
+          <img src="@/assets/images/activate-logo-full.gif" alt="Logo" class="mx-auto" />
         </CardTitle>
       </CardHeader>
 
@@ -117,8 +118,9 @@ const addNewActivity = async () => {
       <div class="flex justify-center my-6">
         <Dialog v-model:open="dialogOpen">
           <DialogTrigger as-child>
-            <Button class="text-3xl px-6 py-3 rounded-full">
-              +
+            <Button
+              class="text-3xl px-6 py-3 rounded-full text-black bg-white border border-black hover:bg-black hover:text-white transition-colors duration-300">
+              <PlusIcon class="h-6 w-6" />
             </Button>
           </DialogTrigger>
           <DialogContent class="sm:max-w-[425px]">
