@@ -37,6 +37,9 @@ const editDescription = ref('');
 const isDeleteDialogOpen = ref(false);
 const isCloneDialogOpen = ref(false);
 const isEditDialogOpen = ref(false);
+const cloneTitleError = ref(false);
+const editTitleError = ref(false);
+
 
 
 // activity store management
@@ -46,7 +49,6 @@ let activities = ref<Activity[]>([]);
 // load all activities on component mount
 onMounted(async () => {
     activities.value = await activityStore.getAllActivities();
-    //console.log("activities: ", activities.value);
 });
 
 // Handle session start when user clicks start button
@@ -59,8 +61,23 @@ const handleStartSession = async () => {
     sessionStore.startSession();
 };
 
-// clone activity function
+// clone activity functionality
+// step 1:
+const openCloneDialog = () => {
+    newTitle = props.activity.name;
+    newDescription = props.activity.description;
+    isCloneDialogOpen.value = true;
+}
+
+
+// step 2
 const cloneThisActivity = async (newTitle: string, newDescription: string) => {
+    if (!newTitle.trim()) {
+        cloneTitleError.value = true;
+        return;
+    }
+    cloneTitleError.value = false;
+
     const clonedActivity = {
         graph: props.activity.graph,
         name: newTitle,
@@ -90,6 +107,13 @@ const openEditDialog = () => {
 
 //      second step
 const updateActivity = async (newTitle: string, newDescription: string) => {
+    if (!newTitle.trim()) {
+        editTitleError.value = true;
+        return;
+    }
+    editTitleError.value = false;
+
+
     const updatedActivity = {
         graph: props.activity.graph,
         name: newTitle,
@@ -158,8 +182,12 @@ const sessionStartAllowed = () => !sessionStore.sessionRole;
                                 <DialogHeader>
                                     <DialogTitle>Edit Activity</DialogTitle>
                                     <DialogDescription>Edit title:</DialogDescription>
-                                    <textarea v-model="editTitle" class="w-full border rounded p-2 my-2"
-                                        placeholder="Edit title" />
+                                    <textarea v-model="editTitle" :class="[
+                                        'w-full border rounded p-2 my-2',
+                                        editTitleError ? 'border-red-500' : 'border-gray-300'
+                                    ]" placeholder="Edit title" />
+                                    <p v-if="editTitleError" class="text-red-500 text-sm mb-2">Title is required.</p>
+
                                     <DialogDescription>Edit description:</DialogDescription>
                                     <textarea v-model="editDescription" class="w-full border rounded p-2 my-2"
                                         placeholder="Edit description" />
@@ -175,22 +203,26 @@ const sessionStartAllowed = () => !sessionStore.sessionRole;
                         <!-- Clone Button -->
                         <Dialog v-model:open="isCloneDialogOpen">
                             <DialogTrigger as-child>
-                                <Button variant="secondary" size="icon">
+                                <Button variant="secondary" size="icon" @click="openCloneDialog">
                                     <BookCopy class="w-4 h-4" />
                                 </Button>
+
                             </DialogTrigger>
                             <DialogContent>
                                 <DialogHeader>
                                     <DialogTitle>Clone Activity</DialogTitle>
-                                    <DialogDescription>Set a new title:</DialogDescription>
-                                    <textarea v-model="newTitle" class="w-full border rounded p-2 my-2"
-                                        placeholder="New title" />
-                                    <DialogDescription>Set a new description:</DialogDescription>
+                                    <textarea v-model="newTitle" :class="[
+                                        'w-full border rounded p-2 my-2',
+                                        cloneTitleError ? 'border-red-500' : 'border-gray-300'
+                                    ]" placeholder="New title" />
+                                    <p v-if="cloneTitleError" class="text-red-500 text-sm mb-2">Title is required.</p>
+                                    <DialogDescription>Set a new description or use the existing one:
+                                    </DialogDescription>
                                     <textarea v-model="newDescription" class="w-full border rounded p-2 my-2"
                                         placeholder="Set new description (optional)" />
                                 </DialogHeader>
                                 <DialogFooter>
-                                    <Button @click="() => cloneThisActivity(newTitle, newDescription)">Clone</Button>
+                                    <Button @click="cloneThisActivity(newTitle, newDescription)">Clone</Button>
                                 </DialogFooter>
                             </DialogContent>
                         </Dialog>

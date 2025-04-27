@@ -36,9 +36,12 @@ const selectedActivity = ref<string>();
 const activityStore = useActivityStore();
 const activities = computed(() => activityStore.activityList);
 
-let newTitle = '';
-let newDescription = '';
-let defaultRole = '';
+const newTitle = ref('');
+const newDescription = ref('');
+const defaultRole = ref('');
+const titleError = ref(false);
+const roleError = ref(false);
+
 
 // Load all available activities on component mount
 onMounted(async () => {
@@ -63,21 +66,34 @@ watch(selectedActivity, async () => {
 
 const addNewActivity = async () => {
   try {
-    const res = await addActivity(newTitle, newDescription);
-    await addEntity(res.modified, defaultRole, KnowledgeGraphActivityClass.subject);
+    let hasError = false;
+    if (!newTitle.value.trim()) {
+      titleError.value = true;
+      hasError = true;
+    } else {
+      titleError.value = false;
+    }
+    if (!defaultRole.value.trim()) {
+      roleError.value = true;
+      hasError = true;
+    } else {
+      roleError.value = false;
+    }
+    if (hasError) return;
 
-    // TODO rollen hinzufügen funktioniert noch nicht korrekt
+
+    const res = await addActivity(newTitle.value, newDescription.value);
+    await addEntity(res.modified, defaultRole.value, KnowledgeGraphActivityClass.subject);
 
     // Reload activities after adding a new one
-    //activities.value = await activityStore.getAllActivities();
     await activityStore.refreshActivityList();
 
     //close dialog
     dialogOpen.value = false;
     // reset form fields
-    newTitle = '';
-    newDescription = '';
-    defaultRole = '';
+    newTitle.value = '';
+    newDescription.value = '';
+    defaultRole.value = '';
   } catch (error) {
     console.error("Fehler beim Hinzufügen einer Aktivität:", error);
   }
@@ -110,15 +126,22 @@ const addNewActivity = async () => {
               <DialogTitle>Create new Activity</DialogTitle>
 
               <DialogDescription>Enter Title</DialogDescription>
-              <textarea v-model="newTitle" class="w-full border rounded p-2 mb-2" />
-
+              <textarea v-model="newTitle" :class="[
+                'w-full border rounded p-2 mb-1',
+                titleError ? 'border-red-500' : 'border-gray-300'
+              ]" />
+              <p v-if="titleError" class="text-red-500 text-sm mb-2">Title is required.</p>
               <DialogDescription>Enter Description</DialogDescription>
               <textarea v-model="newDescription" class="w-full border rounded p-2 mb-2" />
 
               <DialogDescription>Enter default role</DialogDescription>
-              <textarea v-model="defaultRole" class="w-full border rounded p-2 mb-4" />
+              <textarea v-model="defaultRole" :class="[
+                'w-full border rounded p-2 mb-1',
+                roleError ? 'border-red-500' : 'border-gray-300'
+              ]" />
+              <p v-if="roleError" class="text-red-500 text-sm mb-2">Default role is required.</p>
 
-              <Button @click="() => addNewActivity()">Done</Button>
+              <Button @click="addNewActivity">Done</Button>
             </DialogHeader>
           </DialogContent>
         </Dialog>
