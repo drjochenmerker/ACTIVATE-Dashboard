@@ -421,6 +421,31 @@ export const staticContent = {
             en: "Start debriefing",
             de: "Debriefing starten",
             sv: "Starta debriefing",
+        },
+        editSetting: {
+            en: "Edit setting",
+            de: "Situation bearbeiten",
+            sv: "Välj inställning",
+        },
+        editTitle: {
+            en: "Edit title",
+            de: "Titel bearbeiten",
+            sv: "Redigera titel",
+        },
+        titleRequired: {
+            en: "Title is required",
+            de: "Titel ist erforderlich",
+            sv: "Titel krävs",
+        },
+        editDescription: {
+            en: "Edit description",
+            de: "Beschreibung bearbeiten",
+            sv: "Redigera beskrivning",
+        },
+        saveChanges: {
+            en: "Save changes",
+            de: "Änderungen speichern",
+            sv: "Spara ändringar",
         }
     }
 }
