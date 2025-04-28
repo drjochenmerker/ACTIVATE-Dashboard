@@ -151,7 +151,7 @@ const addNewActivity = async () => {
 
       <!-- Activities Grid -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 px-6 pb-6">
-        <ActivityCard v-for="activity in activities" :key="activity.name" :activity="activity" />
+        <ActivityCard v-for="activity in activities" :key="activity.name" :activity="activity" class="h-fit" />
       </div>
     </Card>
   </div>
