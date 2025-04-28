@@ -194,14 +194,15 @@ const sessionStartAllowed = () => !sessionStore.sessionRole;
                                         <DialogTitle>Edit Activity</DialogTitle>
                                         <DialogDescription>Edit title:</DialogDescription>
                                         <textarea v-model="editTitle" :class="[
-                                            'w-full border rounded p-2 my-2',
+                                            'w-full border rounded p-2 my-2 dark:bg-gray-900',
                                             editTitleError ? 'border-red-500' : 'border-gray-300'
                                         ]" placeholder="Edit title" />
                                         <p v-if="editTitleError" class="text-red-500 text-sm mb-2">Title is required.
                                         </p>
 
                                         <DialogDescription>Edit description:</DialogDescription>
-                                        <textarea v-model="editDescription" class="w-full border rounded p-2 my-2"
+                                        <textarea v-model="editDescription"
+                                            class="w-full border rounded p-2 my-2  dark:bg-gray-900"
                                             placeholder="Edit description" />
                                     </DialogHeader>
                                     <DialogFooter>
@@ -226,14 +227,15 @@ const sessionStartAllowed = () => !sessionStore.sessionRole;
                                     <DialogHeader>
                                         <DialogTitle>Clone Activity</DialogTitle>
                                         <textarea v-model="newTitle" :class="[
-                                            'w-full border rounded p-2 my-2',
+                                            'w-full border rounded p-2 my-2  dark:bg-gray-900',
                                             cloneTitleError ? 'border-red-500' : 'border-gray-300'
                                         ]" placeholder="New title" />
                                         <p v-if="cloneTitleError" class="text-red-500 text-sm mb-2">Title is required.
                                         </p>
                                         <DialogDescription>Set a new description or use the existing one:
                                         </DialogDescription>
-                                        <textarea v-model="newDescription" class="w-full border rounded p-2 my-2"
+                                        <textarea v-model="newDescription"
+                                            class="w-full border rounded p-2 my-2  dark:bg-gray-900"
                                             placeholder="Set new description (optional)" />
                                     </DialogHeader>
                                     <DialogFooter>

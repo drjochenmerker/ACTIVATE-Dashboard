@@ -129,16 +129,16 @@ const addNewActivity = async () => {
 
               <DialogDescription>Enter Title</DialogDescription>
               <textarea v-model="newTitle" :class="[
-                'w-full border rounded p-2 mb-1',
+                'w-full border rounded p-2 mb-1 dark:bg-gray-900',
                 titleError ? 'border-red-500' : 'border-gray-300'
               ]" />
               <p v-if="titleError" class="text-red-500 text-sm mb-2">Title is required.</p>
               <DialogDescription>Enter Description</DialogDescription>
-              <textarea v-model="newDescription" class="w-full border rounded p-2 mb-2" />
+              <textarea v-model="newDescription" class="w-full border rounded p-2 mb-2  dark:bg-gray-900" />
 
               <DialogDescription>Enter default role</DialogDescription>
               <textarea v-model="defaultRole" :class="[
-                'w-full border rounded p-2 mb-1',
+                'w-full border rounded p-2 mb-1  dark:bg-gray-900',
                 roleError ? 'border-red-500' : 'border-gray-300'
               ]" />
               <p v-if="roleError" class="text-red-500 text-sm mb-2">Default role is required.</p>
