@@ -193,7 +193,7 @@ const sessionStartAllowed = () => !sessionStore.sessionRole;
                                     <DialogHeader>
                                         <DialogTitle>Edit Activity</DialogTitle>
                                         <DialogDescription>Edit title:</DialogDescription>
-                                        <textarea v-model="editTitle" :class="[
+                                        <input v-model="editTitle" :class="[
                                             'w-full border rounded p-2 my-2 dark:bg-gray-900',
                                             editTitleError ? 'border-red-500' : 'border-gray-300'
                                         ]" placeholder="Edit title" />
@@ -226,7 +226,7 @@ const sessionStartAllowed = () => !sessionStore.sessionRole;
                                 <DialogContent>
                                     <DialogHeader>
                                         <DialogTitle>Clone Activity</DialogTitle>
-                                        <textarea v-model="newTitle" :class="[
+                                        <input v-model="newTitle" :class="[
                                             'w-full border rounded p-2 my-2  dark:bg-gray-900',
                                             cloneTitleError ? 'border-red-500' : 'border-gray-300'
                                         ]" placeholder="New title" />
