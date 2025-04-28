@@ -156,10 +156,3 @@ const addNewActivity = async () => {
     </Card>
   </div>
 </template>
-
-
-<style scoped>
-.delete-activity-button {
-  flex-direction: column;
-}
-</style>

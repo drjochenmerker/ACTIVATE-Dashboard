@@ -1,18 +1,23 @@
 <script lang="ts" setup>
+// functions
 import { defineProps, onMounted, ref } from 'vue';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog'
 import { useSessionStore } from '@/stores/sessionStore';
 import { getActivityClassIds } from '@/data/knowledge_graph/read_operations';
+import { useActivityStore } from '@/stores/activityStore';
+import { buildTreeStructByLang } from '@/data/knowledge_graph/utils';
+
+// functional components
+import RecursiveSelect from './RecursiveSelect.vue';
 import { Activity, KnowledgeGraphActivityClass, NestedMultiLangObject } from '@/data/knowledge_graph/structures';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog'
 import { Select, SelectContent, SelectTrigger, SelectValue } from '@/components/ui/select';
+
+// ui components
+import { Button } from '@/components/ui/button';
 import Label from '@/components/ui/label/Label.vue';
 import Checkbox from '@/components/ui/checkbox/Checkbox.vue';
 import { BookCopy, Play, Loader2 } from 'lucide-vue-next';
-import { useActivityStore } from '@/stores/activityStore';
-import { buildTreeStructByLang } from '@/data/knowledge_graph/utils';
-import RecursiveSelect from './RecursiveSelect.vue';
 
 // consts and props defintion
 const sessionStore = useSessionStore();
@@ -28,10 +33,9 @@ const graph = props.activity.graph;
 sessionStore.availableRoles = {} as NestedMultiLangObject;
 let newTitle = '';
 let newDescription = '';
-// tmp 
+
 const editTitle = ref('');
 const editDescription = ref('');
-
 
 // Refs for dialog interaction
 const isDeleteDialogOpen = ref(false);
@@ -39,8 +43,6 @@ const isCloneDialogOpen = ref(false);
 const isEditDialogOpen = ref(false);
 const cloneTitleError = ref(false);
 const editTitleError = ref(false);
-
-
 
 // activity store management
 const activityStore = useActivityStore();
@@ -62,15 +64,13 @@ const handleStartSession = async () => {
 };
 
 // clone activity functionality
-// step 1:
+//      step 1:
 const openCloneDialog = () => {
     newTitle = props.activity.name;
     newDescription = props.activity.description;
     isCloneDialogOpen.value = true;
 }
-
-
-// step 2
+//      step 2
 const cloneThisActivity = async (newTitle: string, newDescription: string) => {
     if (!newTitle.trim()) {
         cloneTitleError.value = true;
@@ -104,7 +104,6 @@ const openEditDialog = () => {
     editDescription.value = props.activity.description;
     isEditDialogOpen.value = true;
 }
-
 //      second step
 const updateActivity = async (newTitle: string, newDescription: string) => {
     if (!newTitle.trim()) {
@@ -135,24 +134,31 @@ const getRoles = async () => {
 }
 
 const sessionStartAllowed = () => !sessionStore.sessionRole;
-
 </script>
 
 <template>
-    <div class="rounded-xl shadow-md border bg-white dark:bg-gray-900 p-4 transition-all hover:shadow-lg">
+    <div class="rounded-xl shadow-md bg-white dark:bg-gray-900 p-4 transition-all hover:shadow-lg">
+
         <Accordion type="single" class="w-full" collapsible>
-            <AccordionItem :value="props.activity.graph">
-                <AccordionTrigger class="text-lg font-semibold hover:underline" @click="getRoles">
+            <AccordionItem :value="props.activity.graph" class="accordion-item border-0">
+
+                <AccordionTrigger class="accordion-trigger text-lg font-semibold text-middle flex justify-center"
+                    @click="getRoles">
                     {{ props.activity.name }}
                 </AccordionTrigger>
 
-                <!--- I WANT A LINE HERE IF THE ACCORDION IS OPENED-->
+
+
 
                 <AccordionContent class="pt-4 space-y-4 text-sm text-gray-600 dark:text-gray-300">
-                    <p>{{ props.activity.description }}</p>
+                    <!-- slim line that separates the title from the content -->
+                    <div class="h-[1px] bg-gray-200 dark:bg-gray-700 my-2"></div>
 
+                    <!-- Description -->
+                    <p class="text-base">{{ props.activity.description }}</p>
+
+                    <!-- Buttons-->
                     <div class="flex justify-between items-center gap-4 flex-wrap">
-
                         <!-- Delete Button -->
                         <div>
                             <Dialog v-model:open="isDeleteDialogOpen">
@@ -301,11 +307,6 @@ const sessionStartAllowed = () => !sessionStore.sessionRole;
 .card {
     border: 1px solid #ccc;
     padding: 5px;
-}
-
-
-.dark .accordion-item[data-state="open"] {
-    border-bottom: 1px solid #374151;
 }
 
 .buttons {
