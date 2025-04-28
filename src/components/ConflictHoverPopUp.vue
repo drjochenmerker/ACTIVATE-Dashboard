@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { activateTerms, staticContent } from '@/data/contentData';
 import { Conflict } from '@/data/knowledge_graph/structures';
+import { buildLanguageString } from '@/lib/utils';
 import { useSessionStore } from '@/stores/sessionStore';
 import { useColorMode } from '@vueuse/core';
 import { nextTick, onMounted, ref, watch } from 'vue';
@@ -89,7 +90,7 @@ watch(() => props.position, updatePopupHeight);
           v-for="(participant, index) in hoveredConflictPoint.participants"
           :key="index"
         >
-          {{ participant.label[sessionStore.activeLanguage] ? participant.label[sessionStore.activeLanguage].split("/").pop() : participant.label["en"] ? participant.label["en"].split("/").pop() : participant.label ? participant.label[Object.keys(participant.label)[0]] : participant.id }} - {{ activateTerms[sessionStore.activeLanguage][participant.type] }}
+          {{ buildLanguageString(participant, sessionStore.activeLanguage, true) }} - {{ activateTerms[sessionStore.activeLanguage][participant.type] }}
         </li>
       </ul>
     </div>

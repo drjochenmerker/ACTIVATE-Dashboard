@@ -93,7 +93,8 @@ const applyEntity = async () => {
     await addEntity(
         sessionStore.sessionActivity!.graph,
         entityName.value,
-        selectedClass.value as KnowledgeGraphActivityClass
+        selectedClass.value as KnowledgeGraphActivityClass,
+        sessionStore.activeLanguage
     );
 
     // Notify other components that data is outdated

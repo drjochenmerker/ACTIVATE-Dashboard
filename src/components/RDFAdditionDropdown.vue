@@ -1,5 +1,6 @@
 <script>
 import { activateTerms, staticContent } from '@/data/contentData';
+import { buildLanguageString } from '@/lib/utils';
 import { useSessionStore } from '@/stores/sessionStore';
 import { Delete, DeleteIcon } from 'lucide-vue-next';
 
@@ -53,12 +54,17 @@ export default {
      */
     filteredOptions() {
       return this.options.filter(option =>
-        (option.labels[this.sessionStore.activeLanguage] || option.labels.en || option.labels[Object.keys(option.labels)[0]]).toLowerCase().includes(this.search.toLowerCase())
+        buildLanguageString(option, this.sessionStore.activeLanguage).toLowerCase().includes(this.search.toLowerCase())
       );
     },
     placeholderText() {
       const lang = this.sessionStore.activeLanguage || 'en';
       return this.staticContent.placeholders.search[lang];
+    },
+    buildLanguageString() {
+      return (option, lang, isLabel) => {
+        return buildLanguageString(option, lang, isLabel);
+      };
     }
   },
   methods: {
@@ -77,7 +83,7 @@ export default {
      * Sets the search to the selected label and closes the dropdown
      */
     selectOption(option) {
-      this.search = option.labels[this.sessionStore.activeLanguage] || option.labels.en || option.labels[Object.keys(option.labels)[0]];
+      this.search = buildLanguageString(option, this.sessionStore.activeLanguage, true);
       this.$emit('update:modelValue', option);
       this.showDropdown = false;
     },
@@ -109,7 +115,7 @@ export default {
      */
     modelValue(newVal) {
       try {
-        this.search = newVal.labels[this.sessionStore.activeLanguage].split("/").pop() || newVal.labels.en.split("/").pop() || newVal.labels[Object.keys(newVal.labels)[0]].split("/").pop();
+        this.search = buildLanguageString(newVal, this.sessionStore.activeLanguage, true);
       }
       catch (error) {
         this.search = '';
@@ -136,7 +142,7 @@ export default {
 
     <ul v-if="showDropdown && !disabled" class="dropdown-list">
       <li v-for="option in filteredOptions" :key="option.id" @mousedown.prevent="selectOption(option)">
-        {{ (option.labels[this.sessionStore.activeLanguage] || option.labels.en || option.labels[Object.keys(option.labels)[0]]).split("/").pop() || option.id + (activateTerms[this.sessionStore.activeLanguage][option.type] ? " (" + activateTerms[this.sessionStore.activeLanguage][option.type] + ")" : "")}}
+        {{ buildLanguageString(option, sessionStore.activeLanguage, true) + (activateTerms[this.sessionStore.activeLanguage][option.type] ? " (" + activateTerms[this.sessionStore.activeLanguage][option.type] + ")" : "")}}
       </li>
     </ul>
   </div>

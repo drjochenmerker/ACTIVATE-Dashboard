@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Objective } from '@/data/knowledge_graph/structures';
+import { buildLanguageString } from '@/lib/utils';
 import { useSessionStore } from '@/stores/sessionStore';
 import { useColorMode } from '@vueuse/core';
 import { defineProps, nextTick, ref, watch } from 'vue';
@@ -42,6 +43,7 @@ watch(() => props.position, async (pos) => {
 
 // Current color mode (Light- or Dark-Mode)
 const mode = useColorMode()
+console.log("ITEMS", props.hoveredPoint.content);
 
 </script>
 
@@ -50,7 +52,7 @@ const mode = useColorMode()
     <b>{{ hoveredPoint.label }}:</b>
     <ul class="custom-list">
       <li v-for="(item, index) in hoveredPoint.content" :key="index">
-        {{ item.labels[sessionStore.activeLanguage].split("/").pop() }}
+        {{ buildLanguageString(item, sessionStore.activeLanguage, true) }}
       </li>
     </ul>
   </div>

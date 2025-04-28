@@ -86,7 +86,7 @@ const addNewActivity = async () => {
 
 
     const res = await addActivity(newTitle.value, newDescription.value);
-    await addEntity(res.modified, defaultRole.value, KnowledgeGraphActivityClass.subject);
+    await addEntity(res.modified, defaultRole.value, KnowledgeGraphActivityClass.subject, sessionStore.activeLanguage);
 
     // Reload activities after adding a new one
     await activityStore.refreshActivityList();

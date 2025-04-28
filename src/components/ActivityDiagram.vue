@@ -126,7 +126,7 @@ export default defineComponent({
         // Array of all points that are currently selected
         const selectedPoints = ref<string[]>([]);
 
-        // Elements thatt are currently hovered
+        // Elements that are currently hovered
         const hoveredPoint = ref<string | null>(null);
         const hoveredTriangle = ref<{ pointIds: string[] } | null>(null);
 

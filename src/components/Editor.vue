@@ -14,6 +14,7 @@ import { getActivities, getActivityDetail, getConflictDetail, getConflictIds } f
 import { addComment, addConflict } from '@/data/knowledge_graph/write_operations';
 import { useSessionStore } from '@/stores/sessionStore';
 import { staticContent } from '@/data/contentData';
+import { buildLanguageString } from '@/lib/utils';
 
 /** 
  * Editor-Component
@@ -79,7 +80,7 @@ export default {
       const pointData = {};
       for (const key in this.activityDetails) {
         if (Array.isArray(this.activityDetails[key])) {
-          pointData[key] = this.activityDetails[key].map(item => ({ id: item.id, label: item.labels[this.sessionStore.activeLanguage] ? item.labels[this.sessionStore.activeLanguage] : item.labels.en ? item.labels.en : item.labels(Object.keys(item.labels)[0]) }));
+          pointData[key] = this.activityDetails[key].map(item => ({ id: item.id, label: buildLanguageString(item, this.sessionStore.activeLanguage, true) }));
         } else {
           // Ensure it's an array even with no data:
           pointData[key] = [];

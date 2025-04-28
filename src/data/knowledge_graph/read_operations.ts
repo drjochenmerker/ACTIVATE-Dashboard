@@ -176,14 +176,14 @@ export async function getConflictDetail(graph: string, conflictId: string): Prom
             const existingParticipant = parsedConflict.participants.find(participant => participant.id == item.conflict_o.value.split("#").pop());
             const langTag = item.participant_o["xml:lang"];
             if (existingParticipant) {
-              existingParticipant.label[langTag] = item.participant_o.value;
+              existingParticipant.labels[langTag] = item.participant_o.value;
             }
             else {
-              parsedConflict.participants.push({ id: item.conflict_o.value.split("#").pop(), label: { [langTag]: item.participant_o.value }, type: type });
+              parsedConflict.participants.push({ id: item.conflict_o.value.split("#").pop(), labels: { [langTag]: item.participant_o.value }, type: type });
             }
           }
           else {
-            parsedConflict.participants.push({ id: item.conflict_o.value.split("#").pop(), label: { default: item.conflict_o.value.split("#").pop() }, type: type });
+            parsedConflict.participants.push({ id: item.conflict_o.value.split("#").pop(), labels: { default: item.conflict_o.value.split("#").pop() }, type: type });
           }
           break;
         case "ConflictState":

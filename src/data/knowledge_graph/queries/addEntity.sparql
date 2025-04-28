@@ -6,8 +6,8 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
 INSERT DATA {
 	GRAPH graph:{{graph}} {
-		:{{entity}} rdf:type owl:NamedIndividual ,
+		:{{entityId}} rdf:type owl:NamedIndividual ,
                             :{{activityClass}} ;
-					rdfs:label """{{entity}}"""@en
+					rdfs:label """{{entity}}"""@{{lang}} .
 	}
 }

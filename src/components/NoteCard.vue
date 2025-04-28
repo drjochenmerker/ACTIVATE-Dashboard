@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { useConflictsStore } from '@/stores/conflictsStore';
 import { useSessionStore } from '@/stores/sessionStore';
 import { activateTerms, staticContent } from '@/data/contentData';
+import { buildLanguageString } from '@/lib/utils';
 
 const props = defineProps({
   conflict: {
@@ -199,7 +200,7 @@ const removeReply = (id: string) => {
             <strong class="participant-group-title">{{ activateTerms[sessionStore.activeLanguage][type] }}:</strong>
             <div class="participant-tag-container">
               <span v-for="participant in group" :key="participant.id" class="participant-tag">
-                {{ participant.label[sessionStore.activeLanguage] ? participant.label[sessionStore.activeLanguage].split("/").pop() : participant.label["en"] ? participant.label["en"].split("/").pop() : participant.label ? participant.label[Object.keys(participant.label)[0]] : participant.id }}
+                {{ buildLanguageString(participant, sessionStore.activeLanguage, true) }}
               </span>
             </div>
           </div>

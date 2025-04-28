@@ -96,7 +96,7 @@ export interface updateResponse {
  */
 export interface Participant {
     id: string,
-    label: Record<string, string>,
+    labels: Record<string, string>,
     type: string
 }
 
