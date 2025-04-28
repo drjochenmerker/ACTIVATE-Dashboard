@@ -24,6 +24,9 @@ import {
 import { addActivity, addEntity } from '@/data/knowledge_graph/write_operations';
 import { useActivityStore } from '@/stores/activityStore';
 import { buildTreeStructByLang } from '@/data/knowledge_graph/utils';
+import { staticContent } from '@/data/contentData';
+import LanguageSelect from '@/components/LanguageSelect.vue';
+import { PlusIcon } from 'lucide-vue-next';
 
 useColorMode();
 const sessionStore = useSessionStore();
@@ -36,9 +39,12 @@ const selectedActivity = ref<string>();
 const activityStore = useActivityStore();
 const activities = computed(() => activityStore.activityList);
 
-let newTitle = '';
-let newDescription = '';
-let defaultRole = '';
+const newTitle = ref('');
+const newDescription = ref('');
+const defaultRole = ref('');
+const titleError = ref(false);
+const roleError = ref(false);
+
 
 // Load all available activities on component mount
 onMounted(async () => {
@@ -63,21 +69,34 @@ watch(selectedActivity, async () => {
 
 const addNewActivity = async () => {
   try {
-    const res = await addActivity(newTitle, newDescription);
-    await addEntity(res.modified, defaultRole, KnowledgeGraphActivityClass.subject);
+    let hasError = false;
+    if (!newTitle.value.trim()) {
+      titleError.value = true;
+      hasError = true;
+    } else {
+      titleError.value = false;
+    }
+    if (!defaultRole.value.trim()) {
+      roleError.value = true;
+      hasError = true;
+    } else {
+      roleError.value = false;
+    }
+    if (hasError) return;
 
-    // TODO rollen hinzufügen funktioniert noch nicht korrekt
+
+    const res = await addActivity(newTitle.value, newDescription.value);
+    await addEntity(res.modified, defaultRole.value, KnowledgeGraphActivityClass.subject);
 
     // Reload activities after adding a new one
-    //activities.value = await activityStore.getAllActivities();
     await activityStore.refreshActivityList();
 
     //close dialog
     dialogOpen.value = false;
     // reset form fields
-    newTitle = '';
-    newDescription = '';
-    defaultRole = '';
+    newTitle.value = '';
+    newDescription.value = '';
+    defaultRole.value = '';
   } catch (error) {
     console.error("Fehler beim Hinzufügen einer Aktivität:", error);
   }
@@ -88,12 +107,13 @@ const addNewActivity = async () => {
 <template>
   <!-- Main container with centered layout -->
   <div class="flex flex-col items-center justify-center py-10 px-4">
+    <LanguageSelect class="absolute top-0 right-0 mt-4 mr-4"/>
     <Card class="w-full max-w-5xl">
 
       <!-- Card header with logo -->
-      <CardHeader class="flex justify-center">
-        <CardTitle>
-          <img src="@/assets/images/activate-logo-full.gif" alt="Logo" />
+      <CardHeader class="flex justify-center items-center">
+        <CardTitle class="flex justify-center w-full">
+          <img src="@/assets/images/activate-logo-full.gif" alt="Logo" class="mx-auto" />
         </CardTitle>
       </CardHeader>
 
@@ -101,24 +121,32 @@ const addNewActivity = async () => {
       <div class="flex justify-center my-6">
         <Dialog v-model:open="dialogOpen">
           <DialogTrigger as-child>
-            <Button class="text-3xl px-6 py-3 rounded-full">
-              +
+            <Button
+              class="text-3xl px-6 py-3 rounded-full text-black bg-white border border-black hover:bg-black hover:text-white transition-colors duration-300">
+              <PlusIcon class="h-6 w-6" />
             </Button>
           </DialogTrigger>
           <DialogContent class="sm:max-w-[425px]">
             <DialogHeader>
-              <DialogTitle>Create new Activity</DialogTitle>
+              <DialogTitle>{{ staticContent.startPage.createActivity[sessionStore.activeLanguage] }}</DialogTitle>
 
-              <DialogDescription>Enter Title</DialogDescription>
-              <textarea v-model="newTitle" class="w-full border rounded p-2 mb-2" />
+              <DialogDescription>{{staticContent.startPage.enterTitle[sessionStore.activeLanguage]}}</DialogDescription>
+              <input type="text" v-model="newTitle" :class="[
+                'w-full border rounded p-2 mb-1 dark:bg-gray-900',
+                titleError ? 'border-red-500' : 'border-gray-300'
+              ]" />
+              <p v-if="titleError" class="text-red-500 text-sm mb-2">Title is required.</p>
+              <DialogDescription>{{staticContent.startPage.enterDescription[sessionStore.activeLanguage]}}</DialogDescription>
+              <textarea v-model="newDescription" class="w-full border rounded p-2 mb-2  dark:bg-gray-900" />
 
-              <DialogDescription>Enter Description</DialogDescription>
-              <textarea v-model="newDescription" class="w-full border rounded p-2 mb-2" />
+              <DialogDescription>{{staticContent.startPage.defaultRole[sessionStore.activeLanguage]}}</DialogDescription>
+              <input v-model="defaultRole" :class="[
+                'w-full border rounded p-2 mb-1  dark:bg-gray-900',
+                roleError ? 'border-red-500' : 'border-gray-300'
+              ]" />
+              <p v-if="roleError" class="text-red-500 text-sm mb-2">Default role is required.</p>
 
-              <DialogDescription>Enter default role</DialogDescription>
-              <textarea v-model="defaultRole" class="w-full border rounded p-2 mb-4" />
-
-              <Button @click="() => addNewActivity()">Done</Button>
+              <Button @click="addNewActivity">{{ staticContent.terms.done[sessionStore.activeLanguage] }}</Button>
             </DialogHeader>
           </DialogContent>
         </Dialog>
@@ -126,15 +154,8 @@ const addNewActivity = async () => {
 
       <!-- Activities Grid -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 px-6 pb-6">
-        <ActivityCard v-for="activity in activities" :key="activity.name" :activity="activity" />
+        <ActivityCard v-for="activity in activities" :key="activity.name" :activity="activity" class="h-fit" />
       </div>
     </Card>
   </div>
 </template>
-
-
-<style scoped>
-.delete-activity-button {
-  flex-direction: column;
-}
-</style>

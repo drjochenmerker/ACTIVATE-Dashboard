@@ -77,16 +77,14 @@ export default {
 
       // constant array to save the point data
       const pointData = {};
-
       for (const key in this.activityDetails) {
         if (Array.isArray(this.activityDetails[key])) {
-          pointData[key] = this.activityDetails[key].map(item => ({ label: item.label }));
+          pointData[key] = this.activityDetails[key].map(item => ({ id: item.id, label: item.labels[this.sessionStore.activeLanguage] ? item.labels[this.sessionStore.activeLanguage] : item.labels.en ? item.labels.en : item.labels(Object.keys(item.labels)[0]) }));
         } else {
           // Ensure it's an array even with no data:
           pointData[key] = [];
         }
       }
-
       return pointData;
     },
 
@@ -224,7 +222,7 @@ export default {
           console.log("Selected item: ", item);
           participants.push({
             // every entry stays a separate participant (important for the graph)
-            id: item.label,
+            id: item.id,
             type: point.charAt(0).toUpperCase() + point.slice(1)
           });
         });

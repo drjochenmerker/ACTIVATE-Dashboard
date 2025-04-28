@@ -89,6 +89,11 @@ export const staticContent = {
             en: "There are no conflicts.",
             de: "Es gibt keine Konflikte.",
             sv: "Det finns inga konflikter.",
+        },
+        noElements: {
+            en: "No elements to select from",
+            de: "Keine Elemente zur Auswahl",
+            sv: "Inga element att välja mellan",
         }
     },
     terms: {
@@ -124,7 +129,7 @@ export const staticContent = {
         },
         done: {
             en: "Done",
-            de: "Erledigt",
+            de: "Fertig",
             sv: "Färdig",
         },
         add: {
@@ -141,6 +146,16 @@ export const staticContent = {
             en: "End Session",
             de: "Sitzung beenden",
             sv: "Avsluta session",
+        },
+        delete: {
+            en: "Delete",
+            de: "Löschen",
+            sv: "Ta bort",
+        },
+        clone: {
+            en: "Clone",
+            de: "Klonen",
+            sv: "Klon",
         },
         conflictStatus: {
             open: {
@@ -186,6 +201,21 @@ export const staticContent = {
             de: "Antwort...",
             sv: "Svar...",
         },
+        newTitle: {
+            en: "New title...",
+            de: "Neuer Titel...",
+            sv: "Ny titel...",
+        },
+        newDescriptionOptional: {
+            en: "New description (optional)...",
+            de: "Neue Beschreibung (optional)...",
+            sv: "Ny beskrivning (valfritt)...",
+        },
+        roleSelect: {
+            en: "Select role...",
+            de: "Rolle auswählen...",
+            sv: "Välj roll...",
+        }
     },
     editor: {
         header: {
@@ -320,5 +350,102 @@ export const staticContent = {
             de: "Kommentar speichern",
             sv: "Spara kommentar",
         },
+    },
+    startPage: {
+        createActivity: {
+            en: "Create new Setting",
+            de: "Neue Situation erstellen",
+            sv: "Skapa ny situation",
+        },
+        enterTitle: {
+            en: "Enter title",
+            de: "Titel eingeben",
+            sv: "Ange titel",
+        },
+        enterDescription: {
+            en: "Enter description",
+            de: "Beschreibung eingeben",
+            sv: "Ange beskrivning",
+        },
+        defaultRole: {
+            en: "Enter default role",
+            de: "Standardrolle eingeben",
+            sv: "Ange standardroll",
+        },
+        deleteActivity: {
+            en: "Delete activity",
+            de: "Aktivität löschen",
+            sv: "Ta bort aktivitet",
+        },
+        deleteConfirm: {
+            en: "Are you sure you want to delete this activity?",
+            de: "Sind Sie sicher, dass Sie diese Aktivität löschen möchten?",
+            sv: "Är du säker på att du vill ta bort denna aktivitet?",
+        },
+        cloneActivity: {
+            en: "Clone activity",
+            de: "Aktivität klonen",
+            sv: "Klonaktivitet",
+        },
+        newTitle: {
+            en: "Enter new title:",
+            de: "Neuen Titel eingeben:",
+            sv: "Ange ny titel:",
+        },
+        newDescription: {
+            en: "Enter new description:",
+            de: "Neue Beschreibung eingeben:",
+            sv: "Ange ny beskrivning:",
+        },
+        roleSelect: {
+            en: "Role Selection",
+            de: "Rollenwahl",
+            sv: "Rollval",
+        },
+        roleSelectText: {
+            en: "Please select a role for the debriefing:",
+            de: "Bitte wählen Sie eine Rolle für das Debriefing aus:",
+            sv: "Vänligen välj en roll för debriefingen:",
+        },
+        instructorMode: {
+            en: "Enable instructor mode",
+            de: "Dozentmodus aktivieren",
+            sv: "Aktivera instruktörsläge",
+        },
+        activityRoleSelect: {
+            en: "Select setting and role",
+            de: "Situation und Rolle auswählen",
+            sv: "Välj inställning och roll",
+        },
+        startDebriefing: {
+            en: "Start debriefing",
+            de: "Debriefing starten",
+            sv: "Starta debriefing",
+        },
+        editSetting: {
+            en: "Edit setting",
+            de: "Situation bearbeiten",
+            sv: "Välj inställning",
+        },
+        editTitle: {
+            en: "Edit title",
+            de: "Titel bearbeiten",
+            sv: "Redigera titel",
+        },
+        titleRequired: {
+            en: "Title is required",
+            de: "Titel ist erforderlich",
+            sv: "Titel krävs",
+        },
+        editDescription: {
+            en: "Edit description",
+            de: "Beschreibung bearbeiten",
+            sv: "Redigera beskrivning",
+        },
+        saveChanges: {
+            en: "Save changes",
+            de: "Änderungen speichern",
+            sv: "Spara ändringar",
+        }
     }
 }

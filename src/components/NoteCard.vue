@@ -216,7 +216,7 @@ const removeReply = (id: string) => {
     </div>
 
     <div v-if="replyInputVisible[conflict.id]" class="comment-input">
-      <textarea ref="textareaRef" v-model="newReplyText[conflict.id]" :placeholder="staticContent.placeholders.reply[sessionStore.activeLanguage]"
+      <textarea ref="textareaRef" v-model="newReplyText[conflict.id]" :placeholder="staticContent.placeholders.answer[sessionStore.activeLanguage]"
         @keydown.enter="handleEnterKey($event)" />
       <Button @click="saveReply(conflict.id)">{{staticContent.noteCards.save[sessionStore.activeLanguage]}}</Button>
     </div>

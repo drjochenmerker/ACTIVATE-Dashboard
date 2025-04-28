@@ -1,4 +1,4 @@
-import type { Comment, Conflict, MultiLangObject, NestedMultiLangObject, RDFTriple, sparqlTemplate, StringAccessObject } from "./structures";
+import type { Comment, Conflict, MultiLangObject, NestedMultiLangObject, Objective, RDFTriple, sparqlTemplate, StringAccessObject } from "./structures";
 
 /**
  * Internal function that allows to load a SPARQL query template from the filesystem
@@ -149,7 +149,7 @@ function pushNestedValue(obj: NestedMultiLangObject, nestingPath: string[], newV
     currentObj.values.push(newValue);
 }
 
-export function buildTreeStructByLang(input: MultiLangObject[], lang: string): NestedMultiLangObject {
+export function buildTreeStructByLang(input: MultiLangObject[] | Objective[], lang: string): NestedMultiLangObject {
     const result: NestedMultiLangObject = { level: "root" };
     for (const item of input) {
         const label = item.labels[lang] || item.labels["default"] || Object.values(item.labels)[0];

@@ -18,4 +18,5 @@
 
 ###  http://activate.htwk-leipzig.de/model#Doctor1
 :Doctor1 rdf:type owl:NamedIndividual ,
-                  :Subject .
+                  :Subject ;
+        rdfs:label "Doctor 1"@en .
