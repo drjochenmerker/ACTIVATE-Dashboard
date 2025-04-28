@@ -5,7 +5,7 @@ import RDFAdditionDropdown from './RDFAdditionDropdown.vue';
 import { defineProps } from 'vue';
 import { useColorMode } from '@vueuse/core';
 import { addPredicate, updateTriple } from '@/data/knowledge_graph/write_operations';
-import { Activity, KnowledgeGraphActivityClass, LanguageCode, LanguageLabel, PredicateDict, RDFOperation } from '@/data/knowledge_graph/structures';
+import { Activity, KnowledgeGraphActivityClass, LanguageCode, LanguageLabel, Objective, Predicate, PredicateDict, RDFOperation } from '@/data/knowledge_graph/structures';
 import { getActivityDetail, getPredicateObject } from '@/data/knowledge_graph/read_operations';
 import { useSessionStore } from '@/stores/sessionStore';
 import { staticContent } from '@/data/contentData';
@@ -25,33 +25,34 @@ const mode = useColorMode();
 
 // State variables
 const isOpen = ref(false);
-const subject = ref('');
-const predicate = ref('');
-const object = ref('');
+const subject = ref({} as Objective);
+const predicate = ref({} as Predicate);
+const object = ref({} as Objective);
 const selectedDuplicateClass = ref(false)
 const noExistingPredicates = ref(false)
 const noValidParticipants = ref(false)
 
 // Participants and predicates
-const activityParticipants = ref([] as Array<{ label: string }>);
+// participants are objectives here - should probably be renamed
+const activityParticipants = ref([] as Array<Objective>);
 const activityPredicates = ref<PredicateDict | null>(null);
-const predicateOptions = ref([] as Array<{ label: string }>);
-const predicates = ref([] as Array<{ predicate: string }>)
+const predicateOptions = ref([] as Array<Predicate>);
+const predicates = ref([] as Array<Predicate>);
 
 /**
  * Validation Computeds
  */
 const isSubjectValid = computed(() => {
-    return activityParticipants.value.some(item => item.label === subject.value);
+    return activityParticipants.value.some(item => item.id === subject.value.id);
 });
 
 const isObjectValid = computed(() => {
-    return activityParticipants.value.some(item => item.label === object.value);
+    return activityParticipants.value.some(item => item.id === object.value.id);
 });
 
 const isPredicateValid = computed(() => {
     const regex = /^[A-Za-z]+$/;
-    return regex.test(predicate.value);
+    return regex.test(predicate.value.id);
 })
 
 const isApplyEnabled = computed(() => {
@@ -67,8 +68,6 @@ const isApplyEnabled = computed(() => {
 /**
  * Opens the modal dialog
  * Fetches current activity detail to populate participants
- * 
- * TODO Fix loading of participants
  */
 const openDialog = async () => {
     isOpen.value = true;
@@ -78,21 +77,12 @@ const openDialog = async () => {
         const items = activityData[key];
         if (Array.isArray(items)) {
             items.forEach(item => {
-                if (item && item.label) {
-                    activityParticipants.value.push({ label: `${item.label} (${key})` });
+                if (item && item.labels) {
+                    activityParticipants.value.push(item);
                 }
             });
         }
     });
-};
-
-/**
- * Extracts the activity class from a label string
- * Format expected: "Entity Label (class)"
- */
-const extractClass = (str: string): string | null => {
-    const match = str.match(/\(([^)]+)\)/);
-    return match ? match[1] : null;
 };
 
 /**
@@ -109,26 +99,23 @@ onMounted(async () => {
  * Watch subject/object input to determine valid predicates
  */
 watch([subject, object], () => {
-    predicate.value = '';
+    predicate.value = {id: '', labels: {en: ''}};
     selectedDuplicateClass.value = false;
     noExistingPredicates.value = false;
     noValidParticipants.value = false;
 
-    const subjectClass = extractClass(subject.value);
-    const objectClass = extractClass(object.value);
-
     if (isSubjectValid.value && isObjectValid.value) {
-        if (subjectClass !== objectClass) {
+        if (subject.value.type !== object.value.type) {
             //let predicates: Array<{ predicate: string }> = [];
-            if (subjectClass && objectClass && activityPredicates.value) {
+            if (subject.value.type && object.value.type && activityPredicates.value) {
                 try {
-                    predicates.value = (activityPredicates.value.get([subjectClass, objectClass]) as Array<{ predicate: string }>) || [];
+                    predicates.value = (activityPredicates.value.get([subject.value.type, object.value.type]) as Array<Predicate>) || [];
                 } catch (error) {
                     predicates.value = [];
                 }
             }
             if (predicates.value.length > 0) {
-                predicateOptions.value = predicates.value.map(item => ({ label: item.predicate }));
+                predicateOptions.value = predicates.value;
             } else {
                 predicateOptions.value = [];
                 noExistingPredicates.value = true;
@@ -145,9 +132,9 @@ watch([subject, object], () => {
  * Resets form and closes dialog
  */
  const resetInputs = () => {
-    subject.value = '';
-    object.value = '';
-    predicate.value = '';
+    subject.value = {} as Objective;
+    object.value = {} as Objective;
+    predicate.value = {} as Predicate;
 };
 
 const closeDialog = () => {
@@ -156,56 +143,22 @@ const closeDialog = () => {
 };
 
 /**
- * Removes classes from a label string
- */
-const cleanLabel = (label: string): string => {
-    return label.replace(/\s*\(.*?\)\s*/g, '').replace(/\s+/g, '');
-};
-
-/**
- * Converts string to KnowledgeGraphActivityClass enum
- */
-function mapToActivityClass(str: string): KnowledgeGraphActivityClass | undefined {
-    switch (str.toLowerCase()) {
-        case "subject":
-            return KnowledgeGraphActivityClass.subject;
-        case "object":
-            return KnowledgeGraphActivityClass.object;
-        case "rules":
-            return KnowledgeGraphActivityClass.rules;
-        case "instruments":
-            return KnowledgeGraphActivityClass.instruments;
-        case "division_of_labour":
-            return KnowledgeGraphActivityClass.divison_of_labour;
-        case "community":
-            return KnowledgeGraphActivityClass.community;
-        default:
-            return undefined;
-    }
-}
-
-/**
  * Applies the RDF triple by calling write operations
  */
 const applyTriple = async () => {
-    const subjectString = cleanLabel(subject.value);
-    const objectString = cleanLabel(object.value);
-
-    const subjectClass = mapToActivityClass(extractClass(subject.value) || '');
-    const objectClass = mapToActivityClass(extractClass(object.value) || '');
-
+    // TODO - Actually implement Multi-Language
     const languageLabelDummy: LanguageLabel[] = [
-        { label: predicate.value, language: LanguageCode.Deutsch },
-        { label: predicate.value, language: LanguageCode.English },
-        { label: predicate.value, language: LanguageCode.Svenska }
+        { label: predicate.value.id, language: LanguageCode.Deutsch },
+        { label: predicate.value.id, language: LanguageCode.English },
+        { label: predicate.value.id, language: LanguageCode.Svenska }
     ];
 
-    if (predicates.value.length === 0 || !predicates.value.some(item => item.predicate === predicate.value)) {
-        if (subjectClass && objectClass) {
-            await addPredicate(sessionStore.sessionActivity!.graph, predicate.value, [subjectClass], [objectClass], languageLabelDummy);
+    if (predicates.value.length === 0 || !predicates.value.some(item => item.id === predicate.value.id)) {
+        if (subject.value.type && object.value.type) {
+            await addPredicate(sessionStore.sessionActivity!.graph, predicate.value.id, [subject.value.type as KnowledgeGraphActivityClass], [object.value.type as KnowledgeGraphActivityClass], languageLabelDummy);
         }
     }
-    updateTriple(sessionStore.sessionActivity!.graph, { subject: subjectString, predicate: predicate.value, object: objectString }, 'insert' as RDFOperation)
+    updateTriple(sessionStore.sessionActivity!.graph, { subject: subject.value.id, predicate: predicate.value.id, object: object.value.id }, 'insert' as RDFOperation)
 
     closeDialog();
 }

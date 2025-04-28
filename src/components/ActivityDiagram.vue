@@ -4,7 +4,7 @@ import PointHoverPopUp from '@/components/PointHoverPopUp.vue';
 import { useColorMode } from "@vueuse/core";
 import { Button } from '@/components/ui/button';
 import { useActivityPointsStore } from "@/stores/activityPointsStore";
-import { Activity, Conflict, conflictStatus } from "@/data/knowledge_graph/structures";
+import { Activity, Conflict, conflictStatus, Objective } from "@/data/knowledge_graph/structures";
 import ConflictHoverPopUp from "./ConflictHoverPopUp.vue";
 import { useConflictsStore } from "@/stores/conflictsStore";
 import { calculateConflictPositions } from "@/composables/calculateConflictPositions";
@@ -52,7 +52,7 @@ export default defineComponent({
         // Data of the hovered point
         const hoveredPointData = ref<null | {
             label: string;
-            content: Array<{ label: string, value?: string }>;
+            content: Array<Objective>;
         }>(null);
 
         // Data of the hovered conflict point
@@ -394,7 +394,7 @@ export default defineComponent({
 
             hoverPosition.value = { x: event.clientX, y: event.clientY };
 
-            let foundPoint: { label: string; content: Array<string>; } | null = null;
+            let foundPoint: {label: string, content: Array<Objective>} | null = null;
 
             // Check if a point is hovered -> if yes, set foundPoint to the hovered point, set hoveredPosition for hoverPopUp
             points.value.forEach((point) => {

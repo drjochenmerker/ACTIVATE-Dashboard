@@ -13,6 +13,7 @@ import { BookCopy, Play, Loader2 } from 'lucide-vue-next';
 import { useActivityStore } from '@/stores/activityStore';
 import { buildTreeStructByLang } from '@/data/knowledge_graph/utils';
 import RecursiveSelect from './RecursiveSelect.vue';
+import { staticContent } from '@/data/contentData';
 
 // consts and props defintion
 const sessionStore = useSessionStore();
@@ -91,7 +92,7 @@ const sessionStartAllowed = () => !sessionStore.sessionRole;
     <div class="rounded-xl shadow-md border bg-white dark:bg-gray-900 p-4 transition-all hover:shadow-lg">
         <Accordion type="single" class="w-full" collapsible>
             <AccordionItem :value="props.activity.graph">
-                <AccordionTrigger class="text-lg font-semibold hover:underline" @click="getRoles">
+                <AccordionTrigger class="text-lg font-semibold hover:underline">
                     {{ props.activity.name }}
                 </AccordionTrigger>
 
@@ -109,13 +110,13 @@ const sessionStartAllowed = () => !sessionStore.sessionRole;
                             </DialogTrigger>
                             <DialogContent>
                                 <DialogHeader>
-                                    <DialogTitle>Delete Activity</DialogTitle>
+                                    <DialogTitle>{{ staticContent.startPage.deleteActivity[sessionStore.activeLanguage] }}</DialogTitle>
                                     <DialogDescription>
-                                        Are you sure you want to delete this Activity?
+                                        {{ staticContent.startPage.deleteConfirm[sessionStore.activeLanguage] }}
                                     </DialogDescription>
                                 </DialogHeader>
                                 <DialogFooter>
-                                    <Button @click="() => deleteThisActivity()">Delete</Button>
+                                    <Button @click="() => deleteThisActivity()">{{ staticContent.terms.delete[sessionStore.activeLanguage] }}</Button>
                                 </DialogFooter>
                             </DialogContent>
                         </Dialog>
@@ -129,16 +130,16 @@ const sessionStartAllowed = () => !sessionStore.sessionRole;
                             </DialogTrigger>
                             <DialogContent>
                                 <DialogHeader>
-                                    <DialogTitle>Clone Activity</DialogTitle>
-                                    <DialogDescription>Set a new title:</DialogDescription>
+                                    <DialogTitle>{{ staticContent.startPage.cloneActivity[sessionStore.activeLanguage] }}</DialogTitle>
+                                    <DialogDescription>{{ staticContent.startPage.newTitle[sessionStore.activeLanguage] }}</DialogDescription>
                                     <textarea v-model="newTitle" class="w-full border rounded p-2 my-2"
-                                        placeholder="New title" />
-                                    <DialogDescription>Set a new description:</DialogDescription>
+                                        :placeholder="staticContent.placeholders.newTitle[sessionStore.activeLanguage]" />
+                                    <DialogDescription>{{ staticContent.startPage.newDescription[sessionStore.activeLanguage] }}</DialogDescription>
                                     <textarea v-model="newDescription" class="w-full border rounded p-2 my-2"
-                                        placeholder="Set new description (optional)" />
+                                        :placeholder="staticContent.placeholders.newDescriptionOptional[sessionStore.activeLanguage]" />
                                 </DialogHeader>
                                 <DialogFooter>
-                                    <Button @click="() => cloneThisActivity(newTitle, newDescription)">Clone</Button>
+                                    <Button @click="() => cloneThisActivity(newTitle, newDescription)">{{ staticContent.terms.clone[sessionStore.activeLanguage] }}</Button>
                                 </DialogFooter>
                             </DialogContent>
                         </Dialog>
@@ -146,20 +147,20 @@ const sessionStartAllowed = () => !sessionStore.sessionRole;
                         <!-- Start Session Button -->
                         <Dialog>
                             <DialogTrigger as-child>
-                                <Button variant="default" size="icon">
+                                <Button variant="default" size="icon" @click="getRoles">
                                     <Play class="w-4 h-4" />
                                 </Button>
                             </DialogTrigger>
                             <DialogContent>
                                 <DialogHeader>
-                                    <DialogTitle>Role Selection</DialogTitle>
-                                    <DialogDescription>Select your role for the debriefing:</DialogDescription>
+                                    <DialogTitle>{{ staticContent.startPage.roleSelect[sessionStore.activeLanguage] }}</DialogTitle>
+                                    <DialogDescription>{{ staticContent.startPage.roleSelectText[sessionStore.activeLanguage] }}</DialogDescription>
                                 </DialogHeader>
 
                                 <!-- Select a role-->
                                 <Select v-model="sessionStore.sessionRole" id="roleSelect" class="my-4">
                                     <SelectTrigger>
-                                        <SelectValue placeholder="Select a role" />
+                                        <SelectValue :placeholder="staticContent.placeholders.roleSelect[sessionStore.activeLanguage]" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <RecursiveSelect :node="sessionStore.availableRoles" />
@@ -173,7 +174,7 @@ const sessionStartAllowed = () => !sessionStore.sessionRole;
                                     <Checkbox id="cbInstructorMode" :checked="sessionStore.instructorMode"
                                         @update:checked="sessionStore.instructorMode = $event" />
                                     <Label for="cbInstructorMode" class="text-sm font-normal">
-                                        Enable Instructor Mode
+                                        {{ staticContent.startPage.instructorMode[sessionStore.activeLanguage] }}
                                     </Label>
                                 </div>
 
@@ -183,11 +184,11 @@ const sessionStartAllowed = () => !sessionStore.sessionRole;
                                         @click="() => handleStartSession()">
                                         <template v-if="sessionStartAllowed()">
                                             <Loader2 class="w-4 h-4 mr-2 animate-spin" />
-                                            Select activity and role
+                                            {{ staticContent.startPage.activityRoleSelect[sessionStore.activeLanguage] }}
                                         </template>
                                         <template v-else>
                                             <Play class="w-4 h-4 mr-2" />
-                                            Start Debriefing
+                                            {{ staticContent.startPage.startDebriefing[sessionStore.activeLanguage] }}
                                         </template>
                                     </Button>
                                 </DialogFooter>

@@ -119,8 +119,8 @@ export default {
         <div class="search-container">
 
             <!-- Show selected options -->
-            <div v-for="option in selectedOptions" :key="option.label" class="selected-item">
-                {{ option.label }}
+            <div v-for="option in selectedOptions" :key="option.id" class="selected-item">
+                {{ option.label.split("/").pop() }}
                 <span class="remove-icon" @click="removeOption(option)">✕</span>
             </div>
 
@@ -132,10 +132,10 @@ export default {
         <!-- Dropdown list -->
         <ul v-if="showDropdown" class="dropdown-list">
             <li v-if="filteredOptions.length === 0" class="no-options">
-                no elements to select from
+                {{ staticContent.errors.noElements[sessionStore.activeLanguage] || staticContent.errors.noElements.en }}
             </li>
-            <li v-else v-for="option in filteredOptions" :key="option.label" @mousedown.prevent="selectOption(option)">
-                {{ option.label }}
+            <li v-else v-for="option in filteredOptions" :key="option.id" @mousedown.prevent="selectOption(option)">
+                {{ option.label.split("/").pop() }}
             </li>
         </ul>
 

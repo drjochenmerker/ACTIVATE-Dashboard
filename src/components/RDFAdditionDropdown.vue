@@ -1,5 +1,5 @@
 <script>
-import { staticContent } from '@/data/contentData';
+import { activateTerms, staticContent } from '@/data/contentData';
 import { useSessionStore } from '@/stores/sessionStore';
 import { Delete, DeleteIcon } from 'lucide-vue-next';
 
@@ -23,8 +23,8 @@ export default {
       required: true
     },
     modelValue: {
-      type: String,
-      default: ''
+      type: Object,
+      default: {}
     },
     disabled: {
       type: Boolean,
@@ -40,10 +40,11 @@ export default {
    */
   data() {
     return {
-      search: this.modelValue,
+      search: '',
       showDropdown: false,
       sessionStore: useSessionStore(),
-      staticContent: staticContent
+      staticContent: staticContent,
+      activateTerms: activateTerms
     };
   },
   computed: {
@@ -52,7 +53,7 @@ export default {
      */
     filteredOptions() {
       return this.options.filter(option =>
-        option.label.toLowerCase().includes(this.search.toLowerCase())
+        (option.labels[this.sessionStore.activeLanguage] || option.labels.en || option.labels[Object.keys(option.labels)[0]]).toLowerCase().includes(this.search.toLowerCase())
       );
     },
     placeholderText() {
@@ -68,7 +69,6 @@ export default {
     handleInput(event) {
       if (this.disabled) return;
       this.search = event.target.value;
-      this.$emit('update:modelValue', this.search);
       this.showDropdown = true;
     },
 
@@ -77,8 +77,8 @@ export default {
      * Sets the search to the selected label and closes the dropdown
      */
     selectOption(option) {
-      this.search = option.label;
-      this.$emit('update:modelValue', this.search);
+      this.search = option.labels[this.sessionStore.activeLanguage] || option.labels.en || option.labels[Object.keys(option.labels)[0]];
+      this.$emit('update:modelValue', option);
       this.showDropdown = false;
     },
 
@@ -99,7 +99,7 @@ export default {
      */
     clearInput() {
       this.search = '';
-      this.$emit('update:modelValue', '');
+      this.$emit('update:modelValue', {});
       this.showDropdown = false;
     }
   },
@@ -108,7 +108,12 @@ export default {
      * Updates local search value when modelValue prop changes
      */
     modelValue(newVal) {
-      this.search = newVal;
+      try {
+        this.search = newVal.labels[this.sessionStore.activeLanguage].split("/").pop() || newVal.labels.en.split("/").pop() || newVal.labels[Object.keys(newVal.labels)[0]].split("/").pop();
+      }
+      catch (error) {
+        this.search = '';
+      }
     }
   },
   mounted() {
@@ -130,8 +135,8 @@ export default {
     </div>
 
     <ul v-if="showDropdown && !disabled" class="dropdown-list">
-      <li v-for="option in filteredOptions" :key="option.label" @mousedown.prevent="selectOption(option)">
-        {{ option.label }}
+      <li v-for="option in filteredOptions" :key="option.id" @mousedown.prevent="selectOption(option)">
+        {{ (option.labels[this.sessionStore.activeLanguage] || option.labels.en || option.labels[Object.keys(option.labels)[0]]).split("/").pop() || option.id + (activateTerms[this.sessionStore.activeLanguage][option.type] ? " (" + activateTerms[this.sessionStore.activeLanguage][option.type] + ")" : "")}}
       </li>
     </ul>
   </div>

@@ -34,27 +34,34 @@ export async function getActivityDetail(activity: Activity): Promise<ActivityDet
   // Init Division of Labour as false
   data.map((item: StringAccessObject) => {
     // Parse label to make it easier for frontend
-    let label = camelToSnakeCase(item.type.value.split("#").pop());
-    if (label === "rule" || label === "instrument") {
-      label += "s";
+    let type = camelToSnakeCase(item.type.value.split("#").pop());
+    if (type === "rule" || type === "instrument") {
+      type += "s";
     }
     // Init Label Subject, Community, etc. if it doesn't exist yet
-    if (label in activityDetail === false) {
-      activityDetail[label] = [];
+    if (type in activityDetail === false) {
+      activityDetail[type] = [];
     }
     // Check if entity is already in the list
-    const objectIndexInList = (activityDetail[label] as Objective[]).findIndex((obj: Objective) => obj.label == item.entity.value.split("#").pop());
+    const objectIndexInList = (activityDetail[type] as Objective[]).findIndex((obj: Objective) => obj.id == item.entity.value.split("#").pop());
     // Object not in list yet
     if (objectIndexInList < 0) {
-      if (item.property.value.split("#").pop() === "type") {
-        activityDetail[label].push({
-          label: item.entity.value.split("#").pop(),
+      if (item.property.value.split("#").pop() === "type" || item.property.value.split("#").pop() === "label") {
+        const langTag = item.target["xml:lang"] || undefined;
+        activityDetail[type].push({
+          id: item.entity.value.split("#").pop(),
+          type: type,
+          labels: langTag ?
+            { [langTag]: item.target.value } : item.property.value.split("#").pop() === "label" ?
+              { default: item.target.value ? item.target.value : item.entity.value.split("#").pop() } : {},
           properties: [] as Action[]
         } as Objective);
       }
       else {
-        activityDetail[label].push({
-          label: item.entity.value.split("#").pop(),
+        activityDetail[type].push({
+          id: item.entity.value.split("#").pop(),
+          labels: {},
+          type: type,
           properties: [{
             action: item.property.value.split("#").pop(),
             object: item.language ? {
@@ -69,11 +76,17 @@ export async function getActivityDetail(activity: Activity): Promise<ActivityDet
       if (item.property.value.split("#").pop() === "type") {
         return;
       }
+      else if (item.property.value.split("#").pop() === "label") {
+        const langTag = item.target["xml:lang"] || undefined;
+        langTag ?
+          activityDetail[type][objectIndexInList].labels[langTag] = item.target.value : activityDetail[type][objectIndexInList].labels.default = item.target.value ? item.target.value : item.entity.value.split("#").pop();
+        return;
+      }
       if (item.language) {
-        const propertyActionIndex = activityDetail[label][objectIndexInList].properties.findIndex((action: Action) => action.action == item.action.value.split("#").pop());
+        const propertyActionIndex = activityDetail[type][objectIndexInList].properties.findIndex((action: Action) => action.action == item.action.value.split("#").pop());
         // If no language version has been created yet
         if (propertyActionIndex < 0) {
-          activityDetail[label][objectIndexInList].properties.push({
+          activityDetail[type][objectIndexInList].properties.push({
             action: item.action.value.split("#").pop(),
             object: item.language ? {
               [item.language.value]: item.target.value.split("#").pop()
@@ -82,11 +95,11 @@ export async function getActivityDetail(activity: Activity): Promise<ActivityDet
         }
         // Some language has been added already
         else {
-          (activityDetail[label][objectIndexInList].properties[propertyActionIndex].object as StringAccessObject)[item.language.value] = item.target.value.split("#").pop();
+          (activityDetail[type][objectIndexInList].properties[propertyActionIndex].object as StringAccessObject)[item.language.value] = item.target.value.split("#").pop();
         }
       }
       else {
-        activityDetail[label][objectIndexInList].properties.push({
+        activityDetail[type][objectIndexInList].properties.push({
           action: item.property.value.split("#").pop(),
           object: item.language ? {
             [item.language.value]: item.target.value.split("#").pop()
@@ -306,8 +319,8 @@ export async function getPredicateObject(graph: string): Promise<PredicateDict> 
       }
     }
     predDict.add(tuple, {
-      predicate: item.s.value.split("#").pop(),
-      label: item.label.value,
+      id: item.s.value.split("#").pop(),
+      labels: item.label.value,
       lang: item.label["xml:lang"]
     })
   })

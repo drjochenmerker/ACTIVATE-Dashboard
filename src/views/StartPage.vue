@@ -24,6 +24,8 @@ import {
 import { addActivity, addEntity } from '@/data/knowledge_graph/write_operations';
 import { useActivityStore } from '@/stores/activityStore';
 import { buildTreeStructByLang } from '@/data/knowledge_graph/utils';
+import { staticContent } from '@/data/contentData';
+import LanguageSelect from '@/components/LanguageSelect.vue';
 
 useColorMode();
 const sessionStore = useSessionStore();
@@ -88,6 +90,7 @@ const addNewActivity = async () => {
 <template>
   <!-- Main container with centered layout -->
   <div class="flex flex-col items-center justify-center py-10 px-4">
+    <LanguageSelect class="absolute top-0 right-0 mt-4 mr-4"/>
     <Card class="w-full max-w-5xl">
 
       <!-- Card header with logo -->
@@ -107,18 +110,18 @@ const addNewActivity = async () => {
           </DialogTrigger>
           <DialogContent class="sm:max-w-[425px]">
             <DialogHeader>
-              <DialogTitle>Create new Activity</DialogTitle>
+              <DialogTitle>{{ staticContent.startPage.createActivity[sessionStore.activeLanguage] }}</DialogTitle>
 
-              <DialogDescription>Enter Title</DialogDescription>
+              <DialogDescription>{{staticContent.startPage.enterTitle[sessionStore.activeLanguage]}}</DialogDescription>
               <textarea v-model="newTitle" class="w-full border rounded p-2 mb-2" />
 
-              <DialogDescription>Enter Description</DialogDescription>
+              <DialogDescription>{{staticContent.startPage.enterDescription[sessionStore.activeLanguage]}}</DialogDescription>
               <textarea v-model="newDescription" class="w-full border rounded p-2 mb-2" />
 
-              <DialogDescription>Enter default role</DialogDescription>
+              <DialogDescription>{{staticContent.startPage.defaultRole[sessionStore.activeLanguage]}}</DialogDescription>
               <textarea v-model="defaultRole" class="w-full border rounded p-2 mb-4" />
 
-              <Button @click="() => addNewActivity()">Done</Button>
+              <Button @click="() => addNewActivity()">{{ staticContent.terms.done[sessionStore.activeLanguage] }}</Button>
             </DialogHeader>
           </DialogContent>
         </Dialog>

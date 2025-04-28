@@ -68,7 +68,8 @@ export type Action = {
  * Objective in the knowledge graph
  */
 export type Objective = {
-    label: string;
+    id: string,
+    labels: Record<string, string>;
     type: string;
     properties: Action[];
 }
@@ -164,8 +165,8 @@ export enum RDFOperation {
  * Predicate type that holds all relevant information
  */
 export type Predicate = {
-    predicate: string,
-    label: StringAccessObject,
+    id: string,
+    labels: StringAccessObject,
     lang?: string
 }
 
@@ -230,27 +231,27 @@ export class PredicateDict {
         if (this.dict[tuple.join("#")] === undefined) {
             this.dict[tuple.join("#")] = [];
         }
-        const existingInnerObj = this.dict[tuple.join("#")].find(innerObj => innerObj.predicate == obj.predicate);
+        const existingInnerObj = this.dict[tuple.join("#")].find(innerObj => innerObj.id == obj.id);
         const langString = obj.lang || "default";
         if (existingInnerObj == undefined) {
             this.dict[tuple.join("#")].push({
-                predicate: obj.predicate,
-                label: { [langString]: obj.label }
+                id: obj.id,
+                labels: { [langString]: obj.labels }
             });
         }
         else {
-            existingInnerObj.label[langString] = obj.label;
+            existingInnerObj.labels[langString] = obj.labels;
         }
     }
 
     get(tuple: [string, string]): {}[] {
-        return this.dict[tuple.join("#")].sort((a, b) => a.predicate.localeCompare(b.predicate)) || [];
+        return this.dict[tuple.join("#")].sort((a, b) => a.id.localeCompare(b.id)) || [];
     }
 
     getBidirectional(tuple: [string, string]): {} {
         return {
-            given: this.dict[tuple.join("#")].sort((a, b) => a.predicate.localeCompare(b.predicate)) || [],
-            reversed: this.dict[tuple.reverse().join("#")].sort((a, b) => a.predicate.localeCompare(b.predicate)) || []
+            given: this.dict[tuple.join("#")].sort((a, b) => a.id.localeCompare(b.id)) || [],
+            reversed: this.dict[tuple.reverse().join("#")].sort((a, b) => a.id.localeCompare(b.id)) || []
         }
     }
 }

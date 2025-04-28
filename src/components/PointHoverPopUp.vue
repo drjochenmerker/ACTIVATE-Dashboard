@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { Objective } from '@/data/knowledge_graph/structures';
+import { useSessionStore } from '@/stores/sessionStore';
 import { useColorMode } from '@vueuse/core';
 import { defineProps, nextTick, ref, watch } from 'vue';
 
@@ -10,7 +12,7 @@ import { defineProps, nextTick, ref, watch } from 'vue';
 const props = defineProps<{
   hoveredPoint: {
     label: string;
-    content: Array<{label: string; value?: string}>;
+    content: Array<Objective>;
   };
   position: {
     x: number;
@@ -18,6 +20,8 @@ const props = defineProps<{
   };
 
 }>();
+
+const sessionStore = useSessionStore();
 
 const popupRef = ref<HTMLElement | null>(null);
 const popupStyle = ref({ top: props.position.x + "px", left: props.position.y + 'px' });
@@ -46,7 +50,7 @@ const mode = useColorMode()
     <b>{{ hoveredPoint.label }}:</b>
     <ul class="custom-list">
       <li v-for="(item, index) in hoveredPoint.content" :key="index">
-        {{ item.label }}
+        {{ item.labels[sessionStore.activeLanguage].split("/").pop() }}
       </li>
     </ul>
   </div>
