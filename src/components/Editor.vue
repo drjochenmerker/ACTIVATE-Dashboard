@@ -188,25 +188,17 @@ export default {
 
           if (response.status === "OK") {
             // Zeige Toast-Nachricht bei erfolgreicher Speicherung
-            this.toast.success(staticContent.toastNotification.noteAdded[useSessionStore().activeLanguage], {
-              icon: "📝",
-            });
+            this.toast.success(staticContent.toastNotification.noteAdded[useSessionStore().activeLanguage]);
           } else {
             console.warn("Error saving the comment: ", response);
-            this.toast.error("Error", {
-              description: "There was an error saving your comment.",
-              icon: "⚠️",
-            });
+            this.toast.error("Error");
           }
         } catch (error) {
           console.error("Error with API call: ", error);
-          this.toast.error("Error", {
-            icon: "⚠️",
-          });
+          this.toast.error("Error");
         }
 
         this.clearEditor();
-        useConflictsStore().refreshConflictList();
         return;
       }
 
@@ -219,7 +211,6 @@ export default {
         const selectedValues = this.selectedPoints[point] || [];
 
         selectedValues.forEach(item => {
-          console.log("Selected item: ", item);
           participants.push({
             // every entry stays a separate participant (important for the graph)
             id: item.label,
@@ -250,24 +241,14 @@ export default {
           const conflictsStore = useConflictsStore();
           conflictsStore.addConflict(conflictDetail);
 
-          // Zeige Toast-Nachricht nach erfolgreichem Hinzufügen des Konflikts
-          this.toast.success(staticContent.toastNotification.conflictAdded[useSessionStore().activeLanguage], {
-            description: "Your conflict was successfully saved.",
-            icon: "⚖️",
-          });
+          this.toast.success(staticContent.toastNotification.conflictAdded[useSessionStore().activeLanguage]);
         } else {
           console.warn("Error adding conflict.");
-          this.toast.error("Error", {
-            description: "There was an error adding your conflict.",
-            icon: "⚠️",
-          });
+          this.toast.error("Error");
         }
       } catch (error) {
         console.error("Error adding conflict: ", error);
-        this.toast.error("Error", {
-          description: "An unexpected error occurred while adding your conflict.",
-          icon: "⚠️",
-        });
+        this.toast.error("Error");
       }
 
       // Deactivate all of the active points
@@ -275,7 +256,7 @@ export default {
       activityPointStore.deactivateAllPoints();
 
       this.clearEditor();
-      useConflictsStore().refreshConflictList();
+      await useConflictsStore().refreshConflictList();
     },
 
 

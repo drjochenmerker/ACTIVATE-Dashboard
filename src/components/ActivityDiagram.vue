@@ -126,7 +126,7 @@ export default defineComponent({
         // Array of all points that are currently selected
         const selectedPoints = ref<string[]>([]);
 
-        // Elements thatt are currently hovered
+        // Elements that are currently hovered
         const hoveredPoint = ref<string | null>(null);
         const hoveredTriangle = ref<{ pointIds: string[] } | null>(null);
 
@@ -361,12 +361,16 @@ export default defineComponent({
                 ctx.fillStyle = mode.value === "dark" ? "white" : "black";
                 point.active ? ctx.font = `bold ${triangleHeight / 40}px Arial` : ctx.font = `${triangleHeight / 40}px Arial`;
                 ctx.textAlign = "center";
+
                 // TODO Dynamic Positioning depending on language
+                // WORKAROUND: only the object label adjusted
                 if (point.id === "rules" || point.id === "community" || point.id === "division_of_labour") ctx.fillText(point.label, point.x, point.y + triangleHeight / 20);
                 if (point.id === "instruments") ctx.fillText(point.label, point.x, point.y - triangleHeight / 30);
                 if (point.id === "subject") ctx.fillText(point.label, point.x - triangleWidth / 30, point.y - triangleHeight / 30);
-                if (point.id === "object") ctx.fillText(point.label, point.x + triangleWidth / 20, point.y - triangleHeight / 30);
-
+                if (point.id === "object") {
+                    ctx.textAlign = "right";
+                    ctx.fillText(point.label, point.x + triangleWidth / 60 + ctx.measureText(point.label).width, point.y - triangleHeight / 30);
+                }
             });
 
             // Draw conflict points based on conflict positions and status
