@@ -68,6 +68,10 @@ export const contentData = [
     },
 ];
 
+/**
+ * staticContent contains the terms and phrases that helps the user understand
+ * It also provides the terms in the 3 main languages English, German and Swedish
+ */
 export const staticContent = {
     errors: {
         noMisc: {
@@ -186,6 +190,11 @@ export const staticContent = {
             de: "Antwort...",
             sv: "Svar...",
         },
+        noItems: {
+            en: "No items to select from.",
+            de: "Kein Element zur Auswahl.",
+            sv: "Inga artiklar att välja mellan."
+        }
     },
     editor: {
         header: {
@@ -214,6 +223,18 @@ export const staticContent = {
             en: "Please select an activity class.",
             de: "Bitte wählen Sie eine Aktivitätsklasse aus.",
             sv: "Vänligen välj en aktivitetsklass.",
+        }
+    },
+    toastNotification:{
+        conflictAdded: {
+            en: "Conflict added.",
+            de: "Konflikt hinzugefügt",
+            sv: "Konflikt tillagd"
+        },
+        noteAdded: {
+            en: "Note added.",
+            de: "Notiz hinzugefügt.",
+            sv: "Not tillagd"
         }
     },
     entitiyAdd: {

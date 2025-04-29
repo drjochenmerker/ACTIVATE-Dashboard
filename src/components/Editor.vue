@@ -188,8 +188,7 @@ export default {
 
           if (response.status === "OK") {
             // Zeige Toast-Nachricht bei erfolgreicher Speicherung
-            this.toast.success("Comment added", {
-              description: "Your comment was successfully saved.",
+            this.toast.success(staticContent.toastNotification.noteAdded[useSessionStore().activeLanguage], {
               icon: "📝",
             });
           } else {
@@ -202,7 +201,6 @@ export default {
         } catch (error) {
           console.error("Error with API call: ", error);
           this.toast.error("Error", {
-            description: "An unexpected error occurred.",
             icon: "⚠️",
           });
         }
@@ -253,7 +251,7 @@ export default {
           conflictsStore.addConflict(conflictDetail);
 
           // Zeige Toast-Nachricht nach erfolgreichem Hinzufügen des Konflikts
-          this.toast.success("Conflict added", {
+          this.toast.success(staticContent.toastNotification.conflictAdded[useSessionStore().activeLanguage], {
             description: "Your conflict was successfully saved.",
             icon: "⚖️",
           });
@@ -329,14 +327,15 @@ export default {
   <div class="editor-container">
     <!-- Top-Container -->
     <div class="top-container">
-      <p class="font-bold justify-start">{{ this.staticContent.editor.header[this.sessionStore.activeLanguage] || this.staticContent.editor.header.en }}</p>
+      <p class="font-bold justify-start">{{ this.staticContent.editor.header[this.sessionStore.activeLanguage] ||
+        this.staticContent.editor.header.en }}</p>
       <button class="icon-button" @click="clearEditor">
         <span class="material-symbols-outlined">delete</span>
       </button>
     </div>
     <!-- Separator -->
     <hr
-  class="my-4 h-px border-t-0 bg-transparent bg-gradient-to-r from-transparent via-neutral-900 to-transparent opacity-70 dark:via-neutral-700" />
+      class="my-4 h-px border-t-0 bg-transparent bg-gradient-to-r from-transparent via-neutral-900 to-transparent opacity-70 dark:via-neutral-700" />
     <!-- dropdown: -->
     <div class="dropdown-container">
       <div v-for="point in activePoints" :key="point">
@@ -346,9 +345,9 @@ export default {
     </div>
     <!-- Second Separator TODO: Figure out why Tailwind won't render the separator when three points are selected and mt and mb are even -->
     <hr v-if="activePoints.length > 0 && activePoints.length < 3"
-    class="mt-4 mb-4 h-px border-t-0 bg-transparent bg-gradient-to-r from-transparent via-neutral-900 to-transparent opacity-70 dark:via-neutral-700" />
+      class="mt-4 mb-4 h-px border-t-0 bg-transparent bg-gradient-to-r from-transparent via-neutral-900 to-transparent opacity-70 dark:via-neutral-700" />
     <hr v-if="activePoints.length == 3"
-    class="mt-4 mb-5 h-px border-t-0 bg-transparent bg-gradient-to-r from-transparent via-neutral-900 to-transparent opacity-70 dark:via-neutral-700" />
+      class="mt-4 mb-5 h-px border-t-0 bg-transparent bg-gradient-to-r from-transparent via-neutral-900 to-transparent opacity-70 dark:via-neutral-700" />
     <!-- title: -->
     <div>
       <!-- <h3>{{ this.staticContent.editor.addTitle[this.sessionStore.activeLanguage] || this.staticContent.editor.addTitle.en }}</h3> -->
@@ -365,7 +364,8 @@ export default {
     <!-- anonymous checkbox: -->
     <label class="anonymous-checkbox">
       <input type="checkbox" v-model="isAnonymous" />
-      {{ this.staticContent.editor.anonymous[this.sessionStore.activeLanguage] || this.staticContent.editor.anonymous.en }}
+      {{ this.staticContent.editor.anonymous[this.sessionStore.activeLanguage] || this.staticContent.editor.anonymous.en
+      }}
     </label>
 
 
