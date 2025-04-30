@@ -63,7 +63,6 @@ export default defineComponent({
 
         // Conflict Data
         let conflictData = conflictStore.getConflicts;
-        //console.log(conflictData)
         const activityData = ref<any>(null);
 
         // Checks if the Activity-Diagram has to be cleared when a Comment is sent by the editor
@@ -131,8 +130,10 @@ export default defineComponent({
         const hoveredTriangle = ref<{ pointIds: string[] } | null>(null);
 
         // Positions of the conflict points
-        let conflictPositions = calculateConflictPositions(conflictData, points.value, 20);
-
+        //old
+        //  let conflictPositions = calculateConflictPositions(conflictData, points.value, 20);
+        // new
+        const conflictPositions = ref<any[]>([]);
         /**
          * Updates the selected points using the activityPointStore based on the active property of the points
          */
@@ -467,7 +468,8 @@ export default defineComponent({
             activityData.value = await getActivityDetail(sessionStore.sessionActivity as Activity)
             await conflictStore.refreshConflictList();
             conflictData = conflictStore.getConflicts;
-            conflictPositions = calculateConflictPositions(conflictData, points.value, 20);
+            conflictPositions.value = calculateConflictPositions(conflictData, points.value, 20).value;
+
             draw();
         });
 
@@ -517,11 +519,11 @@ export default defineComponent({
         });
 
         // Watcher for the conflictsStore
-        watch(conflictStore.getConflicts, async () => {
-            await conflictStore.refreshConflictList();
-            conflictPositions = calculateConflictPositions(conflictData, points.value, 20);
+        watch(() => conflictStore.getConflicts, () => {
+            conflictPositions.value = calculateConflictPositions(conflictStore.getConflicts, points.value, 20).value;
             draw();
-        });
+        }, { deep: true });
+
 
         return {
             canvas,

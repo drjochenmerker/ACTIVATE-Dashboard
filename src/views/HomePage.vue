@@ -8,7 +8,6 @@ import { useActivityPointsStore } from "@/stores/activityPointsStore";
 import { ref } from 'vue';
 import { useSessionStore } from '@/stores/sessionStore';
 import { staticContent } from '@/data/contentData';
-import { useConflictsStore } from '@/stores/conflictsStore';
 
 defineProps<{ conflicts: any[], activity: any }>();
 
@@ -19,12 +18,6 @@ const isTripleAdditionDialogOpen = ref(false);
 const isEntityAdditionDialogOpen = ref(false);
 
 const sessionStore = useSessionStore();
-const logConflicts = () => {
-  const conflictStore = useConflictsStore();
-  const conflicts = conflictStore.getConflicts;
-
-  console.log(conflicts);
-};
 </script>
 
 <template>
@@ -34,9 +27,7 @@ const logConflicts = () => {
   <hr
     class="mt-4 h-px border-t-0 bg-transparent bg-gradient-to-r from-transparent via-neutral-900 to-transparent opacity-70 dark:via-neutral-400" />
   <div class="flex w-full h-5/6 items-center justify-evenly mx-auto gap-4">
-    <div>
-      <button @click="logConflicts">Log Conflicts</button>
-    </div>
+
     <ActivityDiagram />
     <div
       class=" h-auto w-px self-stretch bg-gradient-to-tr from-transparent via-neutral-900 to-transparent opacity-70 dark:via-neutral-400">
