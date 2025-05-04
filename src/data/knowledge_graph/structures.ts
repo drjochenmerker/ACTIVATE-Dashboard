@@ -198,7 +198,7 @@ export enum KnowledgeGraphActivityClass {
     object = "Object",
     rules = "Rule",
     instruments = "Instrument",
-    divison_of_labour = "DivisonOfLabour",
+    divison_of_labour = "DivisionOfLabour",
     community = "Community"
 }
 

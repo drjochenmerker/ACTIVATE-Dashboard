@@ -244,7 +244,6 @@ export async function addEntity(graph: string, entityLabel: string, activityClas
         "{{lang}}": language
     }
     query = query.replaceMultiple(mapObj);
-    console.log(query)
     const data = await fetchSparql(query, true);
     return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: entityLabel, action: RDFOperation.insert } as updateResponse;
 }
