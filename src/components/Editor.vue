@@ -14,6 +14,7 @@ import { getActivities, getActivityDetail, getConflictDetail, getConflictIds } f
 import { addComment, addConflict } from '@/data/knowledge_graph/write_operations';
 import { useSessionStore } from '@/stores/sessionStore';
 import { staticContent } from '@/data/contentData';
+import { buildLanguageString } from '@/lib/utils';
 
 /** 
  * Editor-Component
@@ -77,16 +78,14 @@ export default {
 
       // constant array to save the point data
       const pointData = {};
-
       for (const key in this.activityDetails) {
         if (Array.isArray(this.activityDetails[key])) {
-          pointData[key] = this.activityDetails[key].map(item => ({ label: item.label }));
+          pointData[key] = this.activityDetails[key].map(item => ({ id: item.id, label: buildLanguageString(item, this.sessionStore.activeLanguage, true) }));
         } else {
           // Ensure it's an array even with no data:
           pointData[key] = [];
         }
       }
-
       return pointData;
     },
 
@@ -188,27 +187,17 @@ export default {
 
           if (response.status === "OK") {
             // Zeige Toast-Nachricht bei erfolgreicher Speicherung
-            this.toast.success("Comment added", {
-              description: "Your comment was successfully saved.",
-              icon: "📝",
-            });
+            this.toast.success(staticContent.toastNotification.noteAdded[useSessionStore().activeLanguage]);
           } else {
             console.warn("Error saving the comment: ", response);
-            this.toast.error("Error", {
-              description: "There was an error saving your comment.",
-              icon: "⚠️",
-            });
+            this.toast.error("Error");
           }
         } catch (error) {
           console.error("Error with API call: ", error);
-          this.toast.error("Error", {
-            description: "An unexpected error occurred.",
-            icon: "⚠️",
-          });
+          this.toast.error("Error");
         }
 
         this.clearEditor();
-        useConflictsStore().refreshConflictList();
         return;
       }
 
@@ -221,10 +210,9 @@ export default {
         const selectedValues = this.selectedPoints[point] || [];
 
         selectedValues.forEach(item => {
-          console.log("Selected item: ", item);
           participants.push({
             // every entry stays a separate participant (important for the graph)
-            id: item.label,
+            id: item.id,
             type: point.charAt(0).toUpperCase() + point.slice(1)
           });
         });
@@ -252,24 +240,14 @@ export default {
           const conflictsStore = useConflictsStore();
           conflictsStore.addConflict(conflictDetail);
 
-          // Zeige Toast-Nachricht nach erfolgreichem Hinzufügen des Konflikts
-          this.toast.success("Conflict added", {
-            description: "Your conflict was successfully saved.",
-            icon: "⚖️",
-          });
+          this.toast.success(staticContent.toastNotification.conflictAdded[useSessionStore().activeLanguage]);
         } else {
           console.warn("Error adding conflict.");
-          this.toast.error("Error", {
-            description: "There was an error adding your conflict.",
-            icon: "⚠️",
-          });
+          this.toast.error("Error");
         }
       } catch (error) {
         console.error("Error adding conflict: ", error);
-        this.toast.error("Error", {
-          description: "An unexpected error occurred while adding your conflict.",
-          icon: "⚠️",
-        });
+        this.toast.error("Error");
       }
 
       // Deactivate all of the active points
@@ -277,7 +255,7 @@ export default {
       activityPointStore.deactivateAllPoints();
 
       this.clearEditor();
-      useConflictsStore().refreshConflictList();
+      await useConflictsStore().refreshConflictList();
     },
 
 
@@ -329,14 +307,15 @@ export default {
   <div class="editor-container">
     <!-- Top-Container -->
     <div class="top-container">
-      <p class="font-bold justify-start">{{ this.staticContent.editor.header[this.sessionStore.activeLanguage] || this.staticContent.editor.header.en }}</p>
+      <p class="font-bold justify-start">{{ this.staticContent.editor.header[this.sessionStore.activeLanguage] ||
+        this.staticContent.editor.header.en }}</p>
       <button class="icon-button" @click="clearEditor">
         <span class="material-symbols-outlined">delete</span>
       </button>
     </div>
     <!-- Separator -->
     <hr
-  class="my-4 h-px border-t-0 bg-transparent bg-gradient-to-r from-transparent via-neutral-900 to-transparent opacity-70 dark:via-neutral-700" />
+      class="my-4 h-px border-t-0 bg-transparent bg-gradient-to-r from-transparent via-neutral-900 to-transparent opacity-70 dark:via-neutral-700" />
     <!-- dropdown: -->
     <div class="dropdown-container">
       <div v-for="point in activePoints" :key="point">
@@ -346,9 +325,9 @@ export default {
     </div>
     <!-- Second Separator TODO: Figure out why Tailwind won't render the separator when three points are selected and mt and mb are even -->
     <hr v-if="activePoints.length > 0 && activePoints.length < 3"
-    class="mt-4 mb-4 h-px border-t-0 bg-transparent bg-gradient-to-r from-transparent via-neutral-900 to-transparent opacity-70 dark:via-neutral-700" />
+      class="mt-4 mb-4 h-px border-t-0 bg-transparent bg-gradient-to-r from-transparent via-neutral-900 to-transparent opacity-70 dark:via-neutral-700" />
     <hr v-if="activePoints.length == 3"
-    class="mt-4 mb-5 h-px border-t-0 bg-transparent bg-gradient-to-r from-transparent via-neutral-900 to-transparent opacity-70 dark:via-neutral-700" />
+      class="mt-4 mb-5 h-px border-t-0 bg-transparent bg-gradient-to-r from-transparent via-neutral-900 to-transparent opacity-70 dark:via-neutral-700" />
     <!-- title: -->
     <div>
       <!-- <h3>{{ this.staticContent.editor.addTitle[this.sessionStore.activeLanguage] || this.staticContent.editor.addTitle.en }}</h3> -->
@@ -365,7 +344,8 @@ export default {
     <!-- anonymous checkbox: -->
     <label class="anonymous-checkbox">
       <input type="checkbox" v-model="isAnonymous" />
-      {{ this.staticContent.editor.anonymous[this.sessionStore.activeLanguage] || this.staticContent.editor.anonymous.en }}
+      {{ this.staticContent.editor.anonymous[this.sessionStore.activeLanguage] || this.staticContent.editor.anonymous.en
+      }}
     </label>
 
 

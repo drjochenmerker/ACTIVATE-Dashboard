@@ -1,5 +1,6 @@
 <script>
-import { staticContent } from '@/data/contentData';
+import { activateTerms, staticContent } from '@/data/contentData';
+import { buildLanguageString } from '@/lib/utils';
 import { useSessionStore } from '@/stores/sessionStore';
 import { Delete, DeleteIcon } from 'lucide-vue-next';
 
@@ -23,8 +24,8 @@ export default {
       required: true
     },
     modelValue: {
-      type: String,
-      default: ''
+      type: Object,
+      default: {}
     },
     disabled: {
       type: Boolean,
@@ -40,10 +41,11 @@ export default {
    */
   data() {
     return {
-      search: this.modelValue,
+      search: '',
       showDropdown: false,
       sessionStore: useSessionStore(),
-      staticContent: staticContent
+      staticContent: staticContent,
+      activateTerms: activateTerms
     };
   },
   computed: {
@@ -52,12 +54,17 @@ export default {
      */
     filteredOptions() {
       return this.options.filter(option =>
-        option.label.toLowerCase().includes(this.search.toLowerCase())
+        buildLanguageString(option, this.sessionStore.activeLanguage).toLowerCase().includes(this.search.toLowerCase())
       );
     },
     placeholderText() {
       const lang = this.sessionStore.activeLanguage || 'en';
       return this.staticContent.placeholders.search[lang];
+    },
+    buildLanguageString() {
+      return (option, lang, isLabel) => {
+        return buildLanguageString(option, lang, isLabel);
+      };
     }
   },
   methods: {
@@ -68,7 +75,6 @@ export default {
     handleInput(event) {
       if (this.disabled) return;
       this.search = event.target.value;
-      this.$emit('update:modelValue', this.search);
       this.showDropdown = true;
     },
 
@@ -77,8 +83,8 @@ export default {
      * Sets the search to the selected label and closes the dropdown
      */
     selectOption(option) {
-      this.search = option.label;
-      this.$emit('update:modelValue', this.search);
+      this.search = buildLanguageString(option, this.sessionStore.activeLanguage, true);
+      this.$emit('update:modelValue', option);
       this.showDropdown = false;
     },
 
@@ -99,7 +105,7 @@ export default {
      */
     clearInput() {
       this.search = '';
-      this.$emit('update:modelValue', '');
+      this.$emit('update:modelValue', {});
       this.showDropdown = false;
     }
   },
@@ -108,7 +114,12 @@ export default {
      * Updates local search value when modelValue prop changes
      */
     modelValue(newVal) {
-      this.search = newVal;
+      try {
+        this.search = buildLanguageString(newVal, this.sessionStore.activeLanguage, true);
+      }
+      catch (error) {
+        this.search = '';
+      }
     }
   },
   mounted() {
@@ -130,8 +141,8 @@ export default {
     </div>
 
     <ul v-if="showDropdown && !disabled" class="dropdown-list">
-      <li v-for="option in filteredOptions" :key="option.label" @mousedown.prevent="selectOption(option)">
-        {{ option.label }}
+      <li v-for="option in filteredOptions" :key="option.id" @mousedown.prevent="selectOption(option)">
+        {{ buildLanguageString(option, sessionStore.activeLanguage, true) + (activateTerms[this.sessionStore.activeLanguage][option.type] ? " (" + activateTerms[this.sessionStore.activeLanguage][option.type] + ")" : "")}}
       </li>
     </ul>
   </div>

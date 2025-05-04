@@ -31,7 +31,7 @@ const newReplyText = ref('');
 const textareaRef = ref<HTMLTextAreaElement | null>(null);
 
 onMounted(() => {
-    console.log(props.parentComment)
+    // console.log(props.parentComment)
 })
 
 const toggleReplyInput = async () => {
@@ -51,7 +51,7 @@ const saveReply = async (parentCommentId: string) => {
             parentCommentId,
             newReplyText.value
         );
-        console.log('reply saved successfully');
+        //console.log('reply saved successfully');
 
 
         replyInputVisible.value = false; // hide input field
@@ -63,9 +63,7 @@ const saveReply = async (parentCommentId: string) => {
     await conflictStore.refreshConflictList();
 };
 
-watch(conflictStore, () => {
-    console.log("conflictstore: ", conflictStore.getConflicts);
-})
+
 
 // Function to submit via Enter key in textarea
 const handleEnterKey = (event: KeyboardEvent) => {
@@ -137,14 +135,17 @@ const removeReply = (id: string) => {
 
         <!-- Reply Button to hide input field -->
         <Button @click="toggleReplyInput()">
-            {{ replyInputVisible ? staticContent.noteCards.cancel[sessionStore.activeLanguage] : staticContent.noteCards.answer[sessionStore.activeLanguage] }}
+            {{ replyInputVisible ? staticContent.noteCards.cancel[sessionStore.activeLanguage] :
+                staticContent.noteCards.answer[sessionStore.activeLanguage] }}
         </Button>
 
         <!-- Reply input field -->
         <div v-if="replyInputVisible" class="reply-input">
-            <textarea ref="textareaRef" v-model="newReplyText" :placeholder="staticContent.placeholders.answer[sessionStore.activeLanguage]"
+            <textarea ref="textareaRef" v-model="newReplyText"
+                :placeholder="staticContent.placeholders.answer[sessionStore.activeLanguage]"
                 @keydown.enter="handleEnterKey($event)"></textarea>
-            <Button @click="saveReply(props.parentComment.id)">{{staticContent.noteCards.saveComment[sessionStore.activeLanguage]}}</Button>
+            <Button @click="saveReply(props.parentComment.id)">{{
+                staticContent.noteCards.saveComment[sessionStore.activeLanguage] }}</Button>
         </div>
 
         <div v-if="Array.isArray(props.parentComment.replies) && props.parentComment.replies.length"

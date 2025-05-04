@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { Objective } from '@/data/knowledge_graph/structures';
+import { buildLanguageString } from '@/lib/utils';
+import { useSessionStore } from '@/stores/sessionStore';
 import { useColorMode } from '@vueuse/core';
 import { defineProps, nextTick, ref, watch } from 'vue';
 
@@ -10,7 +13,7 @@ import { defineProps, nextTick, ref, watch } from 'vue';
 const props = defineProps<{
   hoveredPoint: {
     label: string;
-    content: Array<{label: string; value?: string}>;
+    content: Array<Objective>;
   };
   position: {
     x: number;
@@ -18,6 +21,8 @@ const props = defineProps<{
   };
 
 }>();
+
+const sessionStore = useSessionStore();
 
 const popupRef = ref<HTMLElement | null>(null);
 const popupStyle = ref({ top: props.position.x + "px", left: props.position.y + 'px' });
@@ -38,15 +43,16 @@ watch(() => props.position, async (pos) => {
 
 // Current color mode (Light- or Dark-Mode)
 const mode = useColorMode()
+//console.log("ITEMS", props.hoveredPoint.content);
 
 </script>
 
 <template>
-  <div ref="popupRef" class="popup" :class="{'popup-dark' : mode === 'dark'}" :style="popupStyle">
+  <div ref="popupRef" class="popup" :class="{ 'popup-dark': mode === 'dark' }" :style="popupStyle">
     <b>{{ hoveredPoint.label }}:</b>
     <ul class="custom-list">
       <li v-for="(item, index) in hoveredPoint.content" :key="index">
-        {{ item.label }}
+        {{ buildLanguageString(item, sessionStore.activeLanguage, true) }}
       </li>
     </ul>
   </div>

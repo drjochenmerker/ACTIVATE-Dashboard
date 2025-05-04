@@ -1,6 +1,6 @@
 import hash from "object-hash";
 import { CapitalizeFirstLetter, fetchSparql, getSparqlTemplate, RDFSyntaxCheck, EscapeSparqlStringLiteral } from "./utils";
-import { Activity, Conflict, conflictPredicate, conflictStatus, KnowledgeGraphActivityClass, LanguageLabel, RDFOperation, RDFTriple, sparqlTemplate, updateResponse } from "./structures";
+import { Activity, Conflict, conflictPredicate, conflictStatus, KnowledgeGraphActivityClass, LanguageCode, LanguageLabel, RDFOperation, RDFTriple, sparqlTemplate, updateResponse } from "./structures";
 import { useSessionStore } from "@/stores/sessionStore";
 
 /**
@@ -228,17 +228,24 @@ export async function addPredicate(graph: string, predicate: string, domains: Kn
  * @param activityClass Activity class of the entity
  * @returns UpdateResponse Object
  */
-export async function addEntity(graph: string, entity: string, activityClass: KnowledgeGraphActivityClass): Promise<updateResponse> {
-    if (RDFSyntaxCheck(entity) == false) return { code: 400, status: "Error", modified: entity, action: RDFOperation.insert } as updateResponse;
+export async function addEntity(graph: string, entityLabel: string, activityClass: KnowledgeGraphActivityClass, language: LanguageCode): Promise<updateResponse> {
     let query = await getSparqlTemplate(sparqlTemplate.addEntity);
+    const entityId = hash({
+        entityName: entityLabel,
+        timestamp: new Date().toISOString(),
+        activityClass: activityClass,
+        graph: graph
+    });
     const mapObj = {
         "{{graph}}": graph,
-        "{{entity}}": CapitalizeFirstLetter(entity),
-        "{{activityClass}}": activityClass
+        "{{entityId}}": entityId,
+        "{{entity}}": EscapeSparqlStringLiteral(CapitalizeFirstLetter(entityLabel.trim())),
+        "{{activityClass}}": activityClass,
+        "{{lang}}": language
     }
     query = query.replaceMultiple(mapObj);
     const data = await fetchSparql(query, true);
-    return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: entity, action: RDFOperation.insert } as updateResponse;
+    return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: entityLabel, action: RDFOperation.insert } as updateResponse;
 }
 
 /**
