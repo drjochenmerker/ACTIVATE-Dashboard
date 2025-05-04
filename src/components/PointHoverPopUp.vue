@@ -43,12 +43,12 @@ watch(() => props.position, async (pos) => {
 
 // Current color mode (Light- or Dark-Mode)
 const mode = useColorMode()
-console.log("ITEMS", props.hoveredPoint.content);
+//console.log("ITEMS", props.hoveredPoint.content);
 
 </script>
 
 <template>
-  <div ref="popupRef" class="popup" :class="{'popup-dark' : mode === 'dark'}" :style="popupStyle">
+  <div ref="popupRef" class="popup" :class="{ 'popup-dark': mode === 'dark' }" :style="popupStyle">
     <b>{{ hoveredPoint.label }}:</b>
     <ul class="custom-list">
       <li v-for="(item, index) in hoveredPoint.content" :key="index">

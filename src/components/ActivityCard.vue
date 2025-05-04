@@ -120,8 +120,8 @@ const updateActivity = async (newTitle: string, newDescription: string) => {
         description: newDescription || props.activity.description,
     };
     activityStore.editActivity(updatedActivity);
-
-    activityStore.refreshActivityList();
+    await activityStore.refreshActivityList();
+    isEditDialogOpen.value = false;
 }
 
 /**
@@ -170,13 +170,16 @@ const sessionStartAllowed = () => !sessionStore.sessionRole;
                                 </DialogTrigger>
                                 <DialogContent>
                                     <DialogHeader>
-                                        <DialogTitle>{{ staticContent.startPage.deleteActivity[sessionStore.activeLanguage] }}</DialogTitle>
+                                        <DialogTitle>{{
+                                            staticContent.startPage.deleteActivity[sessionStore.activeLanguage] }}
+                                        </DialogTitle>
                                         <DialogDescription>
                                             {{ staticContent.startPage.deleteConfirm[sessionStore.activeLanguage] }}
                                         </DialogDescription>
                                     </DialogHeader>
                                     <DialogFooter>
-                                        <Button @click="() => deleteThisActivity()">{{ staticContent.terms.delete[sessionStore.activeLanguage] }}</Button>
+                                        <Button @click="() => deleteThisActivity()">{{
+                                            staticContent.terms.delete[sessionStore.activeLanguage] }}</Button>
                                     </DialogFooter>
                                 </DialogContent>
                             </Dialog>
@@ -192,22 +195,30 @@ const sessionStartAllowed = () => !sessionStore.sessionRole;
                                 </DialogTrigger>
                                 <DialogContent>
                                     <DialogHeader>
-                                        <DialogTitle>{{ staticContent.startPage.editSetting[sessionStore.activeLanguage] }}</DialogTitle>
-                                        <DialogDescription>{{staticContent.startPage.editTitle[sessionStore.activeLanguage]}}:</DialogDescription>
+                                        <DialogTitle>{{ staticContent.startPage.editSetting[sessionStore.activeLanguage]
+                                        }}</DialogTitle>
+                                        <DialogDescription>
+                                            {{ staticContent.startPage.editTitle[sessionStore.activeLanguage] }}:
+                                        </DialogDescription>
                                         <input v-model="editTitle" :class="[
                                             'w-full border rounded p-2 my-2 dark:bg-gray-900',
                                             editTitleError ? 'border-red-500' : 'border-gray-300'
-                                        ]" :placeholder="staticContent.startPage.editTitle[sessionStore.activeLanguage]" />
-                                        <p v-if="editTitleError" class="text-red-500 text-sm mb-2">{{staticContent.startPage.titleRequired[sessionStore.activeLanguage]}}.
+                                        ]"
+                                            :placeholder="staticContent.startPage.editTitle[sessionStore.activeLanguage]" />
+                                        <p v-if="editTitleError" class="text-red-500 text-sm mb-2">
+                                            {{ staticContent.startPage.titleRequired[sessionStore.activeLanguage] }}.
                                         </p>
 
-                                        <DialogDescription>{{ staticContent.startPage.newTitle[sessionStore.activeLanguage] }}</DialogDescription>
+                                        <DialogDescription>{{
+                                            staticContent.startPage.newTitle[sessionStore.activeLanguage] }}
+                                        </DialogDescription>
                                         <textarea v-model="editDescription"
                                             class="w-full border rounded p-2 my-2  dark:bg-gray-900"
                                             :placeholder="staticContent.startPage.editDescription[sessionStore.activeLanguage]" />
                                     </DialogHeader>
                                     <DialogFooter>
-                                        <Button @click="() => updateActivity(editTitle, editDescription)">{{staticContent.startPage.saveChanges[sessionStore.activeLanguage]}}</Button>
+                                        <Button @click="() => updateActivity(editTitle, editDescription)">{{
+                                            staticContent.startPage.saveChanges[sessionStore.activeLanguage] }}</Button>
                                     </DialogFooter>
                                 </DialogContent>
                             </Dialog>
@@ -225,21 +236,26 @@ const sessionStartAllowed = () => !sessionStore.sessionRole;
                                 </DialogTrigger>
                                 <DialogContent>
                                     <DialogHeader>
-                                        <DialogTitle>{{ staticContent.startPage.cloneActivity[sessionStore.activeLanguage] }}</DialogTitle>
+                                        <DialogTitle>{{
+                                            staticContent.startPage.cloneActivity[sessionStore.activeLanguage] }}
+                                        </DialogTitle>
                                         <input v-model="newTitle" :class="[
                                             'w-full border rounded p-2 my-2  dark:bg-gray-900',
                                             cloneTitleError ? 'border-red-500' : 'border-gray-300'
-                                        ]" :placeholder="staticContent.placeholders.newTitle[sessionStore.activeLanguage]" />
+                                        ]"
+                                            :placeholder="staticContent.placeholders.newTitle[sessionStore.activeLanguage]" />
                                         <p v-if="cloneTitleError" class="text-red-500 text-sm mb-2">Title is required.
                                         </p>
-                                        <DialogDescription>{{ staticContent.startPage.newDescription[sessionStore.activeLanguage] }}
+                                        <DialogDescription>{{
+                                            staticContent.startPage.newDescription[sessionStore.activeLanguage] }}
                                         </DialogDescription>
                                         <textarea v-model="newDescription"
                                             class="w-full border rounded p-2 my-2  dark:bg-gray-900"
                                             :placeholder="staticContent.placeholders.newDescriptionOptional[sessionStore.activeLanguage]" />
                                     </DialogHeader>
                                     <DialogFooter>
-                                        <Button @click="cloneThisActivity(newTitle, newDescription)">{{ staticContent.terms.clone[sessionStore.activeLanguage] }}</Button>
+                                        <Button @click="cloneThisActivity(newTitle, newDescription)">{{
+                                            staticContent.terms.clone[sessionStore.activeLanguage] }}</Button>
                                     </DialogFooter>
                                 </DialogContent>
                             </Dialog>
@@ -255,14 +271,18 @@ const sessionStartAllowed = () => !sessionStore.sessionRole;
                                 </DialogTrigger>
                                 <DialogContent>
                                     <DialogHeader>
-                                        <DialogTitle>{{ staticContent.startPage.roleSelect[sessionStore.activeLanguage] }}</DialogTitle>
-                                        <DialogDescription>{{ staticContent.startPage.roleSelectText[sessionStore.activeLanguage] }}</DialogDescription>
+                                        <DialogTitle>{{ staticContent.startPage.roleSelect[sessionStore.activeLanguage]
+                                        }}</DialogTitle>
+                                        <DialogDescription>{{
+                                            staticContent.startPage.roleSelectText[sessionStore.activeLanguage] }}
+                                        </DialogDescription>
                                     </DialogHeader>
 
                                     <!-- Select a role-->
                                     <Select v-model="sessionStore.sessionRole" id="roleSelect" class="my-4">
                                         <SelectTrigger>
-                                            <SelectValue :placeholder="staticContent.placeholders.roleSelect[sessionStore.activeLanguage]" />
+                                            <SelectValue
+                                                :placeholder="staticContent.placeholders.roleSelect[sessionStore.activeLanguage]" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             <RecursiveSelect :node="sessionStore.availableRoles" />
@@ -286,11 +306,14 @@ const sessionStartAllowed = () => !sessionStore.sessionRole;
                                             @click="() => handleStartSession()">
                                             <template v-if="sessionStartAllowed()">
                                                 <Loader2 class="w-4 h-4 mr-2 animate-spin" />
-                                                {{ staticContent.startPage.activityRoleSelect[sessionStore.activeLanguage] }}
+                                                {{
+                                                    staticContent.startPage.activityRoleSelect[sessionStore.activeLanguage]
+                                                }}
                                             </template>
                                             <template v-else>
                                                 <Play class="w-4 h-4 mr-2" />
-                                                {{ staticContent.startPage.startDebriefing[sessionStore.activeLanguage] }}
+                                                {{ staticContent.startPage.startDebriefing[sessionStore.activeLanguage]
+                                                }}
                                             </template>
                                         </Button>
                                     </DialogFooter>
