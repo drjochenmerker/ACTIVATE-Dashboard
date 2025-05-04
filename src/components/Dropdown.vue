@@ -48,9 +48,9 @@ export default {
                     !this.selectedOptions.some(selected => selected.label === option.label)
             );
         },
-            placeholderText() {
+        placeholderText() {
             const lang = this.sessionStore.activeLanguage || "en";
-            return this.staticContent.placeholders.search[lang] 
+            return this.staticContent.placeholders.search[lang]
         }
     },
     methods: {
@@ -62,6 +62,8 @@ export default {
             this.selectedOptions.push(option);
             this.$emit('update:modelValue', this.selectedOptions);
             this.search = '';
+            this.showDropdown = false;
+
             this.$nextTick(() => {
                 const input = this.$el.querySelector('input');
                 if (input) {
@@ -125,8 +127,8 @@ export default {
             </div>
 
             <!-- Input field for searching -->
-            <input type="text" v-model="search" @focus="showDropdown = true" @input="updateSearch"
-                :placeholder="placeholderText" />
+            <input type="text" v-model="search" @focus="showDropdown = true" @click="showDropdown = true"
+                @input="updateSearch" :placeholder="placeholderText" />
         </div>
 
         <!-- Dropdown list -->

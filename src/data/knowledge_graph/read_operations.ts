@@ -282,7 +282,7 @@ export async function getConflictDetail(graph: string, conflictId: string): Prom
       parsedConflict.replies!.push(comment);
     }
   }
-  console.log("Parsed Conflict", parsedConflict);
+ // console.log("Parsed Conflict", parsedConflict);
   return parsedConflict;
 }
 

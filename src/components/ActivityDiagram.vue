@@ -63,7 +63,6 @@ export default defineComponent({
 
         // Conflict Data
         let conflictData = conflictStore.getConflicts;
-        //console.log(conflictData)
         const activityData = ref<any>(null);
 
         // Checks if the Activity-Diagram has to be cleared when a Comment is sent by the editor
@@ -131,8 +130,10 @@ export default defineComponent({
         const hoveredTriangle = ref<{ pointIds: string[] } | null>(null);
 
         // Positions of the conflict points
-        let conflictPositions = calculateConflictPositions(conflictData, points.value, 20);
-
+        //old
+        //  let conflictPositions = calculateConflictPositions(conflictData, points.value, 20);
+        // new
+        const conflictPositions = ref<any[]>([]);
         /**
          * Updates the selected points using the activityPointStore based on the active property of the points
          */
@@ -361,12 +362,16 @@ export default defineComponent({
                 ctx.fillStyle = mode.value === "dark" ? "white" : "black";
                 point.active ? ctx.font = `bold ${triangleHeight / 40}px Arial` : ctx.font = `${triangleHeight / 40}px Arial`;
                 ctx.textAlign = "center";
+
                 // TODO Dynamic Positioning depending on language
+                // WORKAROUND: only the object label adjusted
                 if (point.id === "rules" || point.id === "community" || point.id === "division_of_labour") ctx.fillText(point.label, point.x, point.y + triangleHeight / 20);
                 if (point.id === "instruments") ctx.fillText(point.label, point.x, point.y - triangleHeight / 30);
                 if (point.id === "subject") ctx.fillText(point.label, point.x - triangleWidth / 30, point.y - triangleHeight / 30);
-                if (point.id === "object") ctx.fillText(point.label, point.x + triangleWidth / 20, point.y - triangleHeight / 30);
-
+                if (point.id === "object") {
+                    ctx.textAlign = "right";
+                    ctx.fillText(point.label, point.x + triangleWidth / 60 + ctx.measureText(point.label).width, point.y - triangleHeight / 30);
+                }
             });
 
             // Draw conflict points based on conflict positions and status
@@ -463,7 +468,8 @@ export default defineComponent({
             activityData.value = await getActivityDetail(sessionStore.sessionActivity as Activity)
             await conflictStore.refreshConflictList();
             conflictData = conflictStore.getConflicts;
-            conflictPositions = calculateConflictPositions(conflictData, points.value, 20);
+            conflictPositions.value = calculateConflictPositions(conflictData, points.value, 20).value;
+
             draw();
         });
 
@@ -513,11 +519,11 @@ export default defineComponent({
         });
 
         // Watcher for the conflictsStore
-        watch(conflictStore.getConflicts, async () => {
-            await conflictStore.refreshConflictList();
-            conflictPositions = calculateConflictPositions(conflictData, points.value, 20);
+        watch(() => conflictStore.getConflicts, () => {
+            conflictPositions.value = calculateConflictPositions(conflictStore.getConflicts, points.value, 20).value;
             draw();
-        });
+        }, { deep: true });
+
 
         return {
             canvas,
