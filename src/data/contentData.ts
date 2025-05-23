@@ -26,7 +26,7 @@ export const activateTerms: Record<LanguageCode, Record<string, string>> = {
         subject: 'Ämne',
         object: 'Mål',
         instruments: 'Instrument',
-        community: 'Samhälle',
+        community: 'Gemenskap',
         rules: 'Regler',
         division_of_labour: 'Arbetsdelning',
         misc: 'Övrigt',
@@ -255,7 +255,7 @@ export const staticContent = {
             sv: "Vänligen välj en aktivitetsklass.",
         }
     },
-    toastNotification:{
+    toastNotification: {
         conflictAdded: {
             en: "Conflict added.",
             de: "Konflikt hinzugefügt",

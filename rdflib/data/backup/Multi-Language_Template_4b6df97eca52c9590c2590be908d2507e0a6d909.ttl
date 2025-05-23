@@ -2,15 +2,25 @@
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
-:88063a5be9c10efd0beb4645fa76711613ea01ad a :Conflict ;
-    :ConflictDescription "<p>Beschreibung hier</p>" ;
+:561cfbf76edce93c24595517b6a048237b0e5401 a :Conflict ;
+    :ConflictDescription "<p>A lot of physicians won’t say this out loud, but they don’t like attending family meetings about EOL care. I’ve seen as a resident or student, even though the staff person was responsible, they would say, ‘you guys go; I’m not coming,’ just because they don’t want to deal with it.</p>" ;
     :ConflictState "open" ;
-    :ConflictTitle "Test-Konflikt" ;
-    :CreationDate "2025-04-14T07:50:02.369Z" ;
-    :HasParticipant :Conviction,
-        :Death,
-        :Generalist ;
-    :WrittenBy "Palliative_physician" .
+    :ConflictTitle "New Note" ;
+    :CreationDate "2025-05-20T14:03:22.495Z" ;
+    :HasParticipant :End_Of_Life_Conversation,
+        :Hospital,
+        :Leaving_Implicit_Defer ;
+    :WrittenBy "Unspecified" .
+
+:614a34f79eb0b21cb917c60daaf83616799501a0 a :Conflict ;
+    :ConflictDescription "<p>Surgeons wanna fix things . . .. When it’s not obvious that surgery is futile and when there is still the potential for hope, . . . it’s difficult to know when it’s time to change the discourse</p>" ;
+    :ConflictState "open" ;
+    :ConflictTitle "New Note" ;
+    :CreationDate "2025-05-20T14:11:58.693Z" ;
+    :HasParticipant :Culture,
+        :End_Of_Life_Conversation,
+        :Shared_Care ;
+    :WrittenBy "Dietrician" .
 
 :Age a :Object,
         owl:NamedIndividual ;
@@ -90,6 +100,10 @@
         owl:NamedIndividual ;
     rdfs:label "Communication/Implementation/Conversation With Patient"@en .
 
+:Conviction a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Attitude/Conviction"@en .
+
 :Coordination a :Rule,
         owl:NamedIndividual ;
     rdfs:label "Action/Coordination"@en .
@@ -98,15 +112,13 @@
         owl:NamedIndividual ;
     rdfs:label "Patient Profile/Cultural Background"@en .
 
-:Culture a :Community,
-        owl:NamedIndividual ;
-    rdfs:label "Kultur"@de,
-        "Culture"@en,
-        "Kultur"@sv .
-
 :Cure a :Object,
         owl:NamedIndividual ;
     rdfs:label "Goal/Cure"@en .
+
+:Death a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Goal/Sign And Symptoms/Death"@en .
 
 :Decision_Making a :Instrument,
         owl:NamedIndividual ;
@@ -176,10 +188,6 @@
         owl:NamedIndividual ;
     rdfs:label "Perceptions/Emotions"@en .
 
-:End_Of_Life_Conversation a :Object,
-        owl:NamedIndividual ;
-    rdfs:label "Action/End Of Life Conversation"@en .
-
 :Flow_Chart a :Instrument,
         owl:NamedIndividual ;
     rdfs:label "Communication/Means/Documentation/Flow Chart"@en .
@@ -187,6 +195,10 @@
 :ForeignLanguage a :Object,
         owl:NamedIndividual ;
     rdfs:label "Patient Profile/Foreign Language"@en .
+
+:Generalist a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Medical Practitioners/Generalist"@en .
 
 :Geriatrician a :Subject,
         owl:NamedIndividual ;
@@ -211,10 +223,6 @@
 :Hospice a :Community,
         owl:NamedIndividual ;
     rdfs:label "Setting/Hospice"@en .
-
-:Hospital a :Community,
-        owl:NamedIndividual ;
-    rdfs:label "Setting/Hospital"@en .
 
 :Hospital_Nurse a :Subject,
         owl:NamedIndividual ;
@@ -243,10 +251,6 @@
 :Labelling_Artifacts a :Rule,
         owl:NamedIndividual ;
     rdfs:label "Organisation/Labelling Artifacts"@en .
-
-:Leaving_Implicit_Defer a :DivisionOfLabour,
-        owl:NamedIndividual ;
-    rdfs:label "Handling Tasks/Leaving, Implicit Defer"@en .
 
 :Liquid a :Instrument,
         owl:NamedIndividual ;
@@ -291,10 +295,6 @@
 :Palliative_physician a :Subject,
         owl:NamedIndividual ;
     rdfs:label "Medical Practitioners/Specialist/Palliativ Physician"@en .
-
-:Perception_Of_Importance a :DivisionOfLabour,
-        owl:NamedIndividual ;
-    rdfs:label "Handling Tasks/Perception Of Importance"@en .
 
 :Perfusor a :Instrument,
         owl:NamedIndividual ;
@@ -347,10 +347,6 @@
 :Scheduling a :Rule,
         owl:NamedIndividual ;
     rdfs:label "Organisation/Scheduling"@en .
-
-:Shared_Care a :DivisionOfLabour,
-        owl:NamedIndividual ;
-    rdfs:label "Responsibility/Shared Care"@en .
 
 :Shared_Information a :Instrument,
         owl:NamedIndividual ;
@@ -405,8 +401,8 @@
     rdfs:label "Work Format/Informal/Telephone Call"@en .
 
 :Template a owl:NamedIndividual ;
-    :ActivityDescription "Activity Template" ;
-    :ActivityName "Multi-Language Template" .
+    :ActivityDescription "Conversation with the patient" ;
+    :ActivityName "End of Life conversation" .
 
 :Time_allocation a :Rule,
         owl:NamedIndividual ;
@@ -456,15 +452,39 @@
         owl:NamedIndividual ;
     rdfs:label "Communication/Means/Video Conference"@en .
 
-:Conviction a :Instrument,
-        owl:NamedIndividual ;
-    rdfs:label "Attitude/Conviction"@en .
+:e6665215c81fa640a533341b9430d73b7d44a1bf a :Conflict ;
+    :ConflictDescription "<p>EOL communication skills are not seen to beas critical as . . . learning to do a good physical examination or learning to perform a procedure. . .. It’s almost like, well, don’t bother learning it. Just learn to call palliative care.</p>" ;
+    :ConflictState "open" ;
+    :ConflictTitle "Perception of importance" ;
+    :CreationDate "2025-05-20T14:24:55.963Z" ;
+    :HasParticipant :Culture,
+        :End_Of_Life_Conversation,
+        :Perception_Of_Importance ;
+    :WrittenBy "Unspecified" .
 
-:Death a :Object,
+:Hospital a :Community,
         owl:NamedIndividual ;
-    rdfs:label "Goal/Sign And Symptoms/Death"@en .
+    rdfs:label "Setting/Hospital"@en .
 
-:Generalist a :Subject,
+:Leaving_Implicit_Defer a :DivisionOfLabour,
         owl:NamedIndividual ;
-    rdfs:label "Medical Practitioners/Generalist"@en .
+    rdfs:label "Handling Tasks/Leaving, Implicit Defer"@en .
+
+:Perception_Of_Importance a :DivisionOfLabour,
+        owl:NamedIndividual ;
+    rdfs:label "Handling Tasks/Perception Of Importance"@en .
+
+:Shared_Care a :DivisionOfLabour,
+        owl:NamedIndividual ;
+    rdfs:label "Responsibility/Shared Care"@en .
+
+:Culture a :Community,
+        owl:NamedIndividual ;
+    rdfs:label "Kultur"@de,
+        "Culture"@en,
+        "Kultur"@sv .
+
+:End_Of_Life_Conversation a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Action/End Of Life Conversation"@en .
 
