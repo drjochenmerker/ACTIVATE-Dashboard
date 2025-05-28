@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { defineProps, nextTick, onMounted, ref, watch } from 'vue';
+import { defineProps, nextTick, onMounted, ref } from 'vue';
 import { Button } from '@/components/ui/button';
 import { addComment, deleteComment } from '@/data/knowledge_graph/write_operations';
 import { useConflictsStore } from '@/stores/conflictsStore';
