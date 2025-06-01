@@ -102,10 +102,10 @@ export default {
      * @returns {boolean} True if any active point lacks a selection, false otherwise
      */
     isDoneDisabled() {
+      // Disable if more than 3 active points, or if any active point lacks a selection
+      if (this.activePoints.length > 3) return true;
       return this.activePoints.some(point => {
         const value = this.selectedPoints[point];
-
-        // Check if any selection is made for each active point:
         return !value || value.length === 0;
       });
     }
