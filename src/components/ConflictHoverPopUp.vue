@@ -30,7 +30,7 @@ const popupStyle = ref({ top: props.position.x + "px", left: props.position.y + 
  * Updates the height of the popup box after DOM update
  * Uses nextTick to ensure accurate measurement
  */
-const updatePopupHeight = (pos : any) => {
+const updatePopupHeight = (pos: any) => {
   nextTick(() => {
     if (popupRef.value) {
       const rect = popupRef.value.getBoundingClientRect();
@@ -67,34 +67,33 @@ watch(() => props.position, updatePopupHeight);
 </script>
 
 <template>
-  <div
-    ref="popupRef"
-    class="popup"
-    :class="{'popup-dark' : mode === 'dark'}"
-    :style="popupStyle"
-  >
+  <div ref="popupRef" class="popup" :class="{ 'popup-dark': mode === 'dark' }" :style="popupStyle">
     <b>{{ hoveredConflictPoint.title }}</b>
     <p v-if="hoveredConflictPoint.description">
       {{ hoveredConflictPoint.description }}
     </p>
-    <p><strong>{{staticContent.terms.author[sessionStore.activeLanguage]}}:</strong> {{ hoveredConflictPoint.author }}</p>
-    <p>
-      <strong>{{staticContent.terms.timestamp[sessionStore.activeLanguage]}}:</strong>
-      {{ hoveredConflictPoint.timestamp ? new Date(hoveredConflictPoint.timestamp).toLocaleString() : staticContent.errors.timestampLoad[sessionStore.activeLanguage] }}
+    <p><strong>{{ staticContent.terms.author[sessionStore.activeLanguage] }}:</strong> {{ hoveredConflictPoint.author }}
     </p>
-    <p><strong>{{staticContent.terms.status[sessionStore.activeLanguage]}}:</strong> {{ staticContent.terms.conflictStatus[hoveredConflictPoint.status][sessionStore.activeLanguage] }}</p>
+    <p>
+      <strong>{{ staticContent.terms.timestamp[sessionStore.activeLanguage] }}:</strong>
+      {{ hoveredConflictPoint.timestamp ? new Date(hoveredConflictPoint.timestamp).toLocaleString() :
+        staticContent.errors.timestampLoad[sessionStore.activeLanguage] }}
+    </p>
+    <p><strong>{{ staticContent.terms.status[sessionStore.activeLanguage] }}:</strong> {{
+      staticContent.terms.conflictStatus[hoveredConflictPoint.status][sessionStore.activeLanguage] }}</p>
     <div v-if="hoveredConflictPoint.participants.length">
-      <p><strong>{{staticContent.terms.participants[sessionStore.activeLanguage]}}:</strong></p>
+      <p><strong>{{ staticContent.terms.participants[sessionStore.activeLanguage] }}:</strong></p>
       <ul class="custom-list">
-        <li
-          v-for="(participant, index) in hoveredConflictPoint.participants"
-          :key="index"
-        >
-          {{ buildLanguageString(participant, sessionStore.activeLanguage, true) }} - {{ activateTerms[sessionStore.activeLanguage][participant.type] }}
+        <li v-for="(participant, index) in hoveredConflictPoint.participants" :key="index">
+          {{ buildLanguageString(participant, sessionStore.activeLanguage, true) }} - {{
+            activateTerms[sessionStore.activeLanguage][participant.type] }}
         </li>
       </ul>
     </div>
-    <p v-if="hoveredConflictPoint.replies"><strong>{{staticContent.terms.replies[sessionStore.activeLanguage]}}:</strong> {{ hoveredConflictPoint.replies.length }}</p>
+    <p v-if="hoveredConflictPoint.replies">
+      <strong>{{ staticContent.terms.replies[sessionStore.activeLanguage] }}:</strong> {{
+        hoveredConflictPoint.replies.length }}
+    </p>
   </div>
 </template>
 
@@ -106,10 +105,19 @@ watch(() => props.position, updatePopupHeight);
   padding: 8px;
   border-radius: 4px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-  pointer-events: none; /* Verhindert unerwünschte Hover-Events */
+  pointer-events: none;
   z-index: 10;
   opacity: 0.9;
+  max-width: 350px;
+  /* maximale Breite */
+  word-wrap: break-word;
+  /* Zeilenumbruch bei langen Wörtern */
+  overflow-wrap: break-word;
+  /* besserer Support */
+  white-space: normal;
+  /* Mehrzeilig erlauben */
 }
+
 
 .popup-dark {
   color: #fff;

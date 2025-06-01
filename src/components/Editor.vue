@@ -125,7 +125,8 @@ export default {
             ['bold', 'italic', 'underline'],
             [{ list: 'ordered' }, { list: 'bullet' }]
           ]
-        }
+        },
+        formats: ['bold', 'italic', 'underline', 'list']
       });
 
       this.quill.root.innerHTML = this.value;
@@ -170,6 +171,7 @@ export default {
     async transferText() {
       // consts
       const content = this.quill.root.innerHTML;
+      console.log("content ", content);
       const title = this.title || 'New Note';
       const author = this.isAnonymous ? 'Anonymous' : (useSessionStore().sessionRole);
       const participants = [];
