@@ -309,8 +309,17 @@ export default {
   <div class="editor-container">
     <!-- Top-Container -->
     <div class="top-container">
-      <p class="font-bold justify-start">{{ this.staticContent.editor.header[this.sessionStore.activeLanguage] ||
-        this.staticContent.editor.header.en }}</p>
+
+      <p class="font-bold justify-start">
+        {{
+          activePoints.length === 0
+            ? (this.staticContent.editor.headerNoSelection[this.sessionStore.activeLanguage] ||
+              this.staticContent.editor.headerNoSelection.en)
+            : (this.staticContent.editor.header[this.sessionStore.activeLanguage] ||
+              this.staticContent.editor.header.en)
+        }}
+      </p>
+
       <button class="icon-button" @click="clearEditor">
         <span class="material-symbols-outlined">delete</span>
       </button>

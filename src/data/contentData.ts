@@ -232,6 +232,11 @@ export const staticContent = {
             de: "Notiz zu den ausgewählten Punkten hinzufügen:",
             sv: "Lägg till anteckning till valda punkter:",
         },
+        headerNoSelection: {
+            en: "Add Note:",
+            de: "Notiz hinzufügen:",
+            sv: "Lägg till anteckning:",
+        },
         addTitle: {
             en: "Add a title",
             de: "Titel hinzufügen",
