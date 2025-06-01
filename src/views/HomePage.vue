@@ -55,12 +55,13 @@ const isEditorDrawerOPen = ref(true);
       <transition name="fade">
         <div v-if="isEditorDrawerOPen" class="transition-all duration-300 ease-in-out">
           <Editor :activePoints="getActivePoints" />
+          <div class="flex justify-center w-full mt-4 gap-4" v-if="useSessionStore().instructorMode">
+            <TripleAdditionDialog v-model:isOpen="isTripleAdditionDialogOpen" />
+            <EntityAdditionDialog v-model:isOpen="isEntityAdditionDialogOpen" />
+          </div>
         </div>
       </transition>
-      <div class="flex justify-center w-full mt-4 gap-4" v-if="useSessionStore().instructorMode">
-        <TripleAdditionDialog v-model:isOpen="isTripleAdditionDialogOpen" />
-        <EntityAdditionDialog v-model:isOpen="isEntityAdditionDialogOpen" />
-      </div>
+
     </div>
   </div>
 </template>
