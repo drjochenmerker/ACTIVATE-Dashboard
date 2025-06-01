@@ -26,7 +26,7 @@ export const activateTerms: Record<LanguageCode, Record<string, string>> = {
         subject: 'Ämne',
         object: 'Mål',
         instruments: 'Instrument',
-        community: 'Samhälle',
+        community: 'Gemenskap',
         rules: 'Regler',
         division_of_labour: 'Arbetsdelning',
         misc: 'Övrigt',
@@ -232,6 +232,11 @@ export const staticContent = {
             de: "Notiz zu den ausgewählten Punkten hinzufügen:",
             sv: "Lägg till anteckning till valda punkter:",
         },
+        headerNoSelection: {
+            en: "Add Note:",
+            de: "Notiz hinzufügen:",
+            sv: "Lägg till anteckning:",
+        },
         addTitle: {
             en: "Add a title",
             de: "Titel hinzufügen",
@@ -255,7 +260,7 @@ export const staticContent = {
             sv: "Vänligen välj en aktivitetsklass.",
         }
     },
-    toastNotification:{
+    toastNotification: {
         conflictAdded: {
             en: "Conflict added.",
             de: "Konflikt hinzugefügt",

@@ -164,6 +164,54 @@ const removeReply = (id: string) => {
   }
 };
 
+// const cleanContent = computed(() => {
+//   if (!props.content) return '';
+
+//   // Remove all <span class="ql-ui" contenteditable="false"></span> from the string
+//   return props.content.replace(/<span class="ql-ui" contenteditable="false"><\/span>/g, '');
+// });
+
+// const cleanAndWrapLists = computed(() => {
+//   if (!props.content) return '';
+
+//   // 1. Remove the empty spans first
+//   let html = props.content.replace(/<span class="ql-ui" contenteditable="false"><\/span>/g, '');
+
+//   // 2. Convert li with data-list="ordered" into proper <ol><li>...</li></ol>
+//   // and li with data-list="bullet" into <ul><li>...</li></ul>
+
+//   // We do this by splitting content on li and grouping
+//   // Here is a simple regex-based approach:
+
+//   // Match all <li data-list="ordered">...</li>
+//   const orderedListItems = html.match(/<li data-list="ordered">(.*?)<\/li>/gs) || [];
+//   if (orderedListItems.length) {
+//     // Replace all these lis with just <li>content</li>
+//     const orderedLis = orderedListItems.map(item =>
+//       item.replace(/<li data-list="ordered">/, '<li>').replace('</li>', '</li>')
+//     ).join('');
+//     // Replace all ordered lis in original with empty string
+//     html = html.replace(/<li data-list="ordered">(.*?)<\/li>/gs, '');
+
+//     // Insert the <ol> wrapper before the first ordered li was, append after last
+//     // (Simple approach: prepend ol + joined lis + close ol to start of html)
+//     html = `<ol>${orderedLis}</ol>` + html;
+//   }
+
+//   // Similarly for bullet
+//   const bulletListItems = html.match(/<li data-list="bullet">(.*?)<\/li>/gs) || [];
+//   if (bulletListItems.length) {
+//     const bulletLis = bulletListItems.map(item =>
+//       item.replace(/<li data-list="bullet">/, '<li>').replace('</li>', '</li>')
+//     ).join('');
+//     html = html.replace(/<li data-list="bullet">(.*?)<\/li>/gs, '');
+//     html = `<ul>${bulletLis}</ul>` + html;
+//   }
+
+//   return html;
+// });
+
+
 </script>
 
 <template>
@@ -171,14 +219,17 @@ const removeReply = (id: string) => {
     <div class="note-card-header">
       <!-- Author-->
       <span class="note-card-author">
-        {{staticContent.terms.author[sessionStore.activeLanguage]}}: {{ props.author }}
+        {{ staticContent.terms.author[sessionStore.activeLanguage] }}: {{ props.author }}
       </span>
       <!-- Status selector -->
       <div class="status-selector">
         <select v-model="selectedStatus">
-          <option :value="conflictStatus.open">{{ staticContent.terms.conflictStatus.open[sessionStore.activeLanguage] }}</option>
-          <option :value="conflictStatus.inDiscussion">{{ staticContent.terms.conflictStatus.inDiscussion[sessionStore.activeLanguage] }}</option>
-          <option :value="conflictStatus.resolved">{{ staticContent.terms.conflictStatus.resolved[sessionStore.activeLanguage] }}</option>
+          <option :value="conflictStatus.open">{{ staticContent.terms.conflictStatus.open[sessionStore.activeLanguage]
+            }}</option>
+          <option :value="conflictStatus.inDiscussion">{{
+            staticContent.terms.conflictStatus.inDiscussion[sessionStore.activeLanguage] }}</option>
+          <option :value="conflictStatus.resolved">{{
+            staticContent.terms.conflictStatus.resolved[sessionStore.activeLanguage] }}</option>
         </select>
       </div>
       <!-- Delete button -->
@@ -213,13 +264,15 @@ const removeReply = (id: string) => {
 
     <!-- Note comment section starting with add comment button -->
     <div class="note-comment-section">
-      <Button @click="toggleReplyInput(conflict.id)"> {{staticContent.noteCards.addComment[sessionStore.activeLanguage]}} </Button>
+      <Button @click="toggleReplyInput(conflict.id)">
+        {{ staticContent.noteCards.addComment[sessionStore.activeLanguage] }} </Button>
     </div>
 
     <div v-if="replyInputVisible[conflict.id]" class="comment-input">
-      <textarea ref="textareaRef" v-model="newReplyText[conflict.id]" :placeholder="staticContent.placeholders.answer[sessionStore.activeLanguage]"
+      <textarea ref="textareaRef" v-model="newReplyText[conflict.id]"
+        :placeholder="staticContent.placeholders.answer[sessionStore.activeLanguage]"
         @keydown.enter="handleEnterKey($event)" />
-      <Button @click="saveReply(conflict.id)">{{staticContent.noteCards.save[sessionStore.activeLanguage]}}</Button>
+      <Button @click="saveReply(conflict.id)">{{ staticContent.noteCards.save[sessionStore.activeLanguage] }}</Button>
     </div>
 
     <div v-if="conflictDetail && conflictDetail.replies && conflictDetail.replies.length > 0" class="reply-container">
@@ -389,6 +442,21 @@ const removeReply = (id: string) => {
 
 .note-content {
   font-weight: normal;
+  /**display: block !important;*/
 
 }
+
+/**
+
+.note-content ul,
+.note-content ol {
+  list-style-type: disc !important;
+  margin-left: 1.5em !important;
+  padding-left: 1.5em !important;
+  display: block !important;
+}
+
+.note-content li {
+  display: list-item !important;
+} */
 </style>

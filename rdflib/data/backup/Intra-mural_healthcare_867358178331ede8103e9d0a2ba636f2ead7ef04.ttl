@@ -1,0 +1,503 @@
+@prefix : <http://activate.htwk-leipzig.de/model#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+:0b2ee9c70b31192a48c55181adbbf792cf6724cd a :Conflict ;
+    :ConflictDescription "<p>Palliative care has a relatively short history, oncologists have been around for more than 30 years. We have gotten used to having these kind of patients’ problems like pain for a long time before this redundant specialty of palliative care was created.</p>" ;
+    :ConflictState "open" ;
+    :ConflictTitle "Professional expertise" ;
+    :CreationDate "2025-05-21T15:57:37.714Z" ;
+    :HasParticipant :Delivering_Care,
+        :Hierarchy,
+        :Hospital ;
+    :WrittenBy "Oncologist" .
+
+:69f9ecba2e9ab176efcc3b5044ea322a7a029443 a :Conflict ;
+    :ConflictDescription "<p>I am a specialist and therefore I am here to take care of the patient until death, I will take care of him. I will not ask for the intervention of the PC specialist because I am able to face these situations anyway. When we are able to treat the disease… imagine if we are not able to palliate the symptoms…!</p>" ;
+    :ConflictState "open" ;
+    :ConflictTitle "Professional expertise" ;
+    :CreationDate "2025-05-21T16:00:54.069Z" ;
+    :HasParticipant :Conviction,
+        :Delivering_Care,
+        :Oncologist,
+        :Palliative_physician ;
+    :WrittenBy "Oncologist" .
+
+:Age a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Patient Profile/Age"@en .
+
+:Ampul a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Medication/Ampul"@en .
+
+:Appraisal a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Methods To Act/Appraisal"@en .
+
+:Arrogance a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Attitude/Arrogance"@en .
+
+:Bell_mat a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Devices/Monitoring/Bell mat"@en .
+
+:COPD a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Goal/Sign And Symptoms/COPD"@en .
+
+:Care_Staff a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Other Healthcare Professionals/Care Staff"@en .
+
+:Career_Choice a :Community,
+        owl:NamedIndividual ;
+    rdfs:label "Personal Choices/Career Choice"@en .
+
+:Checking a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Methods To Act/Checking"@en .
+
+:Co-Location a :Rule,
+        owl:NamedIndividual ;
+    rdfs:label "Orfanisation/Co-Location"@en .
+
+:Coaching a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Competence/Coaching"@en .
+
+:Communication a :Rule,
+        owl:NamedIndividual ;
+    rdfs:label "Action/Communication"@en .
+
+:Community_Nurse a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Other Healthcare Professionals/Nurse/Community Nurse"@en .
+
+:Complexity a :Community,
+        owl:NamedIndividual ;
+    rdfs:label "Circumstances/Complexity"@en .
+
+:Connectedness a :Rule,
+        owl:NamedIndividual ;
+    rdfs:label "Interaction/Connectedness"@en .
+
+:Construction a :Rule,
+        owl:NamedIndividual ;
+    rdfs:label "Interaction/Construction"@en .
+
+:Consultation a :DivisionOfLabour,
+        :Rule,
+        owl:NamedIndividual ;
+    rdfs:label "Interaction/Consultation"@en,
+        "Responsibility/Consultation"@en .
+
+:Context_Information a :Rule,
+        owl:NamedIndividual ;
+    rdfs:label "Interaction/Context Information"@en .
+
+:Conversation_With_Patient a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Communication/Implementation/Conversation With Patient"@en .
+
+:Coordination a :Rule,
+        owl:NamedIndividual ;
+    rdfs:label "Action/Coordination"@en .
+
+:Cultural_Background a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Patient Profile/Cultural Background"@en .
+
+:Culture a :Community,
+        owl:NamedIndividual ;
+    rdfs:label "Kultur"@de,
+        "Culture"@en,
+        "Kultur"@sv .
+
+:Death a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Goal/Sign And Symptoms/Death"@en .
+
+:Decision_Making a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Methods To Act/Decision Making"@en .
+
+:Decisionmaking a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Action/Decisionmaking"@en .
+
+:Delegate_Explicit_Transfer a :DivisionOfLabour,
+        owl:NamedIndividual ;
+    rdfs:label "Handling Tasks/Delegate, Explicit Transfer"@en .
+
+:Delirium a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Goal/Sign And Symptoms/Dilirium"@en .
+
+:Delivering_Prognoses a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Action/Delivering Prognoses"@en .
+
+:Delivery a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Methods To Act/Delivery"@en .
+
+:Dementia a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Goal/Sign And Symptoms/Dementia"@en .
+
+:Dietrician a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Other Healthcare Professionals/Dietrician"@en .
+
+:Digital_Record a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Communication/Means/Documentation/Digital Record"@en .
+
+:Discussion_Of_Own_Views a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Attitude/Discussion Of Own Views"@en .
+
+:Dissonance a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Relatives/Dissonance"@en .
+
+:Distance a :Community,
+        owl:NamedIndividual ;
+    rdfs:label "Circumstances/Distance"@en .
+
+:Education_And_Preparation a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Education And Preparation"@en .
+
+:Email a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Communication/Means/Email"@en .
+
+:Emergency_Physician a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Medical Practitioners/Specialist/Emergency Physician"@en .
+
+:Emotions a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Perceptions/Emotions"@en .
+
+:End_Of_Life_Conversation a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Action/End Of Life Conversation"@en .
+
+:Flow_Chart a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Communication/Means/Documentation/Flow Chart"@en .
+
+:ForeignLanguage a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Patient Profile/Foreign Language"@en .
+
+:Generalist a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Medical Practitioners/Generalist"@en .
+
+:Geriatrician a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Medical Practitioners/Specialist/Geriatrician"@en .
+
+:Hallway_Meeting a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Work Format/Informal/Hallway Meeting"@en .
+
+:Home a :Community,
+        owl:NamedIndividual ;
+    rdfs:label "Setting/Home"@en .
+
+:Homecare_Nurse a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Other Healthcare Professionals/Nurse/Homecare Nurse"@en .
+
+:Hospice a :Community,
+        owl:NamedIndividual ;
+    rdfs:label "Setting/Hospice"@en .
+
+:Hospital_Nurse a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Other Healthcare Professionals/Nurse/Hospital Nurse"@en .
+
+:IP_Team a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "IP Team"@en .
+
+:Immediate_Needs a :Community,
+        owl:NamedIndividual ;
+    rdfs:label "Circumstances/Immediate Needs"@en .
+
+:Incompetence a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Perceptions/Incompetence"@en .
+
+:Informedness a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Patient Profile/Informedness"@en .
+
+:Known_or_Unknown a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Patient Profile/Known or Unknown"@en .
+
+:Labelling_Artifacts a :Rule,
+        owl:NamedIndividual ;
+    rdfs:label "Organisation/Labelling Artifacts"@en .
+
+:Leaving_Implicit_Defer a :DivisionOfLabour,
+        owl:NamedIndividual ;
+    rdfs:label "Handling Tasks/Leaving, Implicit Defer"@en .
+
+:Liquid a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Medication/Liquid"@en .
+
+:Medication a :Rule,
+        owl:NamedIndividual ;
+    rdfs:label "Action/Deliver/Therapeutic Intervention/Medication"@en .
+
+:Needs_assessment a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Action/Needs Assessment"@en .
+
+:Negotiate a :Rule,
+        owl:NamedIndividual ;
+    rdfs:label "Interaction/Negotiate"@en .
+
+:Nursing_Home a :Community,
+        owl:NamedIndividual ;
+    rdfs:label "Setting/Nursing Home"@en .
+
+:Nursinghome_Nurse a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Other Healthcare Professionals/Nurse/Nursinghome Nurse"@en .
+
+:Orthopaedic a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Medical Practitioners/Specialist/Orthopaedic"@en .
+
+:Pain a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Goal/Sign And Symptoms/Pain"@en .
+
+:Palliative_Care_Nurse a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Other Healthcare Professionals/Nurse/Palliative Care Nurse"@en .
+
+:Perception_Of_Importance a :DivisionOfLabour,
+        owl:NamedIndividual ;
+    rdfs:label "Handling Tasks/Perception Of Importance"@en .
+
+:Perfusor a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Devices/Delivery/Perfusor"@en .
+
+:Personal_Priority a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Attitude/Personal Priority"@en .
+
+:Physiotherapist a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Other Healthcare Professionals/Physiotherapist"@en .
+
+:Pre-Existing_Complexity a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Patient Profile/Pre-Existing Complexity"@en .
+
+:Proactive a :Instrument,
+        :Rule,
+        owl:NamedIndividual ;
+    rdfs:label "Communication/Implementation/Proactive"@en,
+        "Interaction/Proactive"@en .
+
+:Psychosocial-Spiritual_Issues a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Goal/Psychosocial–Spiritual Issues"@en .
+
+:Pump a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Devices/Delivery/Pump"@en .
+
+:Rejecting a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Patient Profile/Rejecting"@en .
+
+:Relatives a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Relatives"@en .
+
+:Role a :Instrument,
+        :Rule,
+        owl:NamedIndividual ;
+    rdfs:label "Communication/Implementation/Role"@en,
+        "Interaction/Role"@en .
+
+:Rounds a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Work Format/Formal/Rounds"@en .
+
+:Scheduling a :Rule,
+        owl:NamedIndividual ;
+    rdfs:label "Organisation/Scheduling"@en .
+
+:Shared_Information a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Shared Information"@en .
+
+:Sharing a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Methods To Act/Sharing"@en .
+
+:Single_carer a :Community,
+        owl:NamedIndividual ;
+    rdfs:label "Circumstances/Shortage/Single Carer"@en .
+
+:Social_Worker a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Other Healthcare Professionals/Social Worker"@en .
+
+:Stigmatised a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Patient Profile/Stigmatised"@en .
+
+:Stock a :Rule,
+        owl:NamedIndividual ;
+    rdfs:label "Organisation/Stock"@en .
+
+:Substance a :Rule,
+        owl:NamedIndividual ;
+    rdfs:label "Action/Deliver/Substance"@en .
+
+:Substitution a :DivisionOfLabour,
+        owl:NamedIndividual ;
+    rdfs:label "Responsibility/Substitution"@en .
+
+:Surgeon a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Medical Practitioners/Specialist/Surgeon"@en .
+
+:Team a :Rule,
+        owl:NamedIndividual ;
+    rdfs:label "Interaction/Team"@en .
+
+:Team_Meeting a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Work Format/Formal/Team Meeting"@en .
+
+:Telephone a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Communication/Means/Telephone"@en .
+
+:Telephone_Call a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Work Format/Informal/Telephone Call"@en .
+
+:Template a owl:NamedIndividual ;
+    :ActivityDescription "Shared care within the hospital" ;
+    :ActivityName "Intra-mural healthcare" .
+
+:Time_allocation a :Rule,
+        owl:NamedIndividual ;
+    rdfs:label "Action/Time Allocation"@en .
+
+:Timing_And_Timeliness a :Rule,
+        owl:NamedIndividual ;
+    rdfs:label "Action/Timing And Timeliness"@en .
+
+:Training a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Competence/Training"@en .
+
+:Transfer a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Action/Transfer"@en .
+
+:Transfer_Letter a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Communication/Means/Documentation/Trannsfer Letter"@en .
+
+:Uncomfortable a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Perceptions/Uncomfortable"@en .
+
+:Understanding a :Rule,
+        owl:NamedIndividual ;
+    rdfs:label "Interaction/Understanding"@en .
+
+:Unspecified a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Medical Practitioners/Specialist/Unspecified"@en .
+
+:Unsuccessful a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Perceptions/Unsuccessful"@en .
+
+:Unsure a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Perceptions/Unsure"@en .
+
+:Venous_Port a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Devices/Delivery/Venous Port"@en .
+
+:Video_Conference a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Communication/Means/Video Conference"@en .
+
+:fdd6fd730c07030b49cb8c2a21aa5ff49cc89f64 a :Conflict ;
+    :ConflictDescription "<p>Regularly the palliative care is delayed, we come in when the oncologists leave the patient. As long as they think it is necessary, they carry on [with active treatments], […] with many lines of chemotherapies, sometimes even too many, and then finally there is the PC taking charge of the symptoms and not anymore the cure of the disease.</p>" ;
+    :ConflictState "open" ;
+    :ConflictTitle "Shared care of in-hospital healthcare providers" ;
+    :CreationDate "2025-05-21T15:29:07.540Z" ;
+    :HasComment :27b0e870ac1b96839655682150fb29ead5645fcc,
+        :62d697789b21b905bf2c1d1202c80794a6f09aec ;
+    :HasParticipant :Cure,
+        :Hospital,
+        :Shared_Care ;
+    :WrittenBy "Palliativ Physician" .
+
+:27b0e870ac1b96839655682150fb29ead5645fcc a :Comment ;
+    :CommentDescription "It would be nice if oncologists understood that ’no recovery’ is not necessarily a defeat…but meanwhile it is also true that if their main purpose is recovery…however, they should be able to make a switch and to say \"Ok, I cannot help him heal… then let’s see if we can help the person live better\"" ;
+    :CreationDate "2025-05-21T15:34:15.370Z" ;
+    :WrittenBy "Palliativ Physician" .
+
+:62d697789b21b905bf2c1d1202c80794a6f09aec a :Comment ;
+    :CommentDescription "We can say that collaboration between oncology and palliative care occurs less often than, probably, is appropriate, because fractures are often created between the PC specialist and the oncologist, even because of communication style and the ways they face specific themes which indeed…arise…where the theme of quality of life becomes predominant…where they talk about prolongation of patient survival, then it becomes difficult…but it occurs eh…that they are able to collaborate." ;
+    :CreationDate "2025-05-21T15:32:55.340Z" ;
+    :WrittenBy "Social Worker" .
+
+:Conviction a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Attitude/Conviction"@en .
+
+:Cure a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Goal/Cure"@en .
+
+:Hierarchy a :DivisionOfLabour,
+        owl:NamedIndividual ;
+    rdfs:label "Hierarchy"@en .
+
+:Oncologist a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Medical Practitioners/Specialist/Oncologist"@en .
+
+:Palliative_physician a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Medical Practitioners/Specialist/Palliativ Physician"@en .
+
+:Shared_Care a :DivisionOfLabour,
+        owl:NamedIndividual ;
+    rdfs:label "Responsibility/Shared Care"@en .
+
+:Delivering_Care a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Action/Delivering Care"@en .
+
+:Hospital a :Community,
+        owl:NamedIndividual ;
+    rdfs:label "Setting/Hospital"@en .
+
