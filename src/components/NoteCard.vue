@@ -225,7 +225,7 @@ const removeReply = (id: string) => {
       <div class="status-selector">
         <select v-model="selectedStatus">
           <option :value="conflictStatus.open">{{ staticContent.terms.conflictStatus.open[sessionStore.activeLanguage]
-          }}</option>
+            }}</option>
           <option :value="conflictStatus.inDiscussion">{{
             staticContent.terms.conflictStatus.inDiscussion[sessionStore.activeLanguage] }}</option>
           <option :value="conflictStatus.resolved">{{
@@ -443,7 +443,7 @@ const removeReply = (id: string) => {
 .note-content {
   font-weight: normal;
   /**display: block !important;*/
-  /
+
 }
 
 /**
