@@ -26,6 +26,14 @@ const mode = useColorMode();
 const popupRef = ref<HTMLElement | null>(null);
 const popupStyle = ref({ top: props.position.x + "px", left: props.position.y + 'px' });
 
+onMounted(() => {
+  props.hoveredConflictPoint.description = props.hoveredConflictPoint.description?.replace(/<\/?[^>]+(>|$)/g, "");
+  updatePopupHeight(props.position);
+});
+
+watch(() => props.hoveredConflictPoint, () => updatePopupHeight(props.position));
+watch(() => props.position, (newVal) => updatePopupHeight(newVal));
+
 /**
  * Updates the height of the popup box after DOM update
  * Uses nextTick to ensure accurate measurement
@@ -34,16 +42,30 @@ const updatePopupHeight = (pos: any) => {
   nextTick(() => {
     if (popupRef.value) {
       const rect = popupRef.value.getBoundingClientRect();
-      if (pos.y + rect.height > window.innerHeight - 10) {
-        pos.y = window.innerHeight - rect.height - 10;
+      let adjustedX = pos.x;
+      let adjustedY = pos.y;
+
+      // Prevent bottom overflow
+      if (adjustedY + rect.height > window.innerHeight - 10) {
+        adjustedY = window.innerHeight - rect.height - 10;
       }
+
+      // Prefer showing the popup to the left of the cursor
+      adjustedX = adjustedX - rect.width - 10;
+
+      // If it overflows to the left, move it to the right side of the cursor
+      if (adjustedX < 10) {
+        adjustedX = pos.x + 10;
+      }
+
       popupStyle.value = {
-        top: `${pos.y}px`,
-        left: `${pos.x - rect.width - 10}px`
+        top: `${adjustedY}px`,
+        left: `${adjustedX}px`
       };
     }
   });
 };
+
 
 const sessionStore = useSessionStore();
 
@@ -109,13 +131,9 @@ watch(() => props.position, updatePopupHeight);
   z-index: 10;
   opacity: 0.9;
   max-width: 350px;
-  /* maximale Breite */
   word-wrap: break-word;
-  /* Zeilenumbruch bei langen Wörtern */
   overflow-wrap: break-word;
-  /* besserer Support */
   white-space: normal;
-  /* Mehrzeilig erlauben */
 }
 
 

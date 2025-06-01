@@ -19,33 +19,45 @@ const props = defineProps<{
     x: number;
     y: number;
   };
-
 }>();
 
 const sessionStore = useSessionStore();
+const mode = useColorMode();
 
 const popupRef = ref<HTMLElement | null>(null);
-const popupStyle = ref({ top: props.position.x + "px", left: props.position.y + 'px' });
+const popupStyle = ref({ top: props.position.y + "px", left: props.position.x + 'px' });
 
-watch(() => props.position, async (pos) => {
+const updatePopupPosition = async (pos: { x: number; y: number }) => {
   await nextTick();
-  if (popupRef.value) {
-    const rect = popupRef.value.getBoundingClientRect();
-    if (pos.y + rect.height > window.innerHeight - 10) {
-      pos.y = window.innerHeight - rect.height - 10;
-    }
-    popupStyle.value = {
-      top: `${pos.y}px`,
-      left: `${pos.x - rect.width - 10}px`
-    };
-  }
-});
+  if (!popupRef.value) return;
 
-// Current color mode (Light- or Dark-Mode)
-const mode = useColorMode()
-//console.log("ITEMS", props.hoveredPoint.content);
+  const rect = popupRef.value.getBoundingClientRect();
+  let adjustedX = pos.x;
+  let adjustedY = pos.y;
+
+  // Avoid bottom overflow
+  if (adjustedY + rect.height > window.innerHeight - 10) {
+    adjustedY = window.innerHeight - rect.height - 10;
+  }
+
+  // Default: try to show left of cursor
+  adjustedX = pos.x - rect.width - 10;
+
+  // If it would overflow left, flip to the right of cursor
+  if (adjustedX < 10) {
+    adjustedX = pos.x + 10;
+  }
+
+  popupStyle.value = {
+    top: `${adjustedY}px`,
+    left: `${adjustedX}px`,
+  };
+};
+
+watch(() => props.position, updatePopupPosition, { immediate: true });
 
 </script>
+
 
 <template>
   <div ref="popupRef" class="popup" :class="{ 'popup-dark': mode === 'dark' }" :style="popupStyle">
