@@ -11,7 +11,7 @@ import { calculateConflictPositions } from "@/composables/calculateConflictPosit
 import { useSessionStore } from "@/stores/sessionStore";
 import { getActivityDetail } from "@/data/knowledge_graph/read_operations";
 import { useRouter } from "vue-router";
-import { activateTerms } from "@/data/contentData";
+import { activateTerms, staticContent } from "@/data/contentData";
 
 /** 
  * Activity-Diagram-Component
@@ -52,6 +52,7 @@ export default defineComponent({
         // Data of the hovered point
         const hoveredPointData = ref<null | {
             label: string;
+            tooltip: string;
             content: Array<Objective>;
         }>(null);
 
@@ -77,17 +78,18 @@ export default defineComponent({
          * @property {number} x: x-coordinate of the point
          * @property {number} y: y-coordinate of the point
          * @property {string} label: Label of the point
+         * @property {string} tooltip: Tooltip of the point
          * @property {color} color: Fill Color of the point
          * @property {boolean} active: Specifies if the point is active at the moment.
          * @property {boolean} highlighted: Specifies if the point is highlighted at the moment.
          */
         let points = ref([
-            { x: triangleWidth / 2, y: triangleHeight / 8, id: "instruments", label: activateTerms[sessionStore.activeLanguage].instruments, color: getPointColor(), active: false, highlighted: false }, // Ecke oben
-            { x: triangleWidth / 8, y: (triangleHeight / 8) * 7, id: "rules", label: activateTerms[sessionStore.activeLanguage].rules, color: getPointColor(), active: false, highlighted: false }, // Ecke Links Unten
-            { x: (triangleWidth / 8) * 7, y: (triangleHeight / 8) * 7, id: "division_of_labour", label: activateTerms[sessionStore.activeLanguage].division_of_labour, color: getPointColor(), active: false, highlighted: false }, // Ecke Rechts Unten
-            { x: (triangleWidth / 16) * 5, y: triangleHeight / 2, id: "subject", label: activateTerms[sessionStore.activeLanguage].subject, color: getPointColor(), active: false, highlighted: false }, // Links Mitte
-            { x: (triangleWidth / 16) * 11, y: triangleHeight / 2, id: "object", label: activateTerms[sessionStore.activeLanguage].object, color: getPointColor(), active: false, highlighted: false }, // Rechts Mitte
-            { x: triangleWidth / 2, y: (triangleHeight / 8) * 7, id: "community", label: activateTerms[sessionStore.activeLanguage].community, color: getPointColor(), active: false, highlighted: false }, // Unten Mitte
+            { x: triangleWidth / 2, y: triangleHeight / 8, id: "instruments", label: activateTerms[sessionStore.activeLanguage].instruments, tooltip: staticContent.hoverText.instruments[sessionStore.activeLanguage], color: getPointColor(), active: false, highlighted: false }, // Ecke oben
+            { x: triangleWidth / 8, y: (triangleHeight / 8) * 7, id: "rules", label: activateTerms[sessionStore.activeLanguage].rules, tooltip: staticContent.hoverText.rules[sessionStore.activeLanguage], color: getPointColor(), active: false, highlighted: false }, // Ecke Links Unten
+            { x: (triangleWidth / 8) * 7, y: (triangleHeight / 8) * 7, id: "division_of_labour", label: activateTerms[sessionStore.activeLanguage].division_of_labour, tooltip: staticContent.hoverText.division_of_labour[sessionStore.activeLanguage], color: getPointColor(), active: false, highlighted: false }, // Ecke Rechts Unten
+            { x: (triangleWidth / 16) * 5, y: triangleHeight / 2, id: "subject", label: activateTerms[sessionStore.activeLanguage].subject, tooltip: staticContent.hoverText.subject[sessionStore.activeLanguage], color: getPointColor(), active: false, highlighted: false }, // Links Mitte
+            { x: (triangleWidth / 16) * 11, y: triangleHeight / 2, id: "object", label: activateTerms[sessionStore.activeLanguage].object, tooltip: staticContent.hoverText.object[sessionStore.activeLanguage], color: getPointColor(), active: false, highlighted: false }, // Rechts Mitte
+            { x: triangleWidth / 2, y: (triangleHeight / 8) * 7, id: "community", label: activateTerms[sessionStore.activeLanguage].community, tooltip: staticContent.hoverText.community[sessionStore.activeLanguage], color: getPointColor(), active: false, highlighted: false }, // Unten Mitte
         ]);
 
         /**
@@ -366,6 +368,7 @@ export default defineComponent({
                 // TODO Dynamic Positioning depending on language
                 // WORKAROUND: only the object label adjusted
                 if (point.id === "rules" || point.id === "community" || point.id === "division_of_labour") ctx.fillText(point.label, point.x, point.y + triangleHeight / 20);
+
                 if (point.id === "instruments") ctx.fillText(point.label, point.x, point.y - triangleHeight / 30);
                 if (point.id === "subject") ctx.fillText(point.label, point.x - triangleWidth / 30, point.y - triangleHeight / 30);
                 if (point.id === "object") {
@@ -399,13 +402,13 @@ export default defineComponent({
 
             hoverPosition.value = { x: event.clientX, y: event.clientY };
 
-            let foundPoint: {label: string, content: Array<Objective>} | null = null;
+            let foundPoint: { label: string, tooltip: String, content: Array<Objective> } | null = null;
 
             // Check if a point is hovered -> if yes, set foundPoint to the hovered point, set hoveredPosition for hoverPopUp
             points.value.forEach((point) => {
                 const distance = Math.sqrt((mouseX - point.x) ** 2 + (mouseY - point.y) ** 2);
                 if (distance < triangleHeight / 40) {
-                    foundPoint = { label: point.label, content: activityData.value[point.id] || [] };
+                    foundPoint = { label: point.label, tooltip: point.tooltip, content: activityData.value[point.id] || [] };
                 }
             });
 
@@ -482,12 +485,12 @@ export default defineComponent({
         watch(() => sessionStore.outdated, async () => {
             if (sessionStore.outdated) {
                 points = ref([
-                    { x: triangleWidth / 2, y: triangleHeight / 8, id: "instruments", label: activateTerms[sessionStore.activeLanguage].instruments, color: getPointColor(), active: false, highlighted: false }, // Ecke oben
-                    { x: triangleWidth / 8, y: (triangleHeight / 8) * 7, id: "rules", label: activateTerms[sessionStore.activeLanguage].rules, color: getPointColor(), active: false, highlighted: false }, // Ecke Links Unten
-                    { x: (triangleWidth / 8) * 7, y: (triangleHeight / 8) * 7, id: "division_of_labour", label: activateTerms[sessionStore.activeLanguage].division_of_labour, color: getPointColor(), active: false, highlighted: false }, // Ecke Rechts Unten
-                    { x: (triangleWidth / 16) * 5, y: triangleHeight / 2, id: "subject", label: activateTerms[sessionStore.activeLanguage].subject, color: getPointColor(), active: false, highlighted: false }, // Links Mitte
-                    { x: (triangleWidth / 16) * 11, y: triangleHeight / 2, id: "object", label: activateTerms[sessionStore.activeLanguage].object, color: getPointColor(), active: false, highlighted: false }, // Rechts Mitte
-                    { x: triangleWidth / 2, y: (triangleHeight / 8) * 7, id: "community", label: activateTerms[sessionStore.activeLanguage].community, color: getPointColor(), active: false, highlighted: false }, // Unten Mitte
+                    { x: triangleWidth / 2, y: triangleHeight / 8, id: "instruments", label: activateTerms[sessionStore.activeLanguage].instruments, tooltip: staticContent.hoverText.instruments[sessionStore.activeLanguage], color: getPointColor(), active: false, highlighted: false }, // Ecke oben
+                    { x: triangleWidth / 8, y: (triangleHeight / 8) * 7, id: "rules", label: activateTerms[sessionStore.activeLanguage].rules, tooltip: staticContent.hoverText.rules[sessionStore.activeLanguage], color: getPointColor(), active: false, highlighted: false }, // Ecke Links Unten
+                    { x: (triangleWidth / 8) * 7, y: (triangleHeight / 8) * 7, id: "division_of_labour", label: activateTerms[sessionStore.activeLanguage].division_of_labour, tooltip: staticContent.hoverText.division_of_labour[sessionStore.activeLanguage], color: getPointColor(), active: false, highlighted: false }, // Ecke Rechts Unten
+                    { x: (triangleWidth / 16) * 5, y: triangleHeight / 2, id: "subject", label: activateTerms[sessionStore.activeLanguage].subject, tooltip: staticContent.hoverText.subject[sessionStore.activeLanguage], color: getPointColor(), active: false, highlighted: false }, // Links Mitte
+                    { x: (triangleWidth / 16) * 11, y: triangleHeight / 2, id: "object", label: activateTerms[sessionStore.activeLanguage].object, tooltip: staticContent.hoverText.object[sessionStore.activeLanguage], color: getPointColor(), active: false, highlighted: false }, // Rechts Mitte
+                    { x: triangleWidth / 2, y: (triangleHeight / 8) * 7, id: "community", label: activateTerms[sessionStore.activeLanguage].community, tooltip: staticContent.hoverText.community[sessionStore.activeLanguage], color: getPointColor(), active: false, highlighted: false }, // Unten Mitte
                 ]);
                 activityData.value = await getActivityDetail(sessionStore.sessionActivity as Activity)
                 await conflictStore.refreshConflictList();
