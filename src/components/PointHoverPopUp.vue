@@ -13,6 +13,7 @@ import { defineProps, nextTick, ref, watch } from 'vue';
 const props = defineProps<{
   hoveredPoint: {
     label: string;
+    tooltip: string;
     content: Array<Objective>;
   };
   position: {
