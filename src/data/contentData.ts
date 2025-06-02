@@ -7,7 +7,7 @@ export const activateTerms: Record<LanguageCode, Record<string, string>> = {
     de: {
         subject: 'Subjekt',
         object: 'Ziel',
-        instruments: 'Instrumente',
+        instruments: 'Werkzeuge',
         community: 'Gemeinschaft',
         rules: 'Regeln',
         division_of_labour: 'Arbeitsteilung',
@@ -16,7 +16,7 @@ export const activateTerms: Record<LanguageCode, Record<string, string>> = {
     en: {
         subject: 'Subject',
         object: 'Object(ive)',
-        instruments: 'Instruments',
+        instruments: 'Tools',
         community: 'Community',
         rules: 'Rules',
         division_of_labour: 'Division of Labour',
@@ -25,7 +25,7 @@ export const activateTerms: Record<LanguageCode, Record<string, string>> = {
     sv: {
         subject: 'Ämne',
         object: 'Mål',
-        instruments: 'Instrument',
+        instruments: 'Verktyg',
         community: 'Gemenskap',
         rules: 'Regler',
         division_of_labour: 'Arbetsdelning',
@@ -472,6 +472,59 @@ export const staticContent = {
             en: "Save changes",
             de: "Änderungen speichern",
             sv: "Spara ändringar",
+        }
+    },
+    hoverText:{
+        object: {
+            en: "What is the goal of the action? Cure, Care, adressing psychosocial issues etc. \n \
+            On whom or what is this action taken? Patient, Relative, Blood sample etc.\n \
+            What action must be taken? Needs assessment, Reporting, Decisionmaking etc.",
+            de: "Was ist das Ziel der Maßnahme? Heilung, Pflege, Behandlung von psychosozialen Problemen usw.\n \
+            An wem oder was wird die Maßnahme durchgeführt? Patient, Angehöriger, Blutprobe usw. \n\
+            Welche Maßnahmen müssen ergriffen werden? Bedarfsanalyse, Berichterstattung, Entscheidungsfindung usw.",
+            sv: "Vad är målet med åtgärden? Bota, vårda, ta itu med psykosociala frågor etc. \n\
+            På vem eller vad vidtas denna åtgärd? Patient, anhörig, blodprov etc. \n\
+            Vilken åtgärd måste vidtas? Behovsbedömning, rapportering, beslutsfattande etc."
+        },
+        subject: {
+            en: "Who are the actors in the action? Family physician, Medical specialist, Nurse, Social worker, Carers etc.\n \
+            What perceptions, ideas and emotions are present in the actors? Uncertainty, Discomfort, Incompetence etc.",
+            de: "Wer sind die Akteure der Aktion? Hausarzt, Facharzt, Krankenschwester, Sozialarbeiter, Pflegepersonal usw.\n \
+            Welche Wahrnehmungen, Vorstellungen und Gefühle sind bei den Akteuren vorhanden? Ungewissheit, Unbehagen, Inkompetenz usw.",
+            sv: "Vilka är aktörerna i handlingen? Familjeläkare, specialistläkare, sjuksköterska, socialarbetare, anhörigvårdare etc. \n\
+            Vilka uppfattningar, idéer och känslor finns hos aktörerna? Osäkerhet, obehag, inkompetens etc."
+        },
+        community: {
+            en: "Where does the activity take place? Home, Nursing home, Hospital etc. \n\
+            What organisation do the actors belong to? General University hospital, Independent Municipal health care practice etc. \n\
+            What conditions characterise this setting? Immediate needs, Distance, Shortage etc.",
+            de: "Wo findet die Aktivität statt? Zuhause, Pflegeheim, Krankenhaus usw. \n\
+            Welcher Organisation gehören die Akteure an? Allgemein Universitätskrankenhaus, Selbstständige Gemeindepraxis für Gesundheitsversorgung usw. \n\
+            Welche Bedingungen kennzeichnen dieses Umfeld? Unmittelbarer Bedarf, Entfernung, Mangel usw.",
+            sv: "Var äger aktiviteten rum? Hem, vårdhem, sjukhus etc.\n\
+            Vilken organisation tillhör aktörerna? Allmän Universitetssjukhus, Oberoende Kommunal vårdcentral etc.\n\
+            Vilka förhållanden kännetecknar denna miljö? Omedelbara behov, Avstånd, Brist etc."
+        },
+        instruments: {
+            en: "What physical means are used in the action? Patient record, Chart, Medical device, Telephone etc. \n\
+            Which abstract resources are deployed in the action? Conviction, Proactivity, Instruction etc.",      
+            de: "Welche materiellen Mittel werden bei der Aktion eingesetzt? Patientenakte, Krankenblatt, medizinisches Gerät, Telefon usw. \n\
+            Welche abstrakten Mittel werden in der Aktion eingesetzt? Überzeugung, Proaktivität, Anweisung usw.",
+            sv: "Vilka fysiska medel används i åtgärden? Patientjournal, diagram, medicinsk utrustning, telefon etc. \n\
+            Vilka abstrakta resurser används i handlingen? Övertygelse, proaktivitet, instruktioner etc."
+        },
+        rules: {
+            en: "Which specific policies and rules are linked to the activity? Guidelines, Authorisation, Reimbursements, Co-location etc. \n\
+            What implicit mores and conventions are linked to the activity? Priority, Career track, Professional jargon etc.",
+            de: "Welche spezifischen Strategien und Regeln sind mit der Aktivität verbunden? Leitlinien, Genehmigungen, Erstattungen, gemeinsame Unterbringung usw. \n\
+            Welche impliziten Sitten und Gebräuche sind mit der Tätigkeit verbunden? Vorrang, Laufbahn, Fachjargon usw.",
+            sv: "Vilka specifika policyer och regler är kopplade till aktiviteten? Riktlinjer, auktorisation, ersättningar, samlokalisering etc. \n\
+            Vilka underförstådda sedvänjor och konventioner är kopplade till aktiviteten? Prioritet, karriärväg, professionell jargong etc."
+        },
+        division_of_labour: {
+            en:"How can different people contribute to the activity? Hierarchy, Role, Leadership, Territorial attitude etc.",
+            de: "Wie können verschiedene Personen zu der Aktivität beitragen? Hierarchie, Rolle, Führung, territoriales Verhalten usw.",
+            sv: "Hur kan olika personer bidra till aktiviteten? Hierarki, roll, ledarskap, territoriell attityd etc.",
         }
     }
 }
