@@ -5,7 +5,7 @@
 :561cfbf76edce93c24595517b6a048237b0e5401 a :Conflict ;
     :ConflictDescription "<p>A lot of physicians won’t say this out loud, but they don’t like attending family meetings about EOL care. I’ve seen as a resident or student, even though the staff person was responsible, they would say, ‘you guys go; I’m not coming,’ just because they don’t want to deal with it.</p>" ;
     :ConflictState "open" ;
-    :ConflictTitle "New Note" ;
+    :ConflictTitle "Responsibility" ;
     :CreationDate "2025-05-20T14:03:22.495Z" ;
     :HasParticipant :End_Of_Life_Conversation,
         :Hospital,
@@ -15,7 +15,7 @@
 :614a34f79eb0b21cb917c60daaf83616799501a0 a :Conflict ;
     :ConflictDescription "<p>Surgeons wanna fix things . . .. When it’s not obvious that surgery is futile and when there is still the potential for hope, . . . it’s difficult to know when it’s time to change the discourse</p>" ;
     :ConflictState "open" ;
-    :ConflictTitle "New Note" ;
+    :ConflictTitle "Culture" ;
     :CreationDate "2025-05-20T14:11:58.693Z" ;
     :HasParticipant :Culture,
         :End_Of_Life_Conversation,
