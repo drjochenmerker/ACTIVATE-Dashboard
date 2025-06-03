@@ -3,7 +3,7 @@ import { Objective } from '@/data/knowledge_graph/structures';
 //import { buildLanguageString } from '@/lib/utils';
 //import { useSessionStore } from '@/stores/sessionStore';
 import { useColorMode } from '@vueuse/core';
-import { defineProps, nextTick, ref, watch } from 'vue';
+import { defineProps, nextTick, ref, watch, computed } from 'vue';
 
 /**
  * Props of the PointHoverPopUp component
@@ -57,7 +57,14 @@ const updatePopupPosition = async (pos: { x: number; y: number }) => {
 
 watch(() => props.position, updatePopupPosition, { immediate: true });
 
-
+const tooltipList = computed(() => {
+  if (!props.hoveredPoint?.tooltip) return [];
+  // Split by line breaks (handles both \n and \r\n), trim whitespace
+  return props.hoveredPoint.tooltip
+    .split(/\r?\n/)
+    .map(line => line.trim())
+    .filter(line => line.length > 0);
+});
 
 </script>
 
@@ -66,7 +73,11 @@ watch(() => props.position, updatePopupPosition, { immediate: true });
   <div ref="popupRef" class="popup" :class="{ 'popup-dark': mode === 'dark' }" :style="popupStyle">
     <b>{{ hoveredPoint.label }}:</b>
     <br>
-    <p>{{ hoveredPoint.tooltip }}</p>
+    <ul class="custom-list">
+      <li v-for="(item, idx) in tooltipList" :key="idx">
+        {{ item }}
+      </li>
+    </ul>
 
     <!-- TEMPORARY: not displaying the content list
     <ul class="custom-list">
@@ -90,6 +101,16 @@ watch(() => props.position, updatePopupPosition, { immediate: true });
   max-width: 350px;
   opacity: 0.9;
 }
+
+.popup ul {
+  padding-left: 20px;
+  margin: 0;
+}
+
+.popup li {
+  margin-bottom: 4px;
+}
+
 
 .popup-dark {
   color: #fff;
