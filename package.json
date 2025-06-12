@@ -31,18 +31,25 @@
         "vue-toastification": "^2.0.0-rc.5"
     },
     "devDependencies": {
+        "@eslint/js": "^9.28.0",
         "@iconify-json/radix-icons": "^1.2.1",
         "@iconify/vue": "^4.2.0",
         "@types/node": "^22.10.1",
         "@types/object-hash": "^3.0.6",
         "@types/quill": "^2.0.14",
+        "@typescript-eslint/eslint-plugin": "^8.33.1",
+        "@typescript-eslint/parser": "^8.33.1",
         "@vitejs/plugin-vue": "^5.2.1",
         "@vue/runtime-core": "^3.5.13",
         "autoprefixer": "^10.4.20",
+        "eslint": "^9.28.0",
+        "eslint-plugin-vue": "^10.2.0",
         "postcss": "^8.4.49",
         "prettier": "^3.4.2",
+        "sonar-scanner": "^3.1.0",
         "tailwindcss": "^3.4.16",
         "typescript": "~5.6.2",
+        "typescript-eslint": "^8.33.1",
         "vite": "^6.0.1",
         "vue-tsc": "^2.1.10"
     }

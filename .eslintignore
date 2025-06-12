@@ -1,0 +1,4 @@
+# .eslintignore
+src/components/ui/**
+dist/
+node_modules/
