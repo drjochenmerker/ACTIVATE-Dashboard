@@ -1,0 +1,372 @@
+{
+  "output": [
+    {
+      "info": "<bg_info>Analyzing Vue, TS and JS files in src/components</bg_info>"
+    },
+    {
+      "info": "👉 Using configuration from <bg_info>vue-mess-detector.json</bg_info>"
+    },
+    {
+      "info": "      Project type: <bg_info>Vue</bg_info>"
+    },
+    {
+      "info": "      Applying 0 rulesets: N/A\n      Applying 1 individual rules: <bg_info>cyclomaticComplexity</bg_info>\n      Ignoring 6 rulesets: <bg_info>vue-caution, vue-essential, vue-recommended, vue-strong, rrd, security</bg_info>\n      Ignoring 52 individual rules: <bg_info>elementSelectorsWithScoped, implicitParentChildCommunication, globalStyle, simpleProp, singleNameComponent, vforNoKey, vifWithVfor, elementAttributeOrder, topLevelElementOrder, componentFilenameCasing, componentFiles, directiveShorthands, fullWordComponentName, multiAttributeElements, propNameCasing, quotedAttributeValues, selfClosingComponents, simpleComputed, templateSimpleExpression, amountOfComments, bigVif, bigVshow, complicatedConditions, computedSideEffects, deepIndentation, elseCondition, functionSize, htmlImageElements, htmlLink, hugeFiles, ifWithoutCurlyBraces, magicNumbers, nestedTernary, noDirectDomAccess, noImportant, noInlineStyles, noPropDestructure, noSkippedTests, noTsLang, noVarDeclaration, parameterCount, plainScript, propsDrilling, repeatedCss, scriptLength, shortVariableName, tooManyProps, vForWithIndexKey, vForExpression, zeroLengthComparison, apiWithoutMethod, rateLimiter</bg_info>\n      Ignoring file-specific rules: \n      Excluding src/components/ui\n      Output level <bg_info>all</bg_info>\n      Grouping by <bg_info>rule</bg_info>\n      Sorting <bg_info>desc</bg_info>"
+    },
+    {
+      "info": "Analyzing src/components/ActivityCard.vue..."
+    },
+    {
+      "info": "Analyzing src/components/ActivityDiagram.vue..."
+    },
+    {
+      "info": "Analyzing src/components/ActivityFormPopup.vue..."
+    },
+    {
+      "info": "Analyzing src/components/ConflictHoverPopUp.vue..."
+    },
+    {
+      "info": "Analyzing src/components/ContentTemplate.vue..."
+    },
+    {
+      "info": "Analyzing src/components/Dropdown.vue..."
+    },
+    {
+      "info": "Analyzing src/components/Editor.vue..."
+    },
+    {
+      "info": "Analyzing src/components/EntityAdditionDialog.vue..."
+    },
+    {
+      "info": "Analyzing src/components/LanguageSelect.vue..."
+    },
+    {
+      "info": "Analyzing src/components/LogoutButton.vue..."
+    },
+    {
+      "info": "Analyzing src/components/MainLayout.vue..."
+    },
+    {
+      "info": "Analyzing src/components/NavBar.vue..."
+    },
+    {
+      "info": "Analyzing src/components/NoteCard.vue..."
+    },
+    {
+      "info": "Analyzing src/components/NoteCardMisc.vue..."
+    },
+    {
+      "info": "Analyzing src/components/PagePlaceholder.vue..."
+    },
+    {
+      "info": "Analyzing src/components/PointHoverPopUp.vue..."
+    },
+    {
+      "info": "Analyzing src/components/RDFAdditionDropdown.vue..."
+    },
+    {
+      "info": "Analyzing src/components/RecursiveSelect.vue..."
+    },
+    {
+      "info": "Analyzing src/components/ReplyCard.vue..."
+    },
+    {
+      "info": "Analyzing src/components/ThemeSwitchButton.vue..."
+    },
+    {
+      "info": "Analyzing src/components/TripleAdditionDialog.vue..."
+    },
+    {
+      "info": "Found <bg_info>21</bg_info> files"
+    }
+  ],
+  "codeHealthOutput": [
+    {
+      "info": "Found <bg_err>6 errors</bg_err>, and <bg_warn>0 warnings</bg_warn>, <bg_info>3,870 lines</bg_info> of code in <bg_info>21 files</bg_info>"
+    },
+    {
+      "info": "Code Health: [<bg_ok>____________________________________________________________</bg_ok><bg_warn></bg_warn><bg_err></bg_err>] 100%\n"
+    },
+    {
+      "info": "<bg_ok>Code health is GOOD: 100%</bg_ok>\n"
+    }
+  ],
+  "reportOutput": {
+    "<text_info>rrd ~ cyclomatic complexity</text_info>": [
+      {
+        "id": "src/components/ActivityDiagram.vue",
+        "description": "👉 <text_warn>Try to reduce complexity.</text_warn> See: https://vue-mess-detector.webmania.cc/rules/rrd/cyclomatic-complexity.html",
+        "message": "Cyclomatic complexity is <bg_err>very high (44)</bg_err> 🚨",
+        "level": "error"
+      },
+      {
+        "id": "src/components/Editor.vue",
+        "description": "👉 <text_warn>Try to reduce complexity.</text_warn> See: https://vue-mess-detector.webmania.cc/rules/rrd/cyclomatic-complexity.html",
+        "message": "Cyclomatic complexity is <bg_err>very high (20)</bg_err> 🚨",
+        "level": "error"
+      },
+      {
+        "id": "src/components/NoteCard.vue",
+        "description": "👉 <text_warn>Try to reduce complexity.</text_warn> See: https://vue-mess-detector.webmania.cc/rules/rrd/cyclomatic-complexity.html",
+        "message": "Cyclomatic complexity is <bg_err>very high (14)</bg_err> 🚨",
+        "level": "error"
+      },
+      {
+        "id": "src/components/NoteCardMisc.vue",
+        "description": "👉 <text_warn>Try to reduce complexity.</text_warn> See: https://vue-mess-detector.webmania.cc/rules/rrd/cyclomatic-complexity.html",
+        "message": "Cyclomatic complexity is <bg_err>very high (12)</bg_err> 🚨",
+        "level": "error"
+      },
+      {
+        "id": "src/components/ReplyCard.vue",
+        "description": "👉 <text_warn>Try to reduce complexity.</text_warn> See: https://vue-mess-detector.webmania.cc/rules/rrd/cyclomatic-complexity.html",
+        "message": "Cyclomatic complexity is <bg_err>very high (12)</bg_err> 🚨",
+        "level": "error"
+      },
+      {
+        "id": "src/components/TripleAdditionDialog.vue",
+        "description": "👉 <text_warn>Try to reduce complexity.</text_warn> See: https://vue-mess-detector.webmania.cc/rules/rrd/cyclomatic-complexity.html",
+        "message": "Cyclomatic complexity is <bg_err>very high (12)</bg_err> 🚨",
+        "level": "error"
+      }
+    ]
+  },
+  "codeHealth": {
+    "errors": 6,
+    "warnings": 0,
+    "linesCount": 3870,
+    "filesCount": 21,
+    "points": 100
+  }
+}
+{
+  "output": [
+    {
+      "info": "<bg_info>Analyzing Vue, TS and JS files in src/components</bg_info>"
+    },
+    {
+      "info": "👉 Using configuration from <bg_info>vue-mess-detector.json</bg_info>"
+    },
+    {
+      "info": "      Project type: <bg_info>Vue</bg_info>"
+    },
+    {
+      "info": "      Applying 0 rulesets: N/A\n      Applying 1 individual rules: <bg_info>cyclomaticComplexity</bg_info>\n      Ignoring 6 rulesets: <bg_info>vue-caution, vue-essential, vue-recommended, vue-strong, rrd, security</bg_info>\n      Ignoring 52 individual rules: <bg_info>elementSelectorsWithScoped, implicitParentChildCommunication, globalStyle, simpleProp, singleNameComponent, vforNoKey, vifWithVfor, elementAttributeOrder, topLevelElementOrder, componentFilenameCasing, componentFiles, directiveShorthands, fullWordComponentName, multiAttributeElements, propNameCasing, quotedAttributeValues, selfClosingComponents, simpleComputed, templateSimpleExpression, amountOfComments, bigVif, bigVshow, complicatedConditions, computedSideEffects, deepIndentation, elseCondition, functionSize, htmlImageElements, htmlLink, hugeFiles, ifWithoutCurlyBraces, magicNumbers, nestedTernary, noDirectDomAccess, noImportant, noInlineStyles, noPropDestructure, noSkippedTests, noTsLang, noVarDeclaration, parameterCount, plainScript, propsDrilling, repeatedCss, scriptLength, shortVariableName, tooManyProps, vForWithIndexKey, vForExpression, zeroLengthComparison, apiWithoutMethod, rateLimiter</bg_info>\n      Ignoring file-specific rules: \n      Excluding src/components/ui\n      Output level <bg_info>all</bg_info>\n      Grouping by <bg_info>rule</bg_info>\n      Sorting <bg_info>desc</bg_info>"
+    },
+    {
+      "info": "Analyzing src/components/ActivityCard.vue..."
+    },
+    {
+      "info": "Analyzing src/components/ActivityDiagram.vue..."
+    },
+    {
+      "info": "Analyzing src/components/ActivityFormPopup.vue..."
+    },
+    {
+      "info": "Analyzing src/components/ConflictHoverPopUp.vue..."
+    },
+    {
+      "info": "Analyzing src/components/ContentTemplate.vue..."
+    },
+    {
+      "info": "Analyzing src/components/Dropdown.vue..."
+    },
+    {
+      "info": "Analyzing src/components/Editor.vue..."
+    },
+    {
+      "info": "Analyzing src/components/EntityAdditionDialog.vue..."
+    },
+    {
+      "info": "Analyzing src/components/LanguageSelect.vue..."
+    },
+    {
+      "info": "Analyzing src/components/LogoutButton.vue..."
+    },
+    {
+      "info": "Analyzing src/components/MainLayout.vue..."
+    },
+    {
+      "info": "Analyzing src/components/NavBar.vue..."
+    },
+    {
+      "info": "Analyzing src/components/NoteCard.vue..."
+    },
+    {
+      "info": "Analyzing src/components/NoteCardMisc.vue..."
+    },
+    {
+      "info": "Analyzing src/components/PagePlaceholder.vue..."
+    },
+    {
+      "info": "Analyzing src/components/PointHoverPopUp.vue..."
+    },
+    {
+      "info": "Analyzing src/components/RDFAdditionDropdown.vue..."
+    },
+    {
+      "info": "Analyzing src/components/RecursiveSelect.vue..."
+    },
+    {
+      "info": "Analyzing src/components/ReplyCard.vue..."
+    },
+    {
+      "info": "Analyzing src/components/ThemeSwitchButton.vue..."
+    },
+    {
+      "info": "Analyzing src/components/TripleAdditionDialog.vue..."
+    },
+    {
+      "info": "Found <bg_info>21</bg_info> files"
+    }
+  ],
+  "codeHealthOutput": [
+    {
+      "info": "Found <bg_err>13 errors</bg_err>, and <bg_warn>0 warnings</bg_warn>, <bg_info>3,870 lines</bg_info> of code in <bg_info>21 files</bg_info>"
+    },
+    {
+      "info": "Code Health: [<bg_ok>____________________________________________________________</bg_ok><bg_warn></bg_warn><bg_err></bg_err>] 100%\n"
+    },
+    {
+      "info": "<bg_ok>Code health is GOOD: 100%</bg_ok>\n"
+    }
+  ],
+  "reportOutput": {
+    "<text_info>rrd ~ cyclomatic complexity</text_info>": [
+      {
+        "id": "src/components/ActivityCard.vue",
+        "description": "👉 <text_warn>Try to reduce complexity.</text_warn> See: https://vue-mess-detector.webmania.cc/rules/rrd/cyclomatic-complexity.html",
+        "message": "Cyclomatic complexity is <bg_err>very high (3)</bg_err> 🚨",
+        "level": "error"
+      },
+      {
+        "id": "src/components/ActivityDiagram.vue",
+        "description": "👉 <text_warn>Try to reduce complexity.</text_warn> See: https://vue-mess-detector.webmania.cc/rules/rrd/cyclomatic-complexity.html",
+        "message": "Cyclomatic complexity is <bg_err>very high (44)</bg_err> 🚨",
+        "level": "error"
+      },
+      {
+        "id": "src/components/ConflictHoverPopUp.vue",
+        "description": "👉 <text_warn>Try to reduce complexity.</text_warn> See: https://vue-mess-detector.webmania.cc/rules/rrd/cyclomatic-complexity.html",
+        "message": "Cyclomatic complexity is <bg_err>very high (2)</bg_err> 🚨",
+        "level": "error"
+      },
+      {
+        "id": "src/components/Dropdown.vue",
+        "description": "👉 <text_warn>Try to reduce complexity.</text_warn> See: https://vue-mess-detector.webmania.cc/rules/rrd/cyclomatic-complexity.html",
+        "message": "Cyclomatic complexity is <bg_err>very high (3)</bg_err> 🚨",
+        "level": "error"
+      },
+      {
+        "id": "src/components/Editor.vue",
+        "description": "👉 <text_warn>Try to reduce complexity.</text_warn> See: https://vue-mess-detector.webmania.cc/rules/rrd/cyclomatic-complexity.html",
+        "message": "Cyclomatic complexity is <bg_err>very high (20)</bg_err> 🚨",
+        "level": "error"
+      },
+      {
+        "id": "src/components/EntityAdditionDialog.vue",
+        "description": "👉 <text_warn>Try to reduce complexity.</text_warn> See: https://vue-mess-detector.webmania.cc/rules/rrd/cyclomatic-complexity.html",
+        "message": "Cyclomatic complexity is <bg_err>very high (5)</bg_err> 🚨",
+        "level": "error"
+      },
+      {
+        "id": "src/components/MainLayout.vue",
+        "description": "👉 <text_warn>Try to reduce complexity.</text_warn> See: https://vue-mess-detector.webmania.cc/rules/rrd/cyclomatic-complexity.html",
+        "message": "Cyclomatic complexity is <bg_err>very high (1)</bg_err> 🚨",
+        "level": "error"
+      },
+      {
+        "id": "src/components/NoteCard.vue",
+        "description": "👉 <text_warn>Try to reduce complexity.</text_warn> See: https://vue-mess-detector.webmania.cc/rules/rrd/cyclomatic-complexity.html",
+        "message": "Cyclomatic complexity is <bg_err>very high (14)</bg_err> 🚨",
+        "level": "error"
+      },
+      {
+        "id": "src/components/NoteCardMisc.vue",
+        "description": "👉 <text_warn>Try to reduce complexity.</text_warn> See: https://vue-mess-detector.webmania.cc/rules/rrd/cyclomatic-complexity.html",
+        "message": "Cyclomatic complexity is <bg_err>very high (12)</bg_err> 🚨",
+        "level": "error"
+      },
+      {
+        "id": "src/components/PointHoverPopUp.vue",
+        "description": "👉 <text_warn>Try to reduce complexity.</text_warn> See: https://vue-mess-detector.webmania.cc/rules/rrd/cyclomatic-complexity.html",
+        "message": "Cyclomatic complexity is <bg_err>very high (2)</bg_err> 🚨",
+        "level": "error"
+      },
+      {
+        "id": "src/components/RDFAdditionDropdown.vue",
+        "description": "👉 <text_warn>Try to reduce complexity.</text_warn> See: https://vue-mess-detector.webmania.cc/rules/rrd/cyclomatic-complexity.html",
+        "message": "Cyclomatic complexity is <bg_err>very high (5)</bg_err> 🚨",
+        "level": "error"
+      },
+      {
+        "id": "src/components/ReplyCard.vue",
+        "description": "👉 <text_warn>Try to reduce complexity.</text_warn> See: https://vue-mess-detector.webmania.cc/rules/rrd/cyclomatic-complexity.html",
+        "message": "Cyclomatic complexity is <bg_err>very high (12)</bg_err> 🚨",
+        "level": "error"
+      },
+      {
+        "id": "src/components/TripleAdditionDialog.vue",
+        "description": "👉 <text_warn>Try to reduce complexity.</text_warn> See: https://vue-mess-detector.webmania.cc/rules/rrd/cyclomatic-complexity.html",
+        "message": "Cyclomatic complexity is <bg_err>very high (12)</bg_err> 🚨",
+        "level": "error"
+      }
+    ]
+  },
+  "codeHealth": {
+    "errors": 13,
+    "warnings": 0,
+    "linesCount": 3870,
+    "filesCount": 21,
+    "points": 100
+  }
+}
+{
+  "output": [
+    {
+      "info": "<bg_info>Analyzing Vue, TS and JS files in src/components/ComplexityTest.vue</bg_info>"
+    },
+    {
+      "info": "👉 Using configuration from <bg_info>vue-mess-detector.json</bg_info>"
+    },
+    {
+      "info": "      Project type: <bg_info>Vue</bg_info>"
+    },
+    {
+      "info": "      Applying 0 rulesets: N/A\n      Applying 1 individual rules: <bg_info>cyclomaticComplexity</bg_info>\n      Ignoring 6 rulesets: <bg_info>vue-caution, vue-essential, vue-recommended, vue-strong, rrd, security</bg_info>\n      Ignoring 52 individual rules: <bg_info>elementSelectorsWithScoped, implicitParentChildCommunication, globalStyle, simpleProp, singleNameComponent, vforNoKey, vifWithVfor, elementAttributeOrder, topLevelElementOrder, componentFilenameCasing, componentFiles, directiveShorthands, fullWordComponentName, multiAttributeElements, propNameCasing, quotedAttributeValues, selfClosingComponents, simpleComputed, templateSimpleExpression, amountOfComments, bigVif, bigVshow, complicatedConditions, computedSideEffects, deepIndentation, elseCondition, functionSize, htmlImageElements, htmlLink, hugeFiles, ifWithoutCurlyBraces, magicNumbers, nestedTernary, noDirectDomAccess, noImportant, noInlineStyles, noPropDestructure, noSkippedTests, noTsLang, noVarDeclaration, parameterCount, plainScript, propsDrilling, repeatedCss, scriptLength, shortVariableName, tooManyProps, vForWithIndexKey, vForExpression, zeroLengthComparison, apiWithoutMethod, rateLimiter</bg_info>\n      Ignoring file-specific rules: \n      Excluding src/components/ui\n      Output level <bg_info>all</bg_info>\n      Grouping by <bg_info>rule</bg_info>\n      Sorting <bg_info>desc</bg_info>"
+    },
+    {
+      "info": "Analyzing src/components/ComplexityTest.vue..."
+    },
+    {
+      "info": "Found <bg_info>1</bg_info> files"
+    }
+  ],
+  "codeHealthOutput": [
+    {
+      "info": "Found <bg_err>1 errors</bg_err>, and <bg_warn>0 warnings</bg_warn>, <bg_info>52 lines</bg_info> of code in <bg_info>1 files</bg_info>"
+    },
+    {
+      "info": "Code Health: [<bg_ok>___________________________________________________________</bg_ok><bg_warn></bg_warn><bg_err>_</bg_err>] 98%\n"
+    },
+    {
+      "info": "<bg_ok>Code health is GOOD: 98%</bg_ok>\n"
+    }
+  ],
+  "reportOutput": {
+    "<text_info>rrd ~ cyclomatic complexity</text_info>": [
+      {
+        "id": "src/components/ComplexityTest.vue",
+        "description": "👉 <text_warn>Try to reduce complexity.</text_warn> See: https://vue-mess-detector.webmania.cc/rules/rrd/cyclomatic-complexity.html",
+        "message": "Cyclomatic complexity is <bg_err>very high (4)</bg_err> 🚨",
+        "level": "error"
+      }
+    ]
+  },
+  "codeHealth": {
+    "errors": 1,
+    "warnings": 0,
+    "linesCount": 52,
+    "filesCount": 1,
+    "points": 98
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "apply": "cyclomaticComplexity",
+  "path": "src/components/complexity-tests",
+  "exclude": "src/components/ui",
+  "output": "table",
+   "override": {
+    "complexityModerate": 0
+  }
+}
