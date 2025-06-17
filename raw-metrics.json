@@ -1,0 +1,1488 @@
+[44mAnalyzing Vue, TS and JS files in ./[0m
+👉 Using configuration from [44mvue-mess-detector.json[0m
+      Project type: [44mVue[0m
+      Applying 6 rulesets: [44mrrd, security, vue-caution, vue-essential, vue-recommended, vue-strong[0m
+      Applying 53 individual rules: [44mamountOfComments, apiWithoutMethod, bigVif, bigVshow, complicatedConditions, componentFilenameCasing, componentFiles, computedSideEffects, cyclomaticComplexity, deepIndentation, directiveShorthands, elementAttributeOrder, elementSelectorsWithScoped, elseCondition, fullWordComponentName, functionSize, globalStyle, htmlImageElements, htmlLink, hugeFiles, ifWithoutCurlyBraces, implicitParentChildCommunication, magicNumbers, multiAttributeElements, nestedTernary, noDirectDomAccess, noImportant, noInlineStyles, noPropDestructure, noSkippedTests, noTsLang, noVarDeclaration, parameterCount, plainScript, propNameCasing, propsDrilling, quotedAttributeValues, rateLimiter, repeatedCss, scriptLength, selfClosingComponents, shortVariableName, simpleComputed, simpleProp, singleNameComponent, templateSimpleExpression, tooManyProps, topLevelElementOrder, vForExpression, vForWithIndexKey, vforNoKey, vifWithVfor, zeroLengthComparison[0m
+      Ignoring 0 rulesets: N/A
+      Ignoring 0 individual rules: N/A
+      Ignoring file-specific rules: 
+      Excluding node_modules/**,dist/**,src/components/ui/**
+      Output level [44mall[0m
+      Grouping by [44mfile[0m
+      Sorting [44mdesc[0m
+Analyzing aggregate-vmd.js...
+Analyzing package.json...
+Analyzing postcss.config.js...
+Analyzing src/App.vue...
+Analyzing src/components/ActivityCard.vue...
+Analyzing src/components/ActivityDiagram.vue...
+Analyzing src/components/ActivityFormPopup.vue...
+Analyzing src/components/ConflictHoverPopUp.vue...
+Analyzing src/components/ContentTemplate.vue...
+Analyzing src/components/Dropdown.vue...
+Analyzing src/components/Editor.vue...
+Analyzing src/components/EntityAdditionDialog.vue...
+Analyzing src/components/LanguageSelect.vue...
+Analyzing src/components/LogoutButton.vue...
+Analyzing src/components/MainLayout.vue...
+Analyzing src/components/NavBar.vue...
+Analyzing src/components/NoteCard.vue...
+Analyzing src/components/NoteCardMisc.vue...
+Analyzing src/components/PagePlaceholder.vue...
+Analyzing src/components/PointHoverPopUp.vue...
+Analyzing src/components/RDFAdditionDropdown.vue...
+Analyzing src/components/RecursiveSelect.vue...
+Analyzing src/components/ReplyCard.vue...
+Analyzing src/components/ThemeSwitchButton.vue...
+Analyzing src/components/TripleAdditionDialog.vue...
+Analyzing src/composables/calculateConflictPositions.ts...
+Analyzing src/data/contentData.ts...
+Analyzing src/data/knowledge_graph/read_operations.ts...
+Analyzing src/data/knowledge_graph/structures.ts...
+Analyzing src/data/knowledge_graph/utils.ts...
+Analyzing src/data/knowledge_graph/write_operations.ts...
+Analyzing src/data/utils.ts...
+Analyzing src/lib/utils.ts...
+Analyzing src/main.ts...
+Analyzing src/router/index.ts...
+Analyzing src/stores/activityPointsStore.ts...
+Analyzing src/stores/activityStore.ts...
+Analyzing src/stores/conflictsStore.ts...
+Analyzing src/stores/sessionStore.ts...
+Analyzing src/views/ContentPage.vue...
+Analyzing src/views/HomePage.vue...
+Analyzing src/views/StartPage.vue...
+Analyzing src/vite-env.d.ts...
+Analyzing src/vue-shim.d.ts...
+Analyzing tailwind.config.js...
+Analyzing vite.config.ts...
+Found [44m46[0m files
+
+- [36m ]8;;file:///home/felix/Dokumente/mthesis/codebases/activate/src/components/NoteCard.vue\src/components/NoteCard.vue]8;;\[0m
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<div>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<button>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<div>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<div>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<span>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<div>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<div>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #6 [43mstaticContent.terms.author[sessionStore.activeLanguage][0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #11 [43mstaticContent.terms.conflictStatus.open[sessionStore.activeLanguage][0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #12 [43mstaticContent.terms.conflictStatus.inDiscussion[sessionStore.activeLanguage][0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #13 [43mstaticContent.terms.conflictStatus.resolved[sessionStore.activeLanguage][0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #32 [43mactivateTerms[sessionStore.activeLanguage][type][0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #35 [43mbuildLanguageString(participant, sessionStore.activeLanguage, true)[0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #48 [43mstaticContent.noteCards.addComment[sessionStore.activeLanguage][0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #54 [43mstaticContent.noteCards.save[sessionStore.activeLanguage][0m 🚨
+
+   [36mvue-caution ~ element selectors with scoped[0m
+   👉 [33mPrefer class selectors over element selectors in scoped styles, because large numbers of element selectors are slow.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-caution/element-selectors-with-scoped.html
+   [43m(button)[0m 🚨
+
+   [36mvue-caution ~ element selectors with scoped[0m
+   👉 [33mPrefer class selectors over element selectors in scoped styles, because large numbers of element selectors are slow.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-caution/element-selectors-with-scoped.html
+   [43m(input)[0m 🚨
+
+   [36mvue-caution ~ element selectors with scoped[0m
+   👉 [33mPrefer class selectors over element selectors in scoped styles, because large numbers of element selectors are slow.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-caution/element-selectors-with-scoped.html
+   [43m(input)[0m 🚨
+
+   [36mvue-caution ~ element selectors with scoped[0m
+   👉 [33mPrefer class selectors over element selectors in scoped styles, because large numbers of element selectors are slow.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-caution/element-selectors-with-scoped.html
+   [43m(textarea)[0m 🚨
+
+   [36mvue-caution ~ element selectors with scoped[0m
+   👉 [33mPrefer class selectors over element selectors in scoped styles, because large numbers of element selectors are slow.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-caution/element-selectors-with-scoped.html
+   [43m(header)[0m 🚨
+
+   [36mvue-caution ~ element selectors with scoped[0m
+   👉 [33mPrefer class selectors over element selectors in scoped styles, because large numbers of element selectors are slow.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-caution/element-selectors-with-scoped.html
+   [43m(title)[0m 🚨
+
+   [36mvue-caution ~ element selectors with scoped[0m
+   👉 [33mPrefer class selectors over element selectors in scoped styles, because large numbers of element selectors are slow.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-caution/element-selectors-with-scoped.html
+   [43m(select)[0m 🚨
+
+   [36mvue-caution ~ element selectors with scoped[0m
+   👉 [33mPrefer class selectors over element selectors in scoped styles, because large numbers of element selectors are slow.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-caution/element-selectors-with-scoped.html
+   [43m(select)[0m 🚨
+
+   [36mvue-caution ~ element selectors with scoped[0m
+   👉 [33mPrefer class selectors over element selectors in scoped styles, because large numbers of element selectors are slow.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-caution/element-selectors-with-scoped.html
+   [43m(title)[0m 🚨
+
+   [36mrrd ~ amount of comments[0m
+   👉 [33mlots of comments found[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/amount-of-comments.html
+   The script block contains 33.33% comments, which exceeds the limit of 30%. 🚨
+
+   [36mrrd ~ cyclomatic complexity[0m
+   👉 [33mTry to reduce complexity.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/cyclomatic-complexity.html
+   Cyclomatic complexity is [43mhigh (14)[0m 🚨
+
+   [36mrrd ~ computed side effects[0m
+   👉 [33mAvoid side effects in computed properties. Computed properties should only derive and return a value.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/computed-side-effects.html
+   line #90 side effect detected in computed property [41m(const groups: Record)[0m 🚨
+
+   [36mrrd ~ function size[0m
+   👉 [33mFunctions must be shorter than 20 lines.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/function-size.html
+   function [43m(saveReply#110)[0m is too long: [43m20 lines[0m 🚨
+
+   [36mrrd ~ if without curly braces[0m
+   👉 [33mAll if statements must be enclosed in curly braces for better readability and maintainability.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/if-without-curly-braces.html
+   line #111 if statement without curly braces: [41mif (!newReplyText.value[conflictId]) return;[0m 🚨
+
+   [36mrrd ~ VFor With Index Key[0m
+   👉 [33mAvoid using index as key in v-for loops.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/v-for-with-index-key.html
+   line #27 [43mindex is being used as :key in v-for[0m 🚨
+
+
+- [36m ]8;;file:///home/felix/Dokumente/mthesis/codebases/activate/src/components/Editor.vue\src/components/Editor.vue]8;;\[0m
+   [36mvue-essential ~ single name component[0m
+   👉 [33mRename the component to use multi-word name.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-essential/single-name-component.html
+   Component name is [41msingle word[0m 🚨
+
+   [36mvue-essential ~ global style[0m
+   👉 [33mUse <style scoped>.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-essential/global-style.html
+   [41mglobal style[0m used 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<button>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<div>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<Dropdown>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<input>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<div>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<input>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<Button>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #5 [43mthis.staticContent.editor.header[this.sessionStore.activeLanguage] ||[0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #28 [43mthis.staticContent.editor.addTitle[this.sessionStore.activeLanguage] || this.staticContent.editor.addTitle.en[0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #42 [43mthis.staticContent.editor.anonymous[this.sessionStore.activeLanguage] || this.staticContent.editor.anonymous.en[0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #48 [43mthis.staticContent.terms.done[this.sessionStore.activeLanguage] || this.staticContent.terms.done.en[0m 🚨
+
+   [36mvue-caution ~ implicit parent-child communication[0m
+   👉 [33mAvoid implicit parent-child communication to maintain clear and predictable component behavior.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-caution/implicit-parent-child-communication.html
+   line #270 [43m($parent)[0m 🚨
+
+   [36mvue-caution ~ element selectors with scoped[0m
+   👉 [33mPrefer class selectors over element selectors in scoped styles, because large numbers of element selectors are slow.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-caution/element-selectors-with-scoped.html
+   [43m(input)[0m 🚨
+
+   [36mvue-caution ~ element selectors with scoped[0m
+   👉 [33mPrefer class selectors over element selectors in scoped styles, because large numbers of element selectors are slow.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-caution/element-selectors-with-scoped.html
+   [43m(input)[0m 🚨
+
+   [36mvue-caution ~ element selectors with scoped[0m
+   👉 [33mPrefer class selectors over element selectors in scoped styles, because large numbers of element selectors are slow.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-caution/element-selectors-with-scoped.html
+   [43m(button)[0m 🚨
+
+   [36mvue-caution ~ element selectors with scoped[0m
+   👉 [33mPrefer class selectors over element selectors in scoped styles, because large numbers of element selectors are slow.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-caution/element-selectors-with-scoped.html
+   [43m(input)[0m 🚨
+
+   [36mvue-caution ~ element selectors with scoped[0m
+   👉 [33mPrefer class selectors over element selectors in scoped styles, because large numbers of element selectors are slow.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-caution/element-selectors-with-scoped.html
+   [43m(li)[0m 🚨
+
+   [36mvue-caution ~ element selectors with scoped[0m
+   👉 [33mPrefer class selectors over element selectors in scoped styles, because large numbers of element selectors are slow.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-caution/element-selectors-with-scoped.html
+   [43m(button)[0m 🚨
+
+   [36mvue-caution ~ element selectors with scoped[0m
+   👉 [33mPrefer class selectors over element selectors in scoped styles, because large numbers of element selectors are slow.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-caution/element-selectors-with-scoped.html
+   [43m(ul)[0m 🚨
+
+   [36mrrd ~ cyclomatic complexity[0m
+   👉 [33mTry to reduce complexity.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/cyclomatic-complexity.html
+   Cyclomatic complexity is [43mhigh (20)[0m 🚨
+
+   [36mrrd ~ else conditions[0m
+   👉 [33mTry to rewrite the conditions in a way that the else clause is not necessary.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/else-condition.html
+   else clauses found [41m(1)[0m 🚨
+
+   [36mrrd ~ no direct dom access[0m
+   👉 [33mAvoid direct DOM manipulation in Vue components. Use refs or Vue's template syntax instead.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/no-direct-dom-access.html
+   line #269 [43mDirect DOM access detected: querySelector([0m 🚨
+
+   [36mrrd ~ no ts lang[0m
+   👉 [33mUse typescript instead of javascript.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/no-ts-lang.html
+   [43mcomponent uses js instead of ts[0m 🚨
+
+   [36mrrd ~ Plain <script> blocks[0m
+   👉 [33m Consider using <script setup> to leverage the new SFC <script> syntax.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/plain-script.html
+   [43mPlain <script> block[0m found 🚨
+
+   [36mrrd ~ Long <script> blocks[0m
+   👉 [33mTry to refactor out the logic into composable functions or other files and keep the script block's length under 300 lines.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/script-length.html
+   [43m(303 lines)[0m 🚨
+
+
+- [36m ]8;;file:///home/felix/Dokumente/mthesis/codebases/activate/src/components/ActivityCard.vue\src/components/ActivityCard.vue]8;;\[0m
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<Accordion>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<AccordionItem>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<Button>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<p>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<Button>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<p>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<Button>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<Select>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<Label>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #35 [43mstaticContent.startPage.deleteActivity[sessionStore.activeLanguage][0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #38 [43mstaticContent.startPage.deleteConfirm[sessionStore.activeLanguage][0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #43 [43mstaticContent.terms.delete[sessionStore.activeLanguage][0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #59 [43mstaticContent.startPage.editSetting[sessionStore.activeLanguage][0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #62 [43mstaticContent.startPage.editTitle[sessionStore.activeLanguage][0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #70 [43mstaticContent.startPage.titleRequired[sessionStore.activeLanguage][0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #74 [43mstaticContent.startPage.newTitle[sessionStore.activeLanguage][0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #82 [43mstaticContent.startPage.saveChanges[sessionStore.activeLanguage][0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #101 [43mstaticContent.startPage.cloneActivity[sessionStore.activeLanguage][0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #111 [43mstaticContent.startPage.newDescription[sessionStore.activeLanguage][0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #119 [43mstaticContent.terms.clone[sessionStore.activeLanguage][0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #135 [43mstaticContent.startPage.roleSelect[sessionStore.activeLanguage][0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #138 [43mstaticContent.startPage.roleSelectText[sessionStore.activeLanguage][0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #160 [43mstaticContent.startPage.instructorMode[sessionStore.activeLanguage][0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #171 [43mstaticContent.startPage.activityRoleSelect[sessionStore.activeLanguage][0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #176 [43mstaticContent.startPage.startDebriefing[sessionStore.activeLanguage][0m 🚨
+
+   [36mvue-recommended ~ element attribute order[0m
+   👉 [33mThe attributes of elements (including components) should be ordered consistently.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-recommended/element-attribute-order.html
+   tag has attributes out of order [43m(Select)[0m 🚨
+
+   [36mvue-caution ~ element selectors with scoped[0m
+   👉 [33mPrefer class selectors over element selectors in scoped styles, because large numbers of element selectors are slow.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-caution/element-selectors-with-scoped.html
+   [43m(textarea)[0m 🚨
+
+
+- [36m ]8;;file:///home/felix/Dokumente/mthesis/codebases/activate/src/components/TripleAdditionDialog.vue\src/components/TripleAdditionDialog.vue]8;;\[0m
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<Button>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<button>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<p>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<p>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<p>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<p>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<Button>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ complicated computed property[0m
+   👉 [33mRefactor the computed properties to smaller ones.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/simple-computed.html
+   line #58 [43mcomputed[0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #3 [43mstaticContent.tripleAdd.addTripleText[sessionStore.activeLanguage][0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #3 [43mstaticContent.tripleAdd.addTripleText[sessionStore.activeLanguage][0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #16 [43mstaticContent.tripleAdd.alertDuplicateClass[sessionStore.activeLanguage][0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #19 [43mstaticContent.tripleAdd.alertNoExistingPredicates[sessionStore.activeLanguage][0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #22 [43mstaticContent.tripleAdd.alertNoValidParticipants[sessionStore.activeLanguage][0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #25 [43mstaticContent.tripleAdd.invalidPredicate[sessionStore.activeLanguage][0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #30 [43mstaticContent.tripleAdd.mainText[sessionStore.activeLanguage][0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #3 [43mstaticContent.tripleAdd.addTripleText[sessionStore.activeLanguage][0m 🚨
+
+   [36mvue-caution ~ element selectors with scoped[0m
+   👉 [33mPrefer class selectors over element selectors in scoped styles, because large numbers of element selectors are slow.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-caution/element-selectors-with-scoped.html
+   [43m(input)[0m 🚨
+
+   [36mrrd ~ big v-if[0m
+   👉 [33mBig v-if can be moved out to its own component.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/big-vif.html
+   line #6 [41mhas a v-if with 23 lines[0m 🚨
+
+   [36mrrd ~ cyclomatic complexity[0m
+   👉 [33mTry to reduce complexity.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/cyclomatic-complexity.html
+   Cyclomatic complexity is [43mhigh (12)[0m 🚨
+
+   [36mrrd ~ computed side effects[0m
+   👉 [33mAvoid side effects in computed properties. Computed properties should only derive and return a value.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/computed-side-effects.html
+   line #44 side effect detected in computed property [41m(return activityParti)[0m 🚨
+
+   [36mrrd ~ computed side effects[0m
+   👉 [33mAvoid side effects in computed properties. Computed properties should only derive and return a value.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/computed-side-effects.html
+   line #48 side effect detected in computed property [41m(return activityParti)[0m 🚨
+
+   [36mrrd ~ computed side effects[0m
+   👉 [33mAvoid side effects in computed properties. Computed properties should only derive and return a value.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/computed-side-effects.html
+   line #52 side effect detected in computed property [41m(const regex = /^[A-Z)[0m 🚨
+
+   [36mrrd ~ else conditions[0m
+   👉 [33mTry to rewrite the conditions in a way that the else clause is not necessary.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/else-condition.html
+   else clauses found [41m(3)[0m 🚨
+
+   [36mrrd ~ Zero Length Comparison[0m
+   👉 [33mIn JavaScript, any number greater than 0 is truthy, so you can directly use the length property.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/zero-length-comparison.html
+   line #116 zero length comparison found [43m(predicates.value)[0m 🚨
+
+
+- [36m ]8;;file:///home/felix/Dokumente/mthesis/codebases/activate/src/components/Dropdown.vue\src/components/Dropdown.vue]8;;\[0m
+   [36mvue-essential ~ single name component[0m
+   👉 [33mRename the component to use multi-word name.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-essential/single-name-component.html
+   Component name is [41msingle word[0m 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<div>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<div>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<span>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<ul>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<li>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<li>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #3 [43mactivateTerms[sessionStore.activeLanguage][label][0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #20 [43mstaticContent.errors.noElements[sessionStore.activeLanguage] || staticContent.errors.noElements.en[0m 🚨
+
+   [36mvue-recommended ~ element attribute order[0m
+   👉 [33mThe attributes of elements (including components) should be ordered consistently.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-recommended/element-attribute-order.html
+   tag has attributes out of order [43m(li)[0m 🚨
+
+   [36mvue-caution ~ element selectors with scoped[0m
+   👉 [33mPrefer class selectors over element selectors in scoped styles, because large numbers of element selectors are slow.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-caution/element-selectors-with-scoped.html
+   [43m(search)[0m 🚨
+
+   [36mvue-caution ~ element selectors with scoped[0m
+   👉 [33mPrefer class selectors over element selectors in scoped styles, because large numbers of element selectors are slow.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-caution/element-selectors-with-scoped.html
+   [43m(input)[0m 🚨
+
+   [36mvue-caution ~ element selectors with scoped[0m
+   👉 [33mPrefer class selectors over element selectors in scoped styles, because large numbers of element selectors are slow.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-caution/element-selectors-with-scoped.html
+   [43m(li)[0m 🚨
+
+   [36mrrd ~ amount of comments[0m
+   👉 [33mlots of comments found[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/amount-of-comments.html
+   The script block contains 35.50% comments, which exceeds the limit of 30%. 🚨
+
+   [36mrrd ~ no direct dom access[0m
+   👉 [33mAvoid direct DOM manipulation in Vue components. Use refs or Vue's template syntax instead.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/no-direct-dom-access.html
+   line #67 [43mDirect DOM access detected: querySelector([0m 🚨
+
+   [36mrrd ~ no ts lang[0m
+   👉 [33mUse typescript instead of javascript.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/no-ts-lang.html
+   [43mcomponent uses js instead of ts[0m 🚨
+
+   [36mrrd ~ Plain <script> blocks[0m
+   👉 [33m Consider using <script setup> to leverage the new SFC <script> syntax.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/plain-script.html
+   [43mPlain <script> block[0m found 🚨
+
+
+- [36m ]8;;file:///home/felix/Dokumente/mthesis/codebases/activate/src/components/EntityAdditionDialog.vue\src/components/EntityAdditionDialog.vue]8;;\[0m
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<Button>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<button>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<label>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<input>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<label>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<select>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<option>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<Button>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #3 [43mstaticContent.entitiyAdd.addButton[sessionStore.activeLanguage][0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #3 [43mstaticContent.entitiyAdd.addButton[sessionStore.activeLanguage][0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #17 [43mstaticContent.entitiyAdd.entityName[sessionStore.activeLanguage][0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #21 [43mstaticContent.entitiyAdd.activityClass[sessionStore.activeLanguage][0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #23 [43mstaticContent.entitiyAdd.selectClass[sessionStore.activeLanguage][0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #32 [43mstaticContent.terms.add[sessionStore.activeLanguage][0m 🚨
+
+   [36mvue-caution ~ element selectors with scoped[0m
+   👉 [33mPrefer class selectors over element selectors in scoped styles, because large numbers of element selectors are slow.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-caution/element-selectors-with-scoped.html
+   [43m(label)[0m 🚨
+
+   [36mvue-caution ~ element selectors with scoped[0m
+   👉 [33mPrefer class selectors over element selectors in scoped styles, because large numbers of element selectors are slow.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-caution/element-selectors-with-scoped.html
+   [43m(select)[0m 🚨
+
+
+- [36m ]8;;file:///home/felix/Dokumente/mthesis/codebases/activate/src/components/NoteCardMisc.vue\src/components/NoteCardMisc.vue]8;;\[0m
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<div>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<button>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<div>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<div>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<div>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-caution ~ element selectors with scoped[0m
+   👉 [33mPrefer class selectors over element selectors in scoped styles, because large numbers of element selectors are slow.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-caution/element-selectors-with-scoped.html
+   [43m(header)[0m 🚨
+
+   [36mvue-caution ~ element selectors with scoped[0m
+   👉 [33mPrefer class selectors over element selectors in scoped styles, because large numbers of element selectors are slow.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-caution/element-selectors-with-scoped.html
+   [43m(title)[0m 🚨
+
+   [36mvue-caution ~ element selectors with scoped[0m
+   👉 [33mPrefer class selectors over element selectors in scoped styles, because large numbers of element selectors are slow.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-caution/element-selectors-with-scoped.html
+   [43m(input)[0m 🚨
+
+   [36mvue-caution ~ element selectors with scoped[0m
+   👉 [33mPrefer class selectors over element selectors in scoped styles, because large numbers of element selectors are slow.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-caution/element-selectors-with-scoped.html
+   [43m(input)[0m 🚨
+
+   [36mvue-caution ~ element selectors with scoped[0m
+   👉 [33mPrefer class selectors over element selectors in scoped styles, because large numbers of element selectors are slow.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-caution/element-selectors-with-scoped.html
+   [43m(textarea)[0m 🚨
+
+   [36mvue-caution ~ element selectors with scoped[0m
+   👉 [33mPrefer class selectors over element selectors in scoped styles, because large numbers of element selectors are slow.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-caution/element-selectors-with-scoped.html
+   [43m(header)[0m 🚨
+
+   [36mrrd ~ amount of comments[0m
+   👉 [33mlots of comments found[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/amount-of-comments.html
+   The script block contains 39.90% comments, which exceeds the limit of 30%. 🚨
+
+   [36mrrd ~ cyclomatic complexity[0m
+   👉 [33mTry to reduce complexity.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/cyclomatic-complexity.html
+   Cyclomatic complexity is [43mhigh (12)[0m 🚨
+
+   [36mrrd ~ function size[0m
+   👉 [33mFunctions must be shorter than 20 lines.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/function-size.html
+   function [43m(saveReply#97)[0m is too long: [43m23 lines[0m 🚨
+
+   [36mrrd ~ if without curly braces[0m
+   👉 [33mAll if statements must be enclosed in curly braces for better readability and maintainability.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/if-without-curly-braces.html
+   line #114 if statement without curly braces: [41mif (!newReplyText.value[commentId]) return;[0m 🚨
+
+
+- [36m ]8;;file:///home/felix/Dokumente/mthesis/codebases/activate/src/components/ReplyCard.vue\src/components/ReplyCard.vue]8;;\[0m
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<div>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<button>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<div>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #17 [43mreplyInputVisible ? staticContent.noteCards.cancel[sessionStore.activeLanguage] :[0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #27 [43mstaticContent.noteCards.saveComment[sessionStore.activeLanguage][0m 🚨
+
+   [36mvue-caution ~ element selectors with scoped[0m
+   👉 [33mPrefer class selectors over element selectors in scoped styles, because large numbers of element selectors are slow.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-caution/element-selectors-with-scoped.html
+   [43m(head)[0m 🚨
+
+   [36mvue-caution ~ element selectors with scoped[0m
+   👉 [33mPrefer class selectors over element selectors in scoped styles, because large numbers of element selectors are slow.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-caution/element-selectors-with-scoped.html
+   [43m(input)[0m 🚨
+
+   [36mvue-caution ~ element selectors with scoped[0m
+   👉 [33mPrefer class selectors over element selectors in scoped styles, because large numbers of element selectors are slow.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-caution/element-selectors-with-scoped.html
+   [43m(textarea)[0m 🚨
+
+   [36mrrd ~ cyclomatic complexity[0m
+   👉 [33mTry to reduce complexity.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/cyclomatic-complexity.html
+   Cyclomatic complexity is [43mhigh (12)[0m 🚨
+
+   [36mrrd ~ else conditions[0m
+   👉 [33mTry to rewrite the conditions in a way that the else clause is not necessary.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/else-condition.html
+   else clauses found [41m(1)[0m 🚨
+
+   [36mrrd ~ function size[0m
+   👉 [33mFunctions must be shorter than 20 lines.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/function-size.html
+   function [43m(handleDelete#81)[0m is too long: [43m29 lines[0m 🚨
+
+   [36mrrd ~ if without curly braces[0m
+   👉 [33mAll if statements must be enclosed in curly braces for better readability and maintainability.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/if-without-curly-braces.html
+   line #47 if statement without curly braces: [41mif (!newReplyText.value) return;[0m 🚨
+
+   [36mrrd ~ if without curly braces[0m
+   👉 [33mAll if statements must be enclosed in curly braces for better readability and maintainability.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/if-without-curly-braces.html
+   line #114 if statement without curly braces: [41mif (!Array.isArray(props.parentComment.replies)) return;[0m 🚨
+
+   [36mrrd ~ Zero Length Comparison[0m
+   👉 [33mIn JavaScript, any number greater than 0 is truthy, so you can directly use the length property.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/zero-length-comparison.html
+   line #76 zero length comparison found [43m(comment.replies)[0m 🚨
+
+
+- [36m ]8;;file:///home/felix/Dokumente/mthesis/codebases/activate/src/views/StartPage.vue\src/views/StartPage.vue]8;;\[0m
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<img>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<p>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<textarea>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<p>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<ActivityCard>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #25 [43mstaticContent.startPage.createActivity[sessionStore.activeLanguage][0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #27 [43mstaticContent.startPage.enterTitle[sessionStore.activeLanguage][0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #33 [43mstaticContent.startPage.enterDescription[sessionStore.activeLanguage][0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #36 [43mstaticContent.startPage.defaultRole[sessionStore.activeLanguage][0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #43 [43mstaticContent.terms.done[sessionStore.activeLanguage][0m 🚨
+
+   [36mrrd ~ else conditions[0m
+   👉 [33mTry to rewrite the conditions in a way that the else clause is not necessary.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/else-condition.html
+   else clauses found [41m(2)[0m 🚨
+
+   [36mrrd ~ function size[0m
+   👉 [33mFunctions must be shorter than 20 lines.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/function-size.html
+   function [43m(addNewActivity#69)[0m is too long: [43m32 lines[0m 🚨
+
+   [36mrrd ~ if without curly braces[0m
+   👉 [33mAll if statements must be enclosed in curly braces for better readability and maintainability.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/if-without-curly-braces.html
+   line #84 if statement without curly braces: [41mif (hasError) return;[0m 🚨
+
+   [36mrrd ~ short variable names[0m
+   👉 [33mVariable names must have a minimum length of 4.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/short-variable-name.html
+   variable: [43m(res)[0m 🚨
+
+
+- [36m ]8;;file:///home/felix/Dokumente/mthesis/codebases/activate/src/components/ConflictHoverPopUp.vue\src/components/ConflictHoverPopUp.vue]8;;\[0m
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #12 [43mstaticContent.terms.author[sessionStore.activeLanguage][0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #14 [43mstaticContent.terms.timestamp[sessionStore.activeLanguage][0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #15 [43mhoveredConflictPoint.timestamp ? new Date(hoveredConflictPoint.timestamp).toLocaleString() : staticContent.errors.timestampLoad[sessionStore.activeLanguage][0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #17 [43mstaticContent.terms.status[sessionStore.activeLanguage][0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #17 [43mstaticContent.terms.conflictStatus[hoveredConflictPoint.status][sessionStore.activeLanguage][0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #19 [43mstaticContent.terms.participants[sessionStore.activeLanguage][0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #25 [43mbuildLanguageString(participant, sessionStore.activeLanguage, true)[0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #25 [43mactivateTerms[sessionStore.activeLanguage][participant.type][0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #29 [43mstaticContent.terms.replies[sessionStore.activeLanguage][0m 🚨
+
+   [36mrrd ~ amount of comments[0m
+   👉 [33mlots of comments found[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/amount-of-comments.html
+   The script block contains 31.98% comments, which exceeds the limit of 30%. 🚨
+
+   [36mrrd ~ big v-if[0m
+   👉 [33mBig v-if can be moved out to its own component.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/big-vif.html
+   line #18 [43mhas a v-if with 11 lines[0m 🚨
+
+   [36mrrd ~ magic numbers[0m
+   👉 [33mExtract magic numbers to a constant.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/magic-numbers.html
+   magic numbers found (line #37 [43mmagic number: 10[0m) 🚨
+
+   [36mrrd ~ no Inline Styles[0m
+   👉 [33mAvoid using inline styles. Consider moving the styles to a CSS or SCSS file, or use a Vue scoped style.[0m
+   line #5 [43mFound inline style: style="popupStyle"[0m 🚨
+
+   [36mrrd ~ VFor With Index Key[0m
+   👉 [33mAvoid using index as key in v-for loops.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/v-for-with-index-key.html
+   line #21 [43mindex is being used as :key in v-for[0m 🚨
+
+
+- [36m ]8;;file:///home/felix/Dokumente/mthesis/codebases/activate/src/components/RDFAdditionDropdown.vue\src/components/RDFAdditionDropdown.vue]8;;\[0m
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<div>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<h3>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<div>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<button>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<ul>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<li>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #12 [43mbuildLanguageString(option, sessionStore.activeLanguage, true) + (activateTerms[this.sessionStore.activeLanguage][option.type] ? " (" + activateTerms[this.sessionStore.activeLanguage][option.type] + ")" : "")[0m 🚨
+
+   [36mvue-caution ~ element selectors with scoped[0m
+   👉 [33mPrefer class selectors over element selectors in scoped styles, because large numbers of element selectors are slow.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-caution/element-selectors-with-scoped.html
+   [43m(input)[0m 🚨
+
+   [36mvue-caution ~ element selectors with scoped[0m
+   👉 [33mPrefer class selectors over element selectors in scoped styles, because large numbers of element selectors are slow.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-caution/element-selectors-with-scoped.html
+   [43m(input)[0m 🚨
+
+   [36mvue-caution ~ element selectors with scoped[0m
+   👉 [33mPrefer class selectors over element selectors in scoped styles, because large numbers of element selectors are slow.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-caution/element-selectors-with-scoped.html
+   [43m(li)[0m 🚨
+
+   [36mrrd ~ if without curly braces[0m
+   👉 [33mAll if statements must be enclosed in curly braces for better readability and maintainability.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/if-without-curly-braces.html
+   line #75 if statement without curly braces: [41mif (this.disabled) return;[0m 🚨
+
+   [36mrrd ~ no ts lang[0m
+   👉 [33mUse typescript instead of javascript.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/no-ts-lang.html
+   [43mcomponent uses js instead of ts[0m 🚨
+
+   [36mrrd ~ Plain <script> blocks[0m
+   👉 [33m Consider using <script setup> to leverage the new SFC <script> syntax.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/plain-script.html
+   [43mPlain <script> block[0m found 🚨
+
+
+- [36m ]8;;file:///home/felix/Dokumente/mthesis/codebases/activate/src/components/ActivityDiagram.vue\src/components/ActivityDiagram.vue]8;;\[0m
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<PointHoverPopUp>[0m should have its attributes on separate lines 🚨
+
+   [36mrrd ~ cyclomatic complexity[0m
+   👉 [33mTry to reduce complexity.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/cyclomatic-complexity.html
+   Cyclomatic complexity is [41mvery high (44)[0m 🚨
+
+   [36mrrd ~ else conditions[0m
+   👉 [33mTry to rewrite the conditions in a way that the else clause is not necessary.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/else-condition.html
+   else clauses found [41m(5)[0m 🚨
+
+   [36mrrd ~ function size[0m
+   👉 [33mFunctions must be shorter than 20 lines.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/function-size.html
+   function [43m(toggleTriangle#175)[0m is too long: [43m24 lines[0m 🚨
+
+   [36mrrd ~ function size[0m
+   👉 [33mFunctions must be shorter than 20 lines.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/function-size.html
+   function [43m(updateColors#207)[0m is too long: [43m37 lines[0m 🚨
+
+   [36mrrd ~ function size[0m
+   👉 [33mFunctions must be shorter than 20 lines.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/function-size.html
+   function [41m(draw#289)[0m is too long: [41m89 lines[0m 🚨
+
+   [36mrrd ~ function size[0m
+   👉 [33mFunctions must be shorter than 20 lines.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/function-size.html
+   function [43m(handleHover#393)[0m is too long: [43m32 lines[0m 🚨
+
+   [36mrrd ~ function size[0m
+   👉 [33mFunctions must be shorter than 20 lines.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/function-size.html
+   function [43m(handleClick#40)[0m is too long: [43m31 lines[0m 🚨
+
+   [36mrrd ~ Plain <script> blocks[0m
+   👉 [33m Consider using <script setup> to leverage the new SFC <script> syntax.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/plain-script.html
+   [43mPlain <script> block[0m found 🚨
+
+   [36mrrd ~ Long <script> blocks[0m
+   👉 [33mTry to refactor out the logic into composable functions or other files and keep the script block's length under 300 lines.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/script-length.html
+   [43m(540 lines)[0m 🚨
+
+   [36mrrd ~ short variable names[0m
+   👉 [33mVariable names must have a minimum length of 4.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/short-variable-name.html
+   variable: [43m(ctx)[0m 🚨
+
+   [36mrrd ~ Zero Length Comparison[0m
+   👉 [33mIn JavaScript, any number greater than 0 is truthy, so you can directly use the length property.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/zero-length-comparison.html
+   line #377 zero length comparison found [43m(conflictPositions.value)[0m 🚨
+
+
+- [36m ]8;;file:///home/felix/Dokumente/mthesis/codebases/activate/src/composables/calculateConflictPositions.ts\src/composables/calculateConflictPositions.ts]8;;\[0m
+   [36mrrd ~ cyclomatic complexity[0m
+   👉 [33mTry to reduce complexity.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/cyclomatic-complexity.html
+   Cyclomatic complexity is [41mvery high (25)[0m 🚨
+
+   [36mrrd ~ computed side effects[0m
+   👉 [33mAvoid side effects in computed properties. Computed properties should only derive and return a value.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/computed-side-effects.html
+   line #35 side effect detected in computed property [41m(const result: Array<)[0m 🚨
+
+   [36mrrd ~ else conditions[0m
+   👉 [33mTry to rewrite the conditions in a way that the else clause is not necessary.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/else-condition.html
+   else clauses found [41m(6)[0m 🚨
+
+   [36mrrd ~ magic numbers[0m
+   👉 [33mExtract magic numbers to a constant.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/magic-numbers.html
+   magic numbers found (line #20 [43mmagic number: 2[0m) 🚨
+
+   [36mrrd ~ magic numbers[0m
+   👉 [33mExtract magic numbers to a constant.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/magic-numbers.html
+   magic numbers found (line #21 [43mmagic number: 3[0m) 🚨
+
+   [36mrrd ~ short variable names[0m
+   👉 [33mVariable names must have a minimum length of 4.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/short-variable-name.html
+   variable: [43m(n)[0m 🚨
+
+   [36mrrd ~ short variable names[0m
+   👉 [33mVariable names must have a minimum length of 4.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/short-variable-name.html
+   variable: [43m(dx)[0m 🚨
+
+   [36mrrd ~ short variable names[0m
+   👉 [33mVariable names must have a minimum length of 4.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/short-variable-name.html
+   variable: [43m(dy)[0m 🚨
+
+   [36mrrd ~ short variable names[0m
+   👉 [33mVariable names must have a minimum length of 4.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/short-variable-name.html
+   variable: [43m(len)[0m 🚨
+
+   [36mrrd ~ short variable names[0m
+   👉 [33mVariable names must have a minimum length of 4.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/short-variable-name.html
+   variable: [43m(n)[0m 🚨
+
+   [36mrrd ~ short variable names[0m
+   👉 [33mVariable names must have a minimum length of 4.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/short-variable-name.html
+   variable: [43m(pts)[0m 🚨
+
+   [36mrrd ~ short variable names[0m
+   👉 [33mVariable names must have a minimum length of 4.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/short-variable-name.html
+   variable: [43m(n)[0m 🚨
+
+
+- [36m ]8;;file:///home/felix/Dokumente/mthesis/codebases/activate/src/components/ContentTemplate.vue\src/components/ContentTemplate.vue]8;;\[0m
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<div>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ complicated computed property[0m
+   👉 [33mRefactor the computed properties to smaller ones.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/simple-computed.html
+   line #30 [43mcomputed[0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #18 [43mstaticContent.errors.noConflicts[sessionStore.activeLanguage][0m 🚨
+
+   [36mvue-caution ~ element selectors with scoped[0m
+   👉 [33mPrefer class selectors over element selectors in scoped styles, because large numbers of element selectors are slow.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-caution/element-selectors-with-scoped.html
+   [43m(section)[0m 🚨
+
+   [36mvue-caution ~ element selectors with scoped[0m
+   👉 [33mPrefer class selectors over element selectors in scoped styles, because large numbers of element selectors are slow.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-caution/element-selectors-with-scoped.html
+   [43m(input)[0m 🚨
+
+   [36mvue-caution ~ element selectors with scoped[0m
+   👉 [33mPrefer class selectors over element selectors in scoped styles, because large numbers of element selectors are slow.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-caution/element-selectors-with-scoped.html
+   [43m(textarea)[0m 🚨
+
+   [36mrrd ~ amount of comments[0m
+   👉 [33mlots of comments found[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/amount-of-comments.html
+   The script block contains 31.11% comments, which exceeds the limit of 30%. 🚨
+
+   [36mrrd ~ computed side effects[0m
+   👉 [33mAvoid side effects in computed properties. Computed properties should only derive and return a value.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/computed-side-effects.html
+   line #29 side effect detected in computed property [41m(return conflictStore)[0m 🚨
+
+
+- [36m ]8;;file:///home/felix/Dokumente/mthesis/codebases/activate/src/data/knowledge_graph/utils.ts\src/data/knowledge_graph/utils.ts]8;;\[0m
+   [36mrrd ~ cyclomatic complexity[0m
+   👉 [33mTry to reduce complexity.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/cyclomatic-complexity.html
+   Cyclomatic complexity is [41mvery high (24)[0m 🚨
+
+   [36mrrd ~ else conditions[0m
+   👉 [33mTry to rewrite the conditions in a way that the else clause is not necessary.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/else-condition.html
+   else clauses found [41m(3)[0m 🚨
+
+   [36mrrd ~ if without curly braces[0m
+   👉 [33mAll if statements must be enclosed in curly braces for better readability and maintainability.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/if-without-curly-braces.html
+   line #98 if statement without curly braces: [41mif (!umlautRegex.test(input)) return false;[0m 🚨
+
+   [36mrrd ~ if without curly braces[0m
+   👉 [33mAll if statements must be enclosed in curly braces for better readability and maintainability.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/if-without-curly-braces.html
+   line #99 if statement without curly braces: [41mif (input.includes(" ")) return false;[0m 🚨
+
+   [36mrrd ~ if without curly braces[0m
+   👉 [33mAll if statements must be enclosed in curly braces for better readability and maintainability.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/if-without-curly-braces.html
+   line #103 if statement without curly braces: [41mif (!umlautRegex.test(value)) return false;[0m 🚨
+
+   [36mrrd ~ if without curly braces[0m
+   👉 [33mAll if statements must be enclosed in curly braces for better readability and maintainability.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/if-without-curly-braces.html
+   line #104 if statement without curly braces: [41mif (value.includes(" ")) return false;[0m 🚨
+
+   [36mrrd ~ if without curly braces[0m
+   👉 [33mAll if statements must be enclosed in curly braces for better readability and maintainability.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/if-without-curly-braces.html
+   line #105 if statement without curly braces: [41mif (!camelCaseRegex.test(value)) return false;[0m 🚨
+
+   [36mrrd ~ short variable names[0m
+   👉 [33mVariable names must have a minimum length of 4.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/short-variable-name.html
+   variable: [43m(res)[0m 🚨
+
+
+- [36m ]8;;file:///home/felix/Dokumente/mthesis/codebases/activate/src/lib/utils.ts\src/lib/utils.ts]8;;\[0m
+   [36mrrd ~ else conditions[0m
+   👉 [33mTry to rewrite the conditions in a way that the else clause is not necessary.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/else-condition.html
+   else clauses found [41m(3)[0m 🚨
+
+   [36mrrd ~ if without curly braces[0m
+   👉 [33mAll if statements must be enclosed in curly braces for better readability and maintainability.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/if-without-curly-braces.html
+   line #19 if statement without curly braces: [41mif (input.labels[language]) res = input.labels[language];[0m 🚨
+
+   [36mrrd ~ if without curly braces[0m
+   👉 [33mAll if statements must be enclosed in curly braces for better readability and maintainability.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/if-without-curly-braces.html
+   line #23 if statement without curly braces: [41mif (keys.length > 0) res = input.labels[keys[0]] + " (" + keys[0] + ")";[0m 🚨
+
+   [36mrrd ~ if without curly braces[0m
+   👉 [33mAll if statements must be enclosed in curly braces for better readability and maintainability.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/if-without-curly-braces.html
+   line #26 if statement without curly braces: [41mif (split) return res.split("/").pop();[0m 🚨
+
+   [36mrrd ~ parameter count[0m
+   👉 [33mMax number of function parameters should be 3.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/parameter-count.html
+   function [43mbuildLanguageString[0m has [43m5[0m parameters 🚨
+
+   [36mrrd ~ short variable names[0m
+   👉 [33mVariable names must have a minimum length of 4.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/short-variable-name.html
+   variable: [43m(res)[0m 🚨
+
+   [36mrrd ~ Zero Length Comparison[0m
+   👉 [33mIn JavaScript, any number greater than 0 is truthy, so you can directly use the length property.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/zero-length-comparison.html
+   line #24 zero length comparison found [43m(keys)[0m 🚨
+
+
+- [36m ]8;;file:///home/felix/Dokumente/mthesis/codebases/activate/src/components/NavBar.vue\src/components/NavBar.vue]8;;\[0m
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<router-link>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<img>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<Select>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #14 [43mactivateTerms[sessionStore.activeLanguage][item.id][0m 🚨
+
+   [36mvue-recommended ~ element attribute order[0m
+   👉 [33mThe attributes of elements (including components) should be ordered consistently.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-recommended/element-attribute-order.html
+   tag has attributes out of order [43m(Select)[0m 🚨
+
+   [36mrrd ~ big v-if[0m
+   👉 [33mBig v-if can be moved out to its own component.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/big-vif.html
+   line #21 [43mhas a v-if with 11 lines[0m 🚨
+
+
+- [36m ]8;;file:///home/felix/Dokumente/mthesis/codebases/activate/src/components/PointHoverPopUp.vue\src/components/PointHoverPopUp.vue]8;;\[0m
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<div>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<li>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #6 [43mbuildLanguageString(item, sessionStore.activeLanguage, true)[0m 🚨
+
+   [36mrrd ~ magic numbers[0m
+   👉 [33mExtract magic numbers to a constant.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/magic-numbers.html
+   magic numbers found (line #34 [43mmagic number: 10[0m) 🚨
+
+   [36mrrd ~ no Inline Styles[0m
+   👉 [33mAvoid using inline styles. Consider moving the styles to a CSS or SCSS file, or use a Vue scoped style.[0m
+   line #1 [43mFound inline style: style="popupStyle"[0m 🚨
+
+   [36mrrd ~ VFor With Index Key[0m
+   👉 [33mAvoid using index as key in v-for loops.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/v-for-with-index-key.html
+   line #4 [43mindex is being used as :key in v-for[0m 🚨
+
+
+- [36m ]8;;file:///home/felix/Dokumente/mthesis/codebases/activate/src/views/ContentPage.vue\src/views/ContentPage.vue]8;;\[0m
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<li>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<NoteCardMisc>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #3 [43mactivateTerms[sessionStore.activeLanguage][pageData!.id][0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #21 [43mstaticContent.errors.noMisc[sessionStore.activeLanguage][0m 🚨
+
+   [36mrrd ~ amount of comments[0m
+   👉 [33mlots of comments found[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/amount-of-comments.html
+   The script block contains 32.44% comments, which exceeds the limit of 30%. 🚨
+
+   [36mrrd ~ VFor With Index Key[0m
+   👉 [33mAvoid using index as key in v-for loops.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/v-for-with-index-key.html
+   line #13 [43mindex is being used as :key in v-for[0m 🚨
+
+
+- [36m ]8;;file:///home/felix/Dokumente/mthesis/codebases/activate/src/data/knowledge_graph/write_operations.ts\src/data/knowledge_graph/write_operations.ts]8;;\[0m
+   [36mrrd ~ else conditions[0m
+   👉 [33mTry to rewrite the conditions in a way that the else clause is not necessary.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/else-condition.html
+   else clauses found [41m(1)[0m 🚨
+
+   [36mrrd ~ if without curly braces[0m
+   👉 [33mAll if statements must be enclosed in curly braces for better readability and maintainability.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/if-without-curly-braces.html
+   line #309 if statement without curly braces: [41mif (activity.name.trim() == "") activity.name = activity.graph + "_copy";[0m 🚨
+
+   [36mrrd ~ if without curly braces[0m
+   👉 [33mAll if statements must be enclosed in curly braces for better readability and maintainability.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/if-without-curly-braces.html
+   line #310 if statement without curly braces: [41mif (activity.description?.trim() == "") activity.description = "No description given";[0m 🚨
+
+   [36mrrd ~ Long <script> blocks[0m
+   👉 [33mTry to refactor out the logic into composable functions or other files and keep the script block's length under 300 lines.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/script-length.html
+   [43m(329 lines)[0m 🚨
+
+   [36mrrd ~ short variable names[0m
+   👉 [33mVariable names must have a minimum length of 4.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/short-variable-name.html
+   variable: [43m(id)[0m 🚨
+
+
+- [36m ]8;;file:///home/felix/Dokumente/mthesis/codebases/activate/src/components/LanguageSelect.vue\src/components/LanguageSelect.vue]8;;\[0m
+   [36mvue-essential ~ v-for has no key[0m
+   👉 [33mAdd a `:key` property to all v-for.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-essential/vfor-no-key.html
+   v-for used [41mwithout a key[0m 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<Select>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<SelectItem>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-recommended ~ element attribute order[0m
+   👉 [33mThe attributes of elements (including components) should be ordered consistently.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-recommended/element-attribute-order.html
+   tag has attributes out of order [43m(Select)[0m 🚨
+
+
+- [36m ]8;;file:///home/felix/Dokumente/mthesis/codebases/activate/src/views/HomePage.vue\src/views/HomePage.vue]8;;\[0m
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<div>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #2 [43mstaticContent.terms.setting[sessionStore.activeLanguage][0m 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #3 [43mactivity.name ? activity.name : `${staticContent.errors.activityNameLoad[sessionStore.activeLanguage]} - Graph-ID:[0m 🚨
+
+
+- [36m ]8;;file:///home/felix/Dokumente/mthesis/codebases/activate/src/main.ts\src/main.ts]8;;\[0m
+   [36mrrd ~ No Var Declaration[0m
+   👉 [33mAvoid var declaration, use const or let instead of that.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/no-var-declaration.html
+   line #20 [43mAvoid using 'var' for variable declarations: var re = new RegExp(Object.keys(mapObj).join("|"), "gi");[0m 🚨
+
+   [36mrrd ~ short variable names[0m
+   👉 [33mVariable names must have a minimum length of 4.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/short-variable-name.html
+   variable: [43m(re)[0m 🚨
+
+   [36mrrd ~ short variable names[0m
+   👉 [33mVariable names must have a minimum length of 4.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/short-variable-name.html
+   variable: [43m(app)[0m 🚨
+
+
+- [36m ]8;;file:///home/felix/Dokumente/mthesis/codebases/activate/src/components/LogoutButton.vue\src/components/LogoutButton.vue]8;;\[0m
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<Button>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #10 [43mstaticContent.terms.endSession[sessionStore.activeLanguage][0m 🚨
+
+
+- [36m ]8;;file:///home/felix/Dokumente/mthesis/codebases/activate/src/components/ThemeSwitchButton.vue\src/components/ThemeSwitchButton.vue]8;;\[0m
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<Button>[0m should have its attributes on separate lines 🚨
+
+   [36mvue-strong ~ lengthy template expression[0m
+   👉 [33mRefactor the expression into a computed property.[0m See: https://vue-mess-detector.webmania.cc/rules/vue-strong/template-simple-expression.html
+   line #11 [43mstaticContent.terms.changeTheme[sessionStore.activeLanguage][0m 🚨
+
+
+- [36m ]8;;file:///home/felix/Dokumente/mthesis/codebases/activate/src/data/knowledge_graph/read_operations.ts\src/data/knowledge_graph/read_operations.ts]8;;\[0m
+   [36mrrd ~ cyclomatic complexity[0m
+   👉 [33mTry to reduce complexity.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/cyclomatic-complexity.html
+   Cyclomatic complexity is [41mvery high (90)[0m 🚨
+
+   [36mrrd ~ Long <script> blocks[0m
+   👉 [33mTry to refactor out the logic into composable functions or other files and keep the script block's length under 300 lines.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/script-length.html
+   [43m(487 lines)[0m 🚨
+
+
+- [36m ]8;;file:///home/felix/Dokumente/mthesis/codebases/activate/src/stores/activityStore.ts\src/stores/activityStore.ts]8;;\[0m
+   [36mrrd ~ else conditions[0m
+   👉 [33mTry to rewrite the conditions in a way that the else clause is not necessary.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/else-condition.html
+   else clauses found [41m(3)[0m 🚨
+
+   [36mrrd ~ Zero Length Comparison[0m
+   👉 [33mIn JavaScript, any number greater than 0 is truthy, so you can directly use the length property.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/zero-length-comparison.html
+   line #36 zero length comparison found [43m(activities)[0m 🚨
+
+
+- [36m ]8;;file:///home/felix/Dokumente/mthesis/codebases/activate/src/components/ActivityCard.vue, src/components/ContentTemplate.vue, src/components/NoteCard.vue, src/components/NoteCardMisc.vue, src/components/ReplyCard.vue\src/components/ActivityCard.vue, src/components/ContentTemplate.vue, src/components/NoteCard.vue, src/components/NoteCardMisc.vue, src/components/ReplyCard.vue]8;;\[0m
+   [36mrrd ~ repeated CSS[0m
+   👉 [33mAvoid repeating CSS properties with the same value more than 3 times across files. Consider using CSS variables or a common class.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/repeated-css.html
+   repeated CSS: (resize:vertical;) in 5 files 🚨
+
+   [36mrrd ~ repeated CSS[0m
+   👉 [33mAvoid repeating CSS properties with the same value more than 3 times across files. Consider using CSS variables or a common class.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/repeated-css.html
+   repeated CSS: (min-height:60px;) in 5 files 🚨
+
+
+- [36m ]8;;file:///home/felix/Dokumente/mthesis/codebases/activate/src/components/Dropdown.vue, src/components/Editor.vue, src/components/EntityAdditionDialog.vue, src/components/RDFAdditionDropdown.vue\src/components/Dropdown.vue, src/components/Editor.vue, src/components/EntityAdditionDialog.vue, src/components/RDFAdditionDropdown.vue]8;;\[0m
+   [36mrrd ~ repeated CSS[0m
+   👉 [33mAvoid repeating CSS properties with the same value more than 3 times across files. Consider using CSS variables or a common class.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/repeated-css.html
+   repeated CSS: (position:relative;) in 4 files 🚨
+
+   [36mrrd ~ repeated CSS[0m
+   👉 [33mAvoid repeating CSS properties with the same value more than 3 times across files. Consider using CSS variables or a common class.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/repeated-css.html
+   repeated CSS: (background:white;) in 4 files 🚨
+
+
+- [36m ]8;;file:///home/felix/Dokumente/mthesis/codebases/activate/src/data/contentData.ts\src/data/contentData.ts]8;;\[0m
+   [36mrrd ~ Long <script> blocks[0m
+   👉 [33mTry to refactor out the logic into composable functions or other files and keep the script block's length under 300 lines.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/script-length.html
+   [43m(473 lines)[0m 🚨
+
+   [36mrrd ~ short variable names[0m
+   👉 [33mVariable names must have a minimum length of 4.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/short-variable-name.html
+   variable: [43m(kan)[0m 🚨
+
+
+- [36m ]8;;file:///home/felix/Dokumente/mthesis/codebases/activate/src/components/RecursiveSelect.vue\src/components/RecursiveSelect.vue]8;;\[0m
+   [36mvue-strong ~ multi-attribute elements[0m
+   👉 [33mElements with multiple attributes should span multiple lines, with one attribute per line.[0m
+   Element [43m<SelectLabel>[0m should have its attributes on separate lines 🚨
+
+
+- [36m ]8;;file:///home/felix/Dokumente/mthesis/codebases/activate/src/data/utils.ts\src/data/utils.ts]8;;\[0m
+   [36mrrd ~ amount of comments[0m
+   👉 [33mlots of comments found[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/amount-of-comments.html
+   The script block contains 65.79% comments, which exceeds the limit of 30%. 🚨
+
+
+- [36m ]8;;file:///home/felix/Dokumente/mthesis/codebases/activate/src/stores/activityPointsStore.ts\src/stores/activityPointsStore.ts]8;;\[0m
+   [36mrrd ~ amount of comments[0m
+   👉 [33mlots of comments found[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/amount-of-comments.html
+   The script block contains 40.04% comments, which exceeds the limit of 30%. 🚨
+
+
+- [36m ]8;;file:///home/felix/Dokumente/mthesis/codebases/activate/src/stores/conflictsStore.ts\src/stores/conflictsStore.ts]8;;\[0m
+   [36mrrd ~ amount of comments[0m
+   👉 [33mlots of comments found[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/amount-of-comments.html
+   The script block contains 33.51% comments, which exceeds the limit of 30%. 🚨
+
+
+- [36m ]8;;file:///home/felix/Dokumente/mthesis/codebases/activate/src/stores/sessionStore.ts\src/stores/sessionStore.ts]8;;\[0m
+   [36mrrd ~ amount of comments[0m
+   👉 [33mlots of comments found[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/amount-of-comments.html
+   The script block contains 44.08% comments, which exceeds the limit of 30%. 🚨
+
+
+- [36m ]8;;file:///home/felix/Dokumente/mthesis/codebases/activate/src/vite-env.d.ts\src/vite-env.d.ts]8;;\[0m
+   [36mrrd ~ amount of comments[0m
+   👉 [33mlots of comments found[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/amount-of-comments.html
+   The script block contains 100.00% comments, which exceeds the limit of 30%. 🚨
+
+
+- [36m ]8;;file:///home/felix/Dokumente/mthesis/codebases/activate/src/data/knowledge_graph/structures.ts\src/data/knowledge_graph/structures.ts]8;;\[0m
+   [36mrrd ~ else conditions[0m
+   👉 [33mTry to rewrite the conditions in a way that the else clause is not necessary.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/else-condition.html
+   else clauses found [41m(1)[0m 🚨
+
+
+- [36m ]8;;file:///home/felix/Dokumente/mthesis/codebases/activate/src/components/ActivityCard.vue, src/components/Dropdown.vue, src/components/Editor.vue, src/components/NoteCard.vue, src/components/TripleAdditionDialog.vue\src/components/ActivityCard.vue, src/components/Dropdown.vue, src/components/Editor.vue, src/components/NoteCard.vue, src/components/TripleAdditionDialog.vue]8;;\[0m
+   [36mrrd ~ repeated CSS[0m
+   👉 [33mAvoid repeating CSS properties with the same value more than 3 times across files. Consider using CSS variables or a common class.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/repeated-css.html
+   repeated CSS: (padding:5px;) in 5 files 🚨
+
+
+- [36m ]8;;file:///home/felix/Dokumente/mthesis/codebases/activate/src/components/ActivityCard.vue, src/components/ContentTemplate.vue, src/components/Dropdown.vue, src/components/Editor.vue, src/components/EntityAdditionDialog.vue, src/components/NoteCard.vue, src/components/NoteCardMisc.vue, src/components/RDFAdditionDropdown.vue, src/components/ReplyCard.vue, src/components/TripleAdditionDialog.vue\src/components/ActivityCard.vue, src/components/ContentTemplate.vue, src/components/Dropdown.vue, src/components/Editor.vue, src/components/EntityAdditionDialog.vue, src/components/NoteCard.vue, src/components/NoteCardMisc.vue, src/components/RDFAdditionDropdown.vue, src/components/ReplyCard.vue, src/components/TripleAdditionDialog.vue]8;;\[0m
+   [36mrrd ~ repeated CSS[0m
+   👉 [33mAvoid repeating CSS properties with the same value more than 3 times across files. Consider using CSS variables or a common class.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/repeated-css.html
+   repeated CSS: (display:flex;) in 10 files 🚨
+
+
+- [36m ]8;;file:///home/felix/Dokumente/mthesis/codebases/activate/src/components/ActivityCard.vue, src/components/Dropdown.vue, src/components/NoteCard.vue, src/components/NoteCardMisc.vue, src/components/RDFAdditionDropdown.vue, src/components/ReplyCard.vue, src/components/TripleAdditionDialog.vue\src/components/ActivityCard.vue, src/components/Dropdown.vue, src/components/NoteCard.vue, src/components/NoteCardMisc.vue, src/components/RDFAdditionDropdown.vue, src/components/ReplyCard.vue, src/components/TripleAdditionDialog.vue]8;;\[0m
+   [36mrrd ~ repeated CSS[0m
+   👉 [33mAvoid repeating CSS properties with the same value more than 3 times across files. Consider using CSS variables or a common class.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/repeated-css.html
+   repeated CSS: (align-items:center;) in 7 files 🚨
+
+
+- [36m ]8;;file:///home/felix/Dokumente/mthesis/codebases/activate/src/components/ConflictHoverPopUp.vue, src/components/Dropdown.vue, src/components/Editor.vue, src/components/EntityAdditionDialog.vue, src/components/PointHoverPopUp.vue, src/components/RDFAdditionDropdown.vue, src/components/TripleAdditionDialog.vue\src/components/ConflictHoverPopUp.vue, src/components/Dropdown.vue, src/components/Editor.vue, src/components/EntityAdditionDialog.vue, src/components/PointHoverPopUp.vue, src/components/RDFAdditionDropdown.vue, src/components/TripleAdditionDialog.vue]8;;\[0m
+   [36mrrd ~ repeated CSS[0m
+   👉 [33mAvoid repeating CSS properties with the same value more than 3 times across files. Consider using CSS variables or a common class.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/repeated-css.html
+   repeated CSS: (position:absolute;) in 7 files 🚨
+
+
+- [36m ]8;;file:///home/felix/Dokumente/mthesis/codebases/activate/src/components/ConflictHoverPopUp.vue, src/components/ContentTemplate.vue, src/components/Dropdown.vue, src/components/Editor.vue, src/components/EntityAdditionDialog.vue, src/components/NoteCard.vue, src/components/NoteCardMisc.vue, src/components/PointHoverPopUp.vue, src/components/RDFAdditionDropdown.vue, src/components/ReplyCard.vue, src/components/TripleAdditionDialog.vue\src/components/ConflictHoverPopUp.vue, src/components/ContentTemplate.vue, src/components/Dropdown.vue, src/components/Editor.vue, src/components/EntityAdditionDialog.vue, src/components/NoteCard.vue, src/components/NoteCardMisc.vue, src/components/PointHoverPopUp.vue, src/components/RDFAdditionDropdown.vue, src/components/ReplyCard.vue, src/components/TripleAdditionDialog.vue]8;;\[0m
+   [36mrrd ~ repeated CSS[0m
+   👉 [33mAvoid repeating CSS properties with the same value more than 3 times across files. Consider using CSS variables or a common class.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/repeated-css.html
+   repeated CSS: (padding:8px;) in 11 files 🚨
+
+
+- [36m ]8;;file:///home/felix/Dokumente/mthesis/codebases/activate/src/components/ConflictHoverPopUp.vue, src/components/Dropdown.vue, src/components/Editor.vue, src/components/EntityAdditionDialog.vue, src/components/NoteCard.vue, src/components/PointHoverPopUp.vue, src/components/RDFAdditionDropdown.vue, src/components/TripleAdditionDialog.vue\src/components/ConflictHoverPopUp.vue, src/components/Dropdown.vue, src/components/Editor.vue, src/components/EntityAdditionDialog.vue, src/components/NoteCard.vue, src/components/PointHoverPopUp.vue, src/components/RDFAdditionDropdown.vue, src/components/TripleAdditionDialog.vue]8;;\[0m
+   [36mrrd ~ repeated CSS[0m
+   👉 [33mAvoid repeating CSS properties with the same value more than 3 times across files. Consider using CSS variables or a common class.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/repeated-css.html
+   repeated CSS: (border-radius:4px;) in 8 files 🚨
+
+
+- [36m ]8;;file:///home/felix/Dokumente/mthesis/codebases/activate/src/components/ConflictHoverPopUp.vue, src/components/Editor.vue, src/components/PointHoverPopUp.vue, src/components/ReplyCard.vue\src/components/ConflictHoverPopUp.vue, src/components/Editor.vue, src/components/PointHoverPopUp.vue, src/components/ReplyCard.vue]8;;\[0m
+   [36mrrd ~ repeated CSS[0m
+   👉 [33mAvoid repeating CSS properties with the same value more than 3 times across files. Consider using CSS variables or a common class.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/repeated-css.html
+   repeated CSS: (padding-left:20px;) in 4 files 🚨
+
+
+- [36m ]8;;file:///home/felix/Dokumente/mthesis/codebases/activate/src/components/ConflictHoverPopUp.vue, src/components/Dropdown.vue, src/components/Editor.vue, src/components/PointHoverPopUp.vue, src/components/RDFAdditionDropdown.vue, src/components/TripleAdditionDialog.vue\src/components/ConflictHoverPopUp.vue, src/components/Dropdown.vue, src/components/Editor.vue, src/components/PointHoverPopUp.vue, src/components/RDFAdditionDropdown.vue, src/components/TripleAdditionDialog.vue]8;;\[0m
+   [36mrrd ~ repeated CSS[0m
+   👉 [33mAvoid repeating CSS properties with the same value more than 3 times across files. Consider using CSS variables or a common class.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/repeated-css.html
+   repeated CSS: (margin:0;) in 6 files 🚨
+
+
+- [36m ]8;;file:///home/felix/Dokumente/mthesis/codebases/activate/src/components/ConflictHoverPopUp.vue, src/components/NoteCard.vue, src/components/NoteCardMisc.vue, src/components/PointHoverPopUp.vue, src/components/ReplyCard.vue\src/components/ConflictHoverPopUp.vue, src/components/NoteCard.vue, src/components/NoteCardMisc.vue, src/components/PointHoverPopUp.vue, src/components/ReplyCard.vue]8;;\[0m
+   [36mrrd ~ repeated CSS[0m
+   👉 [33mAvoid repeating CSS properties with the same value more than 3 times across files. Consider using CSS variables or a common class.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/repeated-css.html
+   repeated CSS: (font-weight:bold;) in 5 files 🚨
+
+
+- [36m ]8;;file:///home/felix/Dokumente/mthesis/codebases/activate/src/components/ContentTemplate.vue, src/components/NoteCard.vue, src/components/NoteCardMisc.vue, src/components/ReplyCard.vue\src/components/ContentTemplate.vue, src/components/NoteCard.vue, src/components/NoteCardMisc.vue, src/components/ReplyCard.vue]8;;\[0m
+   [36mrrd ~ repeated CSS[0m
+   👉 [33mAvoid repeating CSS properties with the same value more than 3 times across files. Consider using CSS variables or a common class.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/repeated-css.html
+   repeated CSS: (margin-top:10px;) in 4 files 🚨
+
+
+- [36m ]8;;file:///home/felix/Dokumente/mthesis/codebases/activate/src/components/ContentTemplate.vue, src/components/Editor.vue, src/components/EntityAdditionDialog.vue, src/components/NoteCard.vue\src/components/ContentTemplate.vue, src/components/Editor.vue, src/components/EntityAdditionDialog.vue, src/components/NoteCard.vue]8;;\[0m
+   [36mrrd ~ repeated CSS[0m
+   👉 [33mAvoid repeating CSS properties with the same value more than 3 times across files. Consider using CSS variables or a common class.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/repeated-css.html
+   repeated CSS: (flex-direction:column;) in 4 files 🚨
+
+
+- [36m ]8;;file:///home/felix/Dokumente/mthesis/codebases/activate/src/components/ContentTemplate.vue, src/components/Editor.vue, src/components/NoteCard.vue, src/components/NoteCardMisc.vue, src/components/ReplyCard.vue\src/components/ContentTemplate.vue, src/components/Editor.vue, src/components/NoteCard.vue, src/components/NoteCardMisc.vue, src/components/ReplyCard.vue]8;;\[0m
+   [36mrrd ~ repeated CSS[0m
+   👉 [33mAvoid repeating CSS properties with the same value more than 3 times across files. Consider using CSS variables or a common class.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/repeated-css.html
+   repeated CSS: (border-radius:8px;) in 5 files 🚨
+
+
+- [36m ]8;;file:///home/felix/Dokumente/mthesis/codebases/activate/src/components/Dropdown.vue, src/components/Editor.vue, src/components/EntityAdditionDialog.vue, src/components/NoteCard.vue, src/components/RDFAdditionDropdown.vue, src/components/TripleAdditionDialog.vue\src/components/Dropdown.vue, src/components/Editor.vue, src/components/EntityAdditionDialog.vue, src/components/NoteCard.vue, src/components/RDFAdditionDropdown.vue, src/components/TripleAdditionDialog.vue]8;;\[0m
+   [36mrrd ~ repeated CSS[0m
+   👉 [33mAvoid repeating CSS properties with the same value more than 3 times across files. Consider using CSS variables or a common class.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/repeated-css.html
+   repeated CSS: (cursor:pointer;) in 6 files 🚨
+
+
+- [36m ]8;;file:///home/felix/Dokumente/mthesis/codebases/activate/src/components/Dropdown.vue, src/components/Editor.vue, src/components/NoteCard.vue, src/components/TripleAdditionDialog.vue\src/components/Dropdown.vue, src/components/Editor.vue, src/components/NoteCard.vue, src/components/TripleAdditionDialog.vue]8;;\[0m
+   [36mrrd ~ repeated CSS[0m
+   👉 [33mAvoid repeating CSS properties with the same value more than 3 times across files. Consider using CSS variables or a common class.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/repeated-css.html
+   repeated CSS: (color:red;) in 4 files 🚨
+
+
+- [36m ]8;;file:///home/felix/Dokumente/mthesis/codebases/activate/src/components/Dropdown.vue, src/components/Editor.vue, src/components/EntityAdditionDialog.vue, src/components/NoteCard.vue, src/components/NoteCardMisc.vue, src/components/RDFAdditionDropdown.vue, src/components/TripleAdditionDialog.vue\src/components/Dropdown.vue, src/components/Editor.vue, src/components/EntityAdditionDialog.vue, src/components/NoteCard.vue, src/components/NoteCardMisc.vue, src/components/RDFAdditionDropdown.vue, src/components/TripleAdditionDialog.vue]8;;\[0m
+   [36mrrd ~ repeated CSS[0m
+   👉 [33mAvoid repeating CSS properties with the same value more than 3 times across files. Consider using CSS variables or a common class.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/repeated-css.html
+   repeated CSS: (border:none;) in 7 files 🚨
+
+
+- [36m ]8;;file:///home/felix/Dokumente/mthesis/codebases/activate/src/components/Dropdown.vue, src/components/EntityAdditionDialog.vue, src/components/NoteCard.vue, src/components/RDFAdditionDropdown.vue, src/components/TripleAdditionDialog.vue\src/components/Dropdown.vue, src/components/EntityAdditionDialog.vue, src/components/NoteCard.vue, src/components/RDFAdditionDropdown.vue, src/components/TripleAdditionDialog.vue]8;;\[0m
+   [36mrrd ~ repeated CSS[0m
+   👉 [33mAvoid repeating CSS properties with the same value more than 3 times across files. Consider using CSS variables or a common class.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/repeated-css.html
+   repeated CSS: (outline:none;) in 5 files 🚨
+
+
+- [36m ]8;;file:///home/felix/Dokumente/mthesis/codebases/activate/src/components/Editor.vue, src/components/EntityAdditionDialog.vue, src/components/NoteCard.vue, src/components/RDFAdditionDropdown.vue, src/components/TripleAdditionDialog.vue\src/components/Editor.vue, src/components/EntityAdditionDialog.vue, src/components/NoteCard.vue, src/components/RDFAdditionDropdown.vue, src/components/TripleAdditionDialog.vue]8;;\[0m
+   [36mrrd ~ repeated CSS[0m
+   👉 [33mAvoid repeating CSS properties with the same value more than 3 times across files. Consider using CSS variables or a common class.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/repeated-css.html
+   repeated CSS: (background:transparent;) in 5 files 🚨
+
+Found [41m43 errors[0m, and [43m286 warnings[0m, [44m6,626 lines[0m of code in [44m46 files[0m
+Code Health: [[42m_________________________________________________________[0m[43m___[0m[41m[0m] 95%
+
+[42mCode health is GOOD: 95%[0m
+
