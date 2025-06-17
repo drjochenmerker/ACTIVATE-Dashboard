@@ -53,6 +53,34 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Temporary TTL reader
+from fastapi import Request, HTTPException
+from uuid import uuid4
+
+@app.post("/upload-ttl/")
+async def upload_ttl(request: Request):
+    ttl_string = await request.body()
+    # Debug log
+    print(f"Received TTL data: {ttl_string[:100]}...")
+    if not ttl_string:
+        raise HTTPException(status_code=400, detail="No TTL data provided.")
+
+    # Generate graph id
+    graph_id = str(uuid4())
+    graph_uri = f"http://activate.htwk-leipzig.de/graph/{graph_id}"
+    graph = ds.graph(URIRef(graph_uri))
+
+    try:
+        graph.parse(data=ttl_string.decode("utf-8"), format="turtle")
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Invalid TTL: {e}")
+
+    # Optional: Graph im graphs- und ttl_filepath_dict registrieren (nur temporär im RAM)
+    graphs[graph_id] = graph
+    ttl_filepath_dict[graph_id] = None  # Kein File, nur temporär
+
+    return {"graph_id": graph_id, "graph_uri": graph_uri, "message": "success"}
+
 # @app.get("/")
 # async def serve_frontend():
 #     return FileResponse(os.path.join(FRONTEND_DIR, "index.html"))

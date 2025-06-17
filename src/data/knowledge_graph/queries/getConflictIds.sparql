@@ -7,5 +7,6 @@ WHERE {
   GRAPH graph:{{graph}} {    
     ?conflict_id rdf:type :Conflict .
     ?conflict_id :ConflictTitle ?conflict_title .
+    FILTER (lang(?conflict_title) = "en" || lang(?conflict_title) = "")
   }
 }

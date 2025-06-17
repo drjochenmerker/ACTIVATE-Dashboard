@@ -17,6 +17,7 @@ SELECT * WHERE {
             ?conflict_o ?participant_p ?participant_o .
             FILTER(?participant_p = rdfs:label)
           }
+          FILTER (lang(?conflict_o) = "en" || lang(?conflict_o) = "" || bound(?object_type))
       }
     }
     UNION
@@ -27,6 +28,7 @@ SELECT * WHERE {
         ?s rdf:type :Comment .
         ?s ?p ?o .
         FILTER (?p != rdf:type) .
+        FILTER (lang(?o) = "en" || lang(?o) = "")
       }
       ORDER BY ?s
     }
