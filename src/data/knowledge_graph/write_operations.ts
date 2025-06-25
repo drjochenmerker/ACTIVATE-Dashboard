@@ -25,22 +25,36 @@ export async function addConflict(graph: string, conflict: Conflict): Promise<up
         return `\t\t:HasParticipant :${participant.id} ;`;
     }).join("\n")
     let query = await getSparqlTemplate(sparqlTemplate.addConflict);
+
+    const titleTriples = buildLangTriples(conflict.title ?? {}, ":ConflictTitle");
+    const descriptionTriples = buildLangTriples(conflict.description ?? {}, ":ConflictDescription");
     const mapObj = {
         "{{graph}}": graph,
         "{{conflictId}}": conflictId,
         "{{participants}}": participantString,
-        "{{description}}": conflict.description?.["en"] ? EscapeSparqlStringLiteral(conflict.description["en"]) : "",
-"{{author}}": conflict.author ? EscapeSparqlStringLiteral(conflict.author) : "",
-
+        "{{titles}}": titleTriples,
+        "{{descriptions}}": descriptionTriples,
+        "{{author}}": EscapeSparqlStringLiteral(conflict.author || ""),
         "{{status}}": conflict.status,
-        "{{created}}": timestamp,
-        "{{title}}": EscapeSparqlStringLiteral(conflict.title["en"]) // or desired fallback language
+        "{{created}}": timestamp
     };
+
+
     query = query.replaceMultiple(mapObj);
     // Exeucte Query in update mode
     const data = await fetchSparql(query, true);
     return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: conflictId, action: RDFOperation.insert } as updateResponse;
 }
+/**
+ * helper
+ */
+function buildLangTriples(field: Record<string, string>, predicate: string): string {
+  return Object.entries(field)
+    .filter(([_, value]) => value && value.trim() !== "")
+    .map(([lang, value]) => `\t\t${predicate} "${EscapeSparqlStringLiteral(value)}"@${lang} ;`)
+    .join("\n");
+}
+
 
 /**
  * Deletes a conflict and all nested comments

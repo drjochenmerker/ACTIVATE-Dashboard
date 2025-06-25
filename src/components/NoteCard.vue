@@ -55,6 +55,7 @@ const textareaRef = ref<HTMLTextAreaElement | null>(null);
 // Set initial conflict detail
 onMounted(() => {
   conflictDetail.value = { ...props.conflict };
+  console.log('conflictDetail', conflictDetail.value);
 });
 
 // Watcher for props.conflict that adds the new conflict
@@ -225,7 +226,7 @@ const removeReply = (id: string) => {
       <div class="status-selector">
         <select v-model="selectedStatus">
           <option :value="conflictStatus.open">{{ staticContent.terms.conflictStatus.open[sessionStore.activeLanguage]
-            }}</option>
+          }}</option>
           <option :value="conflictStatus.inDiscussion">{{
             staticContent.terms.conflictStatus.inDiscussion[sessionStore.activeLanguage] }}</option>
           <option :value="conflictStatus.resolved">{{

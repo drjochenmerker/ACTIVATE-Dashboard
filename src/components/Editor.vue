@@ -175,6 +175,7 @@ export default {
       const author = this.isAnonymous ? 'Anonymous' : (useSessionStore().sessionRole);
       const participants = [];
 
+
       if (this.activePoints.length === 0) {
         // WORKAROUND: merge title and content to later separate in miscellaneous comment section
         // as the misc comments are stores without a title and only content
@@ -221,12 +222,12 @@ export default {
 
       // temporary save note object
       const note = {
-        title: title,
+        title: { [this.sessionStore.activeLanguage]: title },
         timestamp: new Date().toISOString(),
         participants: participants,
         author: author,
         status: conflictStatus.open,
-        description: content,
+        description: { [this.sessionStore.activeLanguage]: content },
       };
 
       // Add conflict to the graph 
