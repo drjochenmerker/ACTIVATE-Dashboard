@@ -12,6 +12,7 @@ import { useSessionStore } from "@/stores/sessionStore";
  * @returns updateResponse Object
  */
 export async function addConflict(graph: string, conflict: Conflict): Promise<updateResponse> {
+
     // Create unique hash as a conflict ID
     const timestamp = new Date().toISOString();
     const conflictId = hash({
@@ -28,11 +29,12 @@ export async function addConflict(graph: string, conflict: Conflict): Promise<up
         "{{graph}}": graph,
         "{{conflictId}}": conflictId,
         "{{participants}}": participantString,
-        "{{description}}": conflict.description ? EscapeSparqlStringLiteral(conflict.description) : "",
-        "{{author}}": EscapeSparqlStringLiteral(conflict.author),
+        "{{description}}": conflict.description?.["en"] ? EscapeSparqlStringLiteral(conflict.description["en"]) : "",
+"{{author}}": conflict.author ? EscapeSparqlStringLiteral(conflict.author) : "",
+
         "{{status}}": conflict.status,
         "{{created}}": timestamp,
-        "{{title}}": EscapeSparqlStringLiteral(conflict.title)
+        "{{title}}": EscapeSparqlStringLiteral(conflict.title["en"]) // or desired fallback language
     };
     query = query.replaceMultiple(mapObj);
     // Exeucte Query in update mode

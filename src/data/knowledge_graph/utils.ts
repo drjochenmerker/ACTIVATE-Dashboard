@@ -114,6 +114,10 @@ export function CapitalizeFirstLetter(input: string): string {
 }
 
 export function EscapeSparqlStringLiteral(input: string): string {
+    if (typeof input !== "string") {
+        console.warn("EscapeSparqlStringLiteral called with non-string:", input);
+        return "";
+    }
     return input
         .replace(/\\/g, '\\\\')
         .replace(/"/g, '\\"')

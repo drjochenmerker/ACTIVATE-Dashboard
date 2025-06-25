@@ -15,7 +15,7 @@ const conflictDetails = ref<any[]>([]);
 const loadConflicts = async () => {
   activity.value = sessionStore.sessionActivity;
   if (activity.value) {
-    const conflicts = await getAllConflictsWithDetail(activity.value.graph);
+    const conflicts = await getAllConflictsWithDetail(activity.value.graph, sessionStore.activeLanguage);
     conflictsStore.setConflicts(conflicts);
     conflictDetails.value = conflicts;
   }
@@ -35,8 +35,7 @@ onMounted(async () => {
   <div class="flex flex-col h-screen">
     <NavBar />
     <main class="flex-grow h-full p-6">
-      <router-view v-if="activity" :key="$route.path" :activity="activity"
-        :conflicts="conflictDetails" />
+      <router-view v-if="activity" :key="$route.path" :activity="activity" :conflicts="conflictDetails" />
     </main>
   </div>
 </template>

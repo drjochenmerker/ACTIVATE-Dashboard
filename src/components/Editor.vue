@@ -171,7 +171,6 @@ export default {
     async transferText() {
       // consts
       const content = this.quill.root.innerHTML;
-      console.log("content ", content);
       const title = this.title || 'New Note';
       const author = this.isAnonymous ? 'Anonymous' : (useSessionStore().sessionRole);
       const participants = [];
@@ -238,7 +237,7 @@ export default {
         if (addConflictResponse.status === "OK") {
           // Add the conflict to the conflictStore as well
           const conflictId = addConflictResponse.modified;
-          const conflictDetail = await getConflictDetail(graph, conflictId, this.sessionStore.activeLanguage);
+          const conflictDetail = await getConflictDetail(graph, conflictId, useSessionStore().activeLanguage);
           const conflictsStore = useConflictsStore();
           conflictsStore.addConflict(conflictDetail);
 
@@ -257,7 +256,8 @@ export default {
       activityPointStore.deactivateAllPoints();
 
       this.clearEditor();
-      await useConflictsStore().refreshConflictList(sessionStore.activeLanguage);
+      console.log(note);
+      await useConflictsStore().refreshConflictList(useSessionStore().activeLanguage);
     },
 
 
