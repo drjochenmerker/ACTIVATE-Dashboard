@@ -49,7 +49,7 @@ const roleError = ref(false);
 // Load all available activities on component mount
 onMounted(async () => {
   try {
-    await activityStore.getAllActivities();
+    await activityStore.getAllActivities(sessionStore.activeLanguage);
   } catch (error) {
     console.error("Failed to load activities:", error);
   }
@@ -89,7 +89,7 @@ const addNewActivity = async () => {
     await addEntity(res.modified, defaultRole.value, KnowledgeGraphActivityClass.subject, sessionStore.activeLanguage);
 
     // Reload activities after adding a new one
-    await activityStore.refreshActivityList();
+    await activityStore.refreshActivityList(sessionStore.activeLanguage);
 
     //close dialog
     dialogOpen.value = false;
@@ -107,7 +107,7 @@ const addNewActivity = async () => {
 <template>
   <!-- Main container with centered layout -->
   <div class="flex flex-col items-center justify-center py-10 px-4">
-    <LanguageSelect class="absolute top-0 right-0 mt-4 mr-4"/>
+    <LanguageSelect class="absolute top-0 right-0 mt-4 mr-4" />
     <Card class="w-full max-w-5xl">
 
       <!-- Card header with logo -->
@@ -130,16 +130,19 @@ const addNewActivity = async () => {
             <DialogHeader>
               <DialogTitle>{{ staticContent.startPage.createActivity[sessionStore.activeLanguage] }}</DialogTitle>
 
-              <DialogDescription>{{staticContent.startPage.enterTitle[sessionStore.activeLanguage]}}</DialogDescription>
+              <DialogDescription>{{ staticContent.startPage.enterTitle[sessionStore.activeLanguage] }}
+              </DialogDescription>
               <input type="text" v-model="newTitle" :class="[
                 'w-full border rounded p-2 mb-1 dark:bg-gray-900',
                 titleError ? 'border-red-500' : 'border-gray-300'
               ]" />
               <p v-if="titleError" class="text-red-500 text-sm mb-2">Title is required.</p>
-              <DialogDescription>{{staticContent.startPage.enterDescription[sessionStore.activeLanguage]}}</DialogDescription>
+              <DialogDescription>{{ staticContent.startPage.enterDescription[sessionStore.activeLanguage] }}
+              </DialogDescription>
               <textarea v-model="newDescription" class="w-full border rounded p-2 mb-2  dark:bg-gray-900" />
 
-              <DialogDescription>{{staticContent.startPage.defaultRole[sessionStore.activeLanguage]}}</DialogDescription>
+              <DialogDescription>{{ staticContent.startPage.defaultRole[sessionStore.activeLanguage] }}
+              </DialogDescription>
               <input v-model="defaultRole" :class="[
                 'w-full border rounded p-2 mb-1  dark:bg-gray-900',
                 roleError ? 'border-red-500' : 'border-gray-300'

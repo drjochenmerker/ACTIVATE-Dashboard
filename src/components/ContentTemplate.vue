@@ -43,7 +43,10 @@ const filteredConflicts = computed(() => {
       <div class="conflict-container">
         <div class="note-container">
           <!-- NoteCard component for displaying conflict details -->
-          <NoteCard :conflict="conflict" :title="conflict.title" :content="conflict.description || ''"
+          <!-- <NoteCard :conflict="conflict" :title="conflict.title" :content="conflict.description || ''"
+            :author="conflict.author" :status="conflict.status" /> -->
+          <NoteCard :conflict="conflict" :title="conflict.title[sessionStore.activeLanguage] || ''"
+            :content="(conflict.description && conflict.description[sessionStore.activeLanguage]) || ''"
             :author="conflict.author" :status="conflict.status" />
         </div>
 
@@ -53,7 +56,7 @@ const filteredConflicts = computed(() => {
 
   <!-- Display a message if there are no conflicts -->
   <div v-else>
-    <p>{{staticContent.errors.noConflicts[sessionStore.activeLanguage]}}</p>
+    <p>{{ staticContent.errors.noConflicts[sessionStore.activeLanguage] }}</p>
   </div>
 </template>
 

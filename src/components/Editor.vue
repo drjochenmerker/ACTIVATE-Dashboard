@@ -10,7 +10,7 @@ import 'vue-toastification/dist/index.css';
 import { useActivityPointsStore } from '@/stores/activityPointsStore';
 import { useConflictsStore } from '@/stores/conflictsStore';
 import { conflictStatus } from '@/data/knowledge_graph/structures';
-import { getActivities, getActivityDetail, getConflictDetail, getConflictIds } from '@/data/knowledge_graph/read_operations';
+import { getActivityDetail, getConflictDetail } from '@/data/knowledge_graph/read_operations';
 import { addComment, addConflict } from '@/data/knowledge_graph/write_operations';
 import { useSessionStore } from '@/stores/sessionStore';
 import { staticContent } from '@/data/contentData';
@@ -238,7 +238,7 @@ export default {
         if (addConflictResponse.status === "OK") {
           // Add the conflict to the conflictStore as well
           const conflictId = addConflictResponse.modified;
-          const conflictDetail = await getConflictDetail(graph, conflictId);
+          const conflictDetail = await getConflictDetail(graph, conflictId, this.sessionStore.activeLanguage);
           const conflictsStore = useConflictsStore();
           conflictsStore.addConflict(conflictDetail);
 
@@ -257,7 +257,7 @@ export default {
       activityPointStore.deactivateAllPoints();
 
       this.clearEditor();
-      await useConflictsStore().refreshConflictList();
+      await useConflictsStore().refreshConflictList(sessionStore.activeLanguage);
     },
 
 

@@ -18,7 +18,7 @@ SELECT * WHERE {
             FILTER(?participant_p = rdfs:label)
           }
           # Language Filter - Remove as soon as frontend parsing can handle multi-language
-          FILTER (lang(?conflict_o) = "en" || lang(?conflict_o) = "" || bound(?object_type))
+          # FILTER (lang(?conflict_o) = "en" || lang(?conflict_o) = "" || bound(?object_type))
       }
     }
     UNION
@@ -30,7 +30,7 @@ SELECT * WHERE {
         ?s ?p ?o .
         FILTER (?p != rdf:type) .
         # Language Filter - Remove as soon as frontend parsing can handle multi-language
-        FILTER (lang(?o) = "en" || lang(?o) = "")
+        # FILTER (lang(?o) = "en" || lang(?o) = "")
       }
       ORDER BY ?s
     }

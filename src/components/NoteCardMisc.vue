@@ -63,7 +63,7 @@ const handleDelete = async (id: string) => {
     try {
         //comment cant be nested because its the misc card
         await deleteComment(graph, id, false);
-        useConflictsStore().refreshConflictList();
+        useConflictsStore().refreshConflictList(sessionStore.activeLanguage);
         emit('deleteComment', id); // Event an Parent-Komponente senden
     } catch (error) {
         console.error("Error deleting conflict: ", error);
@@ -127,7 +127,7 @@ const saveReply = async (commentId: string) => {
         }
 
         // Important to refresh the conflict list so that the UI shows the new comment immediately
-        useConflictsStore().refreshConflictList();
+        useConflictsStore().refreshConflictList(sessionStore.activeLanguage);
         emit('refresh');
 
         replyInputVisible.value[commentId] = false;

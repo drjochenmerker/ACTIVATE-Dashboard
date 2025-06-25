@@ -469,7 +469,7 @@ export default defineComponent({
         // Draws the activity diagram when mounted
         onMounted(async () => {
             activityData.value = await getActivityDetail(sessionStore.sessionActivity as Activity)
-            await conflictStore.refreshConflictList();
+            await conflictStore.refreshConflictList(sessionStore.activeLanguage);
             conflictData = conflictStore.getConflicts;
             conflictPositions.value = calculateConflictPositions(conflictData, points.value, 20).value;
 
@@ -493,7 +493,7 @@ export default defineComponent({
                     { x: triangleWidth / 2, y: (triangleHeight / 8) * 7, id: "community", label: activateTerms[sessionStore.activeLanguage].community, tooltip: staticContent.hoverText.community[sessionStore.activeLanguage], color: getPointColor(), active: false, highlighted: false }, // Unten Mitte
                 ]);
                 activityData.value = await getActivityDetail(sessionStore.sessionActivity as Activity)
-                await conflictStore.refreshConflictList();
+                await conflictStore.refreshConflictList(sessionStore.activeLanguage);
                 conflictData = conflictStore.getConflicts;
                 sessionStore.outdated = false;
                 draw();

@@ -51,7 +51,7 @@ let activities = ref<Activity[]>([]);
 
 // load all activities on component mount
 onMounted(async () => {
-    activities.value = await activityStore.getAllActivities();
+    activities.value = await activityStore.getAllActivities(sessionStore.activeLanguage);
 });
 
 // Handle session start when user clicks start button
@@ -72,7 +72,7 @@ const openCloneDialog = () => {
     isCloneDialogOpen.value = true;
 }
 //      step 2
-const cloneThisActivity = async (newTitle: string, newDescription: string) => {
+const cloneThisActivity = async (newTitle: string, newDescription: string, lang: string) => {
     if (!newTitle.trim()) {
         cloneTitleError.value = true;
         return;
@@ -84,16 +84,16 @@ const cloneThisActivity = async (newTitle: string, newDescription: string) => {
         name: newTitle,
         description: newDescription || props.activity.description,
     };
-    activityStore.cloneThisActivity(clonedActivity);
-    activityStore.refreshActivityList();
+    activityStore.cloneThisActivity(clonedActivity, lang);
+    activityStore.refreshActivityList(sessionStore.activeLanguage);
 
     isCloneDialogOpen.value = false;
 }
 
 //delete activity function
-const deleteThisActivity = async () => {
-    activityStore.removeActivity(graph);
-    activityStore.refreshActivityList();
+const deleteThisActivity = async (lang: string) => {
+    activityStore.removeActivity(graph, lang);
+    activityStore.refreshActivityList(sessionStore.activeLanguage);
 
     isDeleteDialogOpen.value = false;
 }
@@ -106,7 +106,7 @@ const openEditDialog = () => {
     isEditDialogOpen.value = true;
 }
 //      second step
-const updateActivity = async (newTitle: string, newDescription: string) => {
+const updateActivity = async (newTitle: string, newDescription: string, lang: string) => {
     if (!newTitle.trim()) {
         editTitleError.value = true;
         return;
@@ -119,8 +119,8 @@ const updateActivity = async (newTitle: string, newDescription: string) => {
         name: newTitle,
         description: newDescription || props.activity.description,
     };
-    activityStore.editActivity(updatedActivity);
-    await activityStore.refreshActivityList();
+    activityStore.editActivity(updatedActivity, lang);
+    await activityStore.refreshActivityList(lang);
     isEditDialogOpen.value = false;
 }
 
@@ -178,7 +178,7 @@ const sessionStartAllowed = () => !sessionStore.sessionRole;
                                         </DialogDescription>
                                     </DialogHeader>
                                     <DialogFooter>
-                                        <Button @click="() => deleteThisActivity()">{{
+                                        <Button @click="() => deleteThisActivity(sessionStore.activeLanguage)">{{
                                             staticContent.terms.delete[sessionStore.activeLanguage] }}</Button>
                                     </DialogFooter>
                                 </DialogContent>
@@ -217,8 +217,9 @@ const sessionStartAllowed = () => !sessionStore.sessionRole;
                                             :placeholder="staticContent.startPage.editDescription[sessionStore.activeLanguage]" />
                                     </DialogHeader>
                                     <DialogFooter>
-                                        <Button @click="() => updateActivity(editTitle, editDescription)">{{
-                                            staticContent.startPage.saveChanges[sessionStore.activeLanguage] }}</Button>
+                                        <Button
+                                            @click="() => updateActivity(editTitle, editDescription, sessionStore.activeLanguage)">{{
+                                                staticContent.startPage.saveChanges[sessionStore.activeLanguage] }}</Button>
                                     </DialogFooter>
                                 </DialogContent>
                             </Dialog>
@@ -254,8 +255,9 @@ const sessionStartAllowed = () => !sessionStore.sessionRole;
                                             :placeholder="staticContent.placeholders.newDescriptionOptional[sessionStore.activeLanguage]" />
                                     </DialogHeader>
                                     <DialogFooter>
-                                        <Button @click="cloneThisActivity(newTitle, newDescription)">{{
-                                            staticContent.terms.clone[sessionStore.activeLanguage] }}</Button>
+                                        <Button
+                                            @click="cloneThisActivity(newTitle, newDescription, sessionStore.activeLanguage)">{{
+                                                staticContent.terms.clone[sessionStore.activeLanguage] }}</Button>
                                     </DialogFooter>
                                 </DialogContent>
                             </Dialog>

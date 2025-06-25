@@ -104,11 +104,11 @@ export interface Participant {
  * Conflict in the knowledge graph
  */
 export type Conflict = {
-    title: string,
+    title: { [lang: string]: string },           // e.g., { en: "Confidence...", sv: "Självförtroende..." }
+    description?: { [lang: string]: string },    // same multilingual format
     participants: Participant[],
     author: string,
     status: conflictStatus,
-    description?: string,
     timestamp?: Date,
     replies?: Comment[],
     id?: string
@@ -120,7 +120,7 @@ export type Conflict = {
 export type Comment = {
     id: string,
     author?: string,
-    comment?: string,
+    comment?: { [lang: string]: string },
     timestamp?: Date,
     replies?: Comment[]
 }

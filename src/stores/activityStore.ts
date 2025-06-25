@@ -22,8 +22,8 @@ export const useActivityStore = defineStore('ActivityStore', () => {
      * 
      * @returns {Promise<Activity[]>} A promise that resolves to the list of activities
      */
-    const getAllActivities = async () => {
-        activityList.value = await getActivities();
+    const getAllActivities = async (lang: string) => {
+        activityList.value = await getActivities(lang);
         return activityList.value;
     };
 
@@ -31,43 +31,43 @@ export const useActivityStore = defineStore('ActivityStore', () => {
         activityList.value = activities;
     };
 
-    const refreshActivityList = async()=> {
-        const activities = await getAllActivities();
+    const refreshActivityList = async(lang: string)=> {
+        const activities = await getAllActivities(lang);
         if(activities.length > 0) {
             setActivities(activities);
             activityList.value = activities
         }
     };
-    const editActivity = async (activity: Activity) => {
+    const editActivity = async (activity: Activity, lang: string) => {
         const updatedActivity = await updateActivity(activity);
         if (updatedActivity.status === "OK") {
             //console.log("Updated activity successfully.")
         } else {
             console.log("Update failed.")
         }
-        refreshActivityList();
+        refreshActivityList(lang);
     };
     
     const addActivity = (activity: Activity) => {
         activityList.value.push(activity);
     };
-    const cloneThisActivity = async (clonedActivity: Activity) => {
+    const cloneThisActivity = async (clonedActivity: Activity, lang: string) => {
         const savedClone = await cloneActivity(clonedActivity);
         if (savedClone.status === "OK") {
            // console.log("Cloned activity successfully.")
         } else {
             console.log("Cloning failed.")
         }
-        refreshActivityList();
+        refreshActivityList(lang);
     }
-    const removeActivity = async (graph: string) => {
+    const removeActivity = async (graph: string, lang: string) => {
         const deletion = await deleteActivity(graph);
         if (deletion.status === "OK") {
             //console.log("Deleted activity successfully.")
         } else {
             console.log("Deletion failed.")
         }
-        refreshActivityList();
+        refreshActivityList(lang);
     };
     
 

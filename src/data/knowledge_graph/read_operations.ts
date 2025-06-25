@@ -2,24 +2,77 @@ import { Action, Activity, ActivityDetail, Conflict, Comment, StringAccessObject
 import { fetchSparql, findNestedComment, getSparqlTemplate, camelToSnakeCase } from "./utils";
 
 /**
- * Fetches all activities from the knowledge graph
- * @returns A list of Activity objects which can be accessed through
- *          corresponding language string. Example: "de"
+  * old getActivities function without language support
+  *          
+  */
+// export async function getActivities(): Promise<Activity[]> {
+//   let query = await getSparqlTemplate(sparqlTemplate.getActivities);
+//   const data = await fetchSparql(query);
+//   console.log("Fetched Activities", data);
+//   let parsedData: Activity[] = [];
+//   data.forEach((triple: StringAccessObject) => {
+//     parsedData.push({
+//       graph: triple.graph.value.split("/").pop(),
+//       name: triple.name.value ? triple.name.value : "Error - No Name given",
+//       description: triple.description.value ? triple.description.value : "Error - No Description given"
+//     });
+//   });
+//   return parsedData;
+// }
+/**
+ * Fetches all activities from the knowledge graph with language-specific name and description
+ * @param lang Optional language code to prioritize (defaults to "en")
+ * @returns A list of Activity objects with names and descriptions, falling back to default values if not found
  */
-export async function getActivities(): Promise<Activity[]> {
-  let query = await getSparqlTemplate(sparqlTemplate.getActivities);
-  const data = await fetchSparql(query);
-  let parsedData: Activity[] = [];
-  data.forEach((triple: StringAccessObject) => {
-    parsedData.push({
-      graph: triple.graph.value.split("/").pop(),
-      name: triple.name.value ? triple.name.value : "Error - No Name given",
-      description: triple.description.value ? triple.description.value : "Error - No Description given"
-    });
-  });
-  return parsedData;
-}
 
+export async function getActivities(lang: string = "en"): Promise<Activity[]> {
+
+  const query = await getSparqlTemplate(sparqlTemplate.getActivities);
+  const data = await fetchSparql(query);
+
+  // Map activity URI to best matching name/description
+  const activitiesMap: { [uri: string]: Activity & { nameLang?: string; descriptionLang?: string } } = {};
+
+  data.forEach((triple: any) => {
+    const activityId = triple.graph.value;
+    const current = activitiesMap[activityId] ?? {
+      graph: triple.graph.value.split("/").pop(),
+      name: null,
+      description: null,
+      nameLang: null,
+      descriptionLang: null
+    };
+
+    const nameLang = triple.name["xml:lang"] || "";
+    const descriptionLang = triple.description["xml:lang"] || "";
+
+    // Prioritize preferred language, then fallback to untagged
+    if (nameLang === lang && !current.nameLang) {
+      current.name = triple.name.value;
+      current.nameLang = nameLang;
+    } else if (!current.name && nameLang === "") {
+      current.name = triple.name.value;
+      current.nameLang = "";
+    }
+
+    if (descriptionLang === lang && !current.descriptionLang) {
+      current.description = triple.description.value;
+      current.descriptionLang = descriptionLang;
+    } else if (!current.description && descriptionLang === "") {
+      current.description = triple.description.value;
+      current.descriptionLang = "";
+    }
+
+    activitiesMap[activityId] = current;
+  });
+
+  // Map to clean Activity array
+  return Object.values(activitiesMap).map(activity => ({
+    graph: activity.graph,
+    name: activity.name || "Error - No Name given",
+    description: activity.description || "Error - No Description given"
+  }));
+}
 /**
  * Fetches all Details for a given activity and returns them as a ActivityDetail object WITH further
  * information about the objects of the actions. Might be very slow on a full knowledge graph
@@ -116,18 +169,42 @@ export async function getActivityDetail(activity: Activity): Promise<ActivityDet
  * @param graph 
  * @returns List of conflicts with their title and id
  */
-export async function getConflictIds(graph: string): Promise<{ title: string; id: string }[]> {
+// export async function getConflictIds(graph: string): Promise<{ title: string; id: string }[]> {
+//   let query = await getSparqlTemplate(sparqlTemplate.getConflictIds);
+//   query = query.replace("{{graph}}", graph);
+//   const data = await fetchSparql(query);
+//   let conflicts = [] as { title: string; id: string }[];
+//   data.map((conflict: StringAccessObject) => {
+//     conflicts.push({
+//       title: conflict.conflict_title.value,
+//       id: conflict.conflict_id.value.split("#").pop()
+//     });
+//   })
+//   return conflicts;
+// }
+export async function getConflictIds(graph: string): Promise<{ title: string | Record<string, string>; id: string }[]> {
   let query = await getSparqlTemplate(sparqlTemplate.getConflictIds);
   query = query.replace("{{graph}}", graph);
   const data = await fetchSparql(query);
-  let conflicts = [] as { title: string; id: string }[];
-  data.map((conflict: StringAccessObject) => {
-    conflicts.push({
-      title: conflict.conflict_title.value,
-      id: conflict.conflict_id.value.split("#").pop()
-    });
-  })
-  return conflicts;
+
+  const conflictMap = new Map<string, { title: Record<string, string>, id: string }>();
+
+  data.forEach((conflict: StringAccessObject) => {
+    const id = conflict.conflict_id.value.split("#").pop();
+    const lang = conflict.conflict_title["xml:lang"] || "default";
+    const title = conflict.conflict_title.value;
+
+    if (!conflictMap.has(id)) {
+      conflictMap.set(id, {
+        id,
+        title: { [lang]: title }
+      });
+    } else {
+      (conflictMap.get(id)!.title as Record<string, string>)[lang] = title;
+    }
+  });
+
+  return Array.from(conflictMap.values());
 }
 
 /**
@@ -136,11 +213,12 @@ export async function getConflictIds(graph: string): Promise<{ title: string; id
  * @param conflictId Id of the conflict
  * @returns Conflict
  */
-export async function getConflictDetail(graph: string, conflictId: string): Promise<Conflict> {
+export async function getConflictDetail(graph: string, conflictId: string, lang: string): Promise<Conflict> {
   let query = await getSparqlTemplate(sparqlTemplate.getConflictDetail);
   const mapObj = {
     "{{graph}}": graph,
-    "{{conflict}}": conflictId
+    "{{conflict}}": conflictId,
+    "{{lang}}": lang
   };
   query = query.replaceMultiple(mapObj);
   const data = await fetchSparql(query);
@@ -155,12 +233,22 @@ export async function getConflictDetail(graph: string, conflictId: string): Prom
         case "WrittenBy":
           parsedConflict.author = item.conflict_o.value;
           break;
-        case "ConflictDescription":
-          parsedConflict.description = item.conflict_o.value;
+        case "ConflictTitle": {
+          const langTag = item.conflict_o["xml:lang"] || "default";
+          if (!parsedConflict.title || typeof parsedConflict.title === "string") {
+          parsedConflict.title = {};
+          }
+          (parsedConflict.title as Record<string, string>)[langTag] = item.conflict_o.value;
           break;
-        case "ConflictTitle":
-          parsedConflict.title = item.conflict_o.value;
+        }
+        case "ConflictDescription": {
+          const langTag = item.conflict_o["xml:lang"] || "default";
+          if (!parsedConflict.description || typeof parsedConflict.description === "string") {
+          parsedConflict.description = {};
+          }
+          (parsedConflict.description as Record<string, string>)[langTag] = item.conflict_o.value;
           break;
+        }
         case "CreationDate":
           parsedConflict.timestamp = new Date(item.conflict_o.value);
           break;
@@ -282,7 +370,7 @@ export async function getConflictDetail(graph: string, conflictId: string): Prom
       parsedConflict.replies!.push(comment);
     }
   }
- // console.log("Parsed Conflict", parsedConflict);
+  //console.log("Parsed Conflict", parsedConflict);
   return parsedConflict;
 }
 
@@ -291,13 +379,14 @@ export async function getConflictDetail(graph: string, conflictId: string): Prom
  * @param graph activity graph
  * @returns List of Conflicts
  */
-export async function getAllConflictsWithDetail(graph: string): Promise<Conflict[]> {
+export async function getAllConflictsWithDetail(graph: string, lang: string): Promise<Conflict[]> {
   const conflicts = await getConflictIds(graph);
   let detailedConflicts = [] as Conflict[];
   for (const conflict of conflicts) {
-    const detail = await getConflictDetail(graph, conflict.id);
+    const detail = await getConflictDetail(graph, conflict.id, lang);
     detailedConflicts.push(detail);
   }
+  // console.log("Detailed Conflicts", detailedConflicts);
   return detailedConflicts;
 }
 

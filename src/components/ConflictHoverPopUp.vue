@@ -27,7 +27,13 @@ const popupRef = ref<HTMLElement | null>(null);
 const popupStyle = ref({ top: props.position.x + "px", left: props.position.y + 'px' });
 
 onMounted(() => {
-  props.hoveredConflictPoint.description = props.hoveredConflictPoint.description?.replace(/<\/?[^>]+(>|$)/g, "");
+  if (props.hoveredConflictPoint.description && typeof props.hoveredConflictPoint.description === 'object') {
+    const sanitized: { [lang: string]: string } = {};
+    for (const lang in props.hoveredConflictPoint.description) {
+      sanitized[lang] = String(props.hoveredConflictPoint.description[lang]).replace(/<\/?[^>]+(>|$)/g, "");
+    }
+    props.hoveredConflictPoint.description = sanitized;
+  }
   updatePopupHeight(props.position);
 });
 
@@ -75,7 +81,12 @@ const sessionStore = useSessionStore();
  * - Measures popup height
  */
 onMounted(() => {
-  props.hoveredConflictPoint.description = props.hoveredConflictPoint.description?.replace(/<\/?[^>]+(>|$)/g, "");
+  if (typeof props.hoveredConflictPoint.description === 'string') {
+    // If description is a string, convert it to an object with the active language as key
+    props.hoveredConflictPoint.description = {
+      [sessionStore.activeLanguage]: (props.hoveredConflictPoint.description as string).replace(/<\/?[^>]+(>|$)/g, "")
+    };
+  }
   updatePopupHeight({});
 });
 
@@ -90,9 +101,9 @@ watch(() => props.position, updatePopupHeight);
 
 <template>
   <div ref="popupRef" class="popup" :class="{ 'popup-dark': mode === 'dark' }" :style="popupStyle">
-    <b>{{ hoveredConflictPoint.title }}</b>
-    <p v-if="hoveredConflictPoint.description">
-      {{ hoveredConflictPoint.description }}
+    <b>{{ hoveredConflictPoint.title[sessionStore.activeLanguage] }}</b>
+    <p v-if="hoveredConflictPoint.description && hoveredConflictPoint.description[sessionStore.activeLanguage]">
+      {{ hoveredConflictPoint.description[sessionStore.activeLanguage] }}
     </p>
     <p><strong>{{ staticContent.terms.author[sessionStore.activeLanguage] }}:</strong> {{ hoveredConflictPoint.author }}
     </p>

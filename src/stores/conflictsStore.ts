@@ -21,10 +21,10 @@ export const useConflictsStore = defineStore('ActivityConflicts', () => {
     /**
      * Refreshes the conflict list by fetching all conflicts for the current activity
      */
-    const refreshConflictList = async () => {
+    const refreshConflictList = async (lang: string) => {
         const activity = sessionStore.sessionActivity;
         if (activity) {
-            const conflicts = await getAllConflictsWithDetail(activity.graph);
+            const conflicts = await getAllConflictsWithDetail(activity.graph, lang);
             setConflicts(conflicts);
             conflictDetails.value = conflicts;
         }
@@ -59,7 +59,7 @@ export const useConflictsStore = defineStore('ActivityConflicts', () => {
      * @param graph - Graph context to fetch from
      */
     const updateConflict = async (conflictId: string, graph: string) => {
-        const updatedConflict = await getConflictDetail(graph, conflictId);
+        const updatedConflict = await getConflictDetail(graph, conflictId, sessionStore.activeLanguage);
         const index = conflictDetails.value.findIndex(conflict => conflict.id === conflictId);
         if (index !== -1) {
             conflictDetails.value[index] = updatedConflict;  // Reaktive Änderung

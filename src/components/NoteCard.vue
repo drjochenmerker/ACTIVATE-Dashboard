@@ -123,7 +123,7 @@ const saveReply = async (conflictId: string) => {
       }
     }
     // Important to refresh the conflict list so that the UI shows the new comment immediately
-    useConflictsStore().refreshConflictList();
+    useConflictsStore().refreshConflictList(sessionStore.activeLanguage);
     replyInputVisible.value[conflictId] = false;
     newReplyText.value[conflictId] = '';
   } catch (error) {
@@ -149,7 +149,7 @@ const handleDelete = async (id: string) => {
   try {
     const response = await deleteConflict(sessionStore.sessionActivity!.graph, id);
 
-    conflictStore.refreshConflictList(); // important to see result immediately as the conflicts are shown from the store
+    conflictStore.refreshConflictList(sessionStore.activeLanguage); // important to see result immediately as the conflicts are shown from the store
     if (response.status === "OK") {
       conflictStore.removeConflict(id); // delete conflict from store
     }

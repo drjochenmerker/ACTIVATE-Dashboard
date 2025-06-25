@@ -60,7 +60,7 @@ const saveReply = async (parentCommentId: string) => {
         console.error('Error while saving the reply: ', error);
     }
 
-    await conflictStore.refreshConflictList();
+    await conflictStore.refreshConflictList(sessionStore.activeLanguage);
 };
 
 
@@ -87,7 +87,7 @@ const handleDelete = async (id: string, parentComment: any) => {
 
         // call deleteComment function
         const response = await deleteComment(sessionStore.sessionActivity!.graph, id, isNestedComment);
-        conflictStore.refreshConflictList();
+        conflictStore.refreshConflictList(sessionStore.activeLanguage);
 
         if (response.status === "OK") {
             // inform the parent
@@ -114,7 +114,7 @@ const handleDelete = async (id: string, parentComment: any) => {
 const removeReply = (id: string) => {
     if (!Array.isArray(props.parentComment.replies)) return;
     props.parentComment.replies = props.parentComment.replies.filter(reply => reply.id !== id);
-    conflictStore.refreshConflictList();
+    conflictStore.refreshConflictList(sessionStore.activeLanguage);
 };
 
 </script>

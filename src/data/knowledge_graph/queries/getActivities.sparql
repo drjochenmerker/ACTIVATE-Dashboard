@@ -1,11 +1,9 @@
 PREFIX : <http://activate.htwk-leipzig.de/model#> 
 PREFIX graph: <http://activate.htwk-leipzig.de/graph/>
 
-SELECT ?graph ?name ?description WHERE { 
+ SELECT ?graph ?name ?description WHERE { 
     GRAPH ?graph { 
         ?s :ActivityName ?name .
     	?s :ActivityDescription ?description .
-        # Language Filter - Remove as soon as frontend parsing can handle multi-language
-        FILTER (lang(?name) = "en" && lang(?description) = "en")
     }
 }

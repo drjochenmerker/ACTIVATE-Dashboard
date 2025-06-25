@@ -8,6 +8,6 @@ WHERE {
     ?conflict_id rdf:type :Conflict .
     ?conflict_id :ConflictTitle ?conflict_title .
     # Language Filter - Remove as soon as frontend parsing can handle multi-language
-    FILTER (lang(?conflict_title) = "en" || lang(?conflict_title) = "")
+   # FILTER (lang(?conflict_title) = "en" || lang(?conflict_title) = "")
   }
 }
