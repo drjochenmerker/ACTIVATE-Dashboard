@@ -1,0 +1,261 @@
+[44mAnalyzing Vue, TS and JS files in src/components[0m
+👉 Using configuration from [44mvue-mess-detector.json[0m
+      Project type: [44mVue[0m
+      Applying 0 rulesets: N/A
+      Applying 5 individual rules: [44mcomplicatedConditions, cyclomaticComplexity, propsDrilling, scriptLength, tooManyProps[0m
+      Ignoring 6 rulesets: [44mvue-caution, vue-essential, vue-recommended, vue-strong, rrd, security[0m
+      Ignoring 48 individual rules: [44melementSelectorsWithScoped, implicitParentChildCommunication, globalStyle, simpleProp, singleNameComponent, vforNoKey, vifWithVfor, elementAttributeOrder, topLevelElementOrder, componentFilenameCasing, componentFiles, directiveShorthands, fullWordComponentName, multiAttributeElements, propNameCasing, quotedAttributeValues, selfClosingComponents, simpleComputed, templateSimpleExpression, amountOfComments, bigVif, bigVshow, computedSideEffects, deepIndentation, elseCondition, functionSize, htmlImageElements, htmlLink, hugeFiles, ifWithoutCurlyBraces, magicNumbers, nestedTernary, noDirectDomAccess, noImportant, noInlineStyles, noPropDestructure, noSkippedTests, noTsLang, noVarDeclaration, parameterCount, plainScript, repeatedCss, shortVariableName, vForWithIndexKey, vForExpression, zeroLengthComparison, apiWithoutMethod, rateLimiter[0m
+      Ignoring file-specific rules: 
+      Excluding src/components/ui
+      Output level [44mall[0m
+      Grouping by [44mrule[0m
+      Sorting [44mdesc[0m
+Analyzing src/components/ActivityCard.vue...
+Analyzing src/components/ActivityDiagram.vue...
+Analyzing src/components/ActivityFormPopup.vue...
+Analyzing src/components/AnalysisPositiveControl.vue...
+Analyzing src/components/ConflictHoverPopUp.vue...
+Analyzing src/components/ContentTemplate.vue...
+Analyzing src/components/Dropdown.vue...
+Analyzing src/components/Editor.vue...
+Analyzing src/components/EntityAdditionDialog.vue...
+Analyzing src/components/LanguageSelect.vue...
+Analyzing src/components/LogoutButton.vue...
+Analyzing src/components/MainLayout.vue...
+Analyzing src/components/NavBar.vue...
+Analyzing src/components/NoteCard.vue...
+Analyzing src/components/NoteCardMisc.vue...
+Analyzing src/components/PagePlaceholder.vue...
+Analyzing src/components/PointHoverPopUp.vue...
+Analyzing src/components/RDFAdditionDropdown.vue...
+Analyzing src/components/RecursiveSelect.vue...
+Analyzing src/components/ReplyCard.vue...
+Analyzing src/components/ThemeSwitchButton.vue...
+Analyzing src/components/TripleAdditionDialog.vue...
+Found [44m22[0m files
+------------------------------------------------------------------------------------------------------------------------
+[36mRule: [36mrrd ~ Long <script> blocks[0m[0m
+Description: 👉 [33mTry to refactor out the logic into composable functions or other files and keep the script block's length under 0 lines.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/script-length.html
+src/components/ActivityCard.vue
+[41m(138 lines)[0m 🚨
+src/components/ActivityDiagram.vue
+[41m(540 lines)[0m 🚨
+src/components/ActivityFormPopup.vue
+[41m(10 lines)[0m 🚨
+src/components/AnalysisPositiveControl.vue
+[41m(37 lines)[0m 🚨
+src/components/ConflictHoverPopUp.vue
+[41m(67 lines)[0m 🚨
+src/components/ContentTemplate.vue
+[41m(37 lines)[0m 🚨
+src/components/Dropdown.vue
+[41m(116 lines)[0m 🚨
+src/components/Editor.vue
+[41m(303 lines)[0m 🚨
+src/components/EntityAdditionDialog.vue
+[41m(104 lines)[0m 🚨
+src/components/LanguageSelect.vue
+[41m(12 lines)[0m 🚨
+src/components/LogoutButton.vue
+[41m(19 lines)[0m 🚨
+src/components/MainLayout.vue
+[41m(32 lines)[0m 🚨
+src/components/NavBar.vue
+[41m(17 lines)[0m 🚨
+src/components/NoteCard.vue
+[41m(167 lines)[0m 🚨
+src/components/NoteCardMisc.vue
+[41m(146 lines)[0m 🚨
+src/components/PagePlaceholder.vue
+[41m(3 lines)[0m 🚨
+src/components/PointHoverPopUp.vue
+[41m(48 lines)[0m 🚨
+src/components/RDFAdditionDropdown.vue
+[41m(132 lines)[0m 🚨
+src/components/RecursiveSelect.vue
+[41m(12 lines)[0m 🚨
+src/components/ReplyCard.vue
+[41m(120 lines)[0m 🚨
+src/components/ThemeSwitchButton.vue
+[41m(22 lines)[0m 🚨
+src/components/TripleAdditionDialog.vue
+[41m(165 lines)[0m 🚨
+[90m┌────────────────────────────────────────────────────────────[39m[90m┬────────────────────────────────────────────────────────────┐[39m
+[90m│[39m[31m id                                                         [39m[90m│[39m[31m message                                                    [39m[90m│[39m
+[90m├────────────────────────────────────────────────────────────[39m[90m┼────────────────────────────────────────────────────────────┤[39m
+[90m│[39m src/components/ActivityCard.vue                            [90m│[39m [41m(138 lines)[0m 🚨                                             [90m│[39m
+[90m├────────────────────────────────────────────────────────────[39m[90m┼────────────────────────────────────────────────────────────┤[39m
+[90m│[39m src/components/ActivityDiagram.vue                         [90m│[39m [41m(540 lines)[0m 🚨                                             [90m│[39m
+[90m├────────────────────────────────────────────────────────────[39m[90m┼────────────────────────────────────────────────────────────┤[39m
+[90m│[39m src/components/ActivityFormPopup.vue                       [90m│[39m [41m(10 lines)[0m 🚨                                              [90m│[39m
+[90m├────────────────────────────────────────────────────────────[39m[90m┼────────────────────────────────────────────────────────────┤[39m
+[90m│[39m src/components/AnalysisPositiveControl.vue                 [90m│[39m [41m(37 lines)[0m 🚨                                              [90m│[39m
+[90m├────────────────────────────────────────────────────────────[39m[90m┼────────────────────────────────────────────────────────────┤[39m
+[90m│[39m src/components/ConflictHoverPopUp.vue                      [90m│[39m [41m(67 lines)[0m 🚨                                              [90m│[39m
+[90m├────────────────────────────────────────────────────────────[39m[90m┼────────────────────────────────────────────────────────────┤[39m
+[90m│[39m src/components/ContentTemplate.vue                         [90m│[39m [41m(37 lines)[0m 🚨                                              [90m│[39m
+[90m├────────────────────────────────────────────────────────────[39m[90m┼────────────────────────────────────────────────────────────┤[39m
+[90m│[39m src/components/Dropdown.vue                                [90m│[39m [41m(116 lines)[0m 🚨                                             [90m│[39m
+[90m├────────────────────────────────────────────────────────────[39m[90m┼────────────────────────────────────────────────────────────┤[39m
+[90m│[39m src/components/Editor.vue                                  [90m│[39m [41m(303 lines)[0m 🚨                                             [90m│[39m
+[90m├────────────────────────────────────────────────────────────[39m[90m┼────────────────────────────────────────────────────────────┤[39m
+[90m│[39m src/components/EntityAdditionDialog.vue                    [90m│[39m [41m(104 lines)[0m 🚨                                             [90m│[39m
+[90m├────────────────────────────────────────────────────────────[39m[90m┼────────────────────────────────────────────────────────────┤[39m
+[90m│[39m src/components/LanguageSelect.vue                          [90m│[39m [41m(12 lines)[0m 🚨                                              [90m│[39m
+[90m├────────────────────────────────────────────────────────────[39m[90m┼────────────────────────────────────────────────────────────┤[39m
+[90m│[39m src/components/LogoutButton.vue                            [90m│[39m [41m(19 lines)[0m 🚨                                              [90m│[39m
+[90m├────────────────────────────────────────────────────────────[39m[90m┼────────────────────────────────────────────────────────────┤[39m
+[90m│[39m src/components/MainLayout.vue                              [90m│[39m [41m(32 lines)[0m 🚨                                              [90m│[39m
+[90m├────────────────────────────────────────────────────────────[39m[90m┼────────────────────────────────────────────────────────────┤[39m
+[90m│[39m src/components/NavBar.vue                                  [90m│[39m [41m(17 lines)[0m 🚨                                              [90m│[39m
+[90m├────────────────────────────────────────────────────────────[39m[90m┼────────────────────────────────────────────────────────────┤[39m
+[90m│[39m src/components/NoteCard.vue                                [90m│[39m [41m(167 lines)[0m 🚨                                             [90m│[39m
+[90m├────────────────────────────────────────────────────────────[39m[90m┼────────────────────────────────────────────────────────────┤[39m
+[90m│[39m src/components/NoteCardMisc.vue                            [90m│[39m [41m(146 lines)[0m 🚨                                             [90m│[39m
+[90m├────────────────────────────────────────────────────────────[39m[90m┼────────────────────────────────────────────────────────────┤[39m
+[90m│[39m src/components/PagePlaceholder.vue                         [90m│[39m [41m(3 lines)[0m 🚨                                               [90m│[39m
+[90m├────────────────────────────────────────────────────────────[39m[90m┼────────────────────────────────────────────────────────────┤[39m
+[90m│[39m src/components/PointHoverPopUp.vue                         [90m│[39m [41m(48 lines)[0m 🚨                                              [90m│[39m
+[90m├────────────────────────────────────────────────────────────[39m[90m┼────────────────────────────────────────────────────────────┤[39m
+[90m│[39m src/components/RDFAdditionDropdown.vue                     [90m│[39m [41m(132 lines)[0m 🚨                                             [90m│[39m
+[90m├────────────────────────────────────────────────────────────[39m[90m┼────────────────────────────────────────────────────────────┤[39m
+[90m│[39m src/components/RecursiveSelect.vue                         [90m│[39m [41m(12 lines)[0m 🚨                                              [90m│[39m
+[90m├────────────────────────────────────────────────────────────[39m[90m┼────────────────────────────────────────────────────────────┤[39m
+[90m│[39m src/components/ReplyCard.vue                               [90m│[39m [41m(120 lines)[0m 🚨                                             [90m│[39m
+[90m├────────────────────────────────────────────────────────────[39m[90m┼────────────────────────────────────────────────────────────┤[39m
+[90m│[39m src/components/ThemeSwitchButton.vue                       [90m│[39m [41m(22 lines)[0m 🚨                                              [90m│[39m
+[90m├────────────────────────────────────────────────────────────[39m[90m┼────────────────────────────────────────────────────────────┤[39m
+[90m│[39m src/components/TripleAdditionDialog.vue                    [90m│[39m [41m(165 lines)[0m 🚨                                             [90m│[39m
+[90m└────────────────────────────────────────────────────────────[39m[90m┴────────────────────────────────────────────────────────────┘[39m
+------------------------------------------------------------------------------------------------------------------------
+[36mRule: [36mrrd ~ cyclomatic complexity[0m[0m
+Description: 👉 [33mTry to reduce complexity.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/cyclomatic-complexity.html
+src/components/ActivityCard.vue
+Cyclomatic complexity is [41mvery high (3)[0m 🚨
+src/components/ActivityDiagram.vue
+Cyclomatic complexity is [41mvery high (44)[0m 🚨
+src/components/AnalysisPositiveControl.vue
+Cyclomatic complexity is [41mvery high (8)[0m 🚨
+src/components/ConflictHoverPopUp.vue
+Cyclomatic complexity is [41mvery high (2)[0m 🚨
+src/components/Dropdown.vue
+Cyclomatic complexity is [41mvery high (3)[0m 🚨
+src/components/Editor.vue
+Cyclomatic complexity is [41mvery high (20)[0m 🚨
+src/components/EntityAdditionDialog.vue
+Cyclomatic complexity is [41mvery high (5)[0m 🚨
+src/components/MainLayout.vue
+Cyclomatic complexity is [41mvery high (1)[0m 🚨
+src/components/NoteCard.vue
+Cyclomatic complexity is [41mvery high (14)[0m 🚨
+src/components/NoteCardMisc.vue
+Cyclomatic complexity is [41mvery high (12)[0m 🚨
+src/components/PointHoverPopUp.vue
+Cyclomatic complexity is [41mvery high (2)[0m 🚨
+src/components/RDFAdditionDropdown.vue
+Cyclomatic complexity is [41mvery high (5)[0m 🚨
+src/components/ReplyCard.vue
+Cyclomatic complexity is [41mvery high (12)[0m 🚨
+src/components/TripleAdditionDialog.vue
+Cyclomatic complexity is [41mvery high (12)[0m 🚨
+[90m┌────────────────────────────────────────────────────────────[39m[90m┬────────────────────────────────────────────────────────────┐[39m
+[90m│[39m[31m id                                                         [39m[90m│[39m[31m message                                                    [39m[90m│[39m
+[90m├────────────────────────────────────────────────────────────[39m[90m┼────────────────────────────────────────────────────────────┤[39m
+[90m│[39m src/components/ActivityCard.vue                            [90m│[39m Cyclomatic complexity is [41mvery high (3)[0m 🚨                  [90m│[39m
+[90m├────────────────────────────────────────────────────────────[39m[90m┼────────────────────────────────────────────────────────────┤[39m
+[90m│[39m src/components/ActivityDiagram.vue                         [90m│[39m Cyclomatic complexity is [41mvery high (44)[0m 🚨                 [90m│[39m
+[90m├────────────────────────────────────────────────────────────[39m[90m┼────────────────────────────────────────────────────────────┤[39m
+[90m│[39m src/components/AnalysisPositiveControl.vue                 [90m│[39m Cyclomatic complexity is [41mvery high (8)[0m 🚨                  [90m│[39m
+[90m├────────────────────────────────────────────────────────────[39m[90m┼────────────────────────────────────────────────────────────┤[39m
+[90m│[39m src/components/ConflictHoverPopUp.vue                      [90m│[39m Cyclomatic complexity is [41mvery high (2)[0m 🚨                  [90m│[39m
+[90m├────────────────────────────────────────────────────────────[39m[90m┼────────────────────────────────────────────────────────────┤[39m
+[90m│[39m src/components/Dropdown.vue                                [90m│[39m Cyclomatic complexity is [41mvery high (3)[0m 🚨                  [90m│[39m
+[90m├────────────────────────────────────────────────────────────[39m[90m┼────────────────────────────────────────────────────────────┤[39m
+[90m│[39m src/components/Editor.vue                                  [90m│[39m Cyclomatic complexity is [41mvery high (20)[0m 🚨                 [90m│[39m
+[90m├────────────────────────────────────────────────────────────[39m[90m┼────────────────────────────────────────────────────────────┤[39m
+[90m│[39m src/components/EntityAdditionDialog.vue                    [90m│[39m Cyclomatic complexity is [41mvery high (5)[0m 🚨                  [90m│[39m
+[90m├────────────────────────────────────────────────────────────[39m[90m┼────────────────────────────────────────────────────────────┤[39m
+[90m│[39m src/components/MainLayout.vue                              [90m│[39m Cyclomatic complexity is [41mvery high (1)[0m 🚨                  [90m│[39m
+[90m├────────────────────────────────────────────────────────────[39m[90m┼────────────────────────────────────────────────────────────┤[39m
+[90m│[39m src/components/NoteCard.vue                                [90m│[39m Cyclomatic complexity is [41mvery high (14)[0m 🚨                 [90m│[39m
+[90m├────────────────────────────────────────────────────────────[39m[90m┼────────────────────────────────────────────────────────────┤[39m
+[90m│[39m src/components/NoteCardMisc.vue                            [90m│[39m Cyclomatic complexity is [41mvery high (12)[0m 🚨                 [90m│[39m
+[90m├────────────────────────────────────────────────────────────[39m[90m┼────────────────────────────────────────────────────────────┤[39m
+[90m│[39m src/components/PointHoverPopUp.vue                         [90m│[39m Cyclomatic complexity is [41mvery high (2)[0m 🚨                  [90m│[39m
+[90m├────────────────────────────────────────────────────────────[39m[90m┼────────────────────────────────────────────────────────────┤[39m
+[90m│[39m src/components/RDFAdditionDropdown.vue                     [90m│[39m Cyclomatic complexity is [41mvery high (5)[0m 🚨                  [90m│[39m
+[90m├────────────────────────────────────────────────────────────[39m[90m┼────────────────────────────────────────────────────────────┤[39m
+[90m│[39m src/components/ReplyCard.vue                               [90m│[39m Cyclomatic complexity is [41mvery high (12)[0m 🚨                 [90m│[39m
+[90m├────────────────────────────────────────────────────────────[39m[90m┼────────────────────────────────────────────────────────────┤[39m
+[90m│[39m src/components/TripleAdditionDialog.vue                    [90m│[39m Cyclomatic complexity is [41mvery high (12)[0m 🚨                 [90m│[39m
+[90m└────────────────────────────────────────────────────────────[39m[90m┴────────────────────────────────────────────────────────────┘[39m
+------------------------------------------------------------------------------------------------------------------------
+[36mRule: [36mrrd ~ too many props[0m[0m
+Description: 👉 [33mTry to refactor your code to use less properties.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/too-many-props.html
+src/components/ActivityCard.vue
+props found [41m(3)[0m 🚨
+src/components/ActivityFormPopup.vue
+props found [41m(3)[0m 🚨
+src/components/AnalysisPositiveControl.vue
+props found [41m(5)[0m 🚨
+src/components/ConflictHoverPopUp.vue
+props found [41m(1)[0m 🚨
+src/components/ContentTemplate.vue
+props found [41m(3)[0m 🚨
+src/components/EntityAdditionDialog.vue
+props found [41m(2)[0m 🚨
+src/components/NoteCard.vue
+props found [41m(3)[0m 🚨
+src/components/NoteCardMisc.vue
+props found [41m(3)[0m 🚨
+src/components/PointHoverPopUp.vue
+props found [41m(1)[0m 🚨
+src/components/RecursiveSelect.vue
+props found [41m(1)[0m 🚨
+src/components/ReplyCard.vue
+props found [41m(3)[0m 🚨
+src/components/TripleAdditionDialog.vue
+props found [41m(2)[0m 🚨
+[90m┌────────────────────────────────────────────────────────────[39m[90m┬────────────────────────────────────────────────────────────┐[39m
+[90m│[39m[31m id                                                         [39m[90m│[39m[31m message                                                    [39m[90m│[39m
+[90m├────────────────────────────────────────────────────────────[39m[90m┼────────────────────────────────────────────────────────────┤[39m
+[90m│[39m src/components/ActivityCard.vue                            [90m│[39m props found [41m(3)[0m 🚨                                         [90m│[39m
+[90m├────────────────────────────────────────────────────────────[39m[90m┼────────────────────────────────────────────────────────────┤[39m
+[90m│[39m src/components/ActivityFormPopup.vue                       [90m│[39m props found [41m(3)[0m 🚨                                         [90m│[39m
+[90m├────────────────────────────────────────────────────────────[39m[90m┼────────────────────────────────────────────────────────────┤[39m
+[90m│[39m src/components/AnalysisPositiveControl.vue                 [90m│[39m props found [41m(5)[0m 🚨                                         [90m│[39m
+[90m├────────────────────────────────────────────────────────────[39m[90m┼────────────────────────────────────────────────────────────┤[39m
+[90m│[39m src/components/ConflictHoverPopUp.vue                      [90m│[39m props found [41m(1)[0m 🚨                                         [90m│[39m
+[90m├────────────────────────────────────────────────────────────[39m[90m┼────────────────────────────────────────────────────────────┤[39m
+[90m│[39m src/components/ContentTemplate.vue                         [90m│[39m props found [41m(3)[0m 🚨                                         [90m│[39m
+[90m├────────────────────────────────────────────────────────────[39m[90m┼────────────────────────────────────────────────────────────┤[39m
+[90m│[39m src/components/EntityAdditionDialog.vue                    [90m│[39m props found [41m(2)[0m 🚨                                         [90m│[39m
+[90m├────────────────────────────────────────────────────────────[39m[90m┼────────────────────────────────────────────────────────────┤[39m
+[90m│[39m src/components/NoteCard.vue                                [90m│[39m props found [41m(3)[0m 🚨                                         [90m│[39m
+[90m├────────────────────────────────────────────────────────────[39m[90m┼────────────────────────────────────────────────────────────┤[39m
+[90m│[39m src/components/NoteCardMisc.vue                            [90m│[39m props found [41m(3)[0m 🚨                                         [90m│[39m
+[90m├────────────────────────────────────────────────────────────[39m[90m┼────────────────────────────────────────────────────────────┤[39m
+[90m│[39m src/components/PointHoverPopUp.vue                         [90m│[39m props found [41m(1)[0m 🚨                                         [90m│[39m
+[90m├────────────────────────────────────────────────────────────[39m[90m┼────────────────────────────────────────────────────────────┤[39m
+[90m│[39m src/components/RecursiveSelect.vue                         [90m│[39m props found [41m(1)[0m 🚨                                         [90m│[39m
+[90m├────────────────────────────────────────────────────────────[39m[90m┼────────────────────────────────────────────────────────────┤[39m
+[90m│[39m src/components/ReplyCard.vue                               [90m│[39m props found [41m(3)[0m 🚨                                         [90m│[39m
+[90m├────────────────────────────────────────────────────────────[39m[90m┼────────────────────────────────────────────────────────────┤[39m
+[90m│[39m src/components/TripleAdditionDialog.vue                    [90m│[39m props found [41m(2)[0m 🚨                                         [90m│[39m
+[90m└────────────────────────────────────────────────────────────[39m[90m┴────────────────────────────────────────────────────────────┘[39m
+------------------------------------------------------------------------------------------------------------------------
+[36mRule: [36mrrd ~ complicated conditions[0m[0m
+Description: 👉 [33mSimplify complex conditions by breaking them down into smaller, more manageable parts.[0m See: https://vue-mess-detector.webmania.cc/rules/rrd/complicated-conditions.html
+src/components/AnalysisPositiveControl.vue
+line #7 [43mtemplate has a complicated condition with 5 blocks[0m 🚨
+[90m┌────────────────────────────────────────────────────────────[39m[90m┬────────────────────────────────────────────────────────────┐[39m
+[90m│[39m[31m id                                                         [39m[90m│[39m[31m message                                                    [39m[90m│[39m
+[90m├────────────────────────────────────────────────────────────[39m[90m┼────────────────────────────────────────────────────────────┤[39m
+[90m│[39m src/components/AnalysisPositiveControl.vue                 [90m│[39m line #7 [43mtemplate has a complicated condition with 5 b[49m      [90m│[39m
+[90m│[39m                                                            [90m│[39m [43mlocks[0m 🚨                                                   [90m│[39m
+[90m└────────────────────────────────────────────────────────────[39m[90m┴────────────────────────────────────────────────────────────┘[39m
+Found [41m48 errors[0m, and [43m1 warnings[0m, [44m3,923 lines[0m of code in [44m22 files[0m
+Code Health: [[42m___________________________________________________________[0m[43m_[0m[41m[0m] 99%
+
+[42mCode health is GOOD: 99%[0m
+

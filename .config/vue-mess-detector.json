@@ -1,9 +1,11 @@
 {
-  "apply": "cyclomaticComplexity",
-  "path": "src/components/complexity-tests",
+  "apply": "cyclomaticComplexity,scriptLength,tooManyProps,propsDrilling,complicatedConditions",
+  "path": "src/components",
   "exclude": "src/components/ui",
-  "output": "table",
+    "output": "table",
    "override": {
-    "complexityModerate": 0
+    "complexityModerate": 0,
+    "maxPropsCount": 0,
+    "maxScriptLength": 0
   }
 }

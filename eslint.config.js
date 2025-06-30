@@ -23,7 +23,6 @@ export default defineConfig([
       "@typescript-eslint": tsPlugin,
     },
     extends: [
-      // NICHT als String, sondern aus dem Plugin-Objekt:
       ...pluginVue.configs.essential.extends || [],
       ...tsPlugin.configs.recommended.extends || [],
     ],

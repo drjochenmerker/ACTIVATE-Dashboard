@@ -2,5 +2,5 @@ projectKey=activate
 serverUrl=http://localhost:9000
 serverVersion=25.5.0.107428
 dashboardUrl=http://localhost:9000/dashboard?id=activate
-ceTaskId=91221cee-1c63-439e-acb8-e7ffbcf73dd6
-ceTaskUrl=http://localhost:9000/api/ce/task?id=91221cee-1c63-439e-acb8-e7ffbcf73dd6
+ceTaskId=47e31454-f3d3-4df5-b64c-0b5dea6fb485
+ceTaskUrl=http://localhost:9000/api/ce/task?id=47e31454-f3d3-4df5-b64c-0b5dea6fb485
