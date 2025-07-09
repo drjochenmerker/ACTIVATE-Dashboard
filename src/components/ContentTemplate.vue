@@ -50,6 +50,8 @@ const filteredConflicts = computed(() => {
             :content="(conflict.description && (conflict.description[sessionStore.activeLanguage] || conflict.description['en'])) || ''"
             :author="conflict.author" :status="conflict.status" />
         </div>
+        <!-- TODO: content not shown directly from already stored conflicts/tensions.. .. titel and beschreibung not visible in the card -->
+
 
       </div>
     </div>
