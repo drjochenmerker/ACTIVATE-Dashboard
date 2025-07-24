@@ -34,6 +34,7 @@ export const useSessionStore = defineStore('session', () => {
   const instructorMode = ref(false);
   const isSessionActive = ref(false);
   const activeLanguage = ref<LanguageCode>(LanguageCode.English);
+  const activeScene = ref<string>('Scene 1'); // Default scene
 
   const outdated = ref(false);
 
@@ -50,5 +51,5 @@ export const useSessionStore = defineStore('session', () => {
     isSessionActive.value = false;
   }
 
-  return { startSession, endSession, sessionActivity, sessionRole, availableRoles, isSessionActive, instructorMode, outdated, activeLanguage };
+  return { startSession, endSession, sessionActivity, sessionRole, availableRoles, isSessionActive, instructorMode, outdated, activeLanguage, activeScene };
 });

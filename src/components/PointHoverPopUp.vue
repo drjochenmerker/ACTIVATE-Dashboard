@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Objective } from '@/data/knowledge_graph/structures';
-//import { buildLanguageString } from '@/lib/utils';
-//import { useSessionStore } from '@/stores/sessionStore';
+import { buildLanguageString } from '@/lib/utils';
+import { useSessionStore } from '@/stores/sessionStore';
 import { useColorMode } from '@vueuse/core';
 import { defineProps, nextTick, ref, watch, computed } from 'vue';
 
@@ -22,7 +22,7 @@ const props = defineProps<{
   };
 }>();
 
-//const sessionStore = useSessionStore();
+const sessionStore = useSessionStore();
 const mode = useColorMode();
 
 const popupRef = ref<HTMLElement | null>(null);
@@ -70,7 +70,8 @@ const tooltipList = computed(() => {
 
 
 <template>
-  <div ref="popupRef" class="popup" :class="{ 'popup-dark': mode === 'dark' }" :style="popupStyle">
+  <div v-if="sessionStore.activeScene === 'Scene 1'" ref="popupRef" class="popup"
+    :class="{ 'popup-dark': mode === 'dark' }" :style="popupStyle">
     <b>{{ hoveredPoint.label }}:</b>
     <br>
     <ul class="custom-list">
@@ -78,13 +79,18 @@ const tooltipList = computed(() => {
         {{ item }}
       </li>
     </ul>
+  </div>
 
-    <!-- TEMPORARY: not displaying the content list
+  <!-- TEMPORARY: not displaying the content list-->
+  <div v-if="sessionStore.activeScene === 'Scene 2'" ref="popupRef" class="popup"
+    :class="{ 'popup-dark': mode === 'dark' }" :style="popupStyle">
+    <b>{{ hoveredPoint.label }}:</b>
+    <br>
     <ul class="custom-list">
       <li v-for="(item, index) in hoveredPoint.content" :key="index">
         {{ buildLanguageString(item, sessionStore.activeLanguage, true) }}
       </li>
-    </ul>-->
+    </ul>
   </div>
 </template>
 
