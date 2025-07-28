@@ -306,8 +306,10 @@ export default defineComponent({
             // Reset canvas
             ctx.clearRect(0, 0, triangleWidth, triangleHeight);
 
-            // If traingle is hovered, draw it with a slightly red fill
-            if (hoveredTriangle.value) {
+            // If traingle is hovered, draw it with a slightly blue fill
+            // TEMPORARILY disabled because of confusion
+            // TRIANGLE IS STILL SELECTABLE but not hovered
+            /**if (hoveredTriangle.value) {
                 const [p1, p2, p3] = hoveredTriangle.value.pointIds.map((id) => points.value.find((p) => p.id === id));
                 if (p1 && p2 && p3) {
                     ctx.beginPath();
@@ -319,9 +321,9 @@ export default defineComponent({
                     ctx.stroke();
                     ctx.fill();
                 }
-            }
+            }*/
 
-            // Draw red triangle between 3 points if 3 points are currently selected
+            // Draw blue triangle between 3 points if 3 points are currently selected
             if (selectedPoints.value.length === 3) {
                 const [p1, p2, p3] = selectedPoints.value.map((id) => points.value.find((p) => p.id === id));
                 if (p1 && p2 && p3) {
