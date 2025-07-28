@@ -458,8 +458,15 @@ export default defineComponent({
                     conflictPointWasClicked = true;
 
                     const conflictParticipantTypes = conflict.participants.map((participant: { type: any; }) => participant.type)
-
-                    router.push(`/${conflictParticipantTypes[0]}`)
+                    //console.log(conflictParticipantTypes)
+                    // old :
+                    // router.push(`/${conflictParticipantTypes[0]}`)
+                    router.push({
+                        path: `/${conflictParticipantTypes[0]}`,
+                        query: {
+                            conflictId: conflict.id,
+                        }
+                    })
                 }
             });
 

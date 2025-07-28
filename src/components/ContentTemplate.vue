@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
+import { useRoute } from 'vue-router';
 import NoteCard from './NoteCard.vue';
 import { useConflictsStore } from '@/stores/conflictsStore';
 import { staticContent } from '@/data/contentData';
@@ -20,6 +21,10 @@ const props = defineProps({
 const conflictStore = useConflictsStore();
 const sessionStore = useSessionStore();
 
+// for highlights
+const route = useRoute()
+const highlightedConflictId = route.query.conflictId
+
 /**
  * Computes a filtered list of conflicts specific to the current page.
  * Filters conflicts based on whether their participants include the current page's ID
@@ -28,10 +33,26 @@ const sessionStore = useSessionStore();
  * @returns {Array} An array of conflicts relevant to the current page context
  */
 const filteredConflicts = computed(() => {
-  return conflictStore.getConflicts.filter(conflict => {
+  // with the higlighted conflict on top
+  const conflicts = conflictStore.getConflicts.filter(conflict => {
     return Array.isArray(conflict.participants) &&
       conflict.participants.some(participant => participant.type === props.pageData.id);
   });
+
+  // If there is a highlightedConflictId, sort so it comes first
+  if (highlightedConflictId) {
+    return conflicts.slice().sort((a, b) => {
+      if (a.id === highlightedConflictId) return -1;
+      if (b.id === highlightedConflictId) return 1;
+      return 0;
+    });
+  }
+  return conflicts;
+  // old:
+  /*return conflictStore.getConflicts.filter(conflict => {
+    return Array.isArray(conflict.participants) &&
+      conflict.participants.some(participant => participant.type === props.pageData.id);
+  });*/
 });
 
 </script>
@@ -44,7 +65,8 @@ const filteredConflicts = computed(() => {
         <div class="note-container">
           <!-- NoteCard component for displaying conflict details -->
           <NoteCard :conflict="conflict" :title="conflict.title" :content="conflict.description || ''"
-            :author="conflict.author" :status="conflict.status" />
+            :author="conflict.author" :status="conflict.status"
+            :isGrayedOut="!!highlightedConflictId && conflict.id !== highlightedConflictId" />
         </div>
 
       </div>
@@ -53,7 +75,7 @@ const filteredConflicts = computed(() => {
 
   <!-- Display a message if there are no conflicts -->
   <div v-else>
-    <p>{{staticContent.errors.noConflicts[sessionStore.activeLanguage]}}</p>
+    <p>{{ staticContent.errors.noConflicts[sessionStore.activeLanguage] }}</p>
   </div>
 </template>
 
