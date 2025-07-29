@@ -89,20 +89,17 @@ watch(() => props.position, updatePopupHeight);
 </script>
 
 <template>
-  <div ref="popupRef" class="popup" :class="{ 'popup-dark': mode === 'dark' }" :style="popupStyle">
+  <!-- SCENE 1 -->
+  <!--
+     titel, description, participants
+   -->
+
+  <div v-if="sessionStore.activeScene === 'Scene 1'" ref="popupRef" class="popup"
+    :class="{ 'popup-dark': mode === 'dark' }" :style="popupStyle">
     <b>{{ hoveredConflictPoint.title }}</b>
     <p v-if="hoveredConflictPoint.description">
       {{ hoveredConflictPoint.description }}
     </p>
-    <p><strong>{{ staticContent.terms.author[sessionStore.activeLanguage] }}:</strong> {{ hoveredConflictPoint.author }}
-    </p>
-    <p>
-      <strong>{{ staticContent.terms.timestamp[sessionStore.activeLanguage] }}:</strong>
-      {{ hoveredConflictPoint.timestamp ? new Date(hoveredConflictPoint.timestamp).toLocaleString() :
-        staticContent.errors.timestampLoad[sessionStore.activeLanguage] }}
-    </p>
-    <p><strong>{{ staticContent.terms.status[sessionStore.activeLanguage] }}:</strong> {{
-      staticContent.terms.conflictStatus[hoveredConflictPoint.status][sessionStore.activeLanguage] }}</p>
     <div v-if="hoveredConflictPoint.participants.length">
       <p><strong>{{ staticContent.terms.participants[sessionStore.activeLanguage] }}:</strong></p>
       <ul class="custom-list">
@@ -112,10 +109,42 @@ watch(() => props.position, updatePopupHeight);
         </li>
       </ul>
     </div>
-    <p v-if="hoveredConflictPoint.replies">
-      <strong>{{ staticContent.terms.replies[sessionStore.activeLanguage] }}:</strong> {{
-        hoveredConflictPoint.replies.length }}
-    </p>
+  </div>
+
+  <!-- SCENE 2 -->
+  <!--
+     titel, description, author, timestamp, status, participants, replies
+   -->
+  <div v-if="sessionStore.activeScene === 'Scene 2'" class="popup-header">
+    <div ref="popupRef" class="popup" :class="{ 'popup-dark': mode === 'dark' }" :style="popupStyle">
+      <b>{{ hoveredConflictPoint.title }}</b>
+      <p v-if="hoveredConflictPoint.description">
+        {{ hoveredConflictPoint.description }}
+      </p>
+      <p><strong>{{ staticContent.terms.author[sessionStore.activeLanguage] }}:</strong> {{ hoveredConflictPoint.author
+        }}
+      </p>
+      <p>
+        <strong>{{ staticContent.terms.timestamp[sessionStore.activeLanguage] }}:</strong>
+        {{ hoveredConflictPoint.timestamp ? new Date(hoveredConflictPoint.timestamp).toLocaleString() :
+          staticContent.errors.timestampLoad[sessionStore.activeLanguage] }}
+      </p>
+      <p><strong>{{ staticContent.terms.status[sessionStore.activeLanguage] }}:</strong> {{
+        staticContent.terms.conflictStatus[hoveredConflictPoint.status][sessionStore.activeLanguage] }}</p>
+      <div v-if="hoveredConflictPoint.participants.length">
+        <p><strong>{{ staticContent.terms.participants[sessionStore.activeLanguage] }}:</strong></p>
+        <ul class="custom-list">
+          <li v-for="(participant, index) in hoveredConflictPoint.participants" :key="index">
+            {{ buildLanguageString(participant, sessionStore.activeLanguage, true) }} - {{
+              activateTerms[sessionStore.activeLanguage][participant.type] }}
+          </li>
+        </ul>
+      </div>
+      <p v-if="hoveredConflictPoint.replies">
+        <strong>{{ staticContent.terms.replies[sessionStore.activeLanguage] }}:</strong> {{
+          hoveredConflictPoint.replies.length }}
+      </p>
+    </div>
   </div>
 </template>
 

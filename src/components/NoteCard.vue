@@ -29,6 +29,10 @@ const props = defineProps({
   status: {
     type: String,
     required: true,
+  },
+  isGrayedOut: {
+    type: Boolean,
+    default: false,
   }
 });
 
@@ -215,7 +219,7 @@ const removeReply = (id: string) => {
 </script>
 
 <template>
-  <div class="note-card" :class="selectedStatus">
+  <div class="note-card" :class="[selectedStatus, { 'grayed-out': isGrayedOut }]">
     <div class="note-card-header">
       <!-- Author-->
       <span class="note-card-author">
@@ -296,6 +300,12 @@ const removeReply = (id: string) => {
   max-width: 100%;
   width: 100%;
   transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.grayed-out {
+  opacity: 0.5;
+  pointer-events: none;
+  filter: grayscale(100%);
 }
 
 .dark .note-card {

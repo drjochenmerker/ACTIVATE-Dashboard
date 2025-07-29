@@ -22,7 +22,7 @@ const sessionStore = useSessionStore();
 
 
 // drawer:
-const isEditorDrawerOPen = ref(true);
+const isEditorDrawerOPen = ref(false);
 </script>
 
 <template>

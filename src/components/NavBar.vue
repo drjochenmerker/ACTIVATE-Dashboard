@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/select';
 import LogoutButton from './LogoutButton.vue';
 import RecursiveSelect from './RecursiveSelect.vue';
+import SceneChangeButton from './SceneChangeButton.vue';
 import LanguageSelect from './LanguageSelect.vue';
 
 const sessionStore = useSessionStore();
@@ -52,6 +53,7 @@ const sessionStore = useSessionStore();
                         <span>{{ sessionStore.sessionRole }}</span>
                     </template>
                 </div>
+                <SceneChangeButton />
                 <LanguageSelect />
                 <LogoutButton />
                 <ThemeSwitchButton />

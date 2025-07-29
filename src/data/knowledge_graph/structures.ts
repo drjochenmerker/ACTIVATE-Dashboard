@@ -179,6 +179,13 @@ export enum LanguageCode {
     English = "en",
     Svenska = "sv"
 }
+/**
+ * Scene Change Enum to allow easy switching between scenes
+ */
+export enum SceneChange {
+    Scene1 = "Scene 1",
+    Scene2 = "Scene 2"
+}
 
 /**
  * Language Label that stores the language code to a label
