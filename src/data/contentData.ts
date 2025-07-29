@@ -224,6 +224,11 @@ export const staticContent = {
             en: "No items to select from.",
             de: "Kein Element zur Auswahl.",
             sv: "Inga artiklar att välja mellan."
+        },
+        feedbackAnswer: {
+            en: "Write your answer ...",
+            de: "Schreiben Sie Ihre Antwort ...",
+            sv: "Skriv ditt svar ...",
         }
     },
     editor: {
@@ -525,6 +530,33 @@ export const staticContent = {
             en:"How can different people contribute to the activity? Hierarchy, Role, Leadership, Territorial attitude etc.",
             de: "Wie können verschiedene Personen zu der Aktivität beitragen? Hierarchie, Rolle, Führung, territoriales Verhalten usw.",
             sv: "Hur kan olika personer bidra till aktiviteten? Hierarki, roll, ledarskap, territoriell attityd etc.",
+        }
+    },
+    feedbackpage: {
+        question1: {
+            en: "1. How do you feel about the interprofessional collaboration simulation you have just completed?",
+            de: "1. Was denken Sie über die Simulation der interprofessionellen Zusammenarbeit, die Sie gerade abgeschlossen haben?",
+            sv: "1. Vad tycker du om simuleringen av det interprofessionella samarbetet som du just har genomfört?"
+        },
+        question2: {
+            en: "2. Think of a part of the activity that you found very positive, constructive or satisfying. Please describe what happened in this phase in a few sentences.",
+            de: "2. Denken Sie an einen Teil der Aktivität, den Sie sehr positiv, konstruktiv oder befriedigend fanden. Bitte beschreiben Sie in einigen Sätzen, was in dieser Phase passiert ist.",
+            sv: "2. Tänk på en del av aktiviteten som du tyckte var mycket positiv, konstruktiv eller tillfredsställande. Beskriv vad som hände under den här fasen med några få meningar."
+        },
+        question3: {
+            en: "3. Think of a part of the activity that you found very negative, counterproductive or disappointing. Please describe what happened in this phase in a few sentences.",
+            de: "3. Denken Sie an einen Teil der Aktivität, den Sie sehr negativ, kontraproduktiv oder enttäuschend fanden. Bitte beschreiben Sie in einigen Sätzen, was in dieser Phase passiert ist.",
+            sv: "3. Tänk på en del av aktiviteten som du tyckte var mycket negativ, kontraproduktiv eller nedslående. Beskriv vad som hände i den här fasen med några få meningar."
+        },
+        thankYou: {
+            en: "Thanks for your feedback!",
+            de: "Danke für Ihr Feedback!",
+            sv: "Tack för din feedback!"
+        },
+        thankYouSubtext: {
+            en: "You may now close the page or return to the main site.",
+            de: "Sie können die Seite jetzt schließen oder zur Startseite zurückkehren.",
+            sv: "Du kan nu stänga sidan eller återvända till huvudsidan."
         }
     }
 }

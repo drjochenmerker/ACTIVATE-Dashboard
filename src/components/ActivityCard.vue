@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 // functions
-import { defineProps, onMounted, ref } from 'vue';
+import { defineProps, onMounted, computed, ref } from 'vue';
 import { useSessionStore } from '@/stores/sessionStore';
 import { getActivityClassIds } from '@/data/knowledge_graph/read_operations';
 import { useActivityStore } from '@/stores/activityStore';
@@ -12,6 +12,7 @@ import { Activity, KnowledgeGraphActivityClass, NestedMultiLangObject } from '@/
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog'
 import { Select, SelectContent, SelectTrigger, SelectValue } from '@/components/ui/select';
+import QrcodeVue from 'qrcode.vue'
 
 // ui components
 import { Button } from '@/components/ui/button';
@@ -29,7 +30,9 @@ const props = defineProps({
     },
 });
 const graph = props.activity.graph;
-
+const feedbackUrl = computed(() => {
+    return `${window.location.origin}/feedback/${props.activity.graph}`
+})
 //  state management for available roles
 sessionStore.availableRoles = {} as NestedMultiLangObject;
 let newTitle = '';
@@ -135,6 +138,9 @@ const getRoles = async () => {
 }
 
 const sessionStartAllowed = () => !sessionStore.sessionRole;
+
+// work with the qr code
+const showQrDialog = ref(false)
 </script>
 
 <template>
@@ -196,7 +202,7 @@ const sessionStartAllowed = () => !sessionStore.sessionRole;
                                 <DialogContent>
                                     <DialogHeader>
                                         <DialogTitle>{{ staticContent.startPage.editSetting[sessionStore.activeLanguage]
-                                        }}</DialogTitle>
+                                            }}</DialogTitle>
                                         <DialogDescription>
                                             {{ staticContent.startPage.editTitle[sessionStore.activeLanguage] }}:
                                         </DialogDescription>
@@ -260,6 +266,29 @@ const sessionStartAllowed = () => !sessionStore.sessionRole;
                                 </DialogContent>
                             </Dialog>
                         </div>
+                        <!-- Feedback QR Code Button -->
+                        <div>
+                            <Dialog v-model:open="showQrDialog">
+                                <DialogTrigger as-child>
+                                    <Button variant="secondary" size="icon">
+                                        <span class="material-symbols-outlined">qr_code</span>
+                                    </Button>
+                                </DialogTrigger>
+                                <DialogContent>
+                                    <DialogHeader>
+                                        <DialogTitle>Feedback QR Code</DialogTitle>
+                                        <DialogDescription>
+                                            Scan to give feedback for this activity.
+                                        </DialogDescription>
+                                    </DialogHeader>
+                                    <div class="flex justify-center py-4">
+                                        <qrcode-vue :value="feedbackUrl" :size="200" />
+
+
+                                    </div>
+                                </DialogContent>
+                            </Dialog>
+                        </div>
 
                         <!-- Start Session Button -->
                         <div>
@@ -272,7 +301,7 @@ const sessionStartAllowed = () => !sessionStore.sessionRole;
                                 <DialogContent>
                                     <DialogHeader>
                                         <DialogTitle>{{ staticContent.startPage.roleSelect[sessionStore.activeLanguage]
-                                        }}</DialogTitle>
+                                            }}</DialogTitle>
                                         <DialogDescription>{{
                                             staticContent.startPage.roleSelectText[sessionStore.activeLanguage] }}
                                         </DialogDescription>
