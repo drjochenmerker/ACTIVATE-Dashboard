@@ -31,8 +31,9 @@ const props = defineProps({
 });
 const graph = props.activity.graph;
 const feedbackUrl = computed(() => {
-    return `${window.location.origin}/feedback/${props.activity.graph}`
-})
+    return `${window.location.origin}/feedback/${graph}`;
+});
+
 //  state management for available roles
 sessionStore.availableRoles = {} as NestedMultiLangObject;
 let newTitle = '';
@@ -141,6 +142,7 @@ const sessionStartAllowed = () => !sessionStore.sessionRole;
 
 // work with the qr code
 const showQrDialog = ref(false)
+
 </script>
 
 <template>

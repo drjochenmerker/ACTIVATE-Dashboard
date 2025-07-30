@@ -5,6 +5,7 @@ import FeedbackPage from '@/views/FeedbackPage.vue';
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 import MainLayout from '@/components/MainLayout.vue';
 import { useSessionStore } from '@/stores/sessionStore';
+import FeedbackThankyouPage from '@/views/FeedbackThankyouPage.vue';
 
 const routes: Array<RouteRecordRaw> = [
     {
@@ -13,11 +14,16 @@ const routes: Array<RouteRecordRaw> = [
         component: StartPage
     },
     {
-        path: '/feedback/:id',
-        name: 'Feedback',
+        path: '/feedback/:graph',
+        name: 'FeedbackPage',
         component: FeedbackPage,
         props: true
-        },
+    },
+    {
+        path: '/feedback-thank-you',
+        name: 'FeedbackThankYouPage',
+        component: FeedbackThankyouPage
+    },
     {
         path: '/',
         component: MainLayout,
@@ -34,16 +40,15 @@ const router = createRouter({
 });
 
 router.beforeEach((to) => {
-  const sessionStore = useSessionStore();
-  const publicPaths = ['/start', '/feedback', '/feedback-thank-you'];
+    const sessionStore = useSessionStore();
 
-  // Check if the path starts with one of the public ones
-  const isPublic = publicPaths.some(publicPath => to.path.startsWith(publicPath));
+    const isPublic = to.name === 'FeedbackPage' || to.name === 'FeedbackThankYouPage';
 
-  if (!sessionStore.isSessionActive && !isPublic) {
-    return '/start';
-  }
+    if (!sessionStore.isSessionActive && !isPublic && to.path !== '/start') {
+        return '/start';
+    }
 });
+
 // router.beforeEach((to) => {
 //     const sessionStore = useSessionStore();
 //     if (!sessionStore.isSessionActive && to.path !== '/start') {

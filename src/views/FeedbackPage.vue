@@ -1,71 +1,115 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import { Button } from '@/components/ui/button';
-import { useSessionStore } from '@/stores/sessionStore';
-import { staticContent } from "@/data/contentData";
+import { computed, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 
+// UI components
+import { Button } from '@/components/ui/button'
+import { Select, SelectContent, SelectTrigger, SelectValue } from '@/components/ui/select';
+import RecursiveSelect from '@/components/RecursiveSelect.vue';
+
+import LanguageSelect from '@/components/LanguageSelect.vue'
+
+import { useSessionStore } from '@/stores/sessionStore'
+import { staticContent } from '@/data/contentData'
+import { buildTreeStructByLang } from '@/data/knowledge_graph/utils';
+import { getActivityClassIds } from '@/data/knowledge_graph/read_operations';
+import { KnowledgeGraphActivityClass } from '@/data/knowledge_graph/structures';
+
+const props = defineProps<{ graph: string }>()
 
 const router = useRouter()
 const sessionStore = useSessionStore()
+
 const activeLang = computed(() => sessionStore.activeLanguage)
+const answers = ref(['', '', ''])
+const selectedRole = ref('')
 
 const localizedQuestions = computed(() => [
     staticContent.feedbackpage.question1[activeLang.value],
     staticContent.feedbackpage.question2[activeLang.value],
     staticContent.feedbackpage.question3[activeLang.value]
 ])
-const answers = ref(['', '', ''])
-const selectedRole = ref('bla')
+
+onMounted(async () => {
+    await getRoles();
+});
+/**
+ * Retrieves available roles for the current activity graph.
+ * Fetches subject class IDs from the knowledge graph and populates the session store's available roles.
+ */
+const getRoles = async () => {
+    sessionStore.availableRoles = buildTreeStructByLang(
+        await getActivityClassIds(props.graph, KnowledgeGraphActivityClass.subject),
+        sessionStore.activeLanguage);
+}
 
 const submitFeedback = async () => {
-    if (!selectedRole.value) {
-        alert("Please select your role before submitting.");
-        return;
+    if (!sessionStore.sessionRole) {
+        alert('Please select your role before submitting.')
+        return
     }
 
     const feedbackData = {
-        role: selectedRole.value,
+        graph: props.graph,
+        role: sessionStore.sessionRole,
         answers: answers.value
-    };
+    }
 
-    console.log("Submitted feedback object:", feedbackData);
+
+    console.log('Submitted feedback object from student:', feedbackData)
 
     try {
-        await router.push({ name: 'FeedbackThankYou' });
-        console.log("Navigation successful");
+        await router.push('/feedback-thank-you')
+        console.log('Navigation to FeedbackThankyouPage was successful')
     } catch (err) {
-        console.error("Navigation failed:", err);
+        console.error('Navigation failed:', err)
     }
-};
-
+}
 </script>
 
 <template>
     <div class="min-h-screen flex flex-col justify-between bg-gray-100 p-4 text-gray-800">
-        <div>
-            select role:
-        </div>
         <div class="space-y-6">
+            <div>
+                <LanguageSelect class="absolute top-0 right-0 mt-4 mr-4" />
+            </div>
+            <div>
 
-            <div v-for="(question, index) in localizedQuestions" :key="index" class="space-y-2">
-                <label :for="'q' + index" class="block text-lg font-medium">
-                    {{ question }}
-                </label>
-                <textarea :id="'q' + index" v-model="answers[index]"
-                    class="w-full p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
-                    rows="4" :placeholder="staticContent.placeholders.feedbackAnswer[sessionStore.activeLanguage]" />
+                <!-- Role selection -->
+                <div class="mb-6">
+                    <Select v-model="sessionStore.sessionRole" id="roleSelect" class="my-4">
+                        <SelectTrigger>
+                            <SelectValue
+                                :placeholder="staticContent.placeholders.roleSelect[sessionStore.activeLanguage]" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <RecursiveSelect :node="sessionStore.availableRoles" />
+                        </SelectContent>
+                    </Select>
+                </div>
+
+
+                <!-- Questions -->
+                <div v-for="(question, index) in localizedQuestions" :key="index" class="space-y-2">
+                    <label :for="'q' + index" class="block text-lg font-medium">
+                        {{ question }}
+                    </label>
+                    <textarea :id="'q' + index" v-model="answers[index]"
+                        class="w-full p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
+                        rows="4" :placeholder="staticContent.placeholders.feedbackAnswer[activeLang]" />
+                </div>
             </div>
         </div>
 
+        <!-- Submit button -->
         <div class="mt-8">
-            <Button @click="submitFeedback()">
-                {{ staticContent.noteCards.save[sessionStore.activeLanguage] }}
+            <Button class="w-full" @click="submitFeedback">
+                {{ staticContent.noteCards.save[activeLang] }}
             </Button>
         </div>
     </div>
 </template>
 
 <style scoped>
-/* Optional custom styling for extra control if not using Tailwind */
+/* Optional: Adjust vertical spacing for smaller screens */
 </style>
