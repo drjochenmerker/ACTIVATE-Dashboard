@@ -1,15 +1,12 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { useRoute } from 'vue-router'
 import { Button } from '@/components/ui/button';
 import { useSessionStore } from '@/stores/sessionStore';
 import { staticContent } from "@/data/contentData";
 import { useRouter } from 'vue-router'
-import FeedbackThankyouPage from './FeedbackThankyouPage.vue';
 
-const route = useRoute()
+
 const router = useRouter()
-const activityId = route.params.id
 const sessionStore = useSessionStore()
 const activeLang = computed(() => sessionStore.activeLanguage)
 
@@ -20,7 +17,6 @@ const localizedQuestions = computed(() => [
 ])
 const answers = ref(['', '', ''])
 const selectedRole = ref('bla')
-const submitted = ref(false)
 
 const submitFeedback = async () => {
     if (!selectedRole.value) {
@@ -35,7 +31,6 @@ const submitFeedback = async () => {
 
     console.log("Submitted feedback object:", feedbackData);
 
-    // ✅ Attempt navigation
     try {
         await router.push({ name: 'FeedbackThankYou' });
         console.log("Navigation successful");
