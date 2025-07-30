@@ -48,6 +48,8 @@ const isCloneDialogOpen = ref(false);
 const isEditDialogOpen = ref(false);
 const cloneTitleError = ref(false);
 const editTitleError = ref(false);
+const showPoolingDialog = ref(false)
+
 
 // activity store management
 const activityStore = useActivityStore();
@@ -139,6 +141,10 @@ const getRoles = async () => {
 }
 
 const sessionStartAllowed = () => !sessionStore.sessionRole;
+const handlePoolingStart = () => {
+    // todo handle pooling start
+    console.log("Pooling triggered!");
+}
 
 // work with the qr code
 const showQrDialog = ref(false)
@@ -204,7 +210,7 @@ const showQrDialog = ref(false)
                                 <DialogContent>
                                     <DialogHeader>
                                         <DialogTitle>{{ staticContent.startPage.editSetting[sessionStore.activeLanguage]
-                                            }}</DialogTitle>
+                                        }}</DialogTitle>
                                         <DialogDescription>
                                             {{ staticContent.startPage.editTitle[sessionStore.activeLanguage] }}:
                                         </DialogDescription>
@@ -303,7 +309,7 @@ const showQrDialog = ref(false)
                                 <DialogContent>
                                     <DialogHeader>
                                         <DialogTitle>{{ staticContent.startPage.roleSelect[sessionStore.activeLanguage]
-                                            }}</DialogTitle>
+                                        }}</DialogTitle>
                                         <DialogDescription>{{
                                             staticContent.startPage.roleSelectText[sessionStore.activeLanguage] }}
                                         </DialogDescription>
@@ -332,7 +338,36 @@ const showQrDialog = ref(false)
                                     </div>
 
 
-                                    <DialogFooter>
+                                    <DialogFooter class="flex justify-between">
+                                        <!-- button for triggering the pooling of ai generation of conflicts -->
+                                        <Dialog v-model:open="showPoolingDialog">
+                                            <DialogTrigger as-child>
+                                                <Button class="mr-auto" type="button">
+                                                    Pooling!
+                                                </Button>
+                                            </DialogTrigger>
+                                            <DialogContent>
+                                                <DialogHeader>
+                                                    <DialogTitle>
+                                                        Confirm Pooling
+                                                    </DialogTitle>
+                                                    <DialogDescription>
+                                                        This will start the pooling process. Do you want to continue?
+                                                    </DialogDescription>
+                                                </DialogHeader>
+                                                <DialogFooter>
+                                                    <Button variant="secondary" @click="showPoolingDialog = false">
+                                                        Cancel
+                                                    </Button>
+                                                    <Button variant="destructive"
+                                                        @click="handlePoolingStart(); showPoolingDialog = false">
+                                                        Yes, start pooling
+                                                    </Button>
+                                                </DialogFooter>
+                                            </DialogContent>
+                                        </Dialog>
+
+                                        <!-- Start Session Button -->
                                         <Button type="submit" :disabled="sessionStartAllowed()"
                                             @click="() => handleStartSession()">
                                             <template v-if="sessionStartAllowed()">
