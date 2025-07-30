@@ -210,7 +210,7 @@ const showQrDialog = ref(false)
                                 <DialogContent>
                                     <DialogHeader>
                                         <DialogTitle>{{ staticContent.startPage.editSetting[sessionStore.activeLanguage]
-                                        }}</DialogTitle>
+                                            }}</DialogTitle>
                                         <DialogDescription>
                                             {{ staticContent.startPage.editTitle[sessionStore.activeLanguage] }}:
                                         </DialogDescription>
@@ -286,7 +286,7 @@ const showQrDialog = ref(false)
                                     <DialogHeader>
                                         <DialogTitle>Feedback QR Code</DialogTitle>
                                         <DialogDescription>
-                                            Scan to give feedback for this activity.
+                                            {{ staticContent.feedbackpage.description[sessionStore.activeLanguage] }}
                                         </DialogDescription>
                                     </DialogHeader>
                                     <div class="flex justify-center py-4">
@@ -309,7 +309,7 @@ const showQrDialog = ref(false)
                                 <DialogContent>
                                     <DialogHeader>
                                         <DialogTitle>{{ staticContent.startPage.roleSelect[sessionStore.activeLanguage]
-                                        }}</DialogTitle>
+                                            }}</DialogTitle>
                                         <DialogDescription>{{
                                             staticContent.startPage.roleSelectText[sessionStore.activeLanguage] }}
                                         </DialogDescription>

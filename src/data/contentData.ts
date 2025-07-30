@@ -538,6 +538,11 @@ export const staticContent = {
         }
     },
     feedbackpage: {
+        description: {
+            en: "Scan to give feedback for this activity.",
+            de: "Scannen, um Feedback zu dieser Aktivität zu geben.",
+            sv: "Skanna för att ge feedback på denna aktivitet."
+        },
         question1: {
             en: "1. How do you feel about the interprofessional collaboration simulation you have just completed?",
             de: "1. Was denken Sie über die Simulation der interprofessionellen Zusammenarbeit, die Sie gerade abgeschlossen haben?",
