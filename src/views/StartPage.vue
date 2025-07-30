@@ -42,8 +42,8 @@ const activities = computed(() => activityStore.activityList);
 const newTitle = ref('');
 const newDescription = ref('');
 const defaultRole = ref('');
-const titleError = ref(false);
-const roleError = ref(false);
+const showValidationErrors = ref(false);
+
 
 
 // Load all available activities on component mount
@@ -68,46 +68,39 @@ watch(selectedActivity, async () => {
 
 
 const addNewActivity = async () => {
+  // TODO: implement new functionality for AI creating basic activity
+
+  showValidationErrors.value = true;
+
+  if (!newDescription.value.trim()) {
+    return;
+  }
+
   try {
-    let hasError = false;
-    if (!newTitle.value.trim()) {
-      titleError.value = true;
-      hasError = true;
-    } else {
-      titleError.value = false;
-    }
-    if (!defaultRole.value.trim()) {
-      roleError.value = true;
-      hasError = true;
-    } else {
-      roleError.value = false;
-    }
-    if (hasError) return;
-
-
     const res = await addActivity(newTitle.value, newDescription.value);
-    await addEntity(res.modified, defaultRole.value, KnowledgeGraphActivityClass.subject, sessionStore.activeLanguage);
 
-    // Reload activities after adding a new one
+    if (defaultRole.value.trim()) {
+      await addEntity(res.modified, defaultRole.value, KnowledgeGraphActivityClass.subject, sessionStore.activeLanguage);
+    }
+
     await activityStore.refreshActivityList();
 
-    //close dialog
     dialogOpen.value = false;
-    // reset form fields
     newTitle.value = '';
     newDescription.value = '';
     defaultRole.value = '';
+    showValidationErrors.value = false; // Reset validation state
   } catch (error) {
     console.error("Fehler beim Hinzufügen einer Aktivität:", error);
   }
-}
+};
+
 
 </script>
 
 <template>
-  <!-- Main container with centered layout -->
   <div class="flex flex-col items-center justify-center py-10 px-4">
-    <LanguageSelect class="absolute top-0 right-0 mt-4 mr-4"/>
+    <LanguageSelect class="absolute top-0 right-0 mt-4 mr-4" />
     <Card class="w-full max-w-5xl">
 
       <!-- Card header with logo -->
@@ -130,21 +123,26 @@ const addNewActivity = async () => {
             <DialogHeader>
               <DialogTitle>{{ staticContent.startPage.createActivity[sessionStore.activeLanguage] }}</DialogTitle>
 
-              <DialogDescription>{{staticContent.startPage.enterTitle[sessionStore.activeLanguage]}}</DialogDescription>
-              <input type="text" v-model="newTitle" :class="[
-                'w-full border rounded p-2 mb-1 dark:bg-gray-900',
-                titleError ? 'border-red-500' : 'border-gray-300'
-              ]" />
-              <p v-if="titleError" class="text-red-500 text-sm mb-2">Title is required.</p>
-              <DialogDescription>{{staticContent.startPage.enterDescription[sessionStore.activeLanguage]}}</DialogDescription>
-              <textarea v-model="newDescription" class="w-full border rounded p-2 mb-2  dark:bg-gray-900" />
+              <!-- Optional Title -->
+              <DialogDescription>{{ staticContent.startPage.enterTitle[sessionStore.activeLanguage] }}
+              </DialogDescription>
+              <input type="text" v-model="newTitle"
+                class="w-full border rounded p-2 mb-2 dark:bg-gray-900 border-gray-300" />
 
-              <DialogDescription>{{staticContent.startPage.defaultRole[sessionStore.activeLanguage]}}</DialogDescription>
-              <input v-model="defaultRole" :class="[
-                'w-full border rounded p-2 mb-1  dark:bg-gray-900',
-                roleError ? 'border-red-500' : 'border-gray-300'
+              <!-- Required Description -->
+              <DialogDescription>{{ staticContent.startPage.enterDescription[sessionStore.activeLanguage] }}
+              </DialogDescription>
+              <textarea v-model="newDescription" class="w-full border rounded p-2 mb-1 dark:bg-gray-900" :class="[
+                showValidationErrors && !newDescription.trim() ? 'border-red-500' : 'border-gray-300'
               ]" />
-              <p v-if="roleError" class="text-red-500 text-sm mb-2">Default role is required.</p>
+              <p v-if="showValidationErrors && !newDescription.trim()" class="text-red-500 text-sm mb-2">
+                {{ staticContent.startPage.descriptionRequired[sessionStore.activeLanguage] }}
+              </p>
+
+              <!-- Optional Default Role -->
+              <DialogDescription>{{ staticContent.startPage.defaultRole[sessionStore.activeLanguage] }}
+              </DialogDescription>
+              <input v-model="defaultRole" class="w-full border rounded p-2 mb-2 dark:bg-gray-900 border-gray-300" />
 
               <Button @click="addNewActivity">{{ staticContent.terms.done[sessionStore.activeLanguage] }}</Button>
             </DialogHeader>

@@ -468,6 +468,11 @@ export const staticContent = {
             de: "Titel ist erforderlich",
             sv: "Titel krävs",
         },
+        descriptionRequired: {
+            en: "Description is required",
+            de: "Beschreibung ist erforderlich",
+            sv: "Beskrivning krävs",
+        },
         editDescription: {
             en: "Edit description",
             de: "Beschreibung bearbeiten",
