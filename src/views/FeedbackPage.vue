@@ -22,7 +22,6 @@ const sessionStore = useSessionStore()
 
 const activeLang = computed(() => sessionStore.activeLanguage)
 const answers = ref(['', '', ''])
-const selectedRole = ref('')
 
 const localizedQuestions = computed(() => [
     staticContent.feedbackpage.question1[activeLang.value],
