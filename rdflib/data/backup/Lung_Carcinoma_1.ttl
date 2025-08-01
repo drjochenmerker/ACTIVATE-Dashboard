@@ -1,0 +1,808 @@
+@prefix : <http://activate.htwk-leipzig.de/model#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@base <http://activate.htwk-leipzig.de/model> .
+
+:SimulatedPatientDebriefing a owl:NamedIndividual ;
+    :ActivityDescription "A feedback session analyzing a simulated medical consultation, focusing on effective communication in delivering difficult news in a palliative care setting."@en,
+        "Eine Feedback-Sitzung zur Analyse einer simulierten medizinischen Konsultation, die sich auf effektive Kommunikation bei der Übermittlung schwieriger Nachrichten in einem palliativen Umfeld konzentriert."@de,
+        "En återkopplingssession som analyserar en simulerad medicinsk konsultation, med fokus på effektiv kommunikation vid förmedling av svåra besked inom palliativ vård."@sv ;
+    :ActivityName "Simulated Patient Debriefing"@en,
+        "Patientensimulations-Debriefing"@de,
+        "Debriefing av patientsimulering"@sv .
+
+:GivesFeedbackTo rdf:type owl:ObjectProperty ;
+    rdfs:domain :Subject ;
+    rdfs:range :Subject ;
+    rdfs:label "Gibt Feedback an"@de,
+        "Ger feedback till"@sv,
+        "Gives feedback to"@en .
+
+:DiscussesWith rdf:type owl:ObjectProperty ;
+    rdfs:domain :Subject ;
+    rdfs:range :Subject ;
+    rdfs:label "Bespricht mit"@de,
+        "Diskuterar med"@sv,
+        "Discusses with"@en .
+
+:Dozent a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Dozent"@de,
+        "Lecturer"@en,
+        "Lektor"@sv ;
+    :OperatesOn :GesprachsTiming .
+
+:Aerztin a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Ärztin"@de,
+        "Doctor"@en,
+        "Läkare"@sv ;
+    :HasToFollow :AutonomieWahren,
+        :EinwilligungDesPatienten,
+        :Gesprächszeitmanagement,
+        :Patientenautonomie,
+        :Patientenentscheidung ;
+    :InstrumentDescription "The doctor's demeanor was described as 'cool', characterized by direct eye contact, concentration, nodding, and occasional repetition of statements. Her conversation pace was slow, giving the patient time. She perceived the atmosphere upon entering the room and left many pauses, allowing the patient to speak. Her sitting position was described as nice and calm."@en,
+        "Die Haltung der Ärztin wurde als 'cool' beschrieben, gekennzeichnet durch direkten Augenkontakt, Konzentration, Nicken und gelegentliches Wiederholen von Aussagen. Ihr Gesprächstempo war langsam und gab der Patientin Zeit. Sie nahm die Stimmung beim Betreten des Raumes wahr und ließ viele Pausen, die die Patientin nutzte, um zu erzählen. Ihre Sitzposition wurde als sehr schön und ruhig beschrieben."@de,
+        "Läkarens hållning beskrevs som 'cool', kännetecknad av direkt ögonkontakt, koncentration, nickningar och ibland upprepning av uttalanden. Hennes samtalstempo var långsamt och gav patienten tid. Hon uppfattade stämningen när hon kom in i rummet och lämnade många pauser som patienten använde för att berätta. Hennes sittställning beskrevs som mycket fin och lugn."@sv ;
+    :InteractsIn :PalliativesSetting ;
+    :OperatesOn :BotschaftUeberbringen,
+        :BriefeOrganisieren,
+        :EinsatzDesMultipersonellenTeams,
+        :Erstickungsgefuehl,
+        :FragenStellen,
+        :GefuehlDerAerztin,
+        :Gesprach,
+        :Gesprachsabschluss,
+        :InformationUeberPatientengeschichte,
+        :KontrastGesundWerdenVsSterben,
+        :Loesungsangebot,
+        :Patientin,
+        :PatientinAlleineLassen,
+        :PragmatischeVorschlaege,
+        :SchmerzenUndBeschwerden,
+        :Seelsorge,
+        :SeelsorgerSprechen,
+        :SicherheitDerPatientin,
+        :StrohhalmAnbieten,
+        :UmgangMitSterben,
+        :WortSterbenAussprechen,
+        :Zuhoren ;
+    :RuleDescription "The doctor preserved the patient's autonomy and sought the patient's consent before discussing with relatives. She managed the conversation time flexibly, allowing for a slight extension to ensure a natural and complete conclusion for the patient."@en,
+        "Die Ärztin wahrte die Autonomie der Patientin und holte deren Einverständnis ein, bevor sie mit Angehörigen sprach. Sie managte die Gesprächszeit flexibel, um eine leichte Verlängerung zu ermöglichen und einen natürlichen und vollständigen Abschluss für die Patientin zu gewährleisten."@de,
+        "Läkaren bevarade patientens autonomi och inhämtade patientens samtycke innan hon talade med anhöriga. Hon hanterade samtalstiden flexibelt, vilket möjliggjorde en viss förlängning för att säkerställa en naturlig och fullständig avslutning för patienten."@sv ;
+    :Uses :Behutsamkeit,
+        :GesprachsTiming,
+        :Gesprachstempo,
+        :HaltungDerAerztin,
+        :KlarheitDerKommunikation,
+        :Konzentration,
+        :MuensterGesprach,
+        :PausenImGesprach,
+        :SitzpositionDerAerztin,
+        :StimmungWahrnehmen .
+
+:Kommilitonin a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Kommilitonin"@de,
+        "Fellow Student"@en,
+        "Medstudent"@sv ;
+    :GivesFeedbackTo :Aerztin .
+
+:Patientin a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Patientin"@de,
+        "Patient"@en,
+        "Patient"@sv ;
+    :DiscussesWith :Lebenspartner ;
+    :InteractsIn :Krankenhausaufenthalt,
+        :PraefinaleSituation,
+        :Station ;
+    :IsDefinedBy :RolleAlsPatientin ;
+    :OperatesOn :Besuchswunsch,
+        :BriefeOrganisieren,
+        :InformationsbeduerfnisDerPatientin,
+        :InformationVerarbeiten,
+        :Patientenreaktion,
+        :SeelsorgerSprechen,
+        :UmgangMitSterben,
+        :Versorgung .
+
+:Gesprach a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Gespräch"@de,
+        "Conversation"@en,
+        "Samtal"@sv .
+
+:GefuehlDerAerztin a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Gefühl der Ärztin"@de,
+        "Doctor's Feelings"@en,
+        "Läkarens Känslor"@sv .
+
+:BotschaftUeberbringen a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Botschaft überbringen"@de,
+        "Conveying the Message"@en,
+        "Förmedla Budskapet"@sv .
+
+:Zuhoren a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Zuhören"@de,
+        "Listening"@en,
+        "Lyssna"@sv .
+
+:PatientinAlleineLassen a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Patientin alleine lassen"@de,
+        "Leaving the Patient Alone"@en,
+        "Lämna Patienten Ensam"@sv .
+
+:MuensterGesprach a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Münster-Gespräch"@de,
+        "Münster Conversation"@en,
+        "Münster-samtal"@sv ;
+    :InstrumentDescription "The Münster conversation was used to bring a positive turn to the conversation, helping the patient think of positive things. It served as a break and a mindfulness exercise."@en,
+        "Das Münster-Gespräch wurde genutzt, um eine positive Wendung in das Gespräch zu bringen und der Patientin zu helfen, an schöne Dinge zu denken. Es diente als Unterbrechung und Achtsamkeitsübung."@de,
+        "Münster-samtalet användes för att ge samtalet en positiv vändning och hjälpa patienten att tänka på positiva saker. Det fungerade som en paus och en mindfulnessövning."@sv .
+
+:Patientenreaktion a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Patientenreaktion"@de,
+        "Patient's Reaction"@en,
+        "Patientens Reaktion"@sv .
+
+:HaltungDerAerztin a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Haltung der Ärztin"@de,
+        "Doctor's Demeanor"@en,
+        "Läkarens Hållning"@sv ;
+    :InstrumentDescription "The doctor's demeanor was described as 'cool', characterized by direct eye contact, concentration, nodding, and occasional repetition of statements."@en,
+        "Die Haltung der Ärztin wurde als 'cool' beschrieben, gekennzeichnet durch direkten Augenkontakt, Konzentration, Nicken und gelegentliches Wiederholen von Aussagen."@de,
+        "Läkarens hållning beskrevs som 'cool', kännetecknad av direkt ögonkontakt, koncentration, nickningar och ibland upprepning av uttalanden."@sv .
+
+:Konzentration a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Konzentration"@de,
+        "Concentration"@en,
+        "Koncentration"@sv ;
+    :InstrumentDescription "The doctor maintained concentration on the patient during the conversation."@en,
+        "Die Ärztin blieb während des Gesprächs auf die Patientin konzentriert."@de,
+        "Läkaren bibehöll koncentrationen på patienten under samtalet."@sv .
+
+:FragenStellen a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Fragen stellen"@de,
+        "Asking Questions"@en,
+        "Ställa Frågor"@sv .
+
+:SchmerzenUndBeschwerden a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Schmerzen und Beschwerden"@de,
+        "Pain and Complaints"@en,
+        "Smärta och Besvär"@sv .
+
+:InformationUeberPatientengeschichte a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Information über Patientengeschichte"@de,
+        "Information on Patient History"@en,
+        "Information om Patienthistorik"@sv .
+
+:Gesprachstempo a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Gesprächstempo"@de,
+        "Conversation Pace"@en,
+        "Samtalstempo"@sv ;
+    :InstrumentDescription "The conversation pace was slow, allowing the patient time to process information and respond."@en,
+        "Das Gesprächstempo war langsam, was der Patientin Zeit gab, Informationen zu verarbeiten und zu antworten."@de,
+        "Samtalstempot var långsamt, vilket gav patienten tid att bearbeta information och svara."@sv .
+
+:Loesungsangebot a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Lösungsangebot"@de,
+        "Offering Solutions"@en,
+        "Erbjuda Lösningar"@sv .
+
+:Erstickungsgefuehl a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Erstickungsgefühl"@de,
+        "Feeling of Choking"@en,
+        "Kvävningskänsla"@sv .
+
+:PsychiaterPriester a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Psychiater/Priester"@de,
+        "Psychiatrist/Priest"@en,
+        "Psykiater/Präst"@sv .
+
+:BriefeOrganisieren a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Briefe organisieren"@de,
+        "Organizing Letters"@en,
+        "Organisera Brev"@sv .
+
+:StrohhalmAnbieten a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Strohhalm anbieten"@de,
+        "Offering a Straw"@en,
+        "Erbjuda Sugrör"@sv .
+
+:StimmungWahrnehmen a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Stimmung wahrnehmen"@de,
+        "Perceiving the Atmosphere"@en,
+        "Uppfatta Stämningen"@sv ;
+    :InstrumentDescription "The doctor perceived the atmosphere upon entering the room, demonstrating openness to the patient's current state, especially valuable in a palliative setting."@en,
+        "Die Ärztin nahm die Stimmung beim Betreten des Raumes wahr und zeigte Offenheit für den aktuellen Zustand der Patientin, was besonders in einem palliativen Setting wertvoll war."@de,
+        "Läkaren uppfattade stämningen när hon kom in i rummet och visade öppenhet för patientens nuvarande tillstånd, vilket var särskilt värdefullt i en palliativ vårdmiljö."@sv .
+
+:PalliativesSetting a :Community,
+        owl:NamedIndividual ;
+    rdfs:label "Palliatives Setting"@de,
+        "Palliative Setting"@en,
+        "Palliativ Vårdmiljö"@sv .
+
+:PausenImGesprach a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Pausen im Gespräch"@de,
+        "Pauses in Conversation"@en,
+        "Pauser i Samtalet"@sv ;
+    :InstrumentDescription "Many pauses were left during the conversation, which the patient utilized to tell her story and process information."@en,
+        "Es wurden viele Pausen im Gespräch gelassen, die die Patientin nutzte, um ihre Geschichte zu erzählen und Informationen zu verarbeiten."@de,
+        "Många pauser lämnades under samtalet, vilka patienten använde för att berätta sin historia och bearbeta information."@sv .
+
+:PragmatischeVorschlaege a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Pragmatische Vorschläge"@de,
+        "Pragmatic Suggestions"@en,
+        "Pragmatiska Förslag"@sv .
+
+:Gesprachsabschluss a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Gesprächsabschluss"@de,
+        "Conversation Conclusion"@en,
+        "Samtalsavslutning"@sv .
+
+:InformationsbeduerfnisDerPatientin a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Informationsbedürfnis der Patientin"@de,
+        "Patient's Information Need"@en,
+        "Patientens Informationsbehov"@sv .
+
+:Krankenhausaufenthalt a :Community,
+        owl:NamedIndividual ;
+    rdfs:label "Krankenhausaufenthalt"@de,
+        "Hospital Stay"@en,
+        "Sjukhusvistelse"@sv .
+
+:Versorgung a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Versorgung"@de,
+        "Care Provision"@en,
+        "Vård"@sv .
+
+:RolleAlsPatientin a :DivisionOfLabour,
+        owl:NamedIndividual ;
+    rdfs:label "Rolle als Patientin"@de,
+        "Role as Patient"@en,
+        "Roll som Patient"@sv .
+
+:UmgangMitSterben a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Umgang mit Sterben"@de,
+        "Dealing with Dying"@en,
+        "Hantera Döden"@sv .
+
+:Besuchswunsch a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Besuchswunsch"@de,
+        "Wish for Visitors"@en,
+        "Önskan om Besök"@sv .
+
+:SeelsorgerSprechen a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Seelsorger sprechen"@de,
+        "Talking to a Chaplain"@en,
+        "Tala med Själavårdare"@sv .
+
+:Lebenspartner a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Lebenspartner"@de,
+        "Life Partner"@en,
+        "Livspartner"@sv .
+
+:SicherheitDerPatientin a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Sicherheit der Patientin"@de,
+        "Patient's Reassurance"@en,
+        "Patientens Trygghet"@sv .
+
+:InformationVerarbeiten a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Information verarbeiten"@de,
+        "Processing Information"@en,
+        "Bearbeta Information"@sv .
+
+:Behutsamkeit a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Behutsamkeit"@de,
+        "Gentleness"@en,
+        "Varsamhet"@sv ;
+    :InstrumentDescription "The conversation was characterized by incredible gentleness, which was also clear and unambiguous. It was a very clear, focused gentleness."@en,
+        "Das Gespräch war von unglaublicher Behutsamkeit geprägt, die auch klar und eindeutig war. Es war eine sehr eindeutige, fokussierte Behutsamkeit."@de,
+        "Samtalet präglades av otrolig varsamhet, som också var tydlig och entydig. Det var en mycket tydlig, fokuserad varsamhet."@sv .
+
+:KlarheitDerKommunikation a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Klarheit der Kommunikation"@de,
+        "Clarity of Communication"@en,
+        "Tydlighet i Kommunikation"@sv ;
+    :InstrumentDescription "The communication was clear and unambiguous, delivered with gentleness. The timing of this clarity was very good."@en,
+        "Die Kommunikation war klar und eindeutig, mit Behutsamkeit übermittelt. Das Timing dieser Klarheit war sehr gut."@de,
+        "Kommunikationen var klar och entydig, förmedlad mit varsamhet. Tajmingen för denna tydlighet var mycket bra."@sv .
+
+:PraefinaleSituation a :Community,
+        owl:NamedIndividual ;
+    rdfs:label "Präfinale Situation"@de,
+        "Pre-final Situation"@en,
+        "Pre-final Situation"@sv .
+
+:WortSterbenAussprechen a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Wort 'sterben' aussprechen"@de,
+        "Saying the Word 'Dying'"@en,
+        "Uttala Ordet 'Döende'"@sv .
+
+:KontrastGesundWerdenVsSterben a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Kontrast 'gesund werden vs. sterben'"@de,
+        "Contrast 'Getting Well vs. Dying'"@en,
+        "Kontrast 'Bli Frisk vs. Dö'"@sv .
+
+:Achtsamkeitsuebung a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Achtsamkeitsübung"@de,
+        "Mindfulness Exercise"@en,
+        "Mindfulnessövning"@sv ;
+    :InstrumentDescription "The discussion about Münster served as a mindfulness exercise to bring a positive focus."@en,
+        "Die Diskussion über Münster diente als Achtsamkeitsübung, um einen positiven Fokus zu setzen."@de,
+        "Diskussionen om Münster fungerade som en mindfulnessövning för att skapa ett positivt fokus."@sv .
+
+:EinsatzDesMultipersonellenTeams a :DivisionOfLabour,
+        owl:NamedIndividual ;
+    rdfs:label "Einsatz des multipersonellen Teams"@de,
+        "Deployment of Multidisciplinary Team"@en,
+        "Insats av Multiprofessionellt Team"@sv ;
+    :DefinesRoleOf :Physiotherapeut,
+        :PsychiaterPriester .
+
+:Physiotherapeut a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Physiotherapeut"@de,
+        "Physiotherapist"@en,
+        "Fysioterapeut"@sv .
+
+:Seelsorge a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Seelsorge"@de,
+        "Pastoral Care"@en,
+        "Själavård"@sv .
+
+:AutonomieWahren a :Rule,
+        owl:NamedIndividual ;
+    rdfs:label "Autonomie wahren"@de,
+        "Preserving Autonomy"@en,
+        "Bevara Autonomi"@sv ;
+    :RuleDescription "The doctor preserved the patient's autonomy throughout the conversation."@en,
+        "Die Ärztin wahrte die Autonomie der Patientin während des gesamten Gesprächs."@de,
+        "Läkaren bevarade patientens autonomi under hela samtalet."@sv .
+
+:Patientenentscheidung a :Rule,
+        owl:NamedIndividual ;
+    rdfs:label "Patientenentscheidung"@de,
+        "Patient's Decision"@en,
+        "Patientens Beslut"@sv ;
+    :RuleDescription "The patient's decision dictates the course of action, regardless of other opinions."@en,
+        "Die Entscheidung der Patientin bestimmt den Handlungsverlauf, unabhängig von anderen Meinungen."@de,
+        "Patientens beslut styr handlingsförloppet, oavsett andra åsikter."@sv .
+
+:EinwilligungDesPatienten a :Rule,
+        owl:NamedIndividual ;
+    rdfs:label "Einwilligung des Patienten"@de,
+        "Patient's Consent"@en,
+        "Patientens Samtycke"@sv ;
+    :RuleDescription "Consent from the patient is required before discussing their situation with relatives."@en,
+        "Die Einwilligung des Patienten ist erforderlich, bevor dessen Situation mit Angehörigen besprochen wird."@de,
+        "Patientens samtycke krävs innan dennes situation diskuteras med anhöriga."@sv .
+
+:SitzpositionDerAerztin a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Sitzposition der Ärztin"@de,
+        "Doctor's Sitting Position"@en,
+        "Läkarens Sittställning"@sv ;
+    :InstrumentDescription "The doctor's sitting position was described as very nice and calm, contributing to the overall atmosphere."@en,
+        "Die Sitzposition der Ärztin wurde als sehr schön und ruhig beschrieben, was zur Gesamtatmosphäre beitrug."@de,
+        "Läkarens sittställning beskrevs som mycket fin och lugn, vilket bidrog till den övergripande atmosfären."@sv .
+
+:Gesprächszeitmanagement a :Rule,
+        owl:NamedIndividual ;
+    rdfs:label "Gesprächszeitmanagement"@de,
+        "Conversation Time Management"@en,
+        "Samtalstidsplanering"@sv ;
+    :RuleDescription "The conversation time was managed flexibly, allowing for a slight extension to ensure a natural and complete conclusion for the patient."@en,
+        "Die Gesprächszeit wurde flexibel gehandhabt, um eine leichte Verlängerung zu ermöglichen und einen natürlichen und vollständigen Abschluss für die Patientin zu gewährleisten."@de,
+        "Samtalstiden hanterades flexibelt, vilket möjliggjorde en viss förlängning för att säkerställa en naturlig och fullständig avslutning för patienten."@sv .
+
+:Patientenautonomie a :Rule,
+        owl:NamedIndividual ;
+    rdfs:label "Patientenautonomie"@de,
+        "Patient Autonomy"@en,
+        "Patientautonomi"@sv ;
+    :Influences :GesprachsTiming,
+        :KlarheitDerKommunikation ;
+    :RuleDescription "The patient's autonomy dictates how information is conveyed to her."@en,
+        "Die Autonomie der Patientin bestimmt, wie ihr Informationen übermittelt werden."@de,
+        "Patientens autonomi avgör hur information förmedlas till henne."@sv .
+
+:GesprachsTiming a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Gesprächs-Timing"@de,
+        "Conversation Timing"@en,
+        "Samtalstajming"@sv ;
+    :InstrumentDescription "The timing of the conversation, especially regarding the clear message, was considered very good and not too late."@en,
+        "Das Timing des Gesprächs, insbesondere bezüglich der klaren Botschaft, wurde als sehr gut und nicht zu spät empfunden."@de,
+        "Kommunikationen var klar och entydig, förmedlad mit varsamhet. Tajmingen för denna tydlighet var mycket bra."@sv .
+
+:Station a :Community,
+        owl:NamedIndividual ;
+    rdfs:label "Station"@de,
+        "Ward"@en,
+        "Avdelning"@sv .
+
+:Angehoerige a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Angehörige"@de,
+        "Relatives"@en,
+        "Anhöriga"@sv .
+
+:KolleginnenUndKollegen a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Kolleginnen und Kollegen"@de,
+        "Colleagues"@en,
+        "Kollegor"@sv .
+
+:AngehendeAerzte a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Angehende Ärzte"@de,
+        "Trainee Doctors"@en,
+        "Blivande Läkare"@sv .
+
+:Impression1 a :Conflict ;
+    :ConflictState "open" ;
+    :ConflictDescription "Die Ärztin fühlte sich ruhiger und weniger angespannt als am Vortag, empfand den Inhalt des Gesprächs jedoch als schwieriger."@de,
+        "The doctor felt calmer and less tense than the previous day, but found the conversation's content more difficult."@en,
+        "Läkaren kände sig lugnare och mindre spänd än dagen innan, men upplevde samtalets innehåll som svårare."@sv ;
+    :ConflictTitle "Ärztin's Gefühl zum Gespräch"@de,
+        "Doctor's Feelings About the Conversation"@en,
+        "Läkarens Känslor om Samtalet"@sv ;
+    :CreationDate "2024-06-01T12:00:00Z" ;
+    :HasParticipant :Aerztin,
+        :Gesprach ;
+    :WrittenBy :Aerztin .
+
+:Impression2 a :Conflict ;
+    :ConflictState "open" ;
+    :ConflictDescription "Die Ärztin glaubte, die Botschaft gut übermittelt und der Patientin aufmerksam zugehört zu haben."@de,
+        "The doctor believed she conveyed the message well and listened attentively to the patient."@en,
+        "Läkaren trodde att hon hade förmedlat budskapet väl och lyssnat uppmärksamt på patienten."@sv ;
+    :ConflictTitle "Ärztin's Einschätzung zur Botschaft und Zuhören"@de,
+        "Doctor's Assessment of Message Delivery and Listening"@en,
+        "Läkarens Bedömning av Budskapsförmedling och Lyssning"@sv ;
+    :CreationDate "2024-06-01T12:00:00Z" ;
+    :HasParticipant :Aerztin,
+        :BotschaftUeberbringen,
+        :Patientin,
+        :Zuhoren ;
+    :WrittenBy :Aerztin .
+
+:Conflict1 a :Conflict ;
+    :ConflictState "open" ;
+    :ConflictDescription "Die Ärztin hatte Schwierigkeiten zu entscheiden, wann sie das Gespräch beenden sollte, und blieb länger sitzen, um einen positiven Abschluss zu finden, obwohl sie das Gefühl hatte, früher gehen zu können."@de,
+        "The doctor struggled with when to end the conversation, feeling she could have left earlier but stayed to avoid an abrupt end and introduce a positive topic like Münster."@en,
+        "Läkaren hade svårt att bestämma när hon skulle avsluta samtalet och stannade längre för att hitta ett positivt avslut, trots att hon kände att hon kunde ha gått tidigare."@sv ;
+    :ConflictTitle "Ärztin's Schwierigkeiten beim Gesprächsende"@de,
+        "Doctor's Difficulties Ending the Conversation"@en,
+        "Läkarens Svårigheter att Avsluta Samtalet"@sv ;
+    :CreationDate "2024-06-01T12:00:00Z" ;
+    :HasParticipant :Aerztin,
+        :MuensterGesprach,
+        :PatientinAlleineLassen,
+        :Zuhoren ;
+    :WrittenBy :Aerztin .
+
+:Impression3 a :Conflict ;
+    :ConflictState "open" ;
+    :ConflictDescription "Die Ärztin hatte das Gefühl, dass die Patientin positiv auf das Gespräch reagierte und glücklich war."@de,
+        "The doctor felt the patient reacted quite well to the conversation and was happy."@en,
+        "Läkaren upplevde att patienten reagerade ganska väl på samtalet och var nöjd."@sv ;
+    :ConflictTitle "Ärztin's Eindruck von der Patientenreaktion"@de,
+        "Doctor's Impression of Patient's Reaction"@en,
+        "Läkarens Intryck av Patientens Reaktion"@sv ;
+    :CreationDate "2024-06-01T12:00:00Z" ;
+    :HasParticipant :Aerztin,
+        :Patientin,
+        :Patientenreaktion ;
+    :WrittenBy :Aerztin .
+
+:Feedback1 a :Conflict ;
+    :ConflictState "open" ;
+    :ConflictDescription "Kommilitonin 1 lobt die Haltung der Ärztin, ihren direkten Augenkontakt, ihre Konzentration, ihr Nicken und das Wiederholen von Aussagen als 'cool' und 'lieb'."@de,
+        "Fellow Student 1 praises the doctor's posture, direct eye contact, concentration, nodding, and repetition of statements, finding it 'cool' and 'sweet'."@en,
+        "Medstudent 1 berömmer läkarens hållning, hennes direkta ögonkontakt, koncentration, nickningar och upprepning av uttalanden som 'coolt' och 'snällt'."@sv ;
+    :ConflictTitle "Kommilitonin 1's Feedback zur Haltung der Ärztin"@de,
+        "Fellow Student 1's Feedback on the Doctor's Demeanor"@en,
+        "Medstudent 1:s Feedback om Läkarens Hållning"@sv ;
+    :CreationDate "2024-06-01T12:00:00Z" ;
+    :HasParticipant :Aerztin,
+        :HaltungDerAerztin,
+        :Kommilitonin,
+        :Konzentration,
+        :SitzpositionDerAerztin ;
+    :WrittenBy :Kommilitonin .
+
+:Feedback2 a :Conflict ;
+    :ConflictState "open" ;
+    :ConflictDescription "Kommilitonin 1 lobt die Ärztin dafür, dass sie nach Schmerzen und Bedürfnissen fragte und gut über die Patientengeschichte informiert war."@de,
+        "Fellow Student 1 commends the doctor for asking about pain and needs, and for being well-informed about the patient's history."@en,
+        "Medstudent 1 berömmer läkaren för att ha frågat om smärta och behov, och för att ha varit väl informerad om patientens historia."@sv ;
+    :ConflictTitle "Kommilitonin 1's Feedback zu Fragen und Informationsgewinnung"@de,
+        "Fellow Student 1's Feedback on Questions and Information Gathering"@en,
+        "Medstudent 1:s Feedback om Frågor och Informationsinsamling"@sv ;
+    :CreationDate "2024-06-01T12:00:00Z" ;
+    :HasParticipant :Aerztin,
+        :FragenStellen,
+        :InformationUeberPatientengeschichte,
+        :Kommilitonin,
+        :SchmerzenUndBeschwerden ;
+    :WrittenBy :Kommilitonin .
+
+:Feedback3 a :Conflict ;
+    :ConflictState "open" ;
+    :ConflictDescription "Kommilitonin 1 lobt die Ärztin für ihr langsames Gesprächstempo, das sowohl ihr als auch der Patientin ausreichend Zeit gab."@de,
+        "Fellow Student 1 praises the doctor for speaking slowly and allowing both herself and the patient enough time during the conversation."@en,
+        "Medstudent 1 berömmer läkaren för hennes långsamma samtalstempo, vilket gav både henne och patienten tillräckligt med tid."@sv ;
+    :ConflictTitle "Kommilitonin 1's Feedback zum Gesprächstempo"@de,
+        "Fellow Student 1's Feedback on Conversation Pace"@en,
+        "Medstudent 1:s Feedback om Samtalstempot"@sv ;
+    :CreationDate "2024-06-01T12:00:00Z" ;
+    :HasParticipant :Aerztin,
+        :Gesprachstempo,
+        :Kommilitonin,
+        :Patientin ;
+    :WrittenBy :Kommilitonin .
+
+:Feedback4 a :Conflict ;
+    :ConflictState "open" ;
+    :ConflictDescription "Kommilitonin 1 hebt die sofortigen Lösungsangebote der Ärztin hervor, wie bei Erstickungsgefühlen, der Empfehlung eines Psychiaters/Priesters und der Hilfe bei der Brieforganisation, was sie als sehr aufmerksam und beruhigend empfand."@de,
+        "Fellow Student 1 highlights the doctor's immediate offering of solutions, such as for the feeling of choking, suggesting a psychiatrist/priest, and helping with organizing letters, which she found very thoughtful and effective in reassuring the patient."@en,
+        "Medstudent 1 lyfter fram läkarens omedelbara lösningar, som vid kvävningskänslor, rekommendation av psykiater/präst och hjälp med brevorganisering, vilket hon fann mycket omtänksamt och lugnande."@sv ;
+    :ConflictTitle "Kommilitonin 1's Feedback zu Lösungsangeboten"@de,
+        "Fellow Student 1's Feedback on Offering Solutions"@en,
+        "Medstudent 1:s Feedback om Att Erbjuda Lösningar"@sv ;
+    :CreationDate "2024-06-01T12:00:00Z" ;
+    :HasParticipant :Aerztin,
+        :BriefeOrganisieren,
+        :Erstickungsgefuehl,
+        :Kommilitonin,
+        :Loesungsangebot,
+        :Patientin,
+        :PsychiaterPriester,
+        :StrohhalmAnbieten ;
+    :WrittenBy :Kommilitonin .
+
+:Feedback5 a :Conflict ;
+    :ConflictState "open" ;
+    :ConflictDescription "Kommilitonin 2 lobt die Ärztin dafür, dass sie die Stimmung beim Betreten des Raumes wahrnahm und viele Pausen nutzte, die es der Patientin ermöglichten, proaktiv Informationen zu teilen."@de,
+        "Fellow Student 2 praises the doctor for perceiving the atmosphere upon entering the room and for using many pauses, which allowed the patient to share information proactively."@en,
+        "Medstudent 2 berömmer läkaren för att hon uppfattade stämningen när hon kom in i rummet och för att hon använde många pauser, vilket gjorde att patienten proaktivt kunde dela information."@sv ;
+    :ConflictTitle "Kommilitonin 2's Feedback zur Wahrnehmung der Stimmung und Pausennutzung"@de,
+        "Fellow Student 2's Feedback on Perceiving Atmosphere and Using Pauses"@en,
+        "Medstudent 2:s Feedback om Att Uppfatta Stämningen och Använda Pauser"@sv ;
+    :CreationDate "2024-06-01T12:00:00Z" ;
+    :HasParticipant :Aerztin,
+        :Kommilitonin,
+        :PausenImGesprach,
+        :StimmungWahrnehmen ;
+    :WrittenBy :Kommilitonin .
+
+:Feedback6 a :Conflict ;
+    :ConflictState "open" ;
+    :ConflictDescription "Kommilitonin 2 lobt die Ärztin für die effektive Integration pragmatischer Vorschläge und die Bereitstellung eines klaren Plans für die nächsten Schritte, was einen guten Gesprächsabschluss für die Patientin darstellte."@de,
+        "Fellow Student 2 commends the doctor for effectively integrating pragmatic suggestions and providing a clear plan for next steps, which served as a good conclusion for the patient."@en,
+        "Medstudent 2 berömmer läkaren för att hon effektivt integrerade pragmatiska förslag och gav en tydlig plan för nästa steg, vilket utgjorde ett bra samtalsavslut för patienten."@sv ;
+    :ConflictTitle "Kommilitonin 2's Feedback zu pragmatischen Vorschlägen und Gesprächsabschluss"@de,
+        "Fellow Student 2's Feedback on Pragmatic Suggestions and Conversation Conclusion"@en,
+        "Medstudent 2:s Feedback om Pragmatiska Förslag och Samtalsavslutning"@sv ;
+    :CreationDate "2024-06-01T12:00:00Z" ;
+    :HasParticipant :Aerztin,
+        :Gesprachsabschluss,
+        :Kommilitonin,
+        :Patientin,
+        :PragmatischeVorschlaege ;
+    :WrittenBy :Kommilitonin .
+
+:Impression4 a :Conflict ;
+    :ConflictState "open" ;
+    :ConflictDescription "Kommilitonin 2 war sich anfangs unsicher über das Informationsbedürfnis der Patientin, kam aber später zu dem Schluss, dass Ärztin und Patientin diesbezüglich auf einer Wellenlänge waren."@de,
+        "Fellow Student 2 initially felt unsure about the patient's need for information but later concluded that the doctor and patient were on the same wavelength regarding this."@en,
+        "Medstudent 2 var initialt osäker på patientens informationsbehov men drog senare slutsatsen att läkaren och patienten var på samma våglängd i detta avseende."@sv ;
+    :ConflictTitle "Kommilitonin 2's anfängliche Unsicherheit über Informationsbedürfnis"@de,
+        "Fellow Student 2's Initial Uncertainty About Information Need"@en,
+        "Medstudent 2:s Initiala Osäkerhet om Informationsbehov"@sv ;
+    :CreationDate "2024-06-01T12:00:00Z" ;
+    :HasComment :Comment1 ;
+    :HasParticipant :InformationsbeduerfnisDerPatientin,
+        :Kommilitonin,
+        :Patientin ;
+    :WrittenBy :Kommilitonin .
+
+:Comment1 a :Comment ;
+    :CommentDescription "Die Ärztin bestätigt, dass sie sich anfangs ebenfalls unsicher über das Informationsbedürfnis der Patientin war."@de,
+        "The doctor confirms that she also felt unsure about the patient's information needs at the beginning."@en,
+        "Läkaren bekräftar att hon också var osäker på patientens informationsbehov i början."@sv ;
+    :CreationDate "2024-06-01T12:05:00Z" ;
+    :HasComment :Comment2 ;
+    :WrittenBy :Aerztin .
+
+:Impression5 a :Conflict ;
+    :ConflictState "open" ;
+    :ConflictDescription "Die Patientin fühlte sich anfangs unsicher über die Gesprächsrichtung und ihre Rolle, empfand die klare Aussage über ihr Sterben jedoch als befreiend und klärend, da sie dies bereits mit ihrem Partner besprochen hatte."@de,
+        "The patient initially felt uncertain about the conversation's direction and her role, but perceived the clear statement about her dying as liberating and clarifying, as she had already discussed it with her partner."@en,
+        "Patienten kände sig initialt osäker på samtalets riktning och sin roll, men upplevde det tydliga uttalandet om hennes döende som befriande och klargörande, då hon redan hade diskuterat det med sin partner."@sv ;
+    :ConflictTitle "Patientin's anfängliche Unsicherheit und Befreiung durch Klarheit"@de,
+        "Patient's Initial Uncertainty and Liberation Through Clarity"@en,
+        "Patientens Initiala Osäkerhet och Befrielse Genom Tydlighet"@sv ;
+    :CreationDate "2024-06-01T12:00:00Z" ;
+    :HasParticipant :Aerztin,
+        :Krankenhausaufenthalt,
+        :Patientin,
+        :UmgangMitSterben,
+        :Versorgung ;
+    :WrittenBy :Patientin .
+
+:Feedback7 a :Conflict ;
+    :ConflictState "open" ;
+    :ConflictDescription "Die Patientin schätzte die wiederholten Fragen der Ärztin nach Hilfsmöglichkeiten und den respektvollen Umgang mit ihren Wünschen bezüglich Besuchen, Brieforganisation und dem Gespräch mit einem Seelsorger."@de,
+        "The patient appreciated the doctor's repeated questions about how they could help, and the doctor's respectful approach to her wishes regarding visitors, organizing letters, and speaking with a chaplain."@en,
+        "Patienten uppskattade läkarens upprepade frågor om hur de kunde hjälpa till, och läkarens respektfulla förhållningssätt till hennes önskemål gällande besök, brevorganisering och samtal med en själavårdare."@sv ;
+    :ConflictTitle "Patientin's Feedback zu Fragen und Unterstützung"@de,
+        "Patient's Feedback on Questions and Support"@en,
+        "Patientens Feedback om Frågor och Stöd"@sv ;
+    :CreationDate "2024-06-01T12:00:00Z" ;
+    :HasParticipant :Aerztin,
+        :Besuchswunsch,
+        :BriefeOrganisieren,
+        :FragenStellen,
+        :Patientin,
+        :SeelsorgerSprechen ;
+    :WrittenBy :Patientin .
+
+:Feedback8 a :Conflict ;
+    :ConflictState "open" ;
+    :ConflictDescription "Die Patientin empfand das Münster-Gespräch als angenehme und positive Wendung, die ihr half, an schöne Dinge zu denken und ihr Sicherheit gab. Auch die Pausen zur Informationsverarbeitung schätzte sie sehr."@de,
+        "The patient found the Münster conversation a pleasant and positive shift, helping her think of good things and providing reassurance. She also valued the pauses for processing information."@en,
+        "Patienten fann Münster-samtalet som en trevlig och positiv vändning, vilket hjälpte henne att tänka på bra saker och gav henne trygghet. Hon värdesatte också pauserna för att bearbeta information."@sv ;
+    :ConflictTitle "Patientin's Feedback zu Münster-Gespräch und Pausen"@de,
+        "Patient's Feedback on Münster Conversation and Pauses"@en,
+        "Patientens Feedback om Münster-samtal och Pauser"@sv ;
+    :CreationDate "2024-06-01T12:00:00Z" ;
+    :HasParticipant :Aerztin,
+        :InformationVerarbeiten,
+        :MuensterGesprach,
+        :PausenImGesprach,
+        :Patientin,
+        :SicherheitDerPatientin ;
+    :WrittenBy :Patientin .
+
+:Feedback9 a :Conflict ;
+    :ConflictState "open" ;
+    :ConflictDescription "Der Dozent lobt die Leistung der Ärztin als 'eindeutige Behutsamkeit', da sie unglaublich behutsam, aber klar und eindeutig war, und hebt ihre ruhige Sitzposition hervor."@de,
+        "The lecturer praises the doctor's performance as characterized by 'unambiguous gentleness,' noting her ability to be incredibly gentle yet clear and unambiguous, and also commends her calm sitting position."@en,
+        "Lektorn berömmer läkarens prestation som kännetecknad av 'entydig varsamhet', och noterar hennes förmåga att vara otroligt varsam men ändå klar och entydig, samt berömmer hennes lugna sittställning."@sv ;
+    :ConflictTitle "Dozent's Feedback zur Behutsamkeit und Klarheit der Ärztin"@de,
+        "Lecturer's Feedback on the Doctor's Gentleness and Clarity"@en,
+        "Lektorns Feedback om Läkarens Varsamhet och Tydlighet"@sv ;
+    :CreationDate "2024-06-01T12:00:00Z" ;
+    :HasParticipant :Aerztin,
+        :Behutsamkeit,
+        :Dozent,
+        :KlarheitDerKommunikation,
+        :SitzpositionDerAerztin ;
+    :WrittenBy :Dozent .
+
+:Feedback10 a :Conflict ;
+    :ConflictState "open" ;
+    :ConflictDescription "Der Dozent lobt die Ärztin dafür, dass sie behutsam, aber klar aussprach, dass die Patientin sterben würde, kritisiert jedoch den harten Kontrast zwischen 'gesund werden' und 'sterben' als kleine Unsauberkeit."@de,
+        "The lecturer commends the doctor for gently but clearly stating that the patient would die, a task often difficult for others. However, he notes a slight imperfection in contrasting 'getting well' with 'dying,' suggesting a less stark phrasing would have been better."@en,
+        "Lektorn berömmer läkaren för att hon varsamt men tydligt uttalade att patienten skulle dö, en uppgift som ofta är svår för andra. Han noterar dock en liten brist i att kontrastera 'bli frisk' med 'döende', och föreslår en mindre skarp formulering hade varit bättre."@sv ;
+    :ConflictTitle "Dozent's Feedback zum Umgang mit dem Wort 'Sterben' und Kontrast"@de,
+        "Lecturer's Feedback on Handling the Word 'Dying' and Contrast"@en,
+        "Lektorns Feedback om Hanteringen av Ordet 'Döende' och Kontrast"@sv ;
+    :CreationDate "2024-06-01T12:00:00Z" ;
+    :HasParticipant :Aerztin,
+        :Dozent,
+        :KontrastGesundWerdenVsSterben,
+        :Patientin,
+        :PraefinaleSituation,
+        :WortSterbenAussprechen ;
+    :WrittenBy :Dozent .
+
+:Feedback11 a :Conflict ;
+    :ConflictState "open" ;
+    :ConflictDescription "Der Dozent hebt positiv hervor, dass die Ärztin das Münster-Gespräch als 'Break' und 'Achtsamkeitsübung' nutzte, um ein positives Element in die Diskussion einzubringen."@de,
+        "The lecturer positively highlights the doctor's use of the Münster conversation as a 'break' and a 'mindfulness exercise' to introduce a positive element into the discussion."@en,
+        "Lektorn berömmer läkaren för att hon positivt lyfte fram användningen av Münster-samtalet som en 'paus' och en 'mindfulnessövning' för att introducera ett positivt element i diskussionen."@sv ;
+    :ConflictTitle "Dozent's Feedback zum Münster-Gespräch als Achtsamkeitsübung"@de,
+        "Lecturer's Feedback on Münster Conversation as Mindfulness Exercise"@en,
+        "Lektorns Feedback om Münster-samtalet som Mindfulnessövning"@sv ;
+    :CreationDate "2024-06-01T12:00:00Z" ;
+    :HasParticipant :Achtsamkeitsuebung,
+        :Aerztin,
+        :Dozent,
+        :MuensterGesprach ;
+    :WrittenBy :Dozent .
+
+:Feedback12a a :Conflict ;
+    :ConflictState "open" ;
+    :ConflictDescription "Der Dozent lobt die Ärztin für die Wahrung der Patientenautonomie und betont die Wichtigkeit der Patienteneinwilligung vor Gesprächen mit Angehörigen."@de,
+        "The lecturer praises the doctor for preserving the patient's autonomy and emphasizes the importance of patient consent before discussing with relatives."@en,
+        "Lektorn berömmer läkaren för att hon bevarade patientens autonomi och betonar vikten av patientens samtycke innan diskussioner med anhöriga."@sv ;
+    :ConflictTitle "Dozent's Feedback zur Wahrung der Autonomie"@de,
+        "Lecturer's Feedback on Preserving Autonomy"@en,
+        "Lektorns Feedback om Bevarande av Autonomi"@sv ;
+    :CreationDate "2024-06-01T12:00:00Z" ;
+    :HasParticipant :Aerztin,
+        :AutonomieWahren,
+        :Dozent,
+        :EinwilligungDesPatienten,
+        :Patientenentscheidung,
+        :Patientin ;
+    :WrittenBy :Dozent .
+
+:Feedback12b a :Conflict ;
+    :ConflictState "open" ;
+    :ConflictDescription "Der Dozent lobt die Ärztin für die fachlich gute Besprechung des Einsatzes des multipersonellen Teams, insbesondere die Fokussierung auf Seelsorge statt Physiotherapie in der gegebenen Situation."@de,
+        "The lecturer praises the doctor for the technically well-handled discussion of the multidisciplinary team's role, specifically focusing on pastoral care rather than physiotherapy in the given situation."@en,
+        "Lektorn berömmer läkaren för den tekniskt väl hanterade diskussionen av det multiprofessionella teamets roll, särskilt fokus på själavård snarare än fysioterapi i den givna situationen."@sv ;
+    :ConflictTitle "Dozent's Feedback zum Einsatz des multipersonellen Teams"@de,
+        "Lecturer's Feedback on Multidisciplinary Team Deployment"@en,
+        "Lektorns Feedback om Insats av Multiprofessionellt Team"@sv ;
+    :CreationDate "2024-06-01T12:00:00Z" ;
+    :HasParticipant :Aerztin,
+        :Dozent,
+        :EinsatzDesMultipersonellenTeams,
+        :Seelsorge ;
+    :WrittenBy :Dozent .
+
+:Feedback13 a :Conflict ;
+    :ConflictState "open" ;
+    :ConflictDescription "Der Dozent bemerkt, dass die Ärztin das Gespräch leicht über die vorgesehene Zeit hinaus verlängerte, was er zuließ, da sie es natürlich zum Abschluss brachte, was ein gutes Zeitmanagement demonstrierte."@de,
+        "The lecturer notes that the doctor extended the conversation slightly beyond the allotted time, which he allowed because she was naturally bringing it to a close, demonstrating good time management."@en,
+        "Lektorn noterar att läkaren förlängde samtalet något utöver den tilldelade tiden, vilket han tillät eftersom hon naturligt avslutade det, vilket visade på god tidshantering."@sv ;
+    :ConflictTitle "Dozent's Feedback zum Gesprächszeitmanagement"@de,
+        "Lecturer's Feedback on Conversation Time Management"@en,
+        "Lektorns Feedback om Samtalstidsplanering"@sv ;
+    :CreationDate "2024-06-01T12:00:00Z" ;
+    :HasParticipant :Aerztin,
+        :Dozent,
+        :Gesprächszeitmanagement ;
+    :WrittenBy :Dozent .
+
+:Comment2 a :Comment ;
+    :CommentDescription "Der Dozent betont, dass das Timing der klaren Botschaft im Gespräch sehr gut und nicht zu spät war, insbesondere im Vergleich zu anderen Situationen, in denen Klarheit erst sehr spät eintritt."@de,
+        "The lecturer emphasizes that the timing of the clear message in the conversation was very good and not too late, especially compared to other situations where clarity comes very late."@en,
+        "Lektorn betonar att tidpunkten för det tydliga budskapet i samtalet var mycket bra och inte för sent, särskilt jämfört mit andra situationer där tydlighet kommer mycket sent."@sv ;
+    :CreationDate "2024-06-01T12:10:00Z" ;
+    :WrittenBy :Dozent .

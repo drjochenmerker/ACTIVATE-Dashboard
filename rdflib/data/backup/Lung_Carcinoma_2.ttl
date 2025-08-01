@@ -1,0 +1,441 @@
+@prefix : <http://activate.htwk-leipzig.de/model#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@base <http://activate.htwk-leipzig.de/model> .
+
+:MedicalCommunicationDebriefing a owl:NamedIndividual ;
+    :ActivityDescription "A feedback session within a medical training context, discussing and evaluating a doctor's communication with a patient regarding an imminent death prognosis."@en,
+                         "Ein Feedbackgespräch im Rahmen einer medizinischen Ausbildung, in dem die Kommunikation einer Ärztin mit einer Patientin über eine nahende Todesprognose besprochen und bewertet wird."@de,
+                         "En återkopplingssession inom medicinsk utbildning, där en läkares kommunikation med en patient angående en nära förestående dödsprognos diskuteras och utvärderas."@sv ;
+    :ActivityName "Patient Communication Debriefing"@en,
+                  "Feedbackgespräch zur Patientenkommunikation"@de,
+                  "Återkoppling på patientkommunikation"@sv .
+
+:Doctor a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Doctor"@en,
+               "Ärztin"@de,
+               "Läkare"@sv ;
+    :HasToFollow :AdvanceDirective,
+                 :PatientWish ;
+    :OperatesOn :Communication,
+                :PatientComfort,
+                :PatientComprehension,
+                :PatientFears,
+                :PatientInformationNeeds,
+                :PhysicalComfort,
+                :Prognosis,
+                :SimulationTask,
+                :TimeSpentWithPatient ;
+    :SubjectSex "female"@en,
+                "weiblich"@de,
+                "kvinnlig"@sv ;
+    :Uses :Directness,
+          :Euphemism,
+          :ExudingCalmness,
+          :Medication,
+          :Pauses,
+          :Rapport,
+          :Sensitivity,
+          :TheologicalContactPerson .
+
+:FellowStudent a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Fellow Student"@en,
+               "Kommilitonin"@de,
+               "Medstudent"@sv ;
+    :SubjectSex "female"@en,
+                "weiblich"@de,
+                "kvinnlig"@sv .
+
+:Patient a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Patient"@en,
+               "Patientin"@de,
+               "Patient"@sv ;
+    :InteractsIn :Clinic ;
+    :SubjectSex "female"@en,
+                "weiblich"@de,
+                "kvinnlig"@sv .
+
+:Lecturer a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Lecturer"@en,
+               "Dozentin"@de,
+               "Föreläsare"@sv ;
+    :HasToFollow :HonestyInCommunication ;
+    :OperatesOn :MedicalTreatment,
+                :Prognosis ;
+    :SubjectSex "female"@en,
+                "weiblich"@de,
+                "kvinnlig"@sv ;
+    :Uses :Courage,
+          :Directness .
+
+:NursingStaff a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Nursing Staff"@en,
+               "Pflegepersonal"@de,
+               "Vårdpersonal"@sv ;
+    :InteractsIn :Clinic ;
+    :SubjectSex "female"@en,
+                "weiblich"@de,
+                "kvinnlig"@sv .
+
+:Parents a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Parents"@en,
+               "Eltern"@de,
+               "Föräldrar"@sv ;
+    :OperatesOn :SayingGoodbye .
+
+:YoungPatient a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Young Patient"@en,
+               "Junge Patientin"@de,
+               "Ung patient"@sv ;
+    :OperatesOn :OrganizingPersonalAffairs,
+                :SayingGoodbye ;
+    :SubjectSex "female"@en,
+                "weiblich"@de,
+                "kvinnlig"@sv .
+
+:Communication a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Communication"@en,
+               "Kommunikation"@de,
+               "Kommunikation"@sv .
+
+:Prognosis a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Prognosis"@en,
+               "Prognose"@de,
+               "Prognos"@sv .
+
+:PatientFears a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Patient's Fears"@en,
+               "Ängste der Patientin"@de,
+               "Patientens rädsla"@sv .
+
+:PhysicalComfort a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Physical Comfort"@en,
+               "Körperlicher Trost"@de,
+               "Fysisk tröst"@sv .
+
+:TimeSpentWithPatient a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Time Spent with Patient"@en,
+               "Zeit mit Patientin"@de,
+               "Tid med patienten"@sv .
+
+:PatientInformationNeeds a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Patient's Information Needs"@en,
+               "Informationsbedarf der Patientin"@de,
+               "Patientens informationsbehov"@sv .
+
+:Pauses a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Pauses"@en,
+               "Pausen"@de,
+               "Pauser"@sv .
+
+:SimulationTask a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Simulation Task"@en,
+               "Simulationsaufgabe"@de,
+               "Simuleringsuppgift"@sv .
+
+:OrganizingPersonalAffairs a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Organizing Personal Affairs"@en,
+               "Organisation persönlicher Angelegenheiten"@de,
+               "Organisera personliga angelägenheter"@sv .
+
+:ClarityOfPrognosis a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Clarity of Prognosis"@en,
+               "Klarheit der Prognose"@de,
+               "Klarhet i prognosen"@sv .
+
+:SayingGoodbye a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Saying Goodbye"@en,
+               "Abschied Nehmen"@de,
+               "Ta farväl"@sv .
+
+:MedicalTreatment a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Medical Treatment"@en,
+               "Therapie"@de,
+               "Medicinsk behandling"@sv .
+
+:PatientComfort a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Patient Comfort"@en,
+               "Wohlbefinden der Patientin"@de,
+               "Patientens välbefinnande"@sv .
+
+:PatientComprehension a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Patient Comprehension"@en,
+               "Verständnis der Patientin"@de,
+               "Patientens förståelse"@sv .
+
+:TheologicalContactPerson a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Theological Contact Person"@en,
+               "Theologischer Ansprechpartner"@de,
+               "Teologisk kontaktperson"@sv ;
+    :InstrumentDescription "A theological contact person, which caused a strong reaction from the patient."@en,
+                           "Ein theologischer Ansprechpartner, der eine heftige Reaktion der Patientin hervorrief."@de,
+                           "En teologisk kontaktperson, som orsakade en stark reaktion från patienten."@sv ;
+    :InstrumentName "Theological Contact Person"@en,
+                    "Theologischer Ansprechpartner"@de,
+                    "Teologisk kontaktperson"@sv .
+
+:Medication a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Medication"@en,
+               "Medikamente"@de,
+               "Medicin"@sv ;
+    :InstrumentDescription "Medication offered to the patient to alleviate anxiety and allow for a peaceful passing."@en,
+                           "Medikamente, die der Patientin zur Linderung von Angst und für ein friedliches Sterben angeboten wurden."@de,
+                           "Medicin som erbjöds patienten för att lindra ångest och möjliggöra ett fridfullt avsked."@sv ;
+    :InstrumentName "Medication"@en,
+                    "Medikamente"@de,
+                    "Medicin"@sv ;
+    :IsUsedOn :PatientComfort,
+              :PatientFears .
+
+:Sensitivity a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Sensitivity"@en,
+               "Sensibilität"@de,
+               "Känslighet"@sv ;
+    :InstrumentDescription "The doctor's good sensitivity and intuition for the patient's needs, such as the need for touch or pauses."@en,
+                           "Die gute Sensibilität und Intuition der Ärztin für die Bedürfnisse der Patientin, wie z.B. das Bedürfnis nach Berührung oder Pausen."@de,
+                           "Läkarens goda känslighet och intuition för patientens behov, såsom behovet av beröring eller pauser."@sv ;
+    :InstrumentName "Sensitivity"@en,
+                    "Sensibilität"@de,
+                    "Känslighet"@sv .
+
+:ExudingCalmness a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Exuding Calmness"@en,
+               "Ruhe Ausstrahlen"@de,
+               "Utstråla lugn"@sv ;
+    :InstrumentDescription "The doctor's ability to exude calmness, which the patient appreciated."@en,
+                           "Die Fähigkeit der Ärztin, Ruhe auszustrahlen, was die Patientin schätzte."@de,
+                           "Läkarens förmåga att utstråla lugn, vilket patienten uppskattade."@sv ;
+    :InstrumentName "Exuding Calmness"@en,
+                    "Ruhe Ausstrahlen"@de,
+                    "Utstråla lugn"@sv .
+
+:Rapport a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Rapport"@en,
+               "Chemie (Beziehung)"@de,
+               "Relation"@sv ;
+    :InstrumentDescription "A good chemistry or rapport established between the doctor and the patient."@en,
+                           "Eine gute Chemie oder Beziehung, die zwischen der Ärztin und der Patientin hergestellt wurde."@de,
+                           "En god kemi eller relation som etablerades mellan läkaren och patienten."@sv ;
+    :InstrumentName "Rapport"@en,
+                    "Chemie (Beziehung)"@de,
+                    "Relation"@sv .
+
+:Courage a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Courage"@en,
+               "Mut"@de,
+               "Mod"@sv ;
+    :InstrumentDescription "The courage to directly communicate the limited remaining time (hours to days) to the patient."@en,
+                           "Der Mut, der Patientin die begrenzte verbleibende Zeit (Stunden bis Tage) direkt mitzuteilen."@de,
+                           "Modet att direkt kommunicera den begränsade återstående tiden (timmar till dagar) till patienten."@sv ;
+    :InstrumentName "Courage"@en,
+                    "Mut"@de,
+                    "Mod"@sv ;
+    :IsUsedOn :OrganizingPersonalAffairs,
+              :SayingGoodbye .
+
+:Euphemism a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Euphemism"@en,
+               "Euphemismus"@de,
+               "Eufemism"@sv ;
+    :InstrumentDescription "The use of euphemisms like 'gehen können' instead of 'sterben' to soften the message, which the patient found comforting."@en,
+                           "Die Verwendung von Euphemismen wie 'gehen können' anstelle von 'sterben', um die Botschaft abzumildern, was die Patientin als beruhigend empfand."@de,
+                           "Användningen av eufemismer som 'kunna gå' istället för 'dö' för att mildra budskapet, vilket patienten fann tröstande."@sv ;
+    :InstrumentName "Euphemism"@en,
+                    "Euphemismus"@de,
+                    "Eufemism"@sv ;
+    :IsUsedOn :PatientComfort .
+
+:Directness a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Directness"@en,
+               "Direktheit"@de,
+               "Direkthet"@sv ;
+    :InstrumentDescription "The direct and open approach in discussing the prognosis."@en,
+                           "Der direkte und offene Ansatz bei der Besprechung der Prognose."@de,
+                           "Det direkta och öppna tillvägagångssättet vid diskussion av prognosen."@sv ;
+    :InstrumentName "Directness"@en,
+                    "Direktheit"@de,
+                    "Direkthet"@sv ;
+    :IsUsedOn :OrganizingPersonalAffairs,
+              :SayingGoodbye .
+
+:PatientWish a :Rule,
+        owl:NamedIndividual ;
+    rdfs:label "Patient's Wish"@en,
+               "Patientenwunsch"@de,
+               "Patientens önskemål"@sv ;
+    :RuleDescription "The rule to respect the patient's wish not to see relatives and acquaintances."@en,
+                     "Die Regel, den Wunsch der Patientin zu respektieren, Verwandte und Bekannte nicht zu sehen."@de,
+                     "Regeln att respektera patientens önskan att inte träffa släktingar och bekanta."@sv ;
+    :RuleName "Patient's Wish"@en,
+              "Patientenwunsch"@de,
+              "Patientens önskemål"@sv .
+
+:AdvanceDirective a :Rule,
+        owl:NamedIndividual ;
+    rdfs:label "Advance Directive"@en,
+               "Patientenverfügung"@de,
+               "Patienttestamente"@sv ;
+    :RuleDescription "The rule to inquire about an existing and current advance directive, especially regarding wishes like no ventilation, to ensure the patient's comfort and wishes are respected at the end of life."@en,
+                     "Die Regel, nach einer bestehenden und aktuellen Patientenverfügung zu fragen, insbesondere bezüglich Wünschen wie keiner Beatmung, um sicherzustellen, dass der Komfort und die Wünsche der Patientin am Lebensende respektiert werden."@de,
+                     "Regeln att fråga om ett befintligt och aktuellt patienttestamente, särskilt gällande önskemål som ingen ventilation, för att säkerställa att patientens komfort och önskemål respekteras vid livets slut."@sv ;
+    :RuleName "Advance Directive"@en,
+              "Patientenverfügung"@de,
+              "Patienttestamente"@sv .
+
+:HonestyInCommunication a :Rule,
+        owl:NamedIndividual ;
+    rdfs:label "Honesty in Communication"@en,
+               "Ehrlichkeit in der Kommunikation"@de,
+               "Ärlighet i kommunikationen"@sv ;
+    :Influences :ClarityOfPrognosis ;
+    :RuleDescription "The rule to be honest in communication, especially when the prognosis is clear and unambiguous, even if difficult."@en,
+                     "Die Regel, in der Kommunikation ehrlich zu sein, besonders wenn die Prognose klar und eindeutig ist, auch wenn es schwierig ist."@de,
+                     "Regeln att vara ärlig i kommunikationen, särskilt när prognosen är klar och entydig, även om det är svårt."@sv ;
+    :RuleName "Honesty in Communication"@en,
+              "Ehrlichkeit in der Kommunikation"@de,
+              "Ärlighet i kommunikationen"@sv .
+
+:Clinic a :Community,
+        owl:NamedIndividual ;
+    rdfs:label "Clinic"@en,
+               "Klinik"@de,
+               "Klinik"@sv .
+
+:Conflict_TheologicalContactReaction a :Conflict ;
+    :ConflictDescription "The doctor reflects on the patient's strong negative reaction when a theological contact person was suggested, questioning if it was an appropriate suggestion in that moment."@en,
+                         "Die Ärztin reflektiert über die heftige negative Reaktion der Patientin, als ein theologischer Ansprechpartner vorgeschlagen wurde, und hinterfragt, ob dies in diesem Moment ein angemessener Vorschlag war."@de,
+                         "Läkaren reflekterar över patientens starka negativa reaktion när en teologisk kontaktperson föreslogs, och ifrågasätter om det var ett lämpligt förslag i det ögonblicket."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Patient's Strong Reaction to Theological Contact Person Suggestion"@en,
+                   "Häftige Reaktion der Patientin auf den Vorschlag eines theologischen Ansprechpartners"@de,
+                   "Patientens starka reaktion på förslaget om en teologisk kontaktperson"@sv ;
+    :CreationDate "2024-06-01T12:00:00Z"^^xsd:dateTime ;
+    :HasParticipant :Doctor,
+                    :Patient ;
+    :WrittenBy :Doctor .
+
+:Conflict_EuphemismDiscussion a :Conflict ;
+    :ConflictDescription "Fellow Student 1 provides mixed feedback on the doctor's use of 'gehen können' instead of 'sterben', initially finding it an unfavorable phrasing but acknowledging it was well-received by the patient. They suggest that 'sterben' could have been used directly."@en,
+                         "Kommilitonin 1 gibt gemischtes Feedback zur Verwendung von 'gehen können' anstelle von 'sterben' durch die Ärztin. Sie fand die Formulierung zunächst ungünstig, räumt aber ein, dass sie bei der Patientin gut ankam. Sie schlägt vor, dass 'sterben' direkt hätte verwendet werden können."@de,
+                         "Medstudent 1 ger blandad feedback på läkarens användning av 'kunna gå' istället för 'dö', och fann det initialt som en ogynnsam formulering men erkänner att det mottogs väl av patienten. De föreslår att 'dö' kunde ha använts direkt."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Discussion on the Use of Euphemism for Death"@en,
+                   "Diskussion über die Verwendung von Euphemismen für den Tod"@de,
+                   "Diskussion om användningen av eufemismer för döden"@sv ;
+    :CreationDate "2024-06-01T12:05:00Z"^^xsd:dateTime ;
+    :HasComment :Comment_LecturerEuphemismSupport,
+                :Comment_PatientEuphemismApproval ;
+    :HasParticipant :Doctor,
+                    :FellowStudent ;
+    :WrittenBy :FellowStudent .
+
+:Comment_PatientEuphemismApproval a :Comment ;
+    :CommentDescription "The patient expresses strong approval for the doctor's use of 'gehen können' instead of 'sterben', finding it gentle and comforting rather than brutal, and confirming it aligned with her own understanding."@en,
+                        "Die Patientin äußert starke Zustimmung zur Verwendung von 'gehen können' anstelle von 'sterben' durch die Ärztin. Sie empfand es als sanft und beruhigend statt brutal und bestätigte, dass es mit ihrem eigenen Verständnis übereinstimmte."@de,
+                        "Patienten uttrycker starkt godkännande för läkarens användning av 'kunna gå' istället för 'dö', och fann det milt och tröstande snarare än brutalt, och bekräftade att det stämde överens med hennes egen förståelse."@sv ;
+    :CreationDate "2024-06-01T12:10:00Z"^^xsd:dateTime ;
+    :WrittenBy :Patient .
+
+:Comment_LecturerEuphemismSupport a :Comment ;
+    :CommentDescription "The lecturer supports the doctor's choice of euphemism in this specific context, noting that the patient's clear understanding made 'gehen' an appropriate and gentle transition."@en,
+                        "Die Dozentin unterstützt die Wahl des Euphemismus durch die Ärztin in diesem spezifischen Kontext und merkt an, dass das klare Verständnis der Patientin 'gehen' zu einem angemessenen und sanften Übergang machte."@de,
+                        "Föreläsaren stöder läkarens val av eufemism i detta specifika sammanhang, och noterar att patientens tydliga förståelse gjorde 'gå' till en lämplig och mild övergång."@sv ;
+    :CreationDate "2024-06-01T12:15:00Z"^^xsd:dateTime ;
+    :WrittenBy :Lecturer .
+
+:Conflict_AdvanceDirectiveInquiry a :Conflict ;
+    :ConflictDescription "Fellow Student 1 suggests that the doctor should have inquired about the patient's advance directive, emphasizing its importance for respecting patient wishes regarding end-of-life care."@en,
+                         "Kommilitonin 1 schlägt vor, dass die Ärztin nach der Patientenverfügung hätte fragen sollen, und betont deren Wichtigkeit für die Respektierung der Patientenwünsche bezüglich der Sterbebegleitung."@de,
+                         "Medstudent 1 föreslår att läkaren borde ha frågat om patientens patienttestamente, och betonar dess betydelse för att respektera patientens önskemål gällande vård i livets slutskede."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Suggestion to Inquire About Advance Directive"@en,
+                   "Vorschlag zur Nachfrage nach Patientenverfügung"@de,
+                   "Förslag att fråga om patienttestamente"@sv ;
+    :CreationDate "2024-06-01T12:20:00Z"^^xsd:dateTime ;
+    :HasParticipant :Doctor,
+                    :FellowStudent ;
+    :WrittenBy :FellowStudent .
+
+:Conflict_PatientInformationNeeds a :Conflict ;
+    :ConflictDescription "Fellow Student 2 suggests that the doctor could have asked earlier about the patient's specific information needs regarding the prognosis and timeline of death."@en,
+                         "Kommilitonin 2 schlägt vor, dass die Ärztin früher nach dem spezifischen Informationsbedarf der Patientin bezüglich der Prognose und des Zeitpunkts des Todes hätte fragen können."@de,
+                         "Medstudent 2 föreslår att läkaren kunde ha frågat tidigare om patientens specifika informationsbehov gällande prognosen och tidpunkten för döden."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Feedback on Assessing Patient's Information Needs"@en,
+                   "Feedback zur Einschätzung des Informationsbedarfs der Patientin"@de,
+                   "Feedback om bedömning av patientens informationsbehov"@sv ;
+    :CreationDate "2024-06-01T12:25:00Z"^^xsd:dateTime ;
+    :HasParticipant :Doctor,
+                    :FellowStudent ;
+    :WrittenBy :FellowStudent .
+
+:Conflict_PacingAndPauses a :Conflict ;
+    :ConflictDescription "Fellow Student 2 suggests that the doctor could have allowed for more pauses during the conversation, noting that the patient did not express much due to being occupied with the simulation."@en,
+                         "Kommilitonin 2 schlägt vor, dass die Ärztin während des Gesprächs mehr Pausen hätte zulassen können, da die Patientin aufgrund der Simulation nicht viel von sich gab."@de,
+                         "Medstudent 2 föreslår att läkaren kunde ha tillåtit fler pauser under samtalet, och noterade att patienten inte uttryckte mycket på grund av att hon var upptagen med simuleringen."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Feedback on Pacing and Use of Pauses"@en,
+                   "Feedback zu Tempo und Pausennutzung"@de,
+                   "Feedback om tempo och användning av pauser"@sv ;
+    :CreationDate "2024-06-01T12:30:00Z"^^xsd:dateTime ;
+    :HasParticipant :Doctor,
+                    :FellowStudent ;
+    :WrittenBy :FellowStudent .
+
+:Impression_PatientOverallPositive a :Conflict ;
+    :ConflictDescription "The patient expresses feeling very comfortable with the doctor, appreciating her focused presence, sensitivity, ability to sense the need for pauses and touch, the time taken, the calmness exuded, and the offer of medication for anxiety."@en,
+                         "Die Patientin äußert, sich sehr wohl bei der Ärztin gefühlt zu haben. Sie schätzte deren konzentrierte Präsenz, Sensibilität, das Gespür für Pausen und Berührungen, die genommene Zeit, die ausgestrahlte Ruhe und das Angebot von Medikamenten gegen Angst."@de,
+                         "Patienten uttrycker att hon kände sig mycket bekväm med läkaren, och uppskattade hennes fokuserade närvaro, känslighet, förmåga att känna av behovet av pauser och beröring, den tid som togs, den utstrålade lugnet och erbjudandet om medicin mot ångest."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Patient's Overall Positive Impression of the Doctor"@en,
+                   "Gesamteindruck der Patientin von der Ärztin als sehr positiv"@de,
+                   "Patientens övergripande positiva intryck av läkaren"@sv ;
+    :CreationDate "2024-06-01T12:35:00Z"^^xsd:dateTime ;
+    :HasParticipant :Doctor,
+                    :Patient ;
+    :WrittenBy :Patient .
+
+:Feedback_HonestyInPrognosis a :Conflict ;
+    :ConflictDescription "The lecturer emphasizes the critical importance of being honest and courageous when communicating a clear prognosis, even if it's difficult, to allow patients to organize their affairs and say goodbye."@en,
+                         "Die Dozentin betont die entscheidende Bedeutung, ehrlich und mutig zu sein, wenn eine klare Prognose kommuniziert wird, auch wenn es schwierig ist, damit Patienten ihre Angelegenheiten regeln und Abschied nehmen können."@de,
+                         "Föreläsaren betonar den avgörande vikten av att vara ärlig och modig när en tydlig prognos kommuniceras, även om det är svårt, för att patienter ska kunna organisera sina angelägenheter och ta farväl."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Importance of Honesty in Communicating Prognosis"@en,
+                   "Bedeutung der Ehrlichkeit bei der Kommunikation der Prognose"@de,
+                   "Vikten av ärlighet vid kommunikation av prognos"@sv ;
+    :CreationDate "2024-06-01T12:40:00Z"^^xsd:dateTime ;
+    :HasParticipant :HonestyInCommunication,
+                    :Lecturer,
+                    :Prognosis ;
+    :WrittenBy :Lecturer .
