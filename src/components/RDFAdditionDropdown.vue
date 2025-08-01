@@ -58,7 +58,7 @@ export default {
       );
     },
     placeholderText() {
-      const lang = this.sessionStore.activeLanguage || 'en';
+      const lang = this.sessionStore.activeLanguage || 'default';
       return this.staticContent.placeholders.search[lang];
     },
     buildLanguageString() {
@@ -136,13 +136,16 @@ export default {
     <h3 class="label" :class="{ disabled: disabled }">{{ label }}:</h3>
     <div class="search-container" :class="{ disabled: disabled }">
       <input class="text-input" :class="{ disabled: disabled }" type="text" v-model="search"
-        @focus="!disabled && (showDropdown = true)" @input="handleInput" :placeholder="placeholderText" :disabled="disabled" />
+        @focus="!disabled && (showDropdown = true)" @input="handleInput" :placeholder="placeholderText"
+        :disabled="disabled" />
       <button v-if="search" type="button" class="clear-btn" @click="clearInput">×</button>
     </div>
 
     <ul v-if="showDropdown && !disabled" class="dropdown-list">
       <li v-for="option in filteredOptions" :key="option.id" @mousedown.prevent="selectOption(option)">
-        {{ buildLanguageString(option, sessionStore.activeLanguage, true) + (activateTerms[this.sessionStore.activeLanguage][option.type] ? " (" + activateTerms[this.sessionStore.activeLanguage][option.type] + ")" : "")}}
+        {{ buildLanguageString(option, sessionStore.activeLanguage, true) +
+          (activateTerms[this.sessionStore.activeLanguage][option.type] ? " (" +
+            activateTerms[this.sessionStore.activeLanguage][option.type] + ")" : "")}}
       </li>
     </ul>
   </div>
@@ -159,7 +162,8 @@ export default {
   display: flex;
   align-items: center;
   border: 1px solid #a6a4a4;
-  padding: 5px 35px 5px 5px; /* Rechts Platz für das Icon */
+  padding: 5px 35px 5px 5px;
+  /* Rechts Platz für das Icon */
   border-radius: 4px;
 }
 
