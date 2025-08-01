@@ -1,0 +1,813 @@
+@prefix : <http://activate.htwk-leipzig.de/model#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@base <http://activate.htwk-leipzig.de/model> .
+
+:advises rdf:type owl:ObjectProperty ;
+    rdfs:domain :Subject ;
+    rdfs:label "advises"@en,
+        "berät"@de,
+        "råder"@sv ;
+    rdfs:range :Subject .
+
+:causesEffectOn rdf:type owl:ObjectProperty ;
+    rdfs:domain owl:Thing ;
+    rdfs:label "causes effect on"@en,
+        "verursacht Auswirkung auf"@de,
+        "orsakar effekt på"@sv ;
+    rdfs:range owl:Thing .
+
+:evaluatesQualityOf rdf:type owl:ObjectProperty ;
+    rdfs:domain :Subject ;
+    rdfs:label "evaluates quality of"@en,
+        "bewertet Qualität von"@de,
+        "utvärderar kvaliteten på"@sv ;
+    rdfs:range owl:Thing .
+
+:exhibitsState rdf:type owl:ObjectProperty ;
+    rdfs:domain :Subject ;
+    rdfs:label "exhibits state"@en,
+        "uppvisar tillstånd"@sv,
+        "zeigt Zustand"@de ;
+    rdfs:range :Subject .
+
+:isAffectedBy rdf:type owl:ObjectProperty ;
+    rdfs:domain :Subject ;
+    rdfs:label "is affected by"@en,
+        "påverkas av"@sv,
+        "wird beeinflusst von"@de ;
+    rdfs:range owl:Thing .
+
+:isUsedToAchieve rdf:type owl:ObjectProperty ;
+    rdfs:domain :Instrument ;
+    rdfs:label "is used to achieve"@en,
+        "används för att uppnå"@sv,
+        "wird verwendet um zu erreichen"@de ;
+    rdfs:range :Object .
+
+:BreakingBadNewsSimulation001 a owl:NamedIndividual ;
+    :ActivityDescription "A simulated medical consultation focusing on the challenging task of a doctor delivering a terminal diagnosis to a patient, followed by a debriefing session among medical students and a lecturer discussing communication strategies and patient reactions."@en,
+        "En simulerad medicinsk konsultation som fokuserar på den utmanande uppgiften för en läkare att förmedla en terminal diagnos till en patient, följt av en debriefing-session bland läkarstudenter och en föreläsare som diskuterar kommunikationsstrategier och patientreaktioner."@sv,
+        "Eine simulierte medizinische Konsultation, die sich auf die herausfordernde Aufgabe konzentriert, bei der ein Arzt einem Patienten eine unheilbare Diagnose überbringt, gefolgt von einer Nachbesprechung unter Medizinstudenten und einem Dozenten, die Kommunikationsstrategien und Patientenreaktionen diskutieren."@de ;
+    :ActivityName "Breaking Bad News Simulation"@en,
+        "Simulering av att förmedla dåliga nyheter"@sv,
+        "Simulation zur Überbringung schlechter Nachrichten"@de .
+
+:CTScan a :Instrument,
+        owl:NamedIndividual ;
+    :InstrumentDescription "For displaying findings"@en,
+        "For showing findings"@en,
+        "För att visa fynd"@sv,
+        "Zur Darstellung von Befunden"@de,
+        "Zum Zeigen von Befunden"@de ;
+    :InstrumentName "CT"@de,
+        "CT"@en,
+        "DT"@sv ;
+    :InstrumentType "Bilddiagnostisk procedur"@sv,
+        "Bildgebendes Verfahren"@de,
+        "Imaging procedure"@en ;
+    :IsUsedOn :MedicalFindings ;
+    rdfs:label "CT-Scan"@de,
+        "CT Scan"@en,
+        "DT-skanning"@sv .
+
+:Cancer a :Object,
+        owl:NamedIndividual ;
+    :RuleDescription "Incurable"@en,
+        "Obotlig"@sv,
+        "Unheilbar"@de,
+        "Suggestion to name cancer earlier"@en,
+        "Förslag att nämna cancer tidigare"@sv,
+        "Vorschlag, Krebserkrankung früher zu benennen"@de ;
+    :causesEffectOn :PatientBehavior ;
+    rdfs:label "Cancer"@en,
+        "Cancer"@sv,
+        "Krebserkrankung"@de .
+
+:Clarity a :Instrument,
+        owl:NamedIndividual ;
+    :InstrumentDescription "Desired by patient"@en,
+        "Desired by patient"@en,
+        "Important for understanding the diagnosis"@en,
+        "Önskad av patienten"@sv,
+        "Viktigt för att förstå diagnosen"@sv,
+        "Wichtig für das Verständnis der Diagnose"@de,
+        "Wunsch nach früherer Klarheit über Diagnose"@de,
+        "Önskan om tidigare tydlighet kring diagnosen"@sv ;
+    :isUsedToAchieve :Cancer,
+        :Diagnosis,
+        :MalignantDisease,
+        :Prognosis ;
+    rdfs:label "Clarity"@en,
+        "Klarhet"@sv,
+        "Klarheit"@de .
+
+:Comment_1_1 a :Comment ;
+    :CommentDescription "Fellow Student 1 criticizes the doctor for delivering crucial information about the diagnosis too slowly and in small, fragmented pieces, instead of making a clear, upfront statement."@en,
+        "Kommilitonin 1 kritisiert, dass der Arzt die entscheidenden Informationen über die Diagnose zu langsam und in kleinen, fragmentierten Stücken übermittelte, anstatt eine klare, direkte Aussage zu machen."@de,
+        "Studiekamrat 1 kritiserar läkaren för att ha förmedlat avgörande information om diagnosen för långsamt och i små, fragmenterade bitar, istället för att ge ett tydligt, direkt uttalande."@sv ;
+    :CreationDate "2024-06-01T12:01:00Z"^^xsd:dateTime ;
+    :WrittenBy :FellowStudent .
+
+:Comment_1_2 a :Comment ;
+    :CommentDescription "Fellow Student 1 points out that the doctor was not concrete enough when answering the patient's questions about future symptoms and the progression of the disease, leading to prolonged questioning."@en,
+        "Kommilitonin 1 bemängelt, dass der Arzt bei den Fragen der Patientin zu zukünftigen Symptomen und dem Krankheitsverlauf nicht konkret genug wurde, was zu einem langwierigen Nachfragen führte."@de,
+        "Studiekamrat 1 påpekar att läkaren inte var tillräckligt konkret när patienten ställde frågor om framtida symtom och sjukdomsförloppet, vilket ledde till långvariga följdfrågor."@sv ;
+    :CreationDate "2024-06-01T12:02:00Z"^^xsd:dateTime ;
+    :HasParticipant :Clarity,
+        :Doctor,
+        :FellowStudent,
+        :PatientCondition,
+        :PatientSymptoms ;
+    :WrittenBy :FellowStudent .
+
+:Comment_1_3 a :Comment ;
+    :CommentDescription "Fellow Student 2 observes that the patient and doctor operated from different realities, with the patient initially being aversive and in denial, making it difficult for the doctor to convey the seriousness of the diagnosis."@en,
+        "Kommilitone 2 beobachtet, dass Patientin und Arzt von unterschiedlichen Realitäten ausgingen, wobei die Patientin anfangs abweisend und in Verleugnung war, was die Vermittlung der Diagnose erschwerte."@de,
+        "Studiekamrat 2 observerar att patienten och läkaren utgick från olika verkligheter, där patienten initialt var avvisande och i förnekelse, vilket gjorde det svårt för läkaren att förmedla diagnosens allvar."@sv ;
+    :CreationDate "2024-06-01T12:03:00Z"^^xsd:dateTime ;
+    :HasParticipant :Doctor,
+        :FellowStudent,
+        :Patient,
+        :PatientDenial,
+        :PatientPerception ;
+    :WrittenBy :FellowStudent .
+
+:Comment_1_4 a :Comment ;
+    :CommentDescription "Fellow Student 2 suggests that the doctor should have stated directly that the patient would die from the disease earlier in the conversation to convey the seriousness more effectively, even if it led to denial."@en,
+        "Kommilitone 2 schlägt vor, dass der Arzt den Tod der Patientin früher im Gespräch direkt hätte ansprechen sollen, um die Ernsthaftigkeit effektiver zu vermitteln, auch wenn dies zu Verleugnung geführt hätte."@de,
+        "Studiekamrat 2 föreslår att läkaren borde ha sagt direkt att patienten skulle dö av sjukdomen tidigare i samtalet för att förmedla allvaret mer effektivt, även om det hade lett till förnekelse."@sv ;
+    :CreationDate "2024-06-01T12:04:00Z"^^xsd:dateTime ;
+    :HasParticipant :Clarity,
+        :Doctor,
+        :FellowStudent,
+        :Patient,
+        :Prognosis ;
+    :WrittenBy :FellowStudent .
+
+:Comment_1_5 a :Comment ;
+    :CommentDescription "The patient expresses frustration and anger at having to extract all the crucial information herself, feeling that clear facts were not provided proactively, and she did not want to be the one to ask about dying."@en,
+        "Die Patientin äußert Frustration und Wut darüber, dass sie alle entscheidenden Informationen selbst erfragen musste, da klare Fakten nicht proaktiv bereitgestellt wurden, und sie nicht diejenige sein wollte, die nach dem Sterben fragen muss."@de,
+        "Patienten uttrycker frustration och ilska över att själv behöva ta reda på all avgörande information, då tydliga fakta inte gavs proaktivt, och hon ville inte vara den som behövde fråga om att dö."@sv ;
+    :CreationDate "2024-06-01T12:05:00Z"^^xsd:dateTime ;
+    :HasParticipant :Clarity,
+        :Communication,
+        :Doctor,
+        :Patient,
+        :Transparency ;
+    :WrittenBy :Patient .
+
+:Comment_1_6 a :Comment ;
+    :CommentDescription "The lecturer agrees that the doctor's initial 'light atmosphere' and delay in explicitly naming the malignant disease or cancer contributed to the patient's difficulty in understanding the severity, leading to agitation."@en,
+        "Die Dozentin stimmt zu, dass die anfängliche 'leichte Stimmung' des Arztes und die Verzögerung bei der expliziten Nennung der bösartigen Erkrankung oder des Krebses dazu beitrugen, dass die Patientin die Schwere nicht verstand, was zu Unruhe führte."@de,
+        "Föreläsaren håller med om att läkarens initiala 'lätta stämning' och dröjsmålet med att uttryckligen nämna den elakartade sjukdomen eller cancern bidrog till patientens svårigheter att förstå allvaret, vilket ledde till oro."@sv ;
+    :CreationDate "2024-06-01T12:06:00Z"^^xsd:dateTime ;
+    :HasParticipant :Cancer,
+        :Communication,
+        :Doctor,
+        :Lecturer,
+        :MalignantDisease,
+        :Patient ;
+    :WrittenBy :Lecturer .
+
+:Comment_1_7 a :Comment ;
+    :CommentDescription "The lecturer corrects the doctor's understanding of the SPIKES model, clarifying that it involves first assessing the patient's knowledge before delivering bad news, and that direct, clear statements about the diagnosis are necessary."@en,
+        "Die Dozentin korrigiert das Verständnis des Arztes vom SPIKES-Modell und stellt klar, dass es darum geht, zuerst das Wissen des Patienten zu erfragen, bevor schlechte Nachrichten übermittelt werden, und dass direkte, klare Aussagen zur Diagnose notwendig sind."@de,
+        "Föreläsaren korrigerar läkarens förståelse av SPIKES-modellen och förtydligar att den innebär att först bedöma patientens kunskapsnivå innan dåliga nyheter förmedlas, och att direkta, tydliga uttalanden om diagnosen är nödvändiga."@sv ;
+    :CreationDate "2024-06-01T12:07:00Z"^^xsd:dateTime ;
+    :HasParticipant :Doctor,
+        :Lecturer,
+        :SPIKESModel ;
+    :WrittenBy :Lecturer .
+
+:Comment_1_8 a :Comment ;
+    :CommentDescription "The doctor acknowledges that his tactic of not immediately stating the severe diagnosis was incorrect, confirming the feedback received."@en,
+        "Der Arzt bestätigt, dass seine Taktik, die schwere Diagnose nicht sofort zu nennen, falsch war und nimmt das erhaltene Feedback an."@de,
+        "Läkaren erkänner att hans taktik att inte omedelbart nämna den allvarliga diagnosen var felaktig och accepterar den mottagna feedbacken."@sv ;
+    :CreationDate "2024-06-01T12:08:00Z"^^xsd:dateTime ;
+    :HasParticipant :Doctor,
+        :SPIKESModel ;
+    :WrittenBy :Doctor .
+
+:Comment_2_1 a :Comment ;
+    :CommentDescription "Fellow Student 2 expresses respect for the doctor's ability to handle a very difficult conversation, especially given the patient's initial aversive behavior and denial, noting the doctor's calmness and patience."@en,
+        "Kommilitone 2 zollt dem Arzt Respekt für seine Fähigkeit, ein sehr schwieriges Gespräch zu führen, insbesondere angesichts des anfänglich abweisenden Verhaltens und der Verleugnung der Patientin, und hebt die Ruhe und Geduld des Arztes hervor."@de,
+        "Studiekamrat 2 uttrycker respekt för läkarens förmåga att hantera ett mycket svårt samtal, särskilt med tanke på patientens initiala avvisande beteende och förnekelse, och framhåller läkarens lugn och tålamod."@sv ;
+    :CreationDate "2024-06-01T12:10:00Z"^^xsd:dateTime ;
+    :HasParticipant :Doctor,
+        :FellowStudent,
+        :Patient,
+        :PatientInteractionManagement ;
+    :WrittenBy :FellowStudent .
+
+:Comment_2_2 a :Comment ;
+    :CommentDescription "The patient praises the doctor for effectively tolerating silence during the conversation and for handling her moments of impertinence and loudness well."@en,
+        "Die Patientin lobt den Arzt dafür, dass er die Stille während des Gesprächs gut ausgehalten und ihre Momente der Unverschämtheit und Lautstärke gut gemeistert hat."@de,
+        "Patienten berömmer läkaren för att han effektivt tolererade tystnaden under samtalet och för att hanterade hennes stunder av oförskämdhet och högljuddhet väl."@sv ;
+    :CreationDate "2024-06-01T12:11:00Z"^^xsd:dateTime ;
+    :HasParticipant :Doctor,
+        :Patient,
+        :Silence ;
+    :WrittenBy :Patient .
+
+:Comment_2_3 a :Comment ;
+    :CommentDescription "The lecturer reinforces the positive feedback regarding the doctor's excellent ability to tolerate silence, emphasizing its importance for the patient to process information."@en,
+        "Die Dozentin bekräftigt das positive Feedback bezüglich der ausgezeichneten Fähigkeit des Arztes, Stille auszuhalten, und betont deren Bedeutung für die Informationsverarbeitung der Patientin."@de,
+        "Föreläsaren förstärker den positiva feedbacken angående läkarens utmärkta förmåga att tolerera tystnad, och betonar dess betydelse för patientens informationsbearbetning."@sv ;
+    :CreationDate "2024-06-01T12:12:00Z"^^xsd:dateTime ;
+    :HasParticipant :Doctor,
+        :Lecturer,
+        :Silence ;
+    :WrittenBy :Lecturer .
+
+:Comment_6_1 a :Comment ;
+    :CommentDescription "Fellow Student 2 reinforces the idea that palliative care options could have been discussed in more detail, linking it to the need for specialist knowledge."@en,
+        "Kommilitone 2 bekräftigt die Idee, dass Palliativversorgung detaillierter hätte besprochen werden können, und verknüpft dies mit der Notwendigkeit von Facharztwissen."@de,
+        "Studiekamrat 2 bekräftar idén om att palliativ vård kunde ha diskuterats mer i detalj, och kopplar det till behovet av specialistkunskap."@sv ;
+    :CreationDate "2024-06-01T12:17:00Z"^^xsd:dateTime ;
+    :HasParticipant :Doctor,
+        :FellowStudent,
+        :PalliativeCare,
+        :SpecialistKnowledge ;
+    :WrittenBy :FellowStudent .
+
+:Communication a :Object,
+        owl:NamedIndividual ;
+    :RuleDescription "Criticism of too slow and piecemeal information delivery"@en,
+        "Desire for more transparency and clarity"@en,
+        "Difficulty in delivering bad news"@en,
+        "Doctor's wrong tactic in delivering the message"@en,
+        "Kritik an zu langsamer und brockenweiser Informationsgabe"@de,
+        "Kritik mot för långsam och fragmentarisk informationsförmedling"@sv,
+        "Patient had difficulty grasping information for a long time"@en,
+        "Patientin konnte Informationen lange nicht fassen"@de,
+        "Patienten hade svårt att förstå informationen under lång tid"@sv,
+        "Svårighet att förmedla dåliga nyheter"@sv,
+        "Wunsch nach mehr Transparenz und Klarheit"@de,
+        "Önskan om mer transparens och tydlighet"@sv,
+        "Falsche Taktik des Arztes bei der Überbringung der Nachricht"@de ;
+    :causesEffectOn :Discomfort,
+        :PatientPerception ;
+    rdfs:label "Communication"@en,
+        "Kommunikation"@de,
+        "Kommunikation"@sv .
+
+:Conflict_1 a :Conflict ;
+    :ConflictDescription "Läkaren upplever situationen som svår och känner att han inte gav patienten det nödvändiga stödet eller tydligheten, och är osäker på om patienten helt förstod allvaret i situationen."@sv,
+        "The doctor perceives the situation as difficult and feels he did not provide the necessary support or clarity to the patient, and is unsure if the patient fully grasped the seriousness of the situation."@en,
+        "Der Arzt empfindet die Situation als schwierig und hat das Gefühl, der Patientin nicht die nötige Unterstützung oder Klarheit gegeben zu haben, und ist unsicher, ob die Patientin die Ernsthaftigkeit der Lage vollständig verstanden hat."@de ;
+    :ConflictState "open" ;
+    :ConflictTitle "Doctor's Perceived Inadequacy in Delivering Bad News"@en,
+        "Läkarens upplevda otillräcklighet vid förmedling av dåliga nyheter"@sv,
+        "Wahrgenommene Unzulänglichkeit des Arztes bei der Übermittlung schlechter Nachrichten"@de ;
+    :CreationDate "2024-06-01T12:00:00Z"^^xsd:dateTime ;
+    :HasComment :Comment_1_1,
+        :Comment_1_2,
+        :Comment_1_3,
+        :Comment_1_4,
+        :Comment_1_5,
+        :Comment_1_6,
+        :Comment_1_7,
+        :Comment_1_8 ;
+    :HasParticipant :Communication,
+        :Doctor,
+        :FeelingOfIncompetence,
+        :Patient ;
+    :WrittenBy :Doctor .
+
+:Conflict_2 a :Conflict ;
+    :ConflictDescription "Kommilitonin 1 lobt den Arzt für seine sympathische Vorstellung und die ruhige Atmosphäre, die er ausstrahlte."@de,
+        "Studiekamrat 1 berömmer läkaren för hans sympatiska presentation och den lugna atmosfär han utstrålade."@sv,
+        "Fellow Student 1 praises the doctor for his sympathetic introduction and for radiating a calm atmosphere."@en ;
+    :ConflictState "open" ;
+    :ConflictTitle "Positive Feedback on Doctor's Demeanor and Handling"@en,
+        "Positiv feedback om läkarens uppträdande och hantering"@sv,
+        "Positives Feedback zur Haltung und zum Umgang des Arztes"@de ;
+    :CreationDate "2024-06-01T12:09:00Z"^^xsd:dateTime ;
+    :HasComment :Comment_2_1,
+        :Comment_2_2,
+        :Comment_2_3 ;
+    :HasParticipant :Doctor,
+        :Empathy,
+        :FellowStudent ;
+    :WrittenBy :FellowStudent .
+
+:Conflict_3 a :Conflict ;
+    :ConflictDescription "Patienten beskriver sitt initiala intryck av samtalet som en 'lätt stämning' på grund av läkarens uppträdande, vilket gjorde det svårt för henne att förstå allvaret i situationen, och det kändes som ett 'dåligt skämt' eller en 'dåligt skriven Hollywood-historia'."@sv,
+        "The patient describes her initial impression of the conversation as having a 'light atmosphere' due to the doctor's demeanor, which made it difficult for her to grasp the seriousness of the situation, feeling it was like a 'bad joke' or 'poorly written Hollywood story'."@en,
+        "Die Patientin beschreibt ihren anfänglichen Eindruck des Gesprächs als 'leichte Stimmung' aufgrund des Auftretens des Arztes, was es ihr erschwerte, die Ernsthaftigkeit der Situation zu erfassen, und sich wie ein 'schlechter Witz' oder eine 'schlecht geschriebene Hollywood-Geschichte' anfühlte."@de ;
+    :ConflictState "open" ;
+    :ConflictTitle "Anfängliche Wahrnehmung der Patientin als 'leicht' und 'unwirklich'"@de,
+        "Patient's Initial Perception as 'Light' and 'Unreal'"@en,
+        "Patientens initiala uppfattning som 'lätt' och 'overklig'"@sv ;
+    :CreationDate "2024-06-01T12:13:00Z"^^xsd:dateTime ;
+    :HasParticipant :Communication,
+        :Doctor,
+        :Patient,
+        :PatientPerception ;
+    :WrittenBy :Patient .
+
+:Conflict_4 a :Conflict ;
+    :ConflictDescription "Fellow Student 1 suggests that the doctor could have shown the CT scan findings on a screen to the patient as concrete proof, which might have helped the patient accept the diagnosis."@en,
+        "Kommilitonin 1 schlägt vor, dass der Arzt die CT-Befunde der Patientin auf einem Bildschirm als konkreten Beweis hätte zeigen können, was der Patientin möglicherweise geholfen hätte, die Diagnose zu akzeptieren."@de,
+        "Studiekamrat 1 föreslår att läkaren kunde ha visat CT-fynden på en skärm för patienten som konkret bevis, vilket kanske hade hjälpt patienten att acceptera diagnosen."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Suggestion to Display Medical Findings on Screen"@en,
+        "Förslag att visa medicinska fynd på skärmen"@sv,
+        "Vorschlag zur Darstellung medizinischer Befunde auf dem Bildschirm"@de ;
+    :CreationDate "2024-06-01T12:14:00Z"^^xsd:dateTime ;
+    :HasParticipant :CTScan,
+        :Doctor,
+        :FellowStudent,
+        :MedicalFindings,
+        :Screen ;
+    :WrittenBy :FellowStudent .
+
+:Conflict_5 a :Conflict ;
+    :ConflictDescription "Fellow Student 1 suggests that the doctor could have postponed the immediate follow-up, perhaps until after the weekend, to give the patient more time to process the diagnosis and inform her family."@en,
+        "Kommilitonin 1 schlägt vor, dass der Arzt das sofortige Folgetreffen hätte verschieben können, vielleicht bis nach dem Wochenende, um der Patientin mehr Zeit zu geben, die Diagnose zu verarbeiten und ihre Familie zu informieren."@de,
+        "Studiekamrat 1 föreslår att läkaren kunde ha skjutit upp det omedelbara uppföljningsmötet, kanske till efter helgen, för att ge patienten mer tid att bearbeta diagnosen och informera sin familj."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Suggestion to Postpone Follow-up Conversation"@en,
+        "Förslag att skjuta upp uppföljningssamtalet"@sv,
+        "Vorschlag zur Verschiebung des Folgetermins"@de ;
+    :CreationDate "2024-06-01T12:15:00Z"^^xsd:dateTime ;
+    :HasParticipant :Doctor,
+        :Family,
+        :FellowStudent,
+        :Patient ;
+    :WrittenBy :FellowStudent .
+
+:Conflict_6 a :Conflict ;
+    :ConflictDescription "Fellow Student 1 suggests that the doctor should have mentioned the possibilities of palliative care earlier, especially when the patient was asking about what would happen."@en,
+        "Kommilitonin 1 schlägt vor, dass der Arzt die Möglichkeiten der Palliativversorgung früher hätte erwähnen sollen, insbesondere als die Patientin nach dem weiteren Verlauf fragte."@de,
+        "Studiekamrat 1 föreslår att läkaren borde ha nämnt möjligheterna till palliativ vård tidigare, särskilt när patienten frågade om vad som skulle hända."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Suggestion to Mention Palliative Care Earlier"@en,
+        "Förslag att nämna palliativ vård tidigare"@sv,
+        "Vorschlag zur früheren Erwähnung der Palliativversorgung"@de ;
+    :CreationDate "2024-06-01T12:16:00Z"^^xsd:dateTime ;
+    :HasComment :Comment_6_1 ;
+    :HasParticipant :Doctor,
+        :FellowStudent,
+        :PalliativeCare ;
+    :WrittenBy :FellowStudent .
+
+:Conflict_7 a :Conflict ;
+    :ConflictDescription "Föreläsaren observerar att patienten starkt önskade att behålla kontroll och autonomi, vilket framgick av hennes många specifika frågor och hennes initiala preferens att inte ha familj närvarande under samtalet."@sv,
+        "The lecturer observes that the patient strongly desired to maintain control and autonomy, evident in her many specific questions and her initial preference not to have family present during the conversation."@en,
+        "Die Dozentin beobachtet, dass die Patientin stark den Wunsch hatte, Kontrolle und Autonomie zu bewahren, was sich in ihren vielen spezifischen Fragen und ihrer anfänglichen Präferenz, keine Familienmitglieder beim Gespräch dabei zu haben, zeigte."@de ;
+    :ConflictState "open" ;
+    :ConflictTitle "Observation of Patient's Desire for Autonomy and Control"@en,
+        "Observation av patientens önskan om autonomi och kontroll"@sv,
+        "Beobachtung des Autonomie- und Kontrollwunsches der Patientin"@de ;
+    :CreationDate "2024-06-01T12:18:00Z"^^xsd:dateTime ;
+    :HasParticipant :Family,
+        :Lecturer,
+        :Patient,
+        :PatientAutonomy,
+        :PatientBehavior ;
+    :WrittenBy :Lecturer .
+
+:Diagnosis a :Object,
+        owl:NamedIndividual ;
+    :RuleDescription "Allvaret i situationen"@sv,
+        "Bösartige Erkrankung"@de,
+        "Cancer disease"@en,
+        "Cancersjukdom"@sv,
+        "Clarity of findings"@en,
+        "Eindeutigkeit der Befunde"@de,
+        "Incurable disease"@en,
+        "Krebserkrankung"@de,
+        "Malignant disease"@en,
+        "Obotlig sjukdom"@sv,
+        "Patient did not immediately understand seriousness"@en,
+        "Patientin verstand Ernsthaftigkeit nicht sofort"@de,
+        "Patienten förstod inte allvaret omedelbart"@sv,
+        "Seriousness of the situation"@en ;
+    rdfs:label "Diagnosis"@en,
+        "Diagnos"@sv,
+        "Diagnose"@de .
+
+:Discomfort a :Subject,
+        owl:NamedIndividual ;
+    :SubjectName "Discomfort"@en,
+        "Obehag"@sv,
+        "Patient"@en,
+        "Patientin"@de,
+        "Unbehagen"@de ;
+    rdfs:label "Discomfort"@en,
+        "Obehag"@sv,
+        "Unbehagen"@de .
+
+:Doctor a :Subject,
+        owl:NamedIndividual ;
+    :HasToFollow :SPIKESModel ;
+    :OperatesOn :Communication,
+        :Diagnosis,
+        :MedicalFindings,
+        :PalliativeCare,
+        :PatientCondition,
+        :PatientSymptoms,
+        :Prognosis,
+        :SecondOpinion ;
+    :SubjectName "Arzt"@de,
+        "Doctor"@en,
+        "Läkare"@sv ;
+    :Uses :Clarity,
+        :Empathy,
+        :Patience,
+        :SpecialistKnowledge,
+        :TimeManagement ;
+    :exhibitsState :Discomfort,
+        :FeelingOfIncompetence,
+        :PatientPerception,
+        :Uncertainty ;
+    rdfs:label "Arzt"@de,
+        "Doctor"@en,
+        "Läkare"@sv .
+
+:Empathy a :Instrument,
+        owl:NamedIndividual ;
+    :InstrumentDescription "Beröm för läkarens sympatiska uppträdande"@sv,
+        "Gezeigt vom Arzt durch sympathisches Auftreten und Raum geben zur Verarbeitung"@de,
+        "Praise for the doctor's sympathetic demeanor"@en,
+        "Shown by the doctor through sympathetic demeanor and giving space for processing"@en ;
+    rdfs:label "Empathie"@de,
+        "Empati"@sv,
+        "Empathy"@en .
+
+:Family a :Community,
+        owl:NamedIndividual ;
+    :InteractsWith :Patient ;
+    :RuleDescription "Patient did not want family members present during the conversation"@en,
+        "Patientin wollte keine Familienmitglieder beim Gespräch dabei haben"@de,
+        "Roll i diagnoskommunikation och bearbetning"@sv,
+        "Rolle bei der Diagnosemitteilung und Verarbeitung"@de,
+        "Role in diagnosis communication and processing"@en,
+        "Patienten ville inte ha familjemedlemmar närvarande under samtalet"@sv ;
+    rdfs:label "Familie"@de,
+        "Family"@en,
+        "Familj"@sv .
+
+:FeelingOfIncompetence a :Subject,
+        owl:NamedIndividual ;
+    :SubjectName "Arzt"@de,
+        "Doctor"@en,
+        "Känsla av inkompetens"@sv,
+        "Läkare"@sv ;
+    rdfs:label "Feeling of Incompetence"@en,
+        "Gefühl der Inkompetenz"@de,
+        "Känsla av inkompetens"@sv .
+
+:FellowStudent a :Subject,
+        owl:NamedIndividual ;
+    :SubjectName "Fellow Student"@en,
+        "Kommilitone/Kommilitonin"@de,
+        "Studiekamrat"@sv ;
+    :Uses :CTScan,
+        :Screen ;
+    :evaluatesQualityOf :Communication,
+        :Empathy,
+        :PatientInteractionManagement,
+        :TimeManagement ;
+    rdfs:label "Fellow Student"@en,
+        "Kommilitone/Kommilitonin"@de,
+        "Studiekamrat"@sv .
+
+:IncurableDisease a :Object,
+        owl:NamedIndividual ;
+    :RuleDescription "Erwähnung von 'unheilbaren Krankheiten' durch Patientin"@de,
+        "Mention of 'incurable diseases' by patient"@en,
+        "Not curable"@en,
+        "Obotlig"@sv,
+        "Omnämnande av 'obotliga sjukdomar' av patienten"@sv,
+        "Inte botbar"@sv,
+        "Nicht heilbar"@de ;
+    rdfs:label "Incurable Disease"@en,
+        "Obotlig sjukdom"@sv,
+        "Unheilbare Krankheit"@de .
+
+:Lecturer a :Subject,
+        owl:NamedIndividual ;
+    :SubjectName "Dozentin"@de,
+        "Föreläsare"@sv,
+        "Lecturer"@en ;
+    :advises :Doctor ;
+    :evaluatesQualityOf :Communication,
+        :Silence ;
+    rdfs:label "Dozentin"@de,
+        "Föreläsare"@sv,
+        "Lecturer"@en .
+
+:LifeExpectancy a :Object,
+        owl:NamedIndividual ;
+    :RuleDescription "Maximal sechs Monate bis ein Jahr"@de,
+        "Maximalt sex månader till ett år"@sv,
+        "Maximum six months to one year"@en ;
+    rdfs:label "Lebenserwartung"@de,
+        "Life Expectancy"@en,
+        "Livslängd"@sv .
+
+:MalignantDisease a :Object,
+        owl:NamedIndividual ;
+    :RuleDescription "Bösartiger Tumor"@de,
+        "Malignant tumor"@en,
+        "Suggestion to name malignant disease earlier"@en,
+        "Vorschlag, bösartige Erkrankung früher zu benennen"@de,
+        "Elakartad tumör"@sv,
+        "Förslag att nämna elakartad sjukdom tidigare"@sv ;
+    :causesEffectOn :PatientBehavior ;
+    rdfs:label "Bösartige Erkrankung"@de,
+        "Elakartad sjukdom"@sv,
+        "Malignant Disease"@en .
+
+:MedicalFindings a :Object,
+        owl:NamedIndividual ;
+    :RuleDescription "Clear findings"@en,
+        "Eindeutige Befunde"@de,
+        "For displaying findings"@en,
+        "For showing findings"@en,
+        "Suggestion to show findings in CT"@en,
+        "Tydliga fynd"@sv,
+        "Vorschlag, Befunde im CT zu zeigen"@de,
+        "För att visa fynd"@sv ;
+    rdfs:label "Medical Findings"@en,
+        "Medicinska fynd"@sv,
+        "Medizinische Befunde"@de .
+
+:PalliativeCare a :Object,
+        owl:NamedIndividual ;
+    :RuleDescription "Möglichkeit der palliativen Versorgung"@de,
+        "Möglichkeit till palliativ vård"@sv,
+        "Possibility of palliative care"@en,
+        "Suggestion to mention palliative care"@en,
+        "Vorschlag zur Erwähnung von Palliativversorgung"@de,
+        "Förslag att nämna palliativ vård"@sv ;
+    rdfs:label "Palliativ vård"@sv,
+        "Palliativversorgung"@de,
+        "Palliative Care"@en .
+
+:Patient a :Subject,
+        owl:NamedIndividual ;
+    :InteractsIn :Family ;
+    :OperatesOn :PatientBehavior ;
+    :SubjectName "Patient"@en,
+        "Patient"@sv,
+        "Patientin"@de ;
+    :Uses :Clarity,
+        :Communication,
+        :Transparency ;
+    :exhibitsState :Discomfort,
+        :PatientAutonomy,
+        :PatientDenial,
+        :PatientFear,
+        :PatientHope,
+        :PatientPerception ;
+    :isAffectedBy :Cancer,
+        :Diagnosis,
+        :Empathy,
+        :IncurableDisease,
+        :MalignantDisease,
+        :Patience,
+        :Prognosis,
+        :Silence ;
+    rdfs:label "Patient"@en,
+        "Patient"@sv,
+        "Patientin"@de .
+
+:PatientAutonomy a :Subject,
+        owl:NamedIndividual ;
+    :SubjectName "Patient Autonomy"@en,
+        "Patientautonomi"@sv,
+        "Patientin"@de ;
+    rdfs:label "Autonomie des Patienten"@de,
+        "Patient Autonomy"@en,
+        "Patientautonomi"@sv .
+
+:PatientBehavior a :Object,
+        owl:NamedIndividual ;
+    :RuleDescription "Agitated and restless due to lack of clarity"@en,
+        "Aversive, irritable, dysphoric at the beginning"@en,
+        "Aversiv, gereizt, dysphorisch am Anfang"@de,
+        "Aversiv, irriterad, dysforisk i början"@sv,
+        "Desire for autonomy and control"@en,
+        "Did not want family members present"@en,
+        "Hibbelig und unruhig aufgrund mangelnder Klarheit"@de,
+        "Mode of denial"@en,
+        "Modus der Verleugnung"@de,
+        "Önskan om autonomi och kontroll"@sv,
+        "Upprörd och rastlös på grund av bristande tydlighet"@sv,
+        "Wollte keine Familienmitglieder dabei haben"@de,
+        "Ville inte ha familjemedlemmar närvarande"@sv,
+        "Wunsch nach Autonomie und Kontrolle"@de,
+        "Asks many specific questions"@en,
+        "Ställer många konkreta frågor"@sv,
+        "Stellt viele konkrete Fragen"@de,
+        "Förnekelseläge"@sv ;
+    rdfs:label "Patient Behavior"@en,
+        "Patientbeteende"@sv,
+        "Patientenverhalten"@de .
+
+:PatientCondition a :Object,
+        owl:NamedIndividual ;
+    :RuleDescription "Severely ill, bedridden"@en,
+        "Svårt sjuk, sängliggande"@sv,
+        "Schwer krankhaft, bettlägerig"@de ;
+    :causesEffectOn :PatientFear ;
+    rdfs:label "Patient Condition"@en,
+        "Patienttillstånd"@sv,
+        "Patientenzustand"@de .
+
+:PatientDenial a :Subject,
+        owl:NamedIndividual ;
+    :SubjectName "Patient Denial"@en,
+        "Patientförnekelse"@sv,
+        "Patientin"@de ;
+    rdfs:label "Patient Denial"@en,
+        "Patientförnekelse"@sv,
+        "Verleugnung des Patienten"@de .
+
+:PatientFear a :Subject,
+        owl:NamedIndividual ;
+    :SubjectName "Patient Fear"@en,
+        "Patientin"@de,
+        "Patienträdsla"@sv ;
+    rdfs:label "Angst des Patienten"@de,
+        "Patient Fear"@en,
+        "Patienträdsla"@sv .
+
+:PatientHope a :Subject,
+        owl:NamedIndividual ;
+    :SubjectName "Patient Hope"@en,
+        "Patienthopp"@sv,
+        "Patientin"@de ;
+    rdfs:label "Hoffnung des Patienten"@de,
+        "Patient Hope"@en,
+        "Patienthopp"@sv .
+
+:PatientInteractionManagement a :DivisionOfLabour,
+        owl:NamedIndividual ;
+    :RuleDescription "Difficulty in dealing with the patient due to different perceptions and expectations"@en,
+        "Lob für den Umgang mit schwierigem Gespräch"@de,
+        "Praise for handling difficult conversation"@en,
+        "Schwierigkeit im Umgang mit der Patientin aufgrund unterschiedlicher Wahrnehmungen und Erwartungen"@de,
+        "Svårighet att hantera patienten på grund av olika uppfattningar och förväntningar"@sv,
+        "Beröm för att hantera svårt samtal"@sv ;
+    rdfs:label "Patient Interaction Management"@en,
+        "Patientinteraktionshantering"@sv,
+        "Umgang mit dem Patienten"@de .
+
+:PatientPerception a :Subject,
+        owl:NamedIndividual ;
+    :SubjectName "Patient Perception"@en,
+        "Patientin"@de,
+        "Patientuppfattning"@sv ;
+    rdfs:label "Patientenwahrnehmung"@de,
+        "Patient Perception"@en,
+        "Patientuppfattning"@sv .
+
+:PatientSymptoms a :Object,
+        owl:NamedIndividual ;
+    :RuleDescription "Digestion problems, inability to nourish oneself, weakness, pain, helplessness"@en,
+        "Matsmältningsproblem, oförmåga att äta själv, svaghet, smärta, hjälplöshet"@sv,
+        "Verdauungsprobleme, Ernährungsunfähigkeit, Schwäche, Schmerzen, Hilflosigkeit"@de ;
+    :causesEffectOn :PatientFear ;
+    rdfs:label "Patient Symptoms"@en,
+        "Patientsymtom"@sv,
+        "Patientensymptome"@de .
+
+:Patience a :Instrument,
+        owl:NamedIndividual ;
+    :InstrumentDescription "Beröm för läkarens tålamod"@sv,
+        "Gezeigt vom Arzt im Umgang mit Patientin und Stille"@de,
+        "Lob für Geduld des Arztes"@de,
+        "Praise for the doctor's patience"@en,
+        "Shown by the doctor in dealing with the patient and silence"@en ;
+    rdfs:label "Geduld"@de,
+        "Patience"@en,
+        "Tålamod"@sv .
+
+:Prognosis a :Object,
+        owl:NamedIndividual ;
+    :RuleDescription "Bestätigung, dass der Tod angesprochen wurde"@de,
+        "Bekräftelse på att döden togs upp"@sv,
+        "Confirmation that death was addressed"@en,
+        "Incurable and fatal"@en,
+        "Lebenserwartung von sechs Monaten bis einem Jahr"@de,
+        "Life expectancy of six months to one year"@en,
+        "Obotlig och dödlig"@sv,
+        "Unheilbar und tödlich"@de,
+        "Vorschlag, den Tod direkt anzusprechen"@de,
+        "Förslag att direkt ta upp döden"@sv,
+        "Suggestion to directly address death"@en,
+        "Förväntad livslängd på sex månader till ett år"@sv ;
+    :causesEffectOn :PatientFear ;
+    rdfs:label "Prognos"@sv,
+        "Prognose"@de,
+        "Prognosis"@en .
+
+:Screen a :Instrument,
+        owl:NamedIndividual ;
+    :InstrumentDescription "For showing findings"@en,
+        "För att visa fynd"@sv,
+        "Zum Zeigen von Befunden"@de ;
+    :InstrumentName "Bildschirm"@de,
+        "Screen"@en,
+        "Skärm"@sv ;
+    :InstrumentType "Anzeigegerät"@de,
+        "Display device"@en,
+        "Visningsenhet"@sv ;
+    :IsUsedOn :MedicalFindings ;
+    rdfs:label "Bildschirm"@de,
+        "Screen"@en,
+        "Skärm"@sv .
+
+:SecondOpinion a :Object,
+        owl:NamedIndividual ;
+    :RuleDescription "Möglichkeit, eine zweite Meinung einzuholen"@de,
+        "Möjlighet att få en andra åsikt"@sv,
+        "Possibility to get a second opinion"@en ;
+    rdfs:label "Andra åsikt"@sv,
+        "Second Opinion"@en,
+        "Zweite Meinung"@de .
+
+:Silence a :Instrument,
+        owl:NamedIndividual ;
+    :InstrumentDescription "Beröm för läkarens förmåga att hantera tystnad"@sv,
+        "Gut ausgehalten vom Arzt"@de,
+        "Lob für das Aushalten von Stille durch den Arzt"@de,
+        "Viktigt för patientens bearbetning av informationen"@sv,
+        "Well tolerated by the doctor"@en,
+        "Wichtig für die Verarbeitung der Information durch den Patienten"@de,
+        "Praise for the doctor's ability to tolerate silence"@en,
+        "Important for the patient's processing of information"@en ;
+    rdfs:label "Silence"@en,
+        "Stille"@de,
+        "Tystnad"@sv .
+
+:SPIKESModel a :Rule,
+        owl:NamedIndividual ;
+    :Influences :Communication ;
+    :RegulatesActionOf :Doctor ;
+    :RuleDescription "Beinhaltet das Abfragen des Wissensstands des Patienten"@de,
+        "Concept for delivering bad news"@en,
+        "Includes asking about the patient's knowledge level"@en,
+        "Koncept för att förmedla dåliga nyheter"@sv,
+        "Konzept zur Überbringung schlechter Nachrichten"@de,
+        "Inkluderar att fråga om patientens kunskapsnivå"@sv ;
+    :RuleName "SPIKES Model"@en,
+        "SPIKES-modell"@sv,
+        "SPIKES-Modell"@de ;
+    rdfs:label "SPIKES Model"@en,
+        "SPIKES-modell"@sv,
+        "SPIKES-Modell"@de .
+
+:SpecialistKnowledge a :Instrument,
+        owl:NamedIndividual ;
+    :InstrumentDescription "Krävs för mer konkreta förklaringar av prognos och symtom"@sv,
+        "Required for more concrete explanations of prognosis and symptoms"@en,
+        "Erforderlich für konkretere Erklärungen der Prognose und Symptome"@de ;
+    :isUsedToAchieve :Diagnosis,
+        :Prognosis ;
+    rdfs:label "Facharztwissen"@de,
+        "Specialist Knowledge"@en,
+        "Specialistkunskap"@sv .
+
+:TimeManagement a :Instrument,
+        owl:NamedIndividual ;
+    :InstrumentDescription "Beröm för att ge tid att bearbeta diagnosen"@sv,
+        "Criticism of too long a delay at the beginning of the conversation"@en,
+        "Kritik an zu langer Hinhaltung am Anfang des Gesprächs"@de,
+        "Kritik mot för lång fördröjning i början av samtalet"@sv,
+        "Lob für das Geben von Zeit zur Verarbeitung der Diagnose"@de,
+        "Praise for giving time to process the diagnosis"@en,
+        "Suggestion to postpone the conversation to a later time"@en,
+        "Vorschlag zur Verschiebung des Gesprächs auf einen späteren Zeitpunkt"@de,
+        "Förslag att skjuta upp samtalet till ett senare tillfälle"@sv ;
+    rdfs:label "Time Management"@en,
+        "Tidshantering"@sv,
+        "Zeitmanagement"@de .
+
+:Transparency a :Instrument,
+        owl:NamedIndividual ;
+    :InstrumentDescription "Desired by patient"@en,
+        "Desired by patient"@en,
+        "Önskad av patienten"@sv,
+        "Wunsch nach mehr Transparenz in der Kommunikation"@de,
+        "Önskan om mer transparens i kommunikationen"@sv ;
+    :isUsedToAchieve :Diagnosis ;
+    rdfs:label "Transparency"@en,
+        "Transparens"@sv,
+        "Transparenz"@de .
+
+:Uncertainty a :Subject,
+        owl:NamedIndividual ;
+    :SubjectName "Arzt"@de,
+        "Doctor"@en,
+        "Läkare"@sv ;
+    rdfs:label "Osäkerhet"@sv,
+        "Uncertainty"@en,
+        "Unsicherheit"@de .

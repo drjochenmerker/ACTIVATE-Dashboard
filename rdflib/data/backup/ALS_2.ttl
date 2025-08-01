@@ -1,0 +1,716 @@
+@prefix : <http://activate.htwk-leipzig.de/model#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@base <http://activate.htwk-leipzig.de/model> .
+
+:EndofLifeCareDebriefing a owl:NamedIndividual ;
+    :ActivityDescription "A group of medical students and lecturers discusses a patient consultation on end-of-life care and palliative medicine, providing feedback and exploring various options for ending life and symptom relief."@en,
+        "Eine Gruppe von Medizinstudierenden und Dozenten bespricht eine Patientenkonsultation zum Thema Sterbehilfe und Palliativmedizin, wobei Feedback gegeben und verschiedene Optionen der Lebensbeendigung und Symptomlinderung diskutiert werden."@de,
+        "En grupp läkarstudenter och föreläsare diskuterar en patientkonsultation om vård i livets slutskede och palliativ medicin, ger feedback och utforskar olika alternativ för livsavslutning och symtomlindring."@sv ;
+    :ActivityName "End-of-Life Care Consultation Debriefing"@en,
+        "Debriefing zur Sterbehilfe-Konsultation"@de,
+        "Debriefing av konsultation om livets slutskede"@sv .
+
+:Physician a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Ärztin"@de,
+        "Physician"@en,
+        "Läkare"@sv ;
+    :SubjectSex "female" ;
+    :hasToFollow :LegalFramework,
+        :ProfessionalStandards ;
+    :isDefinedBy :Leadership ;
+    :operatesOn :Communication,
+        :DeathWish,
+        :EmotionalLabor,
+        :Euthanasia,
+        :HungerStrikeOption,
+        :InformationProvision,
+        :LossOfAutonomy,
+        :PalliativeCare,
+        :PatientComfort,
+        :SymptomRelief,
+        :VoluntaryRenunciationOfFoodAndFluid ;
+    :uses :ActiveListening,
+        :Clarity,
+        :PatientAdvanceDirective,
+        :Presence .
+
+:Uncertainty a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Unsicherheit"@de,
+        "Uncertainty"@en,
+        "Osäkerhet"@sv .
+
+:Discomfort a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Unbehagen"@de,
+        "Discomfort"@en,
+        "Obehag"@sv .
+
+:Incompetence a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Inkompetenz"@de,
+        "Incompetence"@en,
+        "Inkompetens"@sv .
+
+:MedicalSpecialist a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Medizinischer Spezialist"@de,
+        "Medical Specialist"@en,
+        "Medicinsk specialist"@sv .
+
+:Nurse a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Krankenpfleger"@de,
+        "Nurse"@en,
+        "Sjuksköterska"@sv .
+
+:SocialWorker a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Sozialarbeiter"@de,
+        "Social Worker"@en,
+        "Socialarbetare"@sv .
+
+:Carers a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Pflegepersonal"@de,
+        "Carers"@en,
+        "Vårdgivare"@sv .
+
+:Student a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Kommilitone"@de,
+        "Student"@en,
+        "Student"@sv .
+
+:Lecturer a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Dozentin"@de,
+        "Lecturer"@en,
+        "Föreläsare"@sv ;
+    :SubjectSex "female" .
+
+:Patient a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Patientin"@de,
+        "Patient"@en,
+        "Patient"@sv ;
+    :SubjectSex "female" ;
+    :operatesOn :DecisionMaking ;
+    :uses :PatientAdvanceDirective .
+
+:Cure a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Heilung"@de,
+        "Cure"@en,
+        "Bot"@sv .
+
+:Care a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Pflege"@de,
+        "Care"@en,
+        "Vård"@sv .
+
+:AddressingPsychosocialIssues a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Psychosoziale Probleme ansprechen"@de,
+        "Addressing psychosocial issues"@en,
+        "Att ta itu med psykosociala problem"@sv .
+
+:NeedsAssessment a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Bedarfsermittlung"@de,
+        "Needs assessment"@en,
+        "Behovsbedömning"@sv .
+
+:Reporting a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Berichterstattung"@de,
+        "Reporting"@en,
+        "Rapportering"@sv .
+
+:DecisionMaking a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Entscheidungsfindung"@de,
+        "Decision-making"@en,
+        "Beslutsfattande"@sv .
+
+:Euthanasia a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Sterbehilfe"@de,
+        "Euthanasia"@en,
+        "Eutanasi"@sv .
+
+:PatientRecord a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Patientenakte"@de,
+        "Patient record"@en,
+        "Patientjournal"@sv .
+
+:Chart a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Diagramm"@de,
+        "Chart"@en,
+        "Diagram"@sv .
+
+:MedicalDevice a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Medizinisches Gerät"@de,
+        "Medical device"@en,
+        "Medicinsk utrustning"@sv ;
+    :InstrumentDescription "Infusion anhängen",
+        "Pompel-Fusor starten" ;
+    :InstrumentName "Infusion",
+        "Pompel-Fusor" ;
+    :isUsedOn :AssistedSuicide .
+
+:Telephone a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Telefon"@de,
+        "Telephone"@en,
+        "Telefon"@sv .
+
+:Conviction a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Überzeugung"@de,
+        "Conviction"@en,
+        "Övertygelse"@sv .
+
+:Proactivity a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Proaktivität"@de,
+        "Proactivity"@en,
+        "Proaktivitet"@sv .
+
+:Instruction a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Anweisung"@de,
+        "Instruction"@en,
+        "Instruktion"@sv .
+
+:PatientAdvanceDirective a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Patientenverfügung"@de,
+        "Patient advance directive"@en,
+        "Patientens förhandsdirektiv"@sv ;
+    :InstrumentDescription "ausfüllen sollte",
+        "schriftlich verfassen" .
+
+:Guidelines a :Rule,
+        owl:NamedIndividual ;
+    rdfs:label "Leitlinien"@de,
+        "Guidelines"@en,
+        "Riktlinjer"@sv ;
+    :RuleDescription "Umgang mit diesen Sterbewünschen" ;
+    :RuleName "Leitlinien" ;
+    :influences :DeathWish .
+
+:Authorisation a :Rule,
+        owl:NamedIndividual ;
+    rdfs:label "Genehmigung"@de,
+        "Authorisation"@en,
+        "Auktorisation"@sv .
+
+:Reimbursements a :Rule,
+        owl:NamedIndividual ;
+    rdfs:label "Erstattungen"@de,
+        "Reimbursements"@en,
+        "Ersättningar"@sv .
+
+:CoLocation a :Rule,
+        owl:NamedIndividual ;
+    rdfs:label "Ko-Lokation"@de,
+        "Co-location"@en,
+        "Samlokalisering"@sv .
+
+:Priority a :Rule,
+        owl:NamedIndividual ;
+    rdfs:label "Priorität"@de,
+        "Priority"@en,
+        "Prioritet"@sv .
+
+:CareerTrack a :Rule,
+        owl:NamedIndividual ;
+    rdfs:label "Karriereweg"@de,
+        "Career track"@en,
+        "Karriärväg"@sv .
+
+:ProfessionalJargon a :Rule,
+        owl:NamedIndividual ;
+    rdfs:label "Fachjargon"@de,
+        "Professional jargon"@en,
+        "Professionell jargong"@sv .
+
+:Home a :Community,
+        owl:NamedIndividual ;
+    rdfs:label "Zuhause"@de,
+        "Home"@en,
+        "Hem"@sv .
+
+:NursingHome a :Community,
+        owl:NamedIndividual ;
+    rdfs:label "Pflegeheim"@de,
+        "Nursing home"@en,
+        "Vårdhem"@sv .
+
+:Hospital a :Community,
+        owl:NamedIndividual ;
+    rdfs:label "Krankenhaus"@de,
+        "Hospital"@en,
+        "Sjukhus"@sv .
+
+:GeneralUniversityHospital a :Community,
+        owl:NamedIndividual ;
+    rdfs:label "Allgemeines Universitätskrankenhaus"@de,
+        "General University Hospital"@en,
+        "Allmänt universitetssjukhus"@sv .
+
+:IndependentMunicipalHealthCarePractice a :Community,
+        owl:NamedIndividual ;
+    rdfs:label "Unabhängige kommunale Gesundheitspraxis"@de,
+        "Independent Municipal health care practice"@en,
+        "Oberoende kommunal vårdpraktik"@sv .
+
+:ImmediateNeeds a :Community,
+        owl:NamedIndividual ;
+    rdfs:label "Unmittelbare Bedürfnisse"@de,
+        "Immediate needs"@en,
+        "Omedelbara behov"@sv .
+
+:Distance a :Community,
+        owl:NamedIndividual ;
+    rdfs:label "Entfernung"@de,
+        "Distance"@en,
+        "Avstånd"@sv .
+
+:Shortage a :Community,
+        owl:NamedIndividual ;
+    rdfs:label "Mangel"@de,
+        "Shortage"@en,
+        "Brist"@sv .
+
+:Hierarchy a :DivisionOfLabour,
+        owl:NamedIndividual ;
+    rdfs:label "Hierarchie"@de,
+        "Hierarchy"@en,
+        "Hierarki"@sv .
+
+:Role a :DivisionOfLabour,
+        owl:NamedIndividual ;
+    rdfs:label "Rolle"@de,
+        "Role"@en,
+        "Roll"@sv .
+
+:Leadership a :DivisionOfLabour,
+        owl:NamedIndividual ;
+    rdfs:label "Führung"@de,
+        "Leadership"@en,
+        "Ledarskap"@sv ;
+    :definesRoleOf :Physician .
+
+:TerritorialAttitude a :DivisionOfLabour,
+        owl:NamedIndividual ;
+    rdfs:label "Territoriales Verhalten"@de,
+        "Territorial attitude"@en,
+        "Territoriell attityd"@sv .
+
+:Communication a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Kommunikation"@de,
+        "Communication"@en,
+        "Kommunikation"@sv .
+
+:EmotionalLabor a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Emotionale Arbeit"@de,
+        "Emotional labor"@en,
+        "Emotionellt arbete"@sv .
+
+:InformationProvision a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Informationsbereitstellung"@de,
+        "Information provision"@en,
+        "Informationsgivning"@sv .
+
+:HungerStrikeOption a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Option Hungerstreik"@de,
+        "Hunger strike option"@en,
+        "Alternativ svältstrejk"@sv .
+
+:PalliativeCare a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Leidenslinderung"@de,
+        "Palliative care"@en,
+        "Palliativ vård"@sv .
+
+:DeathWish a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Todeswunsch"@de,
+        "Death wish"@en,
+        "Dödsönskan"@sv .
+
+:LossOfAutonomy a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Verlust der Autonomie"@de,
+        "Loss of autonomy"@en,
+        "Förlust av autonomi"@sv .
+
+:SymptomRelief a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Symptomlinderung"@de,
+        "Symptom relief"@en,
+        "Symtomlindring"@sv .
+
+:AssistedSuicide a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Assistierter Suizid"@de,
+        "Assisted suicide"@en,
+        "Assisterat självmord"@sv .
+
+:VoluntaryRenunciationOfFoodAndFluid a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Freiwilliger Verzicht auf Nahrung und Flüssigkeit"@de,
+        "Voluntary renunciation of food and fluid"@en,
+        "Frivilligt avstående från mat och vätska"@sv .
+
+:TargetedSedation a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Gezielte Sedierung"@de,
+        "Targeted sedation"@en,
+        "Riktad sedering"@sv ;
+    :shallBeAchievedBy :Home,
+        :Hospital .
+
+:PatientComfort a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Wohlbefinden des Patienten"@de,
+        "Patient comfort"@en,
+        "Patientkomfort"@sv .
+
+:ActiveParticipationInEndOfLife a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Aktive Mitwirkung am Lebensende"@de,
+        "Active participation in end of life"@en,
+        "Aktivt deltagande i livets slutskede"@sv .
+
+:Openness a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Offenheit"@de,
+        "Openness"@en,
+        "Öppenhet"@sv .
+
+:ActiveListening a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Aktives Zuhören"@de,
+        "Active listening"@en,
+        "Aktivt lyssnande"@sv .
+
+:GuidanceInConversation a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Gesprächsführung"@de,
+        "Guidance in conversation"@en,
+        "Vägledning i samtal"@sv .
+
+:Clarity a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Klarheit"@de,
+        "Clarity"@en,
+        "Klarhet"@sv .
+
+:Presence a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Präsenz"@de,
+        "Presence"@en,
+        "Närvaro"@sv .
+
+:Empathy a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Empathie"@de,
+        "Empathy"@en,
+        "Empati"@sv .
+
+:LegalFramework a :Rule,
+        owl:NamedIndividual ;
+    rdfs:label "Rechtlicher Rahmen"@de,
+        "Legal framework"@en,
+        "Rättslig ram"@sv .
+
+:EthicalConsiderations a :Rule,
+        owl:NamedIndividual ;
+    rdfs:label "Ethische Überlegungen"@de,
+        "Ethical considerations"@en,
+        "Etiska överväganden"@sv .
+
+:ProfessionalStandards a :Rule,
+        owl:NamedIndividual ;
+    rdfs:label "Berufsstandards"@de,
+        "Professional standards"@en,
+        "Professionella standarder"@sv .
+
+:TeamCollaboration a :DivisionOfLabour,
+        owl:NamedIndividual ;
+    rdfs:label "Teamzusammenarbeit"@de,
+        "Team collaboration"@en,
+        "Samarbete i team"@sv ;
+    :isAppliedToAchieve :VoluntaryRenunciationOfFoodAndFluid .
+
+:RoleClarity a :DivisionOfLabour,
+        owl:NamedIndividual ;
+    rdfs:label "Rollenklarheit"@de,
+        "Role clarity"@en,
+        "Rolltydlighet"@sv .
+
+:InterdisciplinaryApproach a :DivisionOfLabour,
+        owl:NamedIndividual ;
+    rdfs:label "Interdisziplinärer Ansatz"@de,
+        "Interdisciplinary approach"@en,
+        "Tvärvetenskapligt förhållningssätt"@sv .
+
+:TrainingAndEducation a :Community,
+        owl:NamedIndividual ;
+    rdfs:label "Ausbildung und Lehre"@de,
+        "Training and education"@en,
+        "Utbildning och undervisning"@sv .
+
+:ClinicalSetting a :Community,
+        owl:NamedIndividual ;
+    rdfs:label "Klinisches Umfeld"@de,
+        "Clinical setting"@en,
+        "Klinisk miljö"@sv .
+
+:SupportiveAtmosphere a :Community,
+        owl:NamedIndividual ;
+    rdfs:label "Unterstützende Atmosphäre"@de,
+        "Supportive atmosphere"@en,
+        "Stödjande atmosfär"@sv .
+
+:Student_1 a :Student,
+        owl:NamedIndividual ;
+    rdfs:label "Kommilitone 1"@de,
+        "Student 1"@en,
+        "Student 1"@sv .
+
+:Student_2 a :Student,
+        owl:NamedIndividual ;
+    rdfs:label "Kommilitone 2"@de,
+        "Student 2"@en,
+        "Student 2"@sv .
+
+:PhysicianDiscomfortPatientIndirectness a :Conflict ;
+    :ConflictDescription "Die Ärztin empfand es als unangenehm, dass die Patientin nicht direkt ihren Sterbewunsch äußerte, sondern die Informationen erst herausgearbeitet werden mussten."@de,
+        "The physician found it uncomfortable that the patient did not directly express her wish to die, but rather the information had to be elicited."@en,
+        "Läkaren tyckte det var obekvämt att patienten inte direkt uttryckte sin önskan att dö, utan att informationen först behövde arbetas fram."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Unangenehme Indirektheit der Patientin"@de,
+        "Patient's Uncomfortable Indirectness"@en,
+        "Patientens obekväma indirekthet"@sv ;
+    :CreationDate "2024-06-01T12:00:00Z" ;
+    :HasParticipant :Communication,
+        :Patient,
+        :Physician ;
+    :WrittenBy :Physician .
+
+:PhysicianBurdenEmotionalLabor a :Conflict ;
+    :ConflictDescription "Die Ärztin hatte nicht damit gerechnet, die gesamte emotionale Arbeit leisten und alle Informationen selbst herausfinden zu müssen."@de,
+        "The physician did not expect to have to perform all the emotional labor and extract all the information herself."@en,
+        "Läkaren hade inte förväntat sig att behöva utföra allt emotionellt arbete och själv ta reda på all information."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Belastung durch emotionale Arbeit und Informationsgewinnung"@de,
+        "Burden of Emotional Labor and Information Extraction"@en,
+        "Börda av emotionellt arbete och informationsinhämtning"@sv ;
+    :CreationDate "2024-06-01T12:00:00Z" ;
+    :HasParticipant :EmotionalLabor,
+        :InformationProvision,
+        :Physician ;
+    :WrittenBy :Physician .
+
+:PhysicianUncertaintyHungerStrike a :Conflict ;
+    :ConflictDescription "Die Ärztin war sich unsicher, ob sie die Option eines Hungerstreiks überhaupt aufzeigen durfte, tat es aber dennoch."@de,
+        "The physician was unsure if she was allowed to present the option of a hunger strike, but did so anyway."@en,
+        "Läkaren var osäker på om hon överhuvudtaget fick presentera alternativet hungerstrejk, men gjorde det ändå."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Unsicherheit bezüglich der Aufklärung über Hungerstreik"@de,
+        "Uncertainty Regarding Information on Hunger Strike"@en,
+        "Osäkerhet gällande information om hungerstrejk"@sv ;
+    :CreationDate "2024-06-01T12:00:00Z" ;
+    :HasParticipant :HungerStrikeOption,
+        :LegalFramework,
+        :Physician ;
+    :WrittenBy :Physician .
+
+:Student1FeedbackActiveListening a :Conflict ;
+    :ConflictDescription "Kommilitone 1 lobte die Ärztin dafür, dass sie der Patientin am Anfang des Gesprächs viel Raum gelassen und die Stille ausgehalten hat, um ihr Zeit zur Artikulation zu geben."@de,
+        "Student 1 praised the physician for giving the patient ample space at the beginning of the conversation and enduring the silence to allow her time to articulate her feelings."@en,
+        "Student 1 berömde läkaren för att hon gav patienten gott om utrymme i början av samtalet och uthärdade tystnaden för att ge henne tid att formulera sina känslor."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Lob für Raumgebung und Stille"@de,
+        "Praise for Giving Space and Silence"@en,
+        "Beröm för att ge utrymme och tystnad"@sv ;
+    :CreationDate "2024-06-01T12:00:00Z" ;
+    :HasParticipant :ActiveListening,
+        :Patient,
+        :Physician ;
+    :WrittenBy :Student_1 .
+
+:Student1FeedbackEuthanasiaLeadership a :Conflict ;
+    :ConflictDescription "Kommilitone 1 fand es gut, dass die Ärztin die Sterbehilfe direkt ansprach, als das Gespräch stockte, und dadurch die Führung übernahm, was der Patientin half, sich zu öffnen."@de,
+        "Student 1 found it good that the physician directly addressed euthanasia when the conversation faltered, thereby taking leadership, which helped the patient to open up."@en,
+        "Student 1 tyckte det var bra att läkaren direkt tog upp eutanasi när samtalet stannade av, och därmed tog ledningen, vilket hjälpte patienten att öppna sig."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Lob für direkte Ansprache der Sterbehilfe"@de,
+        "Praise for Direct Addressing of Euthanasia"@en,
+        "Beröm för direkt hantering av eutanasi"@sv ;
+    :CreationDate "2024-06-01T12:00:00Z" ;
+    :HasParticipant :Euthanasia,
+        :GuidanceInConversation,
+        :Physician ;
+    :WrittenBy :Student_1 .
+
+:Student1FeedbackPatientAdvanceDirectiveFrequency a :Conflict ;
+    :ConflictDescription "Kommilitone 1 lobte die Ansprache der Patientenverfügung als wichtig, merkte jedoch an, dass sie ein- bis zweimal weniger hätte erwähnt werden können."@de,
+        "Student 1 praised the discussion of the patient advance directive as important but noted that it could have been mentioned one or two times less frequently."@en,
+        "Student 1 berömde diskussionen om patientens förhandsdirektiv som viktig men noterade att det kunde ha nämnts en eller två gånger mindre ofta."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Rückmeldung zur Häufigkeit der Patientenverfügung"@de,
+        "Feedback on Patient Advance Directive Frequency"@en,
+        "Återkoppling om frekvensen av patientens förhandsdirektiv"@sv ;
+    :CreationDate "2024-06-01T12:00:00Z" ;
+    :HasParticipant :Communication,
+        :PatientAdvanceDirective,
+        :Physician ;
+    :WrittenBy :Student_1 .
+
+:Student1FeedbackMissingDeathWishReason a :Conflict ;
+    :ConflictDescription "Kommilitone 1 wünschte sich, dass die Ärztin den genauen Grund für den Todeswunsch der Patientin, wie Angst vor Symptomen oder Autonomieverlust, stärker herausgearbeitet hätte."@de,
+        "Student 1 wished that the physician had more thoroughly explored the exact reason for the patient's death wish, such as fear of symptoms or loss of autonomy."@en,
+        "Student 1 wished that the physician had more thoroughly explored the exact reason for the patient's death wish, such as fear of symptoms or loss of autonomy."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Wunsch nach tieferer Ergründung des Todeswunsches"@de,
+        "Desire for Deeper Exploration of Death Wish"@en,
+        "Önskan om djupare utforskning av dödsönskan"@sv ;
+    :CreationDate "2024-06-01T12:00:00Z" ;
+    :HasParticipant :DeathWish,
+        :LossOfAutonomy,
+        :NeedsAssessment,
+        :Physician,
+        :SymptomRelief ;
+    :WrittenBy :Student_1 .
+
+:Student2FeedbackInitialHesitation a :Conflict ;
+    :ConflictDescription "Kommilitone 2 bemerkte eine anfängliche Zögerlichkeit bei der Ärztin, die darauf zurückzuführen sei, dass sie erwartete, die Patientin würde ihren Sterbewunsch direkt äußern."@de,
+        "Student 2 observed an initial hesitation in the physician, which was attributed to her expectation that the patient would directly express her wish to die."@en,
+        "Student 2 observerade en initial tvekan hos läkaren, som tillskrevs hennes förväntan att patienten direkt skulle uttrycka sin önskan att dö."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Anfängliche Zögerlichkeit der Ärztin"@de,
+        "Physician's Initial Hesitation"@en,
+        "Läkarens initiala tvekan"@sv ;
+    :CreationDate "2024-06-01T12:00:00Z" ;
+    :HasParticipant :DeathWish,
+        :Patient,
+        :Physician ;
+    :WrittenBy :Student_2 .
+
+:Student2FeedbackMissingDeathWishReason a :Conflict ;
+    :ConflictDescription "Kommilitone 2 kritisierte, dass die Ärztin nicht wirklich nach dem tieferen Grund des Todeswunsches fragte, wie Angst vor Symptomen oder Schmerzen, die möglicherweise gelindert werden könnten."@de,
+        "Student 2 criticized that the physician did not truly inquire about the deeper reason for the death wish, such as fear of symptoms or pain that could potentially be alleviated."@en,
+        "Student 2 criticized that the physician did not truly inquire about the deeper reason for the death wish, such as fear of symptoms or pain that could potentially be alleviated."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Fehlende Nachfrage nach dem Grund des Todeswunsches"@de,
+        "Lack of Inquiry into the Reason for the Death Wish"@en,
+        "Bristande förfrågan om orsaken till dödsönskan"@sv ;
+    :CreationDate "2024-06-01T12:00:00Z" ;
+    :HasParticipant :DeathWish,
+        :LossOfAutonomy,
+        :NeedsAssessment,
+        :Physician,
+        :SymptomRelief ;
+    :WrittenBy :Student_2 .
+
+:PatientImpressionPhysicianPresence a :Conflict ;
+    :ConflictDescription "Die Patientin empfand die Ärztin als klar und präsent, was sie als angenehm und passend empfand."@de,
+        "The patient perceived the physician as clear and present, which she found pleasant and appropriate."@en,
+        "Patienten upplevde läkaren som tydlig och närvarande, vilket hon fann behagligt och passande."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Positive Wahrnehmung der Ärztin durch die Patientin"@de,
+        "Patient's Positive Perception of the Physician"@en,
+        "Patientens positiva uppfattning om läkaren"@sv ;
+    :CreationDate "2024-06-01T12:00:00Z" ;
+    :HasParticipant :Clarity,
+        :Physician,
+        :Presence ;
+    :WrittenBy :Patient .
+
+:PatientIrritationCannotStop a :Conflict ;
+    :ConflictDescription "Die Patientin empfand eine leichte Ungeduld oder sogar Wut, als die Ärztin sagte, 'wir können das nicht aufhalten', da dies für sie eine Selbstverständlichkeit war."@de,
+        "The patient felt a slight impatience or even anger when the physician said 'we cannot stop this,' as this was self-evident to her."@en,
+        "Patienten kände en lätt otålighet eller till och med ilska när läkaren sade 'vi kan inte stoppa detta', eftersom detta var självklart för henne."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Patientin empfindet Ungeduld bei Aussage 'Wir können das nicht aufhalten'"@de,
+        "Patient Feels Impatience at Statement 'We Cannot Stop This'"@en,
+        "Patienten känner otålighet vid uttalandet 'Vi kan inte stoppa detta'"@sv ;
+    :CreationDate "2024-06-01T12:00:00Z" ;
+    :HasParticipant :Communication,
+        :Patient,
+        :Physician ;
+    :WrittenBy :Patient .
+
+:PatientIrritationRightToDieHow a :Conflict ;
+    :ConflictDescription "Die Patientin war irritiert, als die Ärztin das Recht zu sterben ansprach, da sie sich nicht bewegen konnte und die Information ohne konkrete Anleitung als nutzlos empfand."@de,
+        "The patient was irritated when the physician mentioned the right to die, as she could not move and found the information useless without concrete guidance."@en,
+        "Patienten blev irriterad när läkaren nämnde rätten att dö, eftersom hon inte kunde röra sig och fann informationen värdelös utan konkret vägledning."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Irritation über 'Recht zu sterben' ohne Anleitung"@de,
+        "Irritation About 'Right to Die' Without Guidance"@en,
+        "Irritation över 'rätt att dö' utan vägledning"@sv ;
+    :CreationDate "2024-06-01T12:00:00Z" ;
+    :HasParticipant :AssistedSuicide,
+        :InformationProvision,
+        :Patient,
+        :Physician ;
+    :WrittenBy :Patient .
+
+:PatientIrritationNetherlandsEuthanasia a :Conflict ;
+    :ConflictDescription "Die Patientin war irritiert über die Erwähnung der aktiven Sterbehilfe in den Niederlanden und fragte sich, ob dies ein Angebot sei oder was sie mit dieser Information anfangen sollte."@de,
+        "The patient was irritated by the mention of active euthanasia in the Netherlands and wondered if it was an offer or what she should do with this information."@en,
+        "Patienten blev irriterad över omnämnandet av aktiv eutanasi i Nederländerna och undrade om det var ett erbjudande eller vad hon skulle göra med informationen."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Irritation über Erwähnung der Sterbehilfe in den Niederlanden"@de,
+        "Irritation About Mention of Euthanasia in the Netherlands"@en,
+        "Irritation över omnämnande av eutanasi i Nederländerna"@sv ;
+    :CreationDate "2024-06-01T12:00:00Z" ;
+    :HasParticipant :Euthanasia,
+        :InformationProvision,
+        :Patient,
+        :Physician ;
+    :WrittenBy :Patient .
+
+:PatientNuancedPatientAdvanceDirective a :Conflict ;
+    :ConflictDescription "Die Patientin fand es gut, die Patientenverfügung zu verfassen, wollte aber nicht, dass die Entscheidung nur aufgrund dieses Dokuments getroffen wird, sondern aktiv von ihr selbst."@de,
+        "The patient found it good to draft the patient advance directive but did not want the decision to be made solely based on this document, but actively by herself."@en,
+        "Patienten tyckte det var bra att upprätta patientens förhandsdirektiv men ville inte att beslutet skulle fattas enbart baserat på detta dokument, utan aktivt av henne själv."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Nuancierte Sicht der Patientin auf Patientenverfügung"@de,
+        "Patient's Nuanced View on Patient Advance Directive"@en,
+        "Patientens nyanserade syn på patientens förhandsdirektiv"@sv ;
+    :CreationDate "2024-06-01T12:00:00Z" ;
+    :HasParticipant :DecisionMaking,
+        :Patient,
+        :PatientAdvanceDirective ;
+    :WrittenBy :Patient .
+
+:PatientImpressionVoluntaryRenunciation a :Conflict ;
+    :ConflictDescription "Die Patientin empfand den freiwilligen Verzicht auf Nahrung und Flüssigkeit als ihre einzige aktive Möglichkeit, die nicht schlecht oder grausam klang, und schätzte die Hilfe für ein friedliches Einschlafen."@de,
+        "The patient perceived voluntary renunciation of food and fluid as her only active possibility, which did not sound bad or cruel, and appreciated the help for a peaceful passing."@en,
+        "Patienten uppfattade frivilligt avstående från mat och vätska som sin enda aktiva möjlighet, vilket inte lät dåligt eller grymt, och uppskattade hjälpen för ein fridfull insomning."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Positive Wahrnehmung des freiwilligen Verzichts auf Nahrung und Flüssigkeit"@de,
+        "Positive Perception of Voluntary Renunciation of Food and Fluid"@en,
+        "Positiv uppfattning om frivilligt avstående från mat och vätska"@sv ;
+    :CreationDate "2024-06-01T12:00:00Z" ;
+    :HasParticipant :ActiveParticipationInEndOfLife,
+        :Patient,
+        :VoluntaryRenunciationOfFoodAndFluid ;
+    :WrittenBy :Patient .

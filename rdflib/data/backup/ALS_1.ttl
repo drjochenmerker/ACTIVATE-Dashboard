@@ -1,0 +1,828 @@
+@prefix : <http://activate.htwk-leipzig.de/model#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@base <http://activate.htwk-leipzig.de/model> .
+
+:EndofLifeCareDebriefing a owl:NamedIndividual ;
+    :ActivityDescription "A debriefing session following a simulated patient consultation, focusing on communication with a patient expressing a wish to die, palliative care, and legal aspects of assisted dying. Participants include a physician, students, and an instructor."@en,
+                         "Eine Debriefing-Sitzung nach einer simulierten Patientenberatung, die sich auf die Kommunikation mit einem Patienten mit Todeswunsch, Palliativversorgung und rechtliche Aspekte der Sterbehilfe konzentriert. Beteiligt sind eine Ärztin, Studierende und ein Dozent."@de,
+                         "En debriefingsession efter en simulerad patientkonsultation, med fokus på kommunikation med en patient som uttrycker en önskan att dö, palliativ vård och juridiska aspekter av assisterat döende. Deltagare inkluderar en läkare, studenter och en instruktör."@sv ;
+    :ActivityName "Medical Simulation Debriefing"@en,
+                  "Debriefing einer medizinischen Simulation"@de,
+                  "Medicinsk simuleringsdebriefing"@sv .
+
+:Relation_1 rdf:type owl:ObjectProperty ;
+    rdfs:domain :Doctor ;
+    rdfs:range :Conversation ;
+    rdfs:label "The doctor conducted the conversation"@en,
+               "Die Ärztin führte das Gespräch"@de,
+               "Läkaren genomförde samtalet"@sv .
+
+:Relation_2 rdf:type owl:ObjectProperty ;
+    rdfs:domain :Doctor ;
+    rdfs:range :GivingSpace ;
+    rdfs:label "The doctor provided space"@en,
+               "Die Ärztin gab Raum"@de,
+               "Läkaren gav utrymme"@sv .
+
+:Relation_3 rdf:type owl:ObjectProperty ;
+    rdfs:domain :Doctor ;
+    rdfs:range :DeathWish ;
+    rdfs:label "The doctor defined the approach to the death wish"@en,
+               "Die Ärztin definierte den Ansatz zum Todeswunsch"@de,
+               "Läkaren definierade tillvägagångssättet för dödsönskan"@sv .
+
+:Relation_4 rdf:type owl:ObjectProperty ;
+    rdfs:domain :Doctor ;
+    rdfs:range :Counseling ;
+    rdfs:label "The doctor provided counseling"@en,
+               "Die Ärztin beriet"@de,
+               "Läkaren gav rådgivning"@sv .
+
+:Relation_5 rdf:type owl:ObjectProperty ;
+    rdfs:domain :Student1 ;
+    rdfs:range :Conversation ;
+    rdfs:label "Student 1 evaluated the conversation"@en,
+               "Kommilitonin 1 bewertete das Gespräch"@de,
+               "Student 1 utvärderade samtalet"@sv .
+
+:Relation_6 rdf:type owl:ObjectProperty ;
+    rdfs:domain :Doctor ;
+    rdfs:range :PatienceEndurance ;
+    rdfs:label "The doctor used patience/endurance"@en,
+               "Die Ärztin zeigte Geduld/Ausdauer"@de,
+               "Läkaren använde tålamod/uthållighet"@sv .
+
+:Relation_7 rdf:type owl:ObjectProperty ;
+    rdfs:domain :Patient ;
+    rdfs:range :GivingSpace ;
+    rdfs:label "The patient experienced space"@en,
+               "Der Patient erfuhr Raum"@de,
+               "Patienten upplevde utrymme"@sv .
+
+:Relation_8 rdf:type owl:ObjectProperty ;
+    rdfs:domain :Doctor ;
+    rdfs:range :Chair ;
+    rdfs:label "The doctor used the chair"@en,
+               "Die Ärztin benutzte den Stuhl"@de,
+               "Läkaren använde stolen"@sv .
+
+:Relation_9 rdf:type owl:ObjectProperty ;
+    rdfs:domain :Doctor ;
+    rdfs:range :Medication ;
+    rdfs:label "The doctor explained medication"@en,
+               "Die Ärztin erklärte Medikamente"@de,
+               "Läkaren förklarade medicinering"@sv .
+
+:Relation_10 rdf:type owl:ObjectProperty ;
+    rdfs:domain :Doctor ;
+    rdfs:range :Mother ;
+    rdfs:label "The doctor interacted with the mother"@en,
+               "Die Ärztin interagierte mit der Mutter"@de,
+               "Läkaren interagerade med modern"@sv .
+
+:Relation_11 rdf:type owl:ObjectProperty ;
+    rdfs:domain :Doctor ;
+    rdfs:range :Friends ;
+    rdfs:label "The doctor interacted with the friends"@en,
+               "Die Ärztin interagierte mit den Freunden"@de,
+               "Läkaren interagerade med vännerna"@sv .
+
+:Relation_12 rdf:type owl:ObjectProperty ;
+    rdfs:domain :Doctor ;
+    rdfs:range :ConcludingDiscussion ;
+    rdfs:label "The doctor included in the concluding discussion"@en,
+               "Die Ärztin bezog in das Abschlussgespräch ein"@de,
+               "Läkaren inkluderade i den avslutande diskussionen"@sv .
+
+:Relation_13 rdf:type owl:ObjectProperty ;
+    rdfs:domain :Doctor ;
+    rdfs:range :PatientAdvanceDirective ;
+    rdfs:label "The doctor clarified the patient advance directive"@en,
+               "Die Ärztin klärte die Patientenverfügung auf"@de,
+               "Läkaren klargjorde patientens förhandsdirektiv"@sv .
+
+:Relation_14 rdf:type owl:ObjectProperty ;
+    rdfs:domain :Doctor ;
+    rdfs:range :PowerOfAttorney ;
+    rdfs:label "The doctor clarified the power of attorney"@en,
+               "Die Ärztin klärte die Vollmacht auf"@de,
+               "Läkaren klargjorde fullmakten"@sv .
+
+:Relation_15 rdf:type owl:ObjectProperty ;
+    rdfs:domain :Patient ;
+    rdfs:range :Dying ;
+    rdfs:label "The patient expressed thoughts on dying"@en,
+               "Der Patient äußerte Gedanken zum Sterben"@de,
+               "Patienten uttryckte tankar om att dö"@sv .
+
+:Relation_16 rdf:type owl:ObjectProperty ;
+    rdfs:domain :Doctor ;
+    rdfs:range :Sedation ;
+    rdfs:label "The doctor discussed sedation"@en,
+               "Die Ärztin besprach Sedierung"@de,
+               "Läkaren diskuterade sedering"@sv .
+
+:Relation_17 rdf:type owl:ObjectProperty ;
+    rdfs:domain :Doctor ;
+    rdfs:range :PainRelief ;
+    rdfs:label "The doctor discussed pain relief"@en,
+               "Die Ärztin besprach Schmerzlinderung"@de,
+               "Läkaren diskuterade smärtlindring"@sv .
+
+:Relation_18 rdf:type owl:ObjectProperty ;
+    rdfs:domain :Doctor ;
+    rdfs:range :EuthanasiaAssistedSuicide ;
+    rdfs:label "The doctor discussed euthanasia/assisted suicide"@en,
+               "Die Ärztin besprach Sterbehilfe/assistierten Suizid"@de,
+               "Läkaren diskuterade eutanasi/assisterat självmord"@sv .
+
+:Relation_19 rdf:type owl:ObjectProperty ;
+    rdfs:domain :Student2 ;
+    rdfs:range :Conversation ;
+    rdfs:label "Student 2 evaluated the conversation"@en,
+               "Kommilitonin 2 bewertete das Gespräch"@de,
+               "Student 2 utvärderade samtalet"@sv .
+
+:Relation_20 rdf:type owl:ObjectProperty ;
+    rdfs:domain :Doctor ;
+    rdfs:range :VoiceModulation ;
+    rdfs:label "The doctor used voice modulation"@en,
+               "Die Ärztin variierte die Stimme"@de,
+               "Läkaren använde röstvariation"@sv .
+
+:Relation_21 rdf:type owl:ObjectProperty ;
+    rdfs:domain :Doctor ;
+    rdfs:range :SelfDisclosure ;
+    rdfs:label "The doctor showed self-disclosure"@en,
+               "Die Ärztin zeigte Selbstoffenbarung"@de,
+               "Läkaren visade självutlämnande"@sv .
+
+:Relation_22 rdf:type owl:ObjectProperty ;
+    rdfs:domain :Doctor ;
+    rdfs:range :RestoringEnvironment ;
+    rdfs:label "The doctor restored the environment"@en,
+               "Die Ärztin stellte die Umgebung wieder her"@de,
+               "Läkaren återställde miljön"@sv .
+
+:Relation_23 rdf:type owl:ObjectProperty ;
+    rdfs:domain :DepressedPeople ;
+    rdfs:range :WishToCommitSuicide ;
+    rdfs:label "Depressed people have a wish to commit suicide"@en,
+               "Depressive Menschen haben den Wunsch, sich umzubringen"@de,
+               "Deprimerade personer har en önskan att ta sitt liv"@sv .
+
+:Relation_24 rdf:type owl:ObjectProperty ;
+    rdfs:domain :Patient ;
+    rdfs:range :Inquiries ;
+    rdfs:label "The patient responded to inquiries"@en,
+               "Der Patient reagierte auf Nachfragen"@de,
+               "Patienten svarade på frågor"@sv .
+
+:Relation_25 rdf:type owl:ObjectProperty ;
+    rdfs:domain :Doctor ;
+    rdfs:range :ProvidingSolutions ;
+    rdfs:label "The doctor attempted to provide solutions"@en,
+               "Die Ärztin versuchte, Lösungen anzubieten"@de,
+               "Läkaren försökte tillhandahålla lösningar"@sv .
+
+:Relation_26 rdf:type owl:ObjectProperty ;
+    rdfs:domain :Doctor ;
+    rdfs:range :NonVerbalCommunication ;
+    rdfs:label "The doctor used non-verbal communication"@en,
+               "Die Ärztin nutzte Mimik und Gestik"@de,
+               "Läkaren använde icke-verbal kommunikation"@sv .
+
+:Relation_27 rdf:type owl:ObjectProperty ;
+    rdfs:domain :Doctor ;
+    rdfs:range :HumanityEmpathy ;
+    rdfs:label "The doctor showed humanity/empathy"@en,
+               "Die Ärztin zeigte Menschlichkeit/Empathie"@de,
+               "Läkaren visade mänsklighet/empati"@sv .
+
+:Relation_28 rdf:type owl:ObjectProperty ;
+    rdfs:domain :Lecturer ;
+    rdfs:range :Conversation ;
+    rdfs:label "The lecturer evaluated the conversation"@en,
+               "Der Dozent bewertete das Gespräch"@de,
+               "Föreläsaren utvärderade samtalet"@sv .
+
+:Relation_29 rdf:type owl:ObjectProperty ;
+    rdfs:domain :Doctor ;
+    rdfs:range :DeliberationThoughtfulness ;
+    rdfs:label "The doctor used deliberation/thoughtfulness"@en,
+               "Die Ärztin zeigte Bedächtigkeit/Nachdenklichkeit"@de,
+               "Läkaren använde eftertänksamhet/övervägande"@sv .
+
+:Relation_30 rdf:type owl:ObjectProperty ;
+    rdfs:domain :Doctor ;
+    rdfs:range :InformationExchange ;
+    rdfs:label "The doctor engaged in information exchange"@en,
+               "Die Ärztin beteiligte sich am Informationsaustausch"@de,
+               "Läkaren deltog i informationsutbytet"@sv .
+
+:Relation_31 rdf:type owl:ObjectProperty ;
+    rdfs:domain :Patient ;
+    rdfs:range :InformationExchange ;
+    rdfs:label "The patient engaged in information exchange"@en,
+               "Der Patient beteiligte sich am Informationsaustausch"@de,
+               "Patienten deltog i informationsutbytet"@sv .
+
+:Relation_32 rdf:type owl:ObjectProperty ;
+    rdfs:domain :MedicalProfessionals ;
+    rdfs:range :DeathWish ;
+    rdfs:label "Medical professionals deal with death wishes"@en,
+               "Medizinisches Fachpersonal befasst sich mit Todeswünschen"@de,
+               "Medicinsk personal hanterar dödsönskningar"@sv .
+
+:Relation_33 rdf:type owl:ObjectProperty ;
+    rdfs:domain :Doctor ;
+    rdfs:range :VoluntaryRefusalOfFoodAndFluids ;
+    rdfs:label "The doctor addressed voluntary refusal of food and fluids"@en,
+               "Die Ärztin sprach den freiwilligen Verzicht auf Nahrung und Flüssigkeit an"@de,
+               "Läkaren tog upp frivilligt avstående från mat och vätska"@sv .
+
+:Relation_34 rdf:type owl:ObjectProperty ;
+    rdfs:domain :Doctor ;
+    rdfs:range :SpecializedKnowledge ;
+    rdfs:label "The doctor used specialized knowledge"@en,
+               "Die Ärztin nutzte Detailwissen"@de,
+               "Läkaren använde specialiserad kunskap"@sv .
+
+:Relation_35 rdf:type owl:ObjectProperty ;
+    rdfs:domain :Doctor ;
+    rdfs:range :Confidence ;
+    rdfs:label "The doctor should show more confidence"@en,
+               "Die Ärztin sollte mehr Selbstbewusstsein zeigen"@de,
+               "Läkaren borde visa mer självförtroende"@sv .
+
+:Relation_36 rdf:type owl:ObjectProperty ;
+    rdfs:domain :Doctor ;
+    rdfs:range :Skills ;
+    rdfs:label "The doctor should be confident in their skills"@en,
+               "Die Ärztin sollte ihren Fertigkeiten vertrauen"@de,
+               "Läkaren borde vara säker på sina färdigheter"@sv .
+
+:Relation_37 rdf:type owl:ObjectProperty ;
+    rdfs:domain :Doctor ;
+    rdfs:range :Suffocation ;
+    rdfs:label "The doctor discussed suffocation"@en,
+               "Die Ärztin besprach Ersticken"@de,
+               "Läkaren diskuterade kvävning"@sv .
+
+:Relation_38 rdf:type owl:ObjectProperty ;
+    rdfs:domain :Doctor ;
+    rdfs:range :MedicinalRelief ;
+    rdfs:label "The doctor discussed medicinal relief"@en,
+               "Die Ärztin besprach medikamentöse Linderung"@de,
+               "Läkaren diskuterade medicinsk lindring"@sv .
+
+:Relation_39 rdf:type owl:ObjectProperty ;
+    rdfs:domain :Doctor ;
+    rdfs:range :SymptomControl ;
+    rdfs:label "The doctor focused on symptom control"@en,
+               "Die Ärztin konzentrierte sich auf die Symptomkontrolle"@de,
+               "Läkaren fokuserade på symtomkontroll"@sv .
+
+:Relation_40 rdf:type owl:ObjectProperty ;
+    rdfs:domain :Patient ;
+    rdfs:range :HomeCare ;
+    rdfs:label "The patient is in home care"@en,
+               "Der Patient befindet sich in häuslicher Versorgung"@de,
+               "Patienten är i hemvård"@sv .
+
+:Relation_41 rdf:type owl:ObjectProperty ;
+    rdfs:domain :HomeCare ;
+    rdfs:range :DivisionOfLabour ;
+    rdfs:label "Home care is organized by division of labor"@en,
+               "Häusliche Versorgung ist durch Arbeitsteilung organisiert"@de,
+               "Hemvård organiseras genom arbetsfördelning"@sv .
+
+:Relation_42 rdf:type owl:ObjectProperty ;
+    rdfs:domain :SpecializedFacility ;
+    rdfs:range :DivisionOfLabour ;
+    rdfs:label "A specialized facility is organized by division of labor"@en,
+               "Eine fachliche Einrichtung ist durch Arbeitsteilung organisiert"@de,
+               "En specialiserad anläggning organiseras genom arbetsfördelning"@sv .
+
+:Relation_43 rdf:type owl:ObjectProperty ;
+    rdfs:domain :Patient ;
+    rdfs:range :SpecializedFacility ;
+    rdfs:label "The patient could be in a specialized facility"@en,
+               "Der Patient könnte sich in einer fachlichen Einrichtung befinden"@de,
+               "Patienten skulle kunna vara på en specialiserad anläggning"@sv .
+
+:Relation_44 rdf:type owl:ObjectProperty ;
+    rdfs:domain :Doctor ;
+    rdfs:range :AcceptingAddressingAlternatives ;
+    rdfs:label "The doctor applied the approach of accepting, addressing, and showing alternatives"@en,
+               "Die Ärztin wandte den Ansatz des Annehmens, Ansprechens und Aufzeigens von Alternativen an"@de,
+               "Läkaren tillämpade tillvägagångssättet att acceptera, adressera och visa alternativ"@sv .
+
+:Relation_45 rdf:type owl:ObjectProperty ;
+    rdfs:domain :LegislationGermany ;
+    rdfs:range :EuthanasiaAssistedSuicide ;
+    rdfs:label "Legislation in Germany influences euthanasia/assisted suicide"@en,
+               "Die Gesetzgebung in Deutschland beeinflusst Sterbehilfe/assistierten Suizid"@de,
+               "Lagstiftningen i Tyskland påverkar eutanasi/assisterat självmord"@sv .
+
+:Relation_46 rdf:type owl:ObjectProperty ;
+    rdfs:domain :FederalConstitutionalCourt ;
+    rdfs:range :RightToSelfDeterminationDeath ;
+    rdfs:label "The Federal Constitutional Court influences the right to self-determination regarding the time of death"@en,
+               "Das Bundesverfassungsgericht beeinflusst das Recht auf Selbstbestimmung bezüglich des Todeszeitpunkts"@de,
+               "Förbundsförfattningsdomstolen påverkar rätten till självbestämmande gällande dödstidpunkten"@sv .
+
+:Relation_47 rdf:type owl:ObjectProperty ;
+    rdfs:domain :RightToSelfDeterminationDeath ;
+    rdfs:range :SeekingThirdPartyAssistance ;
+    rdfs:label "The right to self-determination influences the choice of seeking third-party assistance"@en,
+               "Das Recht auf Selbstbestimmung beeinflusst die Wahl der Inanspruchnahme von Hilfe Dritter"@de,
+               "Rätten till självbestämmande påverkar valet att söka hjälp från tredje part"@sv .
+
+:Relation_48 rdf:type owl:ObjectProperty ;
+    rdfs:domain :ThirdReich ;
+    rdfs:range :HumanDignity ;
+    rdfs:label "The Third Reich caused a violation of human dignity"@en,
+               "Das Dritte Reich verursachte eine Verletzung der Menschenwürde"@de,
+               "Tredje riket orsakade en kränkning av mänsklig värdighet"@sv .
+
+:Relation_49 rdf:type owl:ObjectProperty ;
+    rdfs:domain :ThirdReich ;
+    rdfs:range :Autonomy ;
+    rdfs:label "The Third Reich caused a violation of autonomy"@en,
+               "Das Dritte Reich verursachte eine Verletzung der Autonomie"@de,
+               "Tredje riket orsakade en kränkning av autonomi"@sv .
+
+:Relation_50 rdf:type owl:ObjectProperty ;
+    rdfs:domain :Autonomy ;
+    rdfs:range :LegislationGermany ;
+    rdfs:label "Autonomy influences legislation in Germany"@en,
+               "Autonomie beeinflusst die Gesetzgebung in Deutschland"@de,
+               "Autonomi påverkar lagstiftningen i Tyskland"@sv .
+
+:Relation_51 rdf:type owl:ObjectProperty ;
+    rdfs:domain :EuthanasiaOrganizations ;
+    rdfs:range :Patient ;
+    rdfs:label "Euthanasia organizations are used by patients"@en,
+               "Sterbehilfeorganisationen werden von Patienten genutzt"@de,
+               "Eutanasi-organisationer används av patienter"@sv .
+
+:Relation_52 rdf:type owl:ObjectProperty ;
+    rdfs:domain :Doctor ;
+    rdfs:range :WarningConversation ;
+    rdfs:label "The doctor conducted a warning conversation"@en,
+               "Die Ärztin führte ein Anwarnungsgespräch"@de,
+               "Läkaren genomförde ett varningssamtal"@sv .
+
+:Relation_53 rdf:type owl:ObjectProperty ;
+    rdfs:domain :MedicalProfessionals ;
+    rdfs:range :PhysicianAutonomyRefusalEuthanasia ;
+    rdfs:label "Medical professionals have to follow their autonomy regarding refusal of euthanasia"@en,
+               "Medizinisches Fachpersonal muss die ärztliche Autonomie bezüglich der Ablehnung von Sterbehilfe befolgen"@de,
+               "Medicinsk personal måste följa sin autonomi gällande vägran av eutanasi"@sv .
+
+:Relation_54 rdf:type owl:ObjectProperty ;
+    rdfs:domain :PhysicianAutonomyRefusalEuthanasia ;
+    rdfs:range :EuthanasiaAssistedSuicide ;
+    rdfs:label "Physician's autonomy influences the provision of euthanasia/assisted suicide"@en,
+               "Die ärztliche Autonomie beeinflusst die Bereitstellung von Sterbehilfe/assistiertem Suizid"@de,
+               "Läkares autonomi påverkar tillhandahållandet av eutanasi/assisterat självmord"@sv .
+
+:Relation_55 rdf:type owl:ObjectProperty ;
+    rdfs:domain :PhysicianAutonomyRefusalEuthanasia ;
+    rdfs:range :EthicalJustification ;
+    rdfs:label "Physician's autonomy influences ethical justification"@en,
+               "Die ärztliche Autonomie beeinflusst die ethische Vertretbarkeit"@de,
+               "Läkares autonomi påverkar etisk försvarbarhet"@sv .
+
+:Relation_56 rdf:type owl:ObjectProperty ;
+    rdfs:domain :MedicalProfessionals ;
+    rdfs:range :AdvanceCarePlanning ;
+    rdfs:label "Medical professionals perform advance care planning"@en,
+               "Medizinisches Fachpersonal führt Vorsorgeplanung durch"@de,
+               "Medicinsk personal utför förhandsplanering av vård"@sv .
+
+:Relation_57 rdf:type owl:ObjectProperty ;
+    rdfs:domain :Patient ;
+    rdfs:range :ReducedFoodIntake ;
+    rdfs:label "The patient has reduced food intake"@en,
+               "Der Patient nimmt weniger Nahrung zu sich"@de,
+               "Patienten har minskat matintag"@sv .
+
+:Relation_58 rdf:type owl:ObjectProperty ;
+    rdfs:domain :Neurology ;
+    rdfs:range :ReducedFoodIntake ;
+    rdfs:label "Neurology influences reduced food intake"@en,
+               "Neurologie beeinflusst die reduzierte Nahrungsaufnahme"@de,
+               "Neurologi påverkar minskat matintag"@sv .
+
+:Relation_59 rdf:type owl:ObjectProperty ;
+    rdfs:domain :ReducedFoodIntake ;
+    rdfs:range :SedationNeed ;
+    rdfs:label "Reduced food intake influences sedation need"@en,
+               "Reduzierte Nahrungsaufnahme beeinflusst den Sedierungsbedarf"@de,
+               "Minskat matintag påverkar sedationsbehovet"@sv .
+
+:Relation_60 rdf:type owl:ObjectProperty ;
+    rdfs:domain :ALS ;
+    rdfs:range :SedationNeed ;
+    rdfs:label "ALS influences sedation need"@en,
+               "ALS beeinflusst den Sedierungsbedarf"@de,
+               "ALS påverkar sedationsbehovet"@sv .
+
+:Relation_61 rdf:type owl:ObjectProperty ;
+    rdfs:domain :Patient ;
+    rdfs:range :ALS ;
+    rdfs:label "The patient has ALS"@en,
+               "Der Patient hat ALS"@de,
+               "Patienten har ALS"@sv .
+
+:Doctor a :Subject, owl:NamedIndividual ;
+    rdfs:label "Ärztin"@de, "Doctor"@en, "Läkare"@sv ;
+    :Relation_1 :Conversation ;
+    :Relation_2 :GivingSpace ;
+    :DefinesTheApproachOf :DeathWish ;
+    :Relation_4 :Counseling ;
+    :Uses :PatienceEndurance, :Chair, :VoiceModulation, :SelfDisclosure, :NonVerbalCommunication, :HumanityEmpathy, :DeliberationThoughtfulness, :SpecializedKnowledge, :Confidence, :Skills ;
+    :OperatesOn :Medication, :ConcludingDiscussion, :PatientAdvanceDirective, :PowerOfAttorney, :Sedation, :PainRelief, :EuthanasiaAssistedSuicide, :RestoringEnvironment, :ProvidingSolutions, :InformationExchange, :VoluntaryRefusalOfFoodAndFluids, :Suffocation, :MedicinalRelief, :SymptomControl, :AcceptingAddressingAlternatives, :WarningConversation ;
+    :InteractsWith :Mother, :Friends .
+
+:Lecturer a :Subject, owl:NamedIndividual ;
+    rdfs:label "Dozent"@de, "Lecturer"@en, "Föreläsare"@sv ;
+    :OperatesOn :Conversation .
+
+:Patient a :Subject, owl:NamedIndividual ;
+    rdfs:label "Patient"@de, "Patient"@en, "Patient"@sv ;
+    :OperatesOn :GivingSpace, :Dying, :Inquiries, :InformationExchange, :ReducedFoodIntake, :ALS, :EuthanasiaAssistedSuicide ;
+    :InteractsIn :HomeCare, :SpecializedFacility .
+
+:Student1 a :Subject, owl:NamedIndividual ;
+    rdfs:label "Kommilitonin 1"@de, "Student 1"@en, "Student 1"@sv ;
+    :OperatesOn :Conversation .
+
+:Student2 a :Subject, owl:NamedIndividual ;
+    rdfs:label "Kommilitonin 2"@de, "Student 2"@en, "Student 2"@sv ;
+    :OperatesOn :Conversation .
+
+:Mother a :Subject, owl:NamedIndividual ;
+    rdfs:label "Mutter"@de, "Mother"@en, "Mamma"@sv .
+
+:Friends a :Subject, owl:NamedIndividual ;
+    rdfs:label "Freunde"@de, "Friends"@en, "Vänner"@sv .
+
+:DepressedPeople a :Subject, owl:NamedIndividual ;
+    rdfs:label "Depressive Menschen"@de, "Depressed People"@en, "Deprimerade personer"@sv ;
+    :OperatesOn :WishToCommitSuicide .
+
+:MedicalProfessionals a :Subject, owl:NamedIndividual ;
+    rdfs:label "Ärzte/Ärztinnen"@de, "Medical Professionals"@en, "Läkare/Medicinsk personal"@sv ;
+    :OperatesOn :DeathWish, :AdvanceCarePlanning ;
+    :HasToFollow :PhysicianAutonomyRefusalEuthanasia .
+
+:Conversation a :Object, owl:NamedIndividual ;
+    rdfs:label "Gespräch"@de, "Conversation"@en, "Samtal"@sv .
+
+:GivingSpace a :Object, owl:NamedIndividual ;
+    rdfs:label "Raum geben"@de, "Giving Space"@en, "Ge utrymme"@sv .
+
+:DeathWish a :Object, owl:NamedIndividual ;
+    rdfs:label "Todeswunsch"@de, "Death Wish"@en, "Dödsönskan"@sv .
+
+:Counseling a :Object, owl:NamedIndividual ;
+    rdfs:label "Beraten"@de, "Counseling"@en, "Rådgivning"@sv .
+
+:ConcludingDiscussion a :Object, owl:NamedIndividual ;
+    rdfs:label "Abschlussgespräch"@de, "Concluding Discussion"@en, "Avslutande diskussion"@sv .
+
+:Dying a :Object, owl:NamedIndividual ;
+    rdfs:label "Sterben"@de, "Dying"@en, "Att dö"@sv .
+
+:Sedation a :Object, owl:NamedIndividual ;
+    rdfs:label "Sedieren"@de, "Sedation"@en, "Sedering"@sv .
+
+:PainRelief a :Object, owl:NamedIndividual ;
+    rdfs:label "Schmerzen nehmen"@de, "Pain Relief"@en, "Smärtlindring"@sv .
+
+:EuthanasiaAssistedSuicide a :Object, owl:NamedIndividual ;
+    rdfs:label "Sterbehilfe"@de, "Euthanasia/Assisted Suicide"@en, "Eutanasi/Assisterat självmord"@sv .
+
+:WishToCommitSuicide a :Object, owl:NamedIndividual ;
+    rdfs:label "Wunsch sich umzubringen"@de, "Wish to Commit Suicide"@en, "Önskan att ta sitt liv"@sv .
+
+:Inquiries a :Object, owl:NamedIndividual ;
+    rdfs:label "Nachfragen"@de, "Inquiries"@en, "Frågor"@sv .
+
+:ProvidingSolutions a :Object, owl:NamedIndividual ;
+    rdfs:label "Lösung geben"@de, "Providing Solutions"@en, "Tillhandahålla lösningar"@sv .
+
+:RestoringEnvironment a :Object, owl:NamedIndividual ;
+    rdfs:label "Umgebung wiederherstellen"@de, "Restoring Environment"@en, "Återställa miljön"@sv .
+
+:InformationExchange a :Object, owl:NamedIndividual ;
+    rdfs:label "Informationen geben/zurückgeben"@de, "Information Exchange"@en, "Informationsutbyte"@sv .
+
+:VoluntaryRefusalOfFoodAndFluids a :Object, owl:NamedIndividual ;
+    rdfs:label "Freiwilliger Verzicht auf Nahrung und Flüssigkeit (FVNF)"@de, "Voluntary Refusal of Food and Fluids (VRFF)"@en, "Frivilligt avstående från mat och vätska (FVNF)"@sv .
+
+:Suffocation a :Object, owl:NamedIndividual ;
+    rdfs:label "Ersticken"@de, "Suffocation"@en, "Kvävning"@sv .
+
+:MedicinalRelief a :Object, owl:NamedIndividual ;
+    rdfs:label "Medikamentös lindern"@de, "Medicinal Relief"@en, "Medicinsk lindring"@sv .
+
+:SymptomControl a :Object, owl:NamedIndividual ;
+    rdfs:label "Symptomkontrolle"@de, "Symptom Control"@en, "Symtomkontroll"@sv .
+
+:AcceptingAddressingAlternatives a :Object, owl:NamedIndividual ;
+    rdfs:label "Annehmen, Ansprechen, Alternativen aufzeigen"@de, "Accepting, Addressing, Showing Alternatives"@en, "Acceptera, adressera, visa alternativ"@sv .
+
+:SeekingThirdPartyAssistance a :Object, owl:NamedIndividual ;
+    rdfs:label "Hilfe Dritter in Anspruch nehmen"@de, "Seeking Third-Party Assistance"@en, "Söka hjälp från tredje part"@sv .
+
+:WarningConversation a :Object, owl:NamedIndividual ;
+    rdfs:label "Anwarnungsgespräch"@de, "Warning Conversation"@en, "Varningssamtal"@sv .
+
+:AdvanceCarePlanning a :Object, owl:NamedIndividual ;
+    rdfs:label "Vorsorgeplanung"@de, "Advance Care Planning"@en, "Förhandsplanering av vård"@sv .
+
+:ReducedFoodIntake a :Object, owl:NamedIndividual ;
+    rdfs:label "Nahrung zu sich nehmen (weniger)"@de, "Reduced Food Intake"@en, "Minskat matintag"@sv .
+
+:SedationNeed a :Object, owl:NamedIndividual ;
+    rdfs:label "Sedierungsnotwendigkeit"@de, "Sedation Need"@en, "Sedationsbehov"@sv .
+
+:ALS a :Object, owl:NamedIndividual ;
+    rdfs:label "ALS"@de, "ALS"@en, "ALS"@sv .
+
+:Neurology a :Object, owl:NamedIndividual ;
+    rdfs:label "Neurologie"@de, "Neurology"@en, "Neurologi"@sv ;
+    :Influences :ReducedFoodIntake .
+
+:PatienceEndurance a :Instrument, owl:NamedIndividual ;
+    rdfs:label "Pausen aushalten"@de, "Patience/Endurance"@en, "Tålamod/Uthållighet"@sv .
+
+:Chair a :Instrument, owl:NamedIndividual ;
+    rdfs:label "Stuhl"@de, "Chair"@en, "Stol"@sv .
+
+:Medication a :Instrument, owl:NamedIndividual ;
+    rdfs:label "Medikamente"@de, "Medication"@en, "Medicin"@sv .
+
+:VoiceModulation a :Instrument, owl:NamedIndividual ;
+    rdfs:label "Stimme variieren"@de, "Voice Modulation"@en, "Röstvariation"@sv .
+
+:SelfDisclosure a :Instrument, owl:NamedIndividual ;
+    rdfs:label "Selbstoffenbarung"@de, "Self-Disclosure"@en, "Självutlämnande"@sv .
+
+:NonVerbalCommunication a :Instrument, owl:NamedIndividual ;
+    rdfs:label "Mimik und Gestik"@de, "Non-Verbal Communication"@en, "Mimik och gestik"@sv .
+
+:HumanityEmpathy a :Instrument, owl:NamedIndividual ;
+    rdfs:label "Menschlichkeit"@de, "Humanity/Empathy"@en, "Mänsklighet/Empati"@sv .
+
+:DeliberationThoughtfulness a :Instrument, owl:NamedIndividual ;
+    rdfs:label "Bedächtigkeit"@de, "Deliberation/Thoughtfulness"@en, "Eftertänksamhet/Övervägande"@sv .
+
+:SpecializedKnowledge a :Instrument, owl:NamedIndividual ;
+    rdfs:label "Detailwissen"@de, "Specialized Knowledge"@en, "Detaljkunskap"@sv .
+
+:Confidence a :Instrument, owl:NamedIndividual ;
+    rdfs:label "Selbstbewusstsein"@de, "Confidence"@en, "Självförtroende"@sv .
+
+:Skills a :Instrument, owl:NamedIndividual ;
+    rdfs:label "Fertigkeiten"@de, "Skills"@en, "Färdigheter"@sv .
+
+:PatientAdvanceDirective a :Rule, owl:NamedIndividual ;
+    rdfs:label "Patientenverfügung"@de, "Patient Advance Directive"@en, "Patientens förhandsdirektiv"@sv .
+
+:PowerOfAttorney a :Rule, owl:NamedIndividual ;
+    rdfs:label "Vollmacht"@de, "Power of Attorney"@en, "Fullmakt"@sv .
+
+:LegalSituation a :Rule, owl:NamedIndividual ;
+    rdfs:label "Rechtliche Situation"@de, "Legal Situation"@en, "Rättslig situation"@sv .
+
+:LegislationGermany a :Rule, owl:NamedIndividual ;
+    rdfs:label "Gesetzgebung (in Deutschland)"@de, "Legislation (in Germany)"@en, "Lagstiftning (i Tyskland)"@sv ;
+    :RuleDescription "Die liberalste Gesetzgebung in Europa zum Thema Sterbehilfe."^^xsd:string ;
+    :Influences :EuthanasiaAssistedSuicide .
+
+:FederalConstitutionalCourt a :Rule, owl:NamedIndividual ;
+    rdfs:label "Bundesverfassungsgericht"@de, "Federal Constitutional Court"@en, "Förbundsförfattningsdomstolen"@sv ;
+    :Influences :RightToSelfDeterminationDeath .
+
+:RightToSelfDeterminationDeath a :Rule, owl:NamedIndividual ;
+    rdfs:label "Recht auf Selbstbestimmung (Todeszeitpunkt)"@de, "Right to Self-Determination (Time of Death)"@en, "Rätt till självbestämmande (dödstidpunkt)"@sv ;
+    :RuleDescription "Jeder hat das Recht, selbst zu entscheiden, wann er sterben darf, und Hilfe Dritter in Anspruch zu nehmen."^^xsd:string ;
+    :InfluencesTheChoiceof :SeekingThirdPartyAssistance .
+
+:ThirdReich a :Rule, owl:NamedIndividual ;
+    rdfs:label "Dritter Reich"@de, "Third Reich"@en, "Tredje riket"@sv ;
+    :RuleDescription "Im Dritten Reich wurde anderen Menschen die Würde abgesprochen."^^xsd:string ;
+    :CausedByViolationOf :HumanDignity, :Autonomy .
+
+:HumanDignity a :Rule, owl:NamedIndividual ;
+    rdfs:label "Würde anderer Menschen"@de, "Human Dignity"@en, "Mänsklig värdighet"@sv .
+
+:Autonomy a :Rule, owl:NamedIndividual ;
+    rdfs:label "Autonomie"@de, "Autonomy"@en, "Autonomi"@sv ;
+    :RuleDescription "Autonomie wurde in Deutschland an oberste Stelle gestellt."^^xsd:string ;
+    :Influences :LegislationGermany .
+
+:PhysicianAutonomyRefusalEuthanasia a :Rule, owl:NamedIndividual ;
+    rdfs:label "Ärztliche Autonomie (Ablehnung Sterbehilfe)"@de, "Physician's Autonomy (Refusal of Euthanasia)"@en, "Läkares autonomi (vägran av eutanasi)"@sv ;
+    :RuleDescription "Jeder Arzt und jede Ärztin hat die Autonomie, die persönliche Autonomie, Sterbehilfe ethisch nicht vertreten und nicht leisten zu müssen."^^xsd:string ;
+    :Influences :EuthanasiaAssistedSuicide, :EthicalJustification .
+
+:EthicalJustification a :Rule, owl:NamedIndividual ;
+    rdfs:label "Ethische Vertretbarkeit"@de, "Ethical Justification"@en, "Etisk försvarbarhet"@sv .
+
+:HomeCare a :Community, owl:NamedIndividual ;
+    rdfs:label "Häusliche Versorgung"@de, "Home Care"@en, "Hemvård"@sv ;
+    :IsOrganisedBy :DivisionOfLabour .
+
+:SpecializedFacility a :Community, owl:NamedIndividual ;
+    rdfs:label "Fachliche Einrichtung"@de, "Specialized Facility"@en, "Specialiserad anläggning"@sv ;
+    :IsOrganisedBy :DivisionOfLabour .
+
+:EuthanasiaOrganizations a :Community, owl:NamedIndividual ;
+    rdfs:label "Sterbehilfeorganisationen"@de, "Euthanasia Organizations"@en, "Eutanasi-organisationer"@sv ;
+    :IsUsedBy :Patient .
+
+:GermanSocietyForHumaneDying a :Community, owl:NamedIndividual ;
+    rdfs:label "Deutsche Gesellschaft für Humanes Sterben"@de, "German Society for Humane Dying"@en, "Tyska sällskapet för human död"@sv .
+
+:Dignitas a :Community, owl:NamedIndividual ;
+    rdfs:label "Dignitas"@de, "Dignitas"@en, "Dignitas"@sv .
+
+:DivisionOfLabour a owl:Class ;
+    rdfs:label "Arbeitsteilung"@de, "Division of Labour"@en, "Arbetsfördelning"@sv .
+
+:Conflict_001 a :Conflict ;
+    :ConflictTitle "Ärztin's positive self-assessment of the conversation"@en,
+                   "Positive Selbsteinschätzung der Ärztin zum Gespräch"@de,
+                   "Läkarens positiva självbedömning av samtalet"@sv ;
+    :ConflictDescription "The doctor felt the conversation was pleasant and that she gave the patient enough space, especially considering his difficulty speaking. She also felt she handled the death wish non-judgmentally and provided good advice."@en,
+                         "Die Ärztin empfand das Gespräch als angenehm und hatte das Gefühl, dem Patienten genügend Raum gegeben zu haben, insbesondere angesichts seiner Schwierigkeiten, die Worte zu finden. Sie hatte auch das Gefühl, den Todeswunsch nicht wertend behandelt und gut beraten zu haben."@de,
+                         "Läkaren tyckte att samtalet var trevligt och att hon gav patienten tillräckligt med utrymme, särskilt med tanke på hans svårigheter att hitta orden. Hon kände också att hon hanterade dödsönskan icke-dömande och gav goda råd."@sv ;
+    :ConflictState "open" ;
+    :WrittenBy :Doctor ;
+    :HasParticipant :Doctor, :Patient, :GivingSpace, :DeathWish ;
+    :CreationDate "2024-06-01T12:00:00Z"^^xsd:dateTime .
+
+:Conflict_002 a :Conflict ;
+    :ConflictTitle "Kommilitonin 1's positive feedback on doctor's overall performance"@en,
+                   "Kommilitonin 1's positives Feedback zur Gesamtleistung der Ärztin"@de,
+                   "Student 1:s positiva feedback om läkarens övergripande prestation"@sv ;
+    :ConflictDescription "Student 1 praised the doctor for giving the patient ample space to speak and for enduring pauses, contradicting the doctor's self-doubt about interrupting. She also highlighted the doctor's effective placement of the chair, clear explanation of medication, good inclusion of the mother and friends in the concluding discussion, and thorough clarification of the patient advance directive and power of attorney."@en,
+                         "Kommilitonin 1 lobte die Ärztin dafür, dem Patienten viel Raum zum Sprechen gegeben und Pausen ausgehalten zu haben, was der Selbsteinschätzung der Ärztin widersprach, sie hätte manchmal unterbrochen. Sie hob auch die effektive Positionierung des Stuhls, die klare Erklärung der Medikamente, die gute Einbeziehung der Mutter und Freunde in das Abschlussgespräch sowie die gründliche Klärung der Patientenverfügung und Vollmacht hervor."@de,
+                         "Student 1 berömde läkaren för att ha gett patienten gott om utrymme att tala och för att ha uthärdat pauser, vilket motsade läkarens självtvivel om att avbryta. Hon framhöll också läkarens effektiva placering av stolen, tydliga förklaring av mediciner, goda inkludering av modern och vännerna i den avslutande diskussionen, samt noggranna klargörande av patientens förhandsdirektiv och fullmakt."@sv ;
+    :ConflictState "open" ;
+    :WrittenBy :Student1 ;
+    :HasParticipant :Student1, :Doctor, :Conversation ;
+    :CreationDate "2024-06-01T12:00:00Z"^^xsd:dateTime .
+
+:Conflict_003 a :Conflict ;
+    :ConflictTitle "Kommilitonin 1's critical feedback on delaying the word 'dying'"@en,
+                   "Kommilitonin 1's kritisches Feedback zur Verzögerung des Wortes 'Sterben'"@de,
+                   "Student 1:s kritiska feedback om att dröja med ordet 'döende'"@sv ;
+    :ConflictDescription "Student 1 noted that the word 'dying' was only explicitly mentioned at the very end of the conversation, feeling that the doctor initially avoided directly addressing the patient's implied wish to die and discussing euthanasia options."@en,
+                         "Kommilitonin 1 bemerkte, dass das Wort 'Sterben' erst ganz am Ende des Gesprächs explizit ausgesprochen wurde, und hatte das Gefühl, dass die Ärztin anfangs vermied, den impliziten Todeswunsch des Patienten direkt anzusprechen und Sterbehilfeoptionen zu diskutieren."@de,
+                         "Student 1 noterade att ordet 'döende' endast uttryckligen nämndes i slutet av samtalet, och kände att läkaren initialt undvek att direkt ta upp patientens antydda önskan att dö och diskutera eutanasi-alternativ."@sv ;
+    :ConflictState "open" ;
+    :WrittenBy :Student1 ;
+    :HasParticipant :Student1, :Doctor, :Dying, :EuthanasiaAssistedSuicide ;
+    :CreationDate "2024-06-01T12:00:00Z"^^xsd:dateTime .
+
+:Conflict_004 a :Conflict ;
+    :ConflictTitle "Kommilitonin 2's positive feedback on doctor's communication and care"@en,
+                   "Kommilitonin 2's positives Feedback zur Kommunikation und Fürsorge der Ärztin"@de,
+                   "Student 2:s positiva feedback om läkarens kommunikation och omsorg"@sv ;
+    :ConflictDescription "Student 2 praised the doctor for asking about the patient's wishes, varying her voice, showing self-disclosure when discussing dying, and restoring the environment after the conversation."@en,
+                         "Kommilitonin 2 lobte die Ärztin dafür, nach den Wünschen des Patienten gefragt, ihre Stimme variiert, Selbstoffenbarung beim Thema Sterben gezeigt und die Umgebung nach dem Gespräch wiederhergestellt zu haben."@de,
+                         "Student 2 berömde läkaren för att ha frågat om patientens önskemål, varierat sin röst, visat självutlämnande när hon diskuterade döende, och återställt miljön efter samtalet."@sv ;
+    :ConflictState "open" ;
+    :WrittenBy :Student2 ;
+    :HasParticipant :Student2, :Doctor, :Conversation, :VoiceModulation, :SelfDisclosure, :RestoringEnvironment ;
+    :CreationDate "2024-06-01T12:00:00Z"^^xsd:dateTime .
+
+:Conflict_005 a :Conflict ;
+    :ConflictTitle "Kommilitonin 2's critical feedback on delaying the word 'dying'"@en,
+                   "Kommilitonin 2's kritisches Feedback zur Verzögerung des Wortes 'Sterben'"@de,
+                   "Student 2:s kritiska feedback om att dröja med ordet 'döende'"@sv ;
+    :ConflictDescription "Student 2 expressed a wish that the doctor had used the word 'dying' earlier in the conversation, similar to how one would directly address suicidal thoughts in depressed individuals."@en,
+                         "Kommilitonin 2 äußerte den Wunsch, dass die Ärztin das Wort 'Sterben' früher im Gespräch verwendet hätte, ähnlich wie man Suizidgedanken bei depressiven Menschen direkt ansprechen würde."@de,
+                         "Student 2 uttryckte en önskan om att läkaren hade använt ordet 'döende' tidigare i samtalet, liknande hur man direkt skulle ta upp självmordstankar hos deprimerade individer."@sv ;
+    :ConflictState "open" ;
+    :WrittenBy :Student2 ;
+    :HasParticipant :Student2, :Doctor, :Dying ;
+    :CreationDate "2024-06-01T12:00:00Z"^^xsd:dateTime .
+
+:Conflict_006 a :Conflict ;
+    :ConflictTitle "Patient's positive feedback on doctor's calm demeanor and initial engagement"@en,
+                   "Positives Feedback des Patienten zur ruhigen Art und anfänglichen Engagement der Ärztin"@de,
+                   "Patientens positiva feedback om läkarens lugna uppträdande och initiala engagemang"@sv ;
+    :ConflictDescription "The patient found the conversation very pleasant, appreciating the doctor's calm speech which provided ample space for expression. He also valued the doctor's initial specific inquiries and lively non-verbal communication, which conveyed humanity."@en,
+                         "Der Patient empfand das Gespräch als sehr angenehm und schätzte die ruhige Sprechweise der Ärztin, die ihm viel Raum zur Äußerung gab. Er schätzte auch die anfänglichen konkreten Nachfragen der Ärztin und ihre lebhafte Mimik und Gestik, die Menschlichkeit vermittelte."@de,
+                         "Patienten tyckte att samtalet var mycket trevligt och uppskattade läkarens lugna tal som gav gott om utrymme för uttryck. Han värdesatte också läkarens initiala specifika frågor och livliga icke-verbala kommunikation, som förmedlade mänsklighet."@sv ;
+    :ConflictState "open" ;
+    :WrittenBy :Patient ;
+    :HasParticipant :Patient, :Doctor, :Conversation, :GivingSpace, :Inquiries, :NonVerbalCommunication, :HumanityEmpathy ;
+    :CreationDate "2024-06-01T12:00:00Z"^^xsd:dateTime .
+
+:Conflict_007 a :Conflict ;
+    :ConflictTitle "Patient's critical feedback on doctor's quick solution attempt"@en,
+                   "Kritisches Feedback des Patienten zum schnellen Lösungsversuch der Ärztin"@de,
+                   "Patientens kritiska feedback om läkarens snabba lösningsförsök"@sv ;
+    :ConflictDescription "The patient felt a slight friction when the doctor immediately tried to offer a solution after he expressed feeling like a burden, indicating that he didn't need a solution for that feeling."@en,
+                         "Der Patient empfand eine leichte Reibung, als die Ärztin sofort versuchte, eine Lösung anzubieten, nachdem er geäußert hatte, sich als Last zu fühlen, was darauf hindeutete, dass er für dieses Gefühl keine Lösung benötigte."@de,
+                         "Patienten kände en viss friktion när läkaren omedelbart försökte erbjuda en lösning efter att han uttryckt att han kände sig som en börda, vilket indikerade att han inte behövde en lösning för den känslan."@sv ;
+    :ConflictState "open" ;
+    :WrittenBy :Patient ;
+    :HasParticipant :Patient, :Doctor, :ProvidingSolutions ;
+    :CreationDate "2024-06-01T12:00:00Z"^^xsd:dateTime .
+
+:Conflict_008 a :Conflict ;
+    :ConflictTitle "Patient's critical feedback on doctor's non-verbal communication becoming distant"@en,
+                   "Kritisches Feedback des Patienten zur distanzierter werdenden Mimik und Gestik der Ärztin"@de,
+                   "Patientens kritiska feedback om läkarens icke-verbala kommunikation som blev mer distanserad"@sv ;
+    :ConflictDescription "The patient noted that the doctor's non-verbal communication became more static and distant towards the end of the conversation compared to the lively and human initial impression."@en,
+                         "Der Patient bemerkte, dass die Mimik und Gestik der Ärztin zum Ende des Gesprächs hin statischer und distanzierter wurde, verglichen mit dem lebhaften und menschlichen ersten Eindruck."@de,
+                         "Patienten noterade att läkarens icke-verbala kommunikation blev mer statisk och distanserad mot slutet av samtalet jämfört med det livliga och mänskliga första intrycket."@sv ;
+    :ConflictState "open" ;
+    :WrittenBy :Patient ;
+    :HasParticipant :Patient, :Doctor, :NonVerbalCommunication ;
+    :CreationDate "2024-06-01T12:00:00Z"^^xsd:dateTime .
+
+:Conflict_009 a :Conflict ;
+    :ConflictTitle "Dozent's overall positive feedback on doctor's thoughtful approach"@en,
+                   "Dozent's positives Gesamtfeedback zum bedächtigen Vorgehen der Ärztin"@de,
+                   "Föreläsarens övergripande positiva feedback om läkarens eftertänksamma tillvägagångssätt"@sv ;
+    :ConflictDescription "The lecturer praised the doctor for a very good conversation, highlighting her thoughtfulness in information exchange, her inclusion of family and friends, and her specialized knowledge regarding voluntary refusal of food and fluids. He also commended her approach to the death wish by accepting, addressing, and showing alternatives."@en,
+                         "Der Dozent lobte die Ärztin für ein sehr gutes Gespräch und hob ihre Bedächtigkeit im Informationsaustausch, die Einbeziehung von Familie und Freunden sowie ihr Detailwissen bezüglich des freiwilligen Verzichts auf Nahrung und Flüssigkeit hervor. Er lobte auch ihren Ansatz zum Todeswunsch, diesen anzunehmen, anzusprechen und Alternativen aufzuzeigen."@de,
+                         "Föreläsaren berömde läkaren för ett mycket bra samtal, framhöll hennes eftertänksamhet i informationsutbytet, hennes inkludering av familj och vänner, samt hennes specialistkunskap gällande frivilligt avstående från mat och vätska. Han berömde också hennes tillvägagångssätt för dödsönskan genom att acceptera, adressera och visa alternativ."@sv ;
+    :ConflictState "open" ;
+    :WrittenBy :Lecturer ;
+    :HasParticipant :Lecturer, :Doctor, :Conversation, :DeliberationThoughtfulness, :InformationExchange, :VoluntaryRefusalOfFoodAndFluids, :SpecializedKnowledge, :AcceptingAddressingAlternatives, :DeathWish, :WarningConversation ;
+    :CreationDate "2024-06-01T12:00:00Z"^^xsd:dateTime .
+
+:Conflict_010 a :Conflict ;
+    :ConflictTitle "Dozent's feedback on doctor's need for more confidence in addressing suffocation"@en,
+                   "Dozent's Feedback zum Bedarf der Ärztin an mehr Selbstbewusstsein bei der Ansprache des Erstickens"@de,
+                   "Föreläsarens feedback om läkarens behov av mer självförtroende vid hantering av kvävning"@sv ;
+    :ConflictDescription "The lecturer advised the doctor to be more confident and direct, especially when discussing the prevention of suffocation, emphasizing that it can be effectively managed with medication and symptom control."@en,
+                         "Der Dozent riet der Ärztin, selbstbewusster und direkter zu sein, insbesondere bei der Diskussion der Erstickungsprävention, und betonte, dass diese effektiv medikamentös und durch Symptomkontrolle behandelt werden kann."@de,
+                         "Föreläsaren rådde läkaren att vara mer självsäker och direkt, särskilt när det gäller att diskutera förebyggande av kvävning, och betonade att det effektivt kan hanteras med medicinering och symtomkontroll."@sv ;
+    :ConflictState "open" ;
+    :WrittenBy :Lecturer ;
+    :HasParticipant :Lecturer, :Doctor, :Confidence, :Skills, :Suffocation, :MedicinalRelief, :SymptomControl ;
+    :CreationDate "2024-06-01T12:00:00Z"^^xsd:dateTime .
+
+:Conflict_011 a :Conflict ;
+    :ConflictTitle "Dozent's feedback on the challenges of home care"@en,
+                   "Dozent's Feedback zu den Herausforderungen der häuslichen Versorgung"@de,
+                   "Föreläsarens feedback om utmaningarna med hemvård"@sv ;
+    :ConflictDescription "The lecturer suggested that home care might not always be the best option, especially when patients feel like a burden, implying that the setting might contribute to their feelings of worthlessness."@en,
+                         "Der Dozent deutete an, dass die häusliche Versorgung nicht immer die beste Option sein könnte, insbesondere wenn Patienten sich als Last fühlen, was impliziert, dass das Umfeld zu ihren Gefühlen der Wertlosigkeit beitragen könnte."@de,
+                         "Föreläsaren föreslog att hemvård kanske inte alltid är det bästa alternativet, särskilt när patienter känner sig som en börda, vilket antyder att miljön kan bidra till deras känslor av värdelöshet."@sv ;
+    :ConflictState "open" ;
+    :WrittenBy :Lecturer ;
+    :HasParticipant :Lecturer, :HomeCare ;
+    :CreationDate "2024-06-01T12:00:00Z"^^xsd:dateTime .
+
+:Conflict_012 a :Conflict ;
+    :ConflictTitle "Dozent's feedback on considering specialized facilities"@en,
+                   "Dozent's Feedback zur Berücksichtigung spezialisierter Einrichtungen"@de,
+                   "Föreläsarens feedback om att överväga specialiserade anläggningar"@sv ;
+    :ConflictDescription "The lecturer raised the question of whether a specialized facility might be a better place for patients than home care, especially when the home setting no longer supports their well-being."@en,
+                         "Der Dozent stellte die Frage, ob eine fachliche Einrichtung ein besserer Ort für Patienten sein könnte als die häusliche Versorgung, insbesondere wenn das häusliche Umfeld ihr Wohlbefinden nicht mehr unterstützt."@de,
+                         "Föreläsaren ställde frågan om en specialiserad anläggning skulle kunna vara en bättre plats för patienter än hemvård, särskilt när hemmiljön inte längre stöder deras välbefinnande."@sv ;
+    :ConflictState "open" ;
+    :WrittenBy :Lecturer ;
+    :HasParticipant :Lecturer, :SpecializedFacility ;
+    :CreationDate "2024-06-01T12:00:00Z"^^xsd:dateTime .
+
+:Conflict_013 a :Conflict ;
+    :ConflictTitle "Dozent's feedback on physician's autonomy to refuse euthanasia"@en,
+                   "Dozent's Feedback zur ärztlichen Autonomie, Sterbehilfe abzulehnen"@de,
+                   "Föreläsarens feedback om läkares autonomi att vägra eutanasi"@sv ;
+    :ConflictDescription "The lecturer emphasized that medical professionals have the personal and ethical autonomy to refuse to perform euthanasia, even though patients have the right to seek third-party assistance."@en,
+                         "Der Dozent betonte, dass medizinisches Fachpersonal die persönliche und ethische Autonomie besitzt, die Durchführung von Sterbehilfe abzulehnen, auch wenn Patienten das Recht haben, Hilfe Dritter in Anspruch zu nehmen."@de,
+                         "Föreläsaren betonade att medicinsk personal har personlig och etisk autonomi att vägra utföra eutanasi, även om patienter har rätt att söka hjälp från tredje part."@sv ;
+    :ConflictState "open" ;
+    :WrittenBy :Lecturer ;
+    :HasParticipant :Lecturer, :PhysicianAutonomyRefusalEuthanasia ;
+    :CreationDate "2024-06-01T12:00:00Z"^^xsd:dateTime .
+
+:Conflict_014 a :Conflict ;
+    :ConflictTitle "Dozent's concluding advice on advance care planning for ALS patients"@en,
+                   "Dozent's abschließender Rat zur Vorsorgeplanung bei ALS-Patienten"@de,
+                   "Föreläsarens avslutande råd om förhandsplanering av vård för ALS-patienter"@sv ;
+    :ConflictDescription "The lecturer concluded by advising on the importance of good advance care planning for ALS patients, noting that natural progressions like reduced food intake can lead to increased sedation needs, potentially making assisted suicide unnecessary."@en,
+                         "Der Dozent schloss mit dem Rat zur Bedeutung einer guten Vorsorgeplanung für ALS-Patienten und bemerkte, dass natürliche Verläufe wie eine reduzierte Nahrungsaufnahme zu einem erhöhten Sedierungsbedarf führen können, was assistierten Suizid potenziell unnötig macht."@de,
+                         "Föreläsaren avslutade med att ge råd om vikten av god förhandsplanering av vård för ALS-patienter, och noterade att naturliga förlopp som minskat matintag kan leda till ökat sedationsbehov, vilket potentiellt gör assisterat självmord onödigt."@sv ;
+    :ConflictState "open" ;
+    :WrittenBy :Lecturer ;
+    :HasParticipant :Lecturer, :Patient, :ALS, :AdvanceCarePlanning, :ReducedFoodIntake, :SedationNeed, :EuthanasiaAssistedSuicide ;
+    :CreationDate "2024-06-01T12:00:00Z"^^xsd:dateTime .
