@@ -154,8 +154,10 @@ export async function getActivityDetail(activity: Activity): Promise<ActivityDet
  */
 export async function getConflictIds(graph: string): Promise<{ title: string | Record<string, string>; id: string }[]> {
   let query = await getSparqlTemplate(sparqlTemplate.getConflictIds);
+  console.log("query getConflictIds: ", query);
   query = query.replace("{{graph}}", graph);
   const data = await fetchSparql(query);
+  console.log("data: ", data);
 
   const conflictMap = new Map<string, { title: Record<string, string>, id: string }>();
 
@@ -184,8 +186,8 @@ export async function getConflictIds(graph: string): Promise<{ title: string | R
  * @returns Conflict
  */
 export async function getConflictDetail(graph: string, conflictId: string, lang: string): Promise<Conflict> {
-  console.log("getconflictsdetail called")
   let query = await getSparqlTemplate(sparqlTemplate.getConflictDetail);
+  console.log("query getConflicDetail(): ", query);
   const mapObj = {
     "{{graph}}": graph,
     "{{conflict}}": conflictId,
@@ -202,15 +204,15 @@ export async function getConflictDetail(graph: string, conflictId: string, lang:
     if (item.conflict_p) {
       switch (item.conflict_p.value.split("#").pop()) {
        case "WrittenBy": {
-        // const langTag = item.authorLabel?.["xml:lang"] || "default";
-        const label = item.authorLabel?.value || item.conflict_o?.value?.split("#").pop() || "Unknown";
+        const langTag = item.participant_o?.["xml:lang"] || "default";
+        const label = item.participant_o?.value || item.conflict_o?.value?.split("#").pop() || "Unknown";
         if (!parsedConflict.author) {
-          parsedConflict.author = { [lang]: label };
+          parsedConflict.author = { [langTag]: label };
         } else {
-          parsedConflict.author[lang] = label;
+          parsedConflict.author[langTag] = label;
         }
         break;
-       }
+        }
         case "ConflictTitle": {
           const langTag = item.conflict_o["xml:lang"] || "default";
           if (!parsedConflict.title || typeof parsedConflict.title === "string") {

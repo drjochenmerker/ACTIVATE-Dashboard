@@ -107,7 +107,7 @@ export type Conflict = {
     title: { [lang: string]: string },           // e.g., { en: "Confidence...", sv: "Självförtroende..." }
     description?: { [lang: string]: string },    // same multilingual format
     participants: Participant[],
-    author: string,
+    author:{ [lang: string]: string },
     status: conflictStatus,
     timestamp?: Date,
     replies?: Comment[],

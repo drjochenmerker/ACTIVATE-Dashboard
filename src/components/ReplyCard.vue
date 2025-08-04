@@ -1,11 +1,12 @@
 <script lang="ts" setup>
-import { defineProps, nextTick, onMounted, ref } from 'vue';
+import { defineProps, nextTick, onMounted, ref, watch } from 'vue';
 import { Button } from '@/components/ui/button';
 import { addComment, deleteComment } from '@/data/knowledge_graph/write_operations';
 import { useConflictsStore } from '@/stores/conflictsStore';
 import { useSessionStore } from '@/stores/sessionStore';
 import { staticContent } from '@/data/contentData';
 import { useColorMode } from '@vueuse/core';
+import { getConflictDetail } from '@/data/knowledge_graph/read_operations';
 
 /** 
  * ReplyCard-Component
@@ -13,6 +14,10 @@ import { useColorMode } from '@vueuse/core';
  */
 
 const props = defineProps({
+    conflictId: {
+        type: String,
+        required: true,
+    },
     parentComment: {
         type: Object,
         required: true,
@@ -29,10 +34,6 @@ const conflictStore = useConflictsStore();
 const replyInputVisible = ref(false);
 const newReplyText = ref('');
 const textareaRef = ref<HTMLTextAreaElement | null>(null);
-
-onMounted(() => {
-    // console.log(props.parentComment)
-})
 
 const toggleReplyInput = async () => {
     replyInputVisible.value = !replyInputVisible.value;
@@ -51,8 +52,6 @@ const saveReply = async (parentCommentId: string) => {
             parentCommentId,
             newReplyText.value
         );
-        //console.log('reply saved successfully');
-
 
         replyInputVisible.value = false; // hide input field
         newReplyText.value = ''; // empty the text field 
@@ -110,6 +109,29 @@ const handleDelete = async (id: string, parentComment: any) => {
         console.error("Error while deleting the reply: ", error);
     }
 };
+const localizedAuthorLabel = ref('');
+
+const fetchAuthor = async () => {
+    try {
+        const detail = await getConflictDetail(
+            sessionStore.sessionActivity!.graph,
+            props.conflictId,
+            sessionStore.activeLanguage
+        );
+        localizedAuthorLabel.value = detail.author[sessionStore.activeLanguage];
+    } catch (error) {
+        console.error("Error loading author:", error);
+        localizedAuthorLabel.value = "Unknown Author";
+    }
+};
+
+
+onMounted(fetchAuthor);
+watch(() => sessionStore.activeLanguage, fetchAuthor);
+
+
+
+
 
 const removeReply = (id: string) => {
     if (!Array.isArray(props.parentComment.replies)) return;
@@ -124,7 +146,8 @@ const removeReply = (id: string) => {
 
         <div class="reply-content">
             <div class="reply-head">
-                <p class="reply-author">{{ props.parentComment.author }}</p>
+                <p class="reply-author">{{ localizedAuthorLabel }}</p>
+
                 <button class="icon-button" @click="handleDelete(props.parentComment.id, props.parentComment)">
                     <span class="material-symbols-outlined">delete</span>
                 </button>
@@ -150,8 +173,9 @@ const removeReply = (id: string) => {
 
         <div v-if="Array.isArray(props.parentComment.replies) && props.parentComment.replies.length"
             class="nested-replies">
+
             <ReplyCard v-for="nestedReply in props.parentComment.replies" :key="nestedReply.id"
-                :parentComment="nestedReply" @deleteComment="removeReply" />
+                :conflictId="props.conflictId" :parentComment="nestedReply" @deleteComment="removeReply" />
         </div>
 
     </div>

@@ -9,6 +9,7 @@ import { useSessionStore } from '@/stores/sessionStore';
 import { activateTerms, staticContent } from '@/data/contentData';
 import { buildLanguageString } from '@/lib/utils';
 
+
 const props = defineProps({
   conflict: {
     type: Object,
@@ -31,6 +32,7 @@ const props = defineProps({
     required: true,
   }
 });
+
 
 /** 
  * Reactive references for managing conflict details and reply input state
@@ -55,7 +57,6 @@ const textareaRef = ref<HTMLTextAreaElement | null>(null);
 // Set initial conflict detail
 onMounted(() => {
   conflictDetail.value = { ...props.conflict };
-  console.log('conflictDetail', conflictDetail.value);
 });
 
 // Watcher for props.conflict that adds the new conflict
@@ -222,11 +223,12 @@ const removeReply = (id: string) => {
       <span class="note-card-author">
         {{ staticContent.terms.author[sessionStore.activeLanguage] }}: {{ props.author }}
       </span>
+
       <!-- Status selector -->
       <div class="status-selector">
         <select v-model="selectedStatus">
           <option :value="conflictStatus.open">{{ staticContent.terms.conflictStatus.open[sessionStore.activeLanguage]
-          }}</option>
+            }}</option>
           <option :value="conflictStatus.inDiscussion">{{
             staticContent.terms.conflictStatus.inDiscussion[sessionStore.activeLanguage] }}</option>
           <option :value="conflictStatus.resolved">{{

@@ -48,7 +48,8 @@ const filteredConflicts = computed(() => {
           <NoteCard :conflict="conflict"
             :title="conflict.title[sessionStore.activeLanguage] || conflict.title['default'] || ''"
             :content="(conflict.description && (conflict.description[sessionStore.activeLanguage] || conflict.description['default'])) || ''"
-            :author="conflict.author" :status="conflict.status" />
+            :author="(conflict.author && (conflict.author[sessionStore.activeLanguage] || conflict.author['default'])) || ''"
+            :status="conflict.status" />
         </div>
         <!-- TODO: content not shown directly from already stored conflicts/tensions.. .. titel and beschreibung not visible in the card -->
 

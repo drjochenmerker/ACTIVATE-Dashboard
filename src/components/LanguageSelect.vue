@@ -4,12 +4,16 @@ import { LanguageCode } from '@/data/knowledge_graph/structures';
 import { LanguagesIcon } from 'lucide-vue-next';
 import { useSessionStore } from '@/stores/sessionStore';
 import { useActivityStore } from '@/stores/activityStore';
+import { useConflictsStore } from '@/stores/conflictsStore';
 
 const sessionStore = useSessionStore();
 const activityStore = useActivityStore();
+const conflictsStore = useConflictsStore();
+
 function handleLanguageChange() {
     activityStore.getAllActivities(sessionStore.activeLanguage);
-    // TODO: update for conflicts
+    conflictsStore.refreshConflictList(sessionStore.activeLanguage);
+
     sessionStore.outdated = true
 }
 </script>

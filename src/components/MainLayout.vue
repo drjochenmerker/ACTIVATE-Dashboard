@@ -19,7 +19,6 @@ const loadConflicts = async () => {
     conflictsStore.setConflicts(conflicts);
     conflictDetails.value = conflicts;
   }
-  console.log("Loaded conflicts:", conflictDetails.value);
 };
 
 onMounted(async () => {

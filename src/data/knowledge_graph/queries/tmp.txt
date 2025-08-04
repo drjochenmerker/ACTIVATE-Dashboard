@@ -21,14 +21,13 @@ SELECT * WHERE {
           FILTER(?conflict_p = :HasParticipant)
           ?conflict_o ?participant_p ?participant_o .
           FILTER(?participant_p = rdfs:label)
-          FILTER(lang(?participant_o) = "{{lang}}" || lang(?participant_o) = "")
         }
 
         OPTIONAL {
-          :{{conflict}} :WrittenBy ?author .
-          ?author rdfs:label ?authorLabel .
-          FILTER(lang(?authorLabel) = "{{lang}}" || lang(?authorLabel) = "")
-        }
+  :{{conflict}} :WrittenBy ?author .
+  ?author rdfs:label ?authorLabel .
+}
+
       }
     }
     UNION
@@ -45,8 +44,6 @@ SELECT * WHERE {
           ?o rdfs:label ?commentAuthorLabel .
           FILTER(lang(?commentAuthorLabel) = "{{lang}}" || lang(?commentAuthorLabel) = "")
         }
-
-        FILTER(lang(?o) = "{{lang}}" || lang(?o) = "")
       }
       ORDER BY ?s
     }
