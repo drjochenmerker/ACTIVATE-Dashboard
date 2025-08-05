@@ -150,7 +150,26 @@ function pushNestedValue(obj: NestedMultiLangObject, nestingPath: string[], newV
     currentObj.values.push(newValue);
 }
 
-export function buildTreeStructByLang(input: MultiLangObject[] | Objective[], lang: string): NestedMultiLangObject {
+// export function buildTreeStructByLang(input: MultiLangObject[] | Objective[], lang: string): NestedMultiLangObject {
+//     const result: NestedMultiLangObject = { level: "root" };
+//     for (const item of input) {
+//         const label = item.labels[lang] || item.labels["default"] || Object.values(item.labels)[0];
+//         const nestingPath = label.split("/");
+//         const finalValue = nestingPath.pop();
+//         const currentObj: MultiLangObject = {
+//             id: item.id,
+//             labels: {},
+//             value: finalValue
+//         };
+//         pushNestedValue(result, nestingPath, currentObj);
+//     }
+//     return result;
+// }
+export function buildTreeStructByLang(
+    input: MultiLangObject[] | Objective[],
+    lang: string,
+    preserveLabels: boolean = false // <-- new optional flag
+): NestedMultiLangObject {
     const result: NestedMultiLangObject = { level: "root" };
     for (const item of input) {
         const label = item.labels[lang] || item.labels["default"] || Object.values(item.labels)[0];
@@ -158,7 +177,7 @@ export function buildTreeStructByLang(input: MultiLangObject[] | Objective[], la
         const finalValue = nestingPath.pop();
         const currentObj: MultiLangObject = {
             id: item.id,
-            labels: {},
+            labels: preserveLabels ? item.labels : {},  // <-- respect the flag
             value: finalValue
         };
         pushNestedValue(result, nestingPath, currentObj);

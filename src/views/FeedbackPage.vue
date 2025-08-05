@@ -23,6 +23,7 @@ const sessionStore = useSessionStore()
 const activeLang = computed(() => sessionStore.activeLanguage)
 const answers = ref(['', '', ''])
 
+
 const localizedQuestions = computed(() => [
     staticContent.feedbackpage.question1[activeLang.value],
     staticContent.feedbackpage.question2[activeLang.value],
@@ -31,15 +32,37 @@ const localizedQuestions = computed(() => [
 
 onMounted(async () => {
     await getRoles();
+    // LOG the available roles to the console
+    // if (sessionStore.availableRoles.values) {
+    //     sessionStore.availableRoles.values.forEach(role => {
+    //         console.log("rollens: ", role.labels[sessionStore.activeLanguage]);
+    //     });
+    // }
 });
+const selectedRoleLabel = computed(() => {
+    const roles = sessionStore.availableRoles.values || [];
+    const selected = roles.find(role => role.id === sessionStore.sessionRole);
+    return selected
+        ? selected.labels[activeLang.value]
+        : '';
+});
+
+
 /**
  * Retrieves available roles for the current activity graph.
  * Fetches subject class IDs from the knowledge graph and populates the session store's available roles.
  */
 const getRoles = async () => {
+    const roles = await getActivityClassIds(props.graph, KnowledgeGraphActivityClass.subject);
     sessionStore.availableRoles = buildTreeStructByLang(
-        await getActivityClassIds(props.graph, KnowledgeGraphActivityClass.subject),
-        sessionStore.activeLanguage);
+        roles,
+        activeLang.value,
+        true
+    );
+    // available roles are now set in the sessionstore with
+    // {id: "", labels: {de: "", en: "", sv: ""}, value:""}
+    // console.log('Available roles:', sessionStore.availableRoles.values);
+
 }
 
 const submitFeedback = async () => {
@@ -47,14 +70,21 @@ const submitFeedback = async () => {
         alert('Please select your role before submitting.')
         return
     }
+    console.log("sessionrole", sessionStore.sessionRole)
 
+    const fullData = answers.value.map(answer => ({
+        question: localizedQuestions.value[answers.value.indexOf(answer)],
+        answer: answer
+    }));
     const feedbackData = {
         graph: props.graph,
-        role: sessionStore.sessionRole,
-        answers: answers.value
+        role: sessionStore.sessionRole, // todo correct role_id
+        data: fullData
     }
 
-
+    //sowohl antworten als fragen
+    // so strukturiert wie doc example 
+    // data: question und answer
     console.log('Submitted feedback object from student:', feedbackData)
 
     try {
@@ -78,14 +108,17 @@ const submitFeedback = async () => {
                 <div class="mb-6">
                     <Select v-model="sessionStore.sessionRole" id="roleSelect" class="my-4">
                         <SelectTrigger>
-                            <SelectValue
-                                :placeholder="staticContent.placeholders.roleSelect[sessionStore.activeLanguage]" />
+                            <span>
+                                {{ selectedRoleLabel ||
+                                    staticContent.placeholders.roleSelect[sessionStore.activeLanguage] }}
+                            </span>
                         </SelectTrigger>
                         <SelectContent>
                             <RecursiveSelect :node="sessionStore.availableRoles" />
                         </SelectContent>
                     </Select>
                 </div>
+
 
 
                 <!-- Questions -->
