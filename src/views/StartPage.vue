@@ -77,7 +77,9 @@ const addNewActivity = async () => {
   }
 
   try {
-    const res = await addActivity(newTitle.value, newDescription.value);
+    // const res = await addActivity(newTitle.value, newDescription.value);
+    // TODO handle adding of activities
+    const res = await addActivity(newTitle.value);
 
     if (defaultRole.value.trim()) {
       await addEntity(res.modified, defaultRole.value, KnowledgeGraphActivityClass.subject, sessionStore.activeLanguage);
