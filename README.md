@@ -15,14 +15,21 @@ cd activate-dashboard
 
 ```
 npm install
+cd feedback-parser
+npm install
+cd ..
 ```
 
-3. Add a ```.env``` File containing the environment variables
+3. Add a `.env` File containing the environment variables
 
 The File should look like this
+
 ```
 VITE_KNOWLEDGE_GRAPH_URL=<URL>
 VITE_KNOWLEDGE_GRAPH_PORT=<PORT>
+
+VITE_LLM_URL=<URL>
+VITE_LLM_PORT=<PORT>
 ```
 
 ## Development
@@ -39,6 +46,12 @@ Run the development server with a SPARQL Endpoint on Port 8000
 npm run dev-sparql
 ```
 
+Run all components at once
+
+```
+npm run dev-full
+```
+
 The application will be available at http://localhost:5173 by default.
 
 ## SPARQL Setup for local testing
@@ -46,16 +59,19 @@ The application will be available at http://localhost:5173 by default.
 Method 1 and 2 will run the sparql endpoint on http://localhost:8000
 
 #### Method 1 - NPM
-```npm run sparql```
+
+`npm run sparql`
 
 #### Method 2 - Python
-```pip install rdflib-endpoint uvicorn``` and ```rdflib-endpoint serve /path/to/ttl```
 
+`pip install rdflib-endpoint uvicorn` and `rdflib-endpoint serve /path/to/ttl`
 
 #### Method 3 - Podman
-```podman run -p 3030:3030 docker.io/secoresearch/fuseki```
+
+`podman run -p 3030:3030 docker.io/secoresearch/fuseki`
 
 **Example:**
+
 ```
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -70,5 +86,6 @@ SELECT * WHERE {
 ```
 
 ## Deployment using Docker/Podman
+
 It's highly recommended to use the following command:
-```podman-compose up -d```
+`podman-compose up -d`

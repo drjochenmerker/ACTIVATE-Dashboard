@@ -1,0 +1,4 @@
+[submodule "feedback-parser"]
+	path = feedback-parser
+	url = git@gitlab.dit.htwk-leipzig.de:iosse/activate/text-ttl/text-ttl-backend.git
+	branch = feedback-parser

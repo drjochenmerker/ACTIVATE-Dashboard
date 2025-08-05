@@ -6,11 +6,13 @@
     "scripts": {
         "dev": "vite",
         "dev-sparql": "concurrently --kill-others \"npm run sparql\" \"sleep 8 && vite\"",
+        "dev-full": "concurrently --kill-others \"npm run sparql\" \"sleep 8 && vite\" \"npm run llm\"",
         "build": "vue-tsc -b && vite build",
         "preview": "vite preview",
         "format": "prettier --write .",
         "format-check": "prettier --check .",
-        "sparql": "bash rdflib/scripts/sparql_setup.sh"
+        "sparql": "bash rdflib/scripts/sparql_setup.sh",
+        "llm": "cd feedback-parser && npm run dev"
     },
     "dependencies": {
         "@tanstack/vue-table": "^8.21.2",
