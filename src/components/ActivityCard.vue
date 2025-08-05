@@ -87,8 +87,8 @@ const cloneThisActivity = async (newTitle: string, newDescription: string) => {
 
     const clonedActivity = {
         graph: props.activity.graph,
-        name: newTitle,
-        description: newDescription || props.activity.description,
+        name: { ...props.activity.name, [sessionStore.activeLanguage]: newTitle },
+        description: { ...props.activity.description, [sessionStore.activeLanguage]: newDescription || props.activity.description[sessionStore.activeLanguage] },
     };
     activityStore.cloneThisActivity(clonedActivity);
     activityStore.refreshActivityList();
@@ -106,11 +106,17 @@ const deleteThisActivity = async () => {
 
 // edit activity:
 //      first step
+// const openEditDialog = () => {
+//     editTitle.value = props.activity.name;
+//     editDescription.value = props.activity.description;
+//     isEditDialogOpen.value = true;
+// }
 const openEditDialog = () => {
-    editTitle.value = props.activity.name;
-    editDescription.value = props.activity.description;
-    isEditDialogOpen.value = true;
+    editTitle.value = props.activity.name[sessionStore.activeLanguage] || ''
+    editDescription.value = props.activity.description[sessionStore.activeLanguage] || ''
+    isEditDialogOpen.value = true
 }
+
 //      second step
 const updateActivity = async (newTitle: string, newDescription: string) => {
     if (!newTitle.trim()) {
@@ -119,11 +125,10 @@ const updateActivity = async (newTitle: string, newDescription: string) => {
     }
     editTitleError.value = false;
 
-
     const updatedActivity = {
         graph: props.activity.graph,
-        name: newTitle,
-        description: newDescription || props.activity.description,
+        name: { ...props.activity.name, [sessionStore.activeLanguage]: newTitle },
+        description: { ...props.activity.description, [sessionStore.activeLanguage]: newDescription || props.activity.description[sessionStore.activeLanguage] },
     };
     activityStore.editActivity(updatedActivity);
     await activityStore.refreshActivityList();
@@ -135,9 +140,16 @@ const updateActivity = async (newTitle: string, newDescription: string) => {
  * Fetches subject class IDs from the knowledge graph and populates the session store's available roles.
  */
 const getRoles = async () => {
-    sessionStore.availableRoles = buildTreeStructByLang(
-        await getActivityClassIds(props.activity.graph, KnowledgeGraphActivityClass.subject),
-        sessionStore.activeLanguage);
+    try {
+
+        const roles = await getActivityClassIds(props.activity.graph, KnowledgeGraphActivityClass.subject);
+        sessionStore.availableRoles = buildTreeStructByLang(roles, sessionStore.activeLanguage);
+    } catch (error) {
+        console.error("Error fetching roles:", error);
+    }
+    // console.log("Available roles for activity:", sessionStore.availableRoles.values);
+    // console.log("Built tree structure:", sessionStore.availableRoles.values?.[0].labels[sessionStore.activeLanguage]);
+
 }
 
 const sessionStartAllowed = () => !sessionStore.sessionRole;
@@ -159,7 +171,7 @@ const showQrDialog = ref(false)
 
                 <AccordionTrigger class="accordion-trigger text-lg font-semibold text-middle flex justify-center"
                     @click="getRoles">
-                    {{ props.activity.name }}
+                    {{ props.activity.name[sessionStore.activeLanguage] || props.activity.name['default'] }}
                 </AccordionTrigger>
 
 
@@ -170,7 +182,8 @@ const showQrDialog = ref(false)
                     <div class="h-[1px] bg-gray-200 dark:bg-gray-700 my-2"></div>
 
                     <!-- Description -->
-                    <p class="text-base">{{ props.activity.description }}</p>
+                    <p class="text-base">{{ props.activity.description[sessionStore.activeLanguage]
+                        || props.activity.description['default'] }}</p>
 
                     <!-- Buttons-->
                     <div class="flex justify-between items-center gap-4 flex-wrap">
@@ -323,6 +336,7 @@ const showQrDialog = ref(false)
                                         </SelectTrigger>
                                         <SelectContent>
                                             <RecursiveSelect :node="sessionStore.availableRoles" />
+
                                         </SelectContent>
 
                                     </Select>

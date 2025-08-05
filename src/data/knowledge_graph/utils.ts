@@ -1,4 +1,4 @@
-import type { Comment, Conflict, MultiLangObject, NestedMultiLangObject, Objective, RDFTriple, sparqlTemplate, StringAccessObject } from "./structures";
+import type { Comment, Conflict, MultiLangObject, NestedMultiLangObject, RDFTriple, sparqlTemplate, StringAccessObject } from "./structures";
 
 /**
  * Internal function that allows to load a SPARQL query template from the filesystem
@@ -123,32 +123,55 @@ export function EscapeSparqlStringLiteral(input: string): string {
         .replace(/\t/g, '\\t');
 }
 
-function pushNestedValue(obj: NestedMultiLangObject, nestingPath: string[], newValue: MultiLangObject): void {
-    // Case 1: empty nestingPath
-    if (nestingPath.length == 0) {
-        !obj.values ? obj.values = [newValue] : obj.values.push(newValue);
-        return;
+// function pushNestedValue(obj: NestedMultiLangObject, nestingPath: string[], newValue: MultiLangObject): void {
+//     // Case 1: empty nestingPath
+//     if (nestingPath.length == 0) {
+//         !obj.values ? obj.values = [newValue] : obj.values.push(newValue);
+//         return;
+//     }
+//     // Case 2 nestingPath not empty
+//     let currentObj: NestedMultiLangObject = obj;
+//     for (const levelPath of nestingPath) {
+//         !currentObj.next ? currentObj.next = [] : null;
+//         // Find next level object
+//         let nextLevelObj = currentObj.next.find((item) => item.level == levelPath);
+//         if (nextLevelObj) {
+//             currentObj = nextLevelObj;
+//         }
+//         else {
+//             const newLevelObj = { level: levelPath };
+//             currentObj.next.push(newLevelObj);
+//             currentObj = newLevelObj;
+//         }
+//     }
+//     if (!currentObj.values) {
+//         currentObj.values = [];
+//     }
+//     currentObj.values.push(newValue);
+// }
+function pushNestedValue(
+  root: NestedMultiLangObject,
+  path: string[],
+  value: MultiLangObject
+) {
+  let current = root;
+
+  for (const segment of path) {
+    if (!current.next) current.next = [];
+
+    let nextNode = current.next.find((n) => n.level === segment);
+    if (!nextNode) {
+      nextNode = { level: segment, values: [], next: [] };
+      current.next.push(nextNode);
     }
-    // Case 2 nestingPath not empty
-    let currentObj: NestedMultiLangObject = obj;
-    for (const levelPath of nestingPath) {
-        !currentObj.next ? currentObj.next = [] : null;
-        // Find next level object
-        let nextLevelObj = currentObj.next.find((item) => item.level == levelPath);
-        if (nextLevelObj) {
-            currentObj = nextLevelObj;
-        }
-        else {
-            const newLevelObj = { level: levelPath };
-            currentObj.next.push(newLevelObj);
-            currentObj = newLevelObj;
-        }
-    }
-    if (!currentObj.values) {
-        currentObj.values = [];
-    }
-    currentObj.values.push(newValue);
+
+    current = nextNode;
+  }
+
+  if (!current.values) current.values = [];
+  current.values.push(value);
 }
+
 
 // export function buildTreeStructByLang(input: MultiLangObject[] | Objective[], lang: string): NestedMultiLangObject {
 //     const result: NestedMultiLangObject = { level: "root" };
@@ -166,21 +189,28 @@ function pushNestedValue(obj: NestedMultiLangObject, nestingPath: string[], newV
 //     return result;
 // }
 export function buildTreeStructByLang(
-    input: MultiLangObject[] | Objective[],
-    lang: string,
-    preserveLabels: boolean = false // <-- new optional flag
+  input: MultiLangObject[],
+  lang: string
 ): NestedMultiLangObject {
-    const result: NestedMultiLangObject = { level: "root" };
-    for (const item of input) {
-        const label = item.labels[lang] || item.labels["default"] || Object.values(item.labels)[0];
-        const nestingPath = label.split("/");
-        const finalValue = nestingPath.pop();
-        const currentObj: MultiLangObject = {
-            id: item.id,
-            labels: preserveLabels ? item.labels : {},  // <-- respect the flag
-            value: finalValue
-        };
-        pushNestedValue(result, nestingPath, currentObj);
-    }
-    return result;
+  const result: NestedMultiLangObject = { level: "root", values: [], next: [] };
+
+  for (const item of input) {
+    const label =
+      item.labels[lang] ||
+      item.labels["default"] ||
+      Object.values(item.labels)[0];
+
+    const nestingPath = label.split("/");
+    //const finalValue = nestingPath.pop(); // e.g., "Doctor" from "Medical/Doctor"
+
+    const currentObj: MultiLangObject = {
+        id: item.id,
+        labels: item.labels,
+        value: "", 
+    };
+
+    pushNestedValue(result, nestingPath, currentObj);
+  }
+
+  return result;
 }

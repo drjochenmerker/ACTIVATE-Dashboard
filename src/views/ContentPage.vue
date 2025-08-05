@@ -30,6 +30,7 @@ const miscComments = ref<Comment[]>([]);
 
 // Fetch miscellaneous comments on mount
 onMounted(async () => {
+    console.log(props.conflicts);
     fetchMiscs();
 });
 

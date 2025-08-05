@@ -32,19 +32,6 @@ const localizedQuestions = computed(() => [
 
 onMounted(async () => {
     await getRoles();
-    // LOG the available roles to the console
-    // if (sessionStore.availableRoles.values) {
-    //     sessionStore.availableRoles.values.forEach(role => {
-    //         console.log("rollens: ", role.labels[sessionStore.activeLanguage]);
-    //     });
-    // }
-});
-const selectedRoleLabel = computed(() => {
-    const roles = sessionStore.availableRoles.values || [];
-    const selected = roles.find(role => role.id === sessionStore.sessionRole);
-    return selected
-        ? selected.labels[activeLang.value]
-        : '';
 });
 
 
@@ -56,8 +43,7 @@ const getRoles = async () => {
     const roles = await getActivityClassIds(props.graph, KnowledgeGraphActivityClass.subject);
     sessionStore.availableRoles = buildTreeStructByLang(
         roles,
-        activeLang.value,
-        true
+        activeLang.value
     );
     // available roles are now set in the sessionstore with
     // {id: "", labels: {de: "", en: "", sv: ""}, value:""}
@@ -106,12 +92,16 @@ const submitFeedback = async () => {
 
                 <!-- Role selection -->
                 <div class="mb-6">
-                    <Select v-model="sessionStore.sessionRole" id="roleSelect" class="my-4">
+                    <Select :model-value="sessionStore.sessionRole"
+                        @update:model-value="sessionStore.sessionRole = $event" id="roleSelect" class="my-4">
                         <SelectTrigger>
-                            <span>
+                            <!-- <span>
                                 {{ selectedRoleLabel ||
                                     staticContent.placeholders.roleSelect[sessionStore.activeLanguage] }}
-                            </span>
+                            </span> -->
+                            <SelectValue
+                                :placeholder="staticContent.placeholders.roleSelect[sessionStore.activeLanguage] || sessionStore.sessionRole" />
+
                         </SelectTrigger>
                         <SelectContent>
                             <RecursiveSelect :node="sessionStore.availableRoles" />

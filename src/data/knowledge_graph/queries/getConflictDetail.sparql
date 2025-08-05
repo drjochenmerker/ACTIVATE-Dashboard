@@ -21,12 +21,13 @@ SELECT * WHERE {
     }
     UNION
     {
-      SELECT ?s ?p ?o
+      SELECT ?s ?p ?o ?oLang
       WHERE {
         :{{conflict}} (<>|!<>)* ?s .
         ?s rdf:type :Comment .
         ?s ?p ?o .
         FILTER (?p != rdf:type) .
+        BIND(LANG(?o) AS ?oLang)
       }
       ORDER BY ?s
     }

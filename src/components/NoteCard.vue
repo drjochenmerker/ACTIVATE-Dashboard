@@ -224,6 +224,7 @@ const removeReply = (id: string) => {
       <!-- Author-->
       <span class="note-card-author">
         {{ staticContent.terms.author[sessionStore.activeLanguage] }}: {{ props.author }}
+        <!-- TODO: correctly access the author in the active language -->
       </span>
       <!-- Status selector -->
       <div class="status-selector">

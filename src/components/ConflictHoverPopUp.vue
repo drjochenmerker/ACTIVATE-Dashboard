@@ -27,7 +27,12 @@ const popupRef = ref<HTMLElement | null>(null);
 const popupStyle = ref({ top: props.position.x + "px", left: props.position.y + 'px' });
 
 onMounted(() => {
-  props.hoveredConflictPoint.description = props.hoveredConflictPoint.description?.replace(/<\/?[^>]+(>|$)/g, "");
+  const descKey = sessionStore.activeLanguage in props.hoveredConflictPoint.description
+    ? sessionStore.activeLanguage
+    : 'default';
+  if (props.hoveredConflictPoint.description && typeof props.hoveredConflictPoint.description[descKey] === 'string') {
+    props.hoveredConflictPoint.description[descKey] = props.hoveredConflictPoint.description[descKey].replace(/<\/?[^>]+(>|$)/g, "");
+  }
   updatePopupHeight(props.position);
 });
 
@@ -75,7 +80,12 @@ const sessionStore = useSessionStore();
  * - Measures popup height
  */
 onMounted(() => {
-  props.hoveredConflictPoint.description = props.hoveredConflictPoint.description?.replace(/<\/?[^>]+(>|$)/g, "");
+  const descKey = sessionStore.activeLanguage in props.hoveredConflictPoint.description
+    ? sessionStore.activeLanguage
+    : 'default';
+  if (props.hoveredConflictPoint.description && typeof props.hoveredConflictPoint.description[descKey] === 'string') {
+    props.hoveredConflictPoint.description[descKey] = props.hoveredConflictPoint.description[descKey].replace(/<\/?[^>]+(>|$)/g, "");
+  }
   updatePopupHeight({});
 });
 
@@ -96,9 +106,9 @@ watch(() => props.position, updatePopupHeight);
 
   <div v-if="sessionStore.activeScene === 'Scene 1'" ref="popupRef" class="popup"
     :class="{ 'popup-dark': mode === 'dark' }" :style="popupStyle">
-    <b>{{ hoveredConflictPoint.title }}</b>
+    <b>{{ hoveredConflictPoint.title[sessionStore.activeLanguage] || hoveredConflictPoint.title['default'] }}</b>
     <p v-if="hoveredConflictPoint.description">
-      {{ hoveredConflictPoint.description }}
+      {{ hoveredConflictPoint.description[sessionStore.activeLanguage] || hoveredConflictPoint.description['default'] }}
     </p>
     <div v-if="hoveredConflictPoint.participants.length">
       <p><strong>{{ staticContent.terms.participants[sessionStore.activeLanguage] }}:</strong></p>
@@ -117,11 +127,14 @@ watch(() => props.position, updatePopupHeight);
    -->
   <div v-if="sessionStore.activeScene === 'Scene 2'" class="popup-header">
     <div ref="popupRef" class="popup" :class="{ 'popup-dark': mode === 'dark' }" :style="popupStyle">
-      <b>{{ hoveredConflictPoint.title }}</b>
+      <b>{{ hoveredConflictPoint.title[sessionStore.activeLanguage] || hoveredConflictPoint.title['default'] }}</b>
+
       <p v-if="hoveredConflictPoint.description">
-        {{ hoveredConflictPoint.description }}
+        {{ hoveredConflictPoint.description[sessionStore.activeLanguage] || hoveredConflictPoint.description['default']
+        }}
       </p>
-      <p><strong>{{ staticContent.terms.author[sessionStore.activeLanguage] }}:</strong> {{ hoveredConflictPoint.author
+      <p><strong>{{ staticContent.terms.author[sessionStore.activeLanguage] }}:</strong> {{
+        hoveredConflictPoint.author[sessionStore.activeLanguage] || hoveredConflictPoint.author['default']
         }}
       </p>
       <p>
