@@ -21,7 +21,7 @@ import {
   DialogDescription,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import { addActivity, addEntity } from '@/data/knowledge_graph/write_operations';
+// import { addActivity, addEntity } from '@/data/knowledge_graph/write_operations';
 import { useActivityStore } from '@/stores/activityStore';
 import { buildTreeStructByLang } from '@/data/knowledge_graph/utils';
 import { staticContent } from '@/data/contentData';
