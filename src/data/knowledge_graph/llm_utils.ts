@@ -22,6 +22,7 @@ export type LLMParsingResult = {
  */
 export async function llmSettingGeneration(description: string, title?: string, defaultRole?: string): Promise<LLMParsingResult> {
     // Generate TTL using the LLM Backend
+    console.log("port", import.meta.env.VITE_LLM_PORT);
     const llmRes = await fetch(`${import.meta.env.VITE_LLM_URL}${import.meta.env.VITE_LLM_PORT == false ? '' : ':' + import.meta.env.VITE_LLM_PORT}/api/feedback/settingGen`, {
         method: "POST",
         headers: {

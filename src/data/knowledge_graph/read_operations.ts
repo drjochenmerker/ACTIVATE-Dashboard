@@ -515,8 +515,10 @@ export async function getActivityClassIds(
     "{{activityClass}}": activityClass,
   };
   query = query.replaceMultiple(mapObj);
+  console.log("Query:", query);
 
   const data = await fetchSparql(query);
+  console.log("Data:", data);
   let result: MultiLangObject[] = [];
 
   data.forEach((item: StringAccessObject) => {

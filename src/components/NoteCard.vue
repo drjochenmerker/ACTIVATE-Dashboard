@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { defineProps, ref, onMounted, nextTick, computed, watch } from 'vue';
+import { ref, onMounted, nextTick, computed, watch } from 'vue';
 import { conflictPredicate, conflictStatus, Participant } from '@/data/knowledge_graph/structures';
 import ReplyCard from './ReplyCard.vue';
 import { addComment, deleteConflict, updateConflict } from "@/data/knowledge_graph/write_operations";
@@ -230,7 +230,7 @@ const removeReply = (id: string) => {
       <div class="status-selector">
         <select v-model="selectedStatus">
           <option :value="conflictStatus.open">{{ staticContent.terms.conflictStatus.open[sessionStore.activeLanguage]
-          }}</option>
+            }}</option>
           <option :value="conflictStatus.inDiscussion">{{
             staticContent.terms.conflictStatus.inDiscussion[sessionStore.activeLanguage] }}</option>
           <option :value="conflictStatus.resolved">{{

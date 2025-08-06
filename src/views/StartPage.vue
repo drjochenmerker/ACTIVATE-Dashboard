@@ -27,6 +27,7 @@ import { buildTreeStructByLang } from '@/data/knowledge_graph/utils';
 import { staticContent } from '@/data/contentData';
 import LanguageSelect from '@/components/LanguageSelect.vue';
 import { PlusIcon } from 'lucide-vue-next';
+import { llmSettingGeneration } from '@/data/knowledge_graph/llm_utils';
 
 useColorMode();
 const sessionStore = useSessionStore();
@@ -69,32 +70,41 @@ watch(selectedActivity, async () => {
 
 const addNewActivity = async () => {
   // TODO: implement new functionality for AI creating basic activity
-
-  showValidationErrors.value = true;
-
-  if (!newDescription.value.trim()) {
-    return;
-  }
-
+  console.log("Adding new activity with title:", newTitle.value);
+  console.log("Description:", newDescription.value);
+  console.log("Default role:", defaultRole.value);
   try {
-    // const res = await addActivity(newTitle.value, newDescription.value);
-    // TODO handle adding of activities
-    const res = await addActivity(newTitle.value);
 
-    if (defaultRole.value.trim()) {
-      await addEntity(res.modified, defaultRole.value, KnowledgeGraphActivityClass.subject, sessionStore.activeLanguage);
-    }
-
-    await activityStore.refreshActivityList();
-
-    dialogOpen.value = false;
-    newTitle.value = '';
-    newDescription.value = '';
-    defaultRole.value = '';
-    showValidationErrors.value = false; // Reset validation state
+    const res = await llmSettingGeneration(newDescription.value, newTitle.value, defaultRole.value);
+    console.log("LLM response:", res);
   } catch (error) {
-    console.error("Fehler beim Hinzufügen einer Aktivität:", error);
+    console.error("Error during LLM generation:", error);
   }
+  // showValidationErrors.value = true;
+
+  // if (!newDescription.value.trim()) {
+  //   return;
+  // }
+
+  // try {
+  //   // const res = await addActivity(newTitle.value, newDescription.value);
+  //   // TODO handle adding of activities
+  //   const res = await addActivity(newTitle.value);
+
+  //   if (defaultRole.value.trim()) {
+  //     await addEntity(res.modified, defaultRole.value, KnowledgeGraphActivityClass.subject, sessionStore.activeLanguage);
+  //   }
+
+  //   await activityStore.refreshActivityList();
+
+  //   dialogOpen.value = false;
+  //   newTitle.value = '';
+  //   newDescription.value = '';
+  //   defaultRole.value = '';
+  //   showValidationErrors.value = false; // Reset validation state
+  // } catch (error) {
+  //   console.error("Fehler beim Hinzufügen einer Aktivität:", error);
+  // }
 };
 
 
@@ -154,8 +164,7 @@ const addNewActivity = async () => {
 
       <!-- Activities Grid -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 px-6 pb-6">
-        <ActivityCard v-for="activity in activities" :key="activity.name['default']" :activity="activity"
-          class="h-fit" />
+        <ActivityCard v-for="activity in activities" :key="activity.graph" :activity="activity" class="h-fit" />
       </div>
     </Card>
   </div>

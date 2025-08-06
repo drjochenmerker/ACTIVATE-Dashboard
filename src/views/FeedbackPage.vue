@@ -14,6 +14,7 @@ import { staticContent } from '@/data/contentData'
 import { buildTreeStructByLang } from '@/data/knowledge_graph/utils';
 import { getActivityClassIds } from '@/data/knowledge_graph/read_operations';
 import { KnowledgeGraphActivityClass } from '@/data/knowledge_graph/structures';
+import { llmSubmit } from '@/data/knowledge_graph/llm_utils';
 
 const props = defineProps<{ graph: string }>()
 
@@ -32,6 +33,7 @@ const localizedQuestions = computed(() => [
 
 onMounted(async () => {
     await getRoles();
+    // console.log("Available roles:", sessionStore.availableRoles);
 });
 
 
@@ -41,6 +43,11 @@ onMounted(async () => {
  */
 const getRoles = async () => {
     const roles = await getActivityClassIds(props.graph, KnowledgeGraphActivityClass.subject);
+
+    roles.forEach(role => {
+        console.log("Role:", role);
+    });
+
     sessionStore.availableRoles = buildTreeStructByLang(
         roles,
         activeLang.value
@@ -52,22 +59,61 @@ const submitFeedback = async () => {
         alert('Please select your role before submitting.')
         return
     }
-    console.log("sessionrole", sessionStore.sessionRole)
+    // console.log("sessionrole", sessionStore.sessionRole)
 
+    // const fullData = answers.value.map(answer => ({
+    //     question: localizedQuestions.value[answers.value.indexOf(answer)],
+    //     answer: answer
+    // }));
+    // const feedbackData = {
+    //     graph: props.graph,
+    //     role: sessionStore.sessionRole, // todo correct role_id
+    //     data: fullData
+    // }
+
+    // console.log('Submitted feedback object from student:', feedbackData)
+    // console.log("sessioinrole", sessionStore.sessionRole);
+    // Pick label in active language or fallback
+    const roles = await getActivityClassIds(props.graph, KnowledgeGraphActivityClass.subject);
+
+    const selectedRole = roles.find(role => role.id === sessionStore.sessionRole);
+
+    if (!selectedRole) {
+        alert('Selected role not found!');
+        return;
+    }
+
+    const roleLabel = selectedRole.labels[activeLang.value] || selectedRole.labels['default'] || selectedRole.labels['en'];
+
+    // Build correct role object
+    const roleForSubmit = {
+        id: selectedRole.id,
+        label: roleLabel
+    };
+
+    // Build full feedback object
     const fullData = answers.value.map(answer => ({
         question: localizedQuestions.value[answers.value.indexOf(answer)],
         answer: answer
     }));
+
     const feedbackData = {
         graph: props.graph,
-        role: sessionStore.sessionRole, // todo correct role_id
+        role: roleForSubmit,
         data: fullData
+    };
+
+    console.log('Submitted feedback object from student:', feedbackData);
+    try {
+        await llmSubmit(feedbackData.graph, feedbackData.role, feedbackData.data);
+    } catch (error) {
+        console.error("Error submitting feedback:", error);
+        alert('Failed to submit feedback. Please try again later.');
+        return;
     }
-
-    console.log('Submitted feedback object from student:', feedbackData)
-
     try {
         await router.push('/feedback-thank-you')
+        // TODO maybe show feedback success message earlier because right now it takes too long
         console.log('Navigation to FeedbackThankyouPage was successful')
     } catch (err) {
         console.error('Navigation failed:', err)

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 // functions
-import { defineProps, onMounted, computed, ref } from 'vue';
+import { onMounted, computed, ref } from 'vue';
 import { useSessionStore } from '@/stores/sessionStore';
 import { getActivityClassIds } from '@/data/knowledge_graph/read_operations';
 import { useActivityStore } from '@/stores/activityStore';
@@ -20,6 +20,7 @@ import Label from '@/components/ui/label/Label.vue';
 import Checkbox from '@/components/ui/checkbox/Checkbox.vue';
 import { BookCopy, Play, Loader2 } from 'lucide-vue-next';
 import { staticContent } from '@/data/contentData';
+import { llmPool } from '@/data/knowledge_graph/llm_utils';
 
 // consts and props defintion
 const sessionStore = useSessionStore();
@@ -150,10 +151,17 @@ const getRoles = async () => {
 }
 
 const sessionStartAllowed = () => !sessionStore.sessionRole;
-const handlePoolingStart = () => {
+const handlePoolingStart = async () => {
     // todo handle pooling start
     console.log("Pooling triggered!");
+    try {
+        const res = await llmPool(props.activity.graph);
+        console.log("Pooling response:", res);
+    } catch (error) {
+        console.error("Error during pooling:", error);
+    }
 }
+
 
 // work with the qr code
 const showQrDialog = ref(false)

@@ -2,7 +2,6 @@
 import { computed, onMounted, ref, watch } from 'vue';
 import Button from '@/components/ui/button/Button.vue';
 import RDFAdditionDropdown from './RDFAdditionDropdown.vue';
-import { defineProps } from 'vue';
 import { useColorMode } from '@vueuse/core';
 import { addPredicate, updateTriple } from '@/data/knowledge_graph/write_operations';
 import { Activity, KnowledgeGraphActivityClass, LanguageCode, LanguageLabel, Objective, Predicate, PredicateDict, RDFOperation } from '@/data/knowledge_graph/structures';
@@ -99,7 +98,7 @@ onMounted(async () => {
  * Watch subject/object input to determine valid predicates
  */
 watch([subject, object], () => {
-    predicate.value = {id: '', labels: {en: ''}};
+    predicate.value = { id: '', labels: { en: '' } };
     selectedDuplicateClass.value = false;
     noExistingPredicates.value = false;
     noValidParticipants.value = false;
@@ -131,7 +130,7 @@ watch([subject, object], () => {
 /**
  * Resets form and closes dialog
  */
- const resetInputs = () => {
+const resetInputs = () => {
     subject.value = {} as Objective;
     object.value = {} as Objective;
     predicate.value = {} as Predicate;
@@ -176,19 +175,20 @@ const applyTriple = async () => {
 
             <button class="close-btn" @click="closeDialog">×</button>
             <div class="header-container flex items-center mb-4">
-                <h2 class="text-xl font-bold">{{ staticContent.tripleAdd.addTripleText[sessionStore.activeLanguage] }}</h2>
+                <h2 class="text-xl font-bold">{{ staticContent.tripleAdd.addTripleText[sessionStore.activeLanguage] }}
+                </h2>
                 <div class="alert-container">
                     <p v-if="selectedDuplicateClass" class="alert-message">
-                        {{staticContent.tripleAdd.alertDuplicateClass[sessionStore.activeLanguage]}}
+                        {{ staticContent.tripleAdd.alertDuplicateClass[sessionStore.activeLanguage] }}
                     </p>
                     <p v-else-if="noExistingPredicates" class="alert-message">
-                        {{staticContent.tripleAdd.alertNoExistingPredicates[sessionStore.activeLanguage]}}
+                        {{ staticContent.tripleAdd.alertNoExistingPredicates[sessionStore.activeLanguage] }}
                     </p>
                     <p v-else-if="noValidParticipants" class="alert-message">
                         {{ staticContent.tripleAdd.alertNoValidParticipants[sessionStore.activeLanguage] }}
                     </p>
                     <p v-else-if="isObjectValid && isSubjectValid && !isPredicateValid" class="alert-message">
-                        {{staticContent.tripleAdd.invalidPredicate[sessionStore.activeLanguage]}}
+                        {{ staticContent.tripleAdd.invalidPredicate[sessionStore.activeLanguage] }}
                     </p>
 
                 </div>
@@ -217,7 +217,8 @@ const applyTriple = async () => {
             </div>
 
             <div class="flex gap-4">
-                <Button class="w-full" :disabled="!isApplyEnabled" @click="applyTriple">{{staticContent.tripleAdd.addTripleText[sessionStore.activeLanguage]}}</Button>
+                <Button class="w-full" :disabled="!isApplyEnabled"
+                    @click="applyTriple">{{ staticContent.tripleAdd.addTripleText[sessionStore.activeLanguage] }}</Button>
             </div>
         </div>
     </div>

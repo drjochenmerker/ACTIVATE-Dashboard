@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 import Button from '@/components/ui/button/Button.vue';
-import { defineProps } from 'vue';
 import { useColorMode } from '@vueuse/core';
 import { useSessionStore } from '@/stores/sessionStore';
 import { KnowledgeGraphActivityClass } from '@/data/knowledge_graph/structures';
@@ -14,7 +13,7 @@ import { activateTerms, staticContent } from '@/data/contentData';
  * @property isOpen - Indicates if the modal is open (passed from parent)
  */
 defineProps<{
-    isOpen: Boolean,
+  isOpen: Boolean,
 }>();
 
 // Current color mode (Light- or Dark-Mode)
@@ -34,12 +33,12 @@ const selectedClass = ref<KnowledgeGraphActivityClass | ''>('');
  * Includes label and value for each supported activity class
  */
 let activityClassOptions = [
-    { label: activateTerms[sessionStore.activeLanguage].subject, value: KnowledgeGraphActivityClass.subject },
-    { label: activateTerms[sessionStore.activeLanguage].object, value: KnowledgeGraphActivityClass.object },
-    { label: activateTerms[sessionStore.activeLanguage].rules, value: KnowledgeGraphActivityClass.rules },
-    { label: activateTerms[sessionStore.activeLanguage].instruments, value: KnowledgeGraphActivityClass.instruments },
-    { label: activateTerms[sessionStore.activeLanguage].division_of_labour, value: KnowledgeGraphActivityClass.divison_of_labour },
-    { label: activateTerms[sessionStore.activeLanguage].community, value: KnowledgeGraphActivityClass.community }
+  { label: activateTerms[sessionStore.activeLanguage].subject, value: KnowledgeGraphActivityClass.subject },
+  { label: activateTerms[sessionStore.activeLanguage].object, value: KnowledgeGraphActivityClass.object },
+  { label: activateTerms[sessionStore.activeLanguage].rules, value: KnowledgeGraphActivityClass.rules },
+  { label: activateTerms[sessionStore.activeLanguage].instruments, value: KnowledgeGraphActivityClass.instruments },
+  { label: activateTerms[sessionStore.activeLanguage].division_of_labour, value: KnowledgeGraphActivityClass.divison_of_labour },
+  { label: activateTerms[sessionStore.activeLanguage].community, value: KnowledgeGraphActivityClass.community }
 ];
 
 watch(() => sessionStore.activeLanguage, () => {
@@ -50,30 +49,30 @@ watch(() => sessionStore.activeLanguage, () => {
     { label: activateTerms[sessionStore.activeLanguage].instruments, value: KnowledgeGraphActivityClass.instruments },
     { label: activateTerms[sessionStore.activeLanguage].division_of_labour, value: KnowledgeGraphActivityClass.divison_of_labour },
     { label: activateTerms[sessionStore.activeLanguage].community, value: KnowledgeGraphActivityClass.community }
-];
+  ];
 });
 
 /**
  * Opens the modal dialog
  */
 const openDialog = async () => {
-    isOpen.value = true;
+  isOpen.value = true;
 };
 
 /**
  * Closes the modal and resets the input fields
  */
 const closeDialog = () => {
-    isOpen.value = false;
-    resetInputs();
+  isOpen.value = false;
+  resetInputs();
 };
 
 /**
  * Resets input fields to default values
  */
 const resetInputs = () => {
-    entityName.value = '';
-    selectedClass.value = '';
+  entityName.value = '';
+  selectedClass.value = '';
 };
 
 /**
@@ -81,49 +80,52 @@ const resetInputs = () => {
  * Validates inputs and adds the entity to the knowledge graph
  */
 const applyEntity = async () => {
-    if (!entityName.value.trim()) {
-        alert(staticContent.alerts.entityEnter[sessionStore.activeLanguage]);
-        return;
-    }
-    if (!selectedClass.value) {
-        alert(staticContent.alerts.activityClassSelect[sessionStore.activeLanguage]);
-        return;
-    }
+  if (!entityName.value.trim()) {
+    alert(staticContent.alerts.entityEnter[sessionStore.activeLanguage]);
+    return;
+  }
+  if (!selectedClass.value) {
+    alert(staticContent.alerts.activityClassSelect[sessionStore.activeLanguage]);
+    return;
+  }
 
-    await addEntity(
-        sessionStore.sessionActivity!.graph,
-        entityName.value,
-        selectedClass.value as KnowledgeGraphActivityClass,
-        sessionStore.activeLanguage
-    );
+  await addEntity(
+    sessionStore.sessionActivity!.graph,
+    entityName.value,
+    selectedClass.value as KnowledgeGraphActivityClass,
+    sessionStore.activeLanguage
+  );
 
-    // Notify other components that data is outdated
-    sessionStore.outdated = true;
-    closeDialog();
+  // Notify other components that data is outdated
+  sessionStore.outdated = true;
+  closeDialog();
 };
 </script>
 
 <template>
-    <Button class="mb-4" @click="openDialog">
-        {{ staticContent.entitiyAdd.addButton[sessionStore.activeLanguage]}}
-    </Button>
+  <Button class="mb-4" @click="openDialog">
+    {{ staticContent.entitiyAdd.addButton[sessionStore.activeLanguage] }}
+  </Button>
 
-    <div v-if="isOpen" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
-       @click.self="closeDialog">
+  <div v-if="isOpen" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+    @click.self="closeDialog">
     <div :class="mode === 'dark' ? 'modal-container dark' : 'modal-container light'">
       <button class="close-btn" @click="closeDialog">×</button>
       <div class="header-container flex items-center mb-4">
-        <h2 class="text-xl font-bold">{{ staticContent.entitiyAdd.addButton[sessionStore.activeLanguage]}}</h2>
+        <h2 class="text-xl font-bold">{{ staticContent.entitiyAdd.addButton[sessionStore.activeLanguage] }}</h2>
       </div>
 
       <!-- Side-by-side inputs for entity name and activity class -->
       <div class="inputs-container mb-4">
         <div class="input-group">
-          <label for="entityName" class="input-label">{{staticContent.entitiyAdd.entityName[sessionStore.activeLanguage]}}</label>
-          <input id="entityName" type="text" v-model="entityName" :placeholder="staticContent.alerts.entityEnter[sessionStore.activeLanguage]" class="input-field" />
+          <label for="entityName"
+            class="input-label">{{ staticContent.entitiyAdd.entityName[sessionStore.activeLanguage] }}</label>
+          <input id="entityName" type="text" v-model="entityName"
+            :placeholder="staticContent.alerts.entityEnter[sessionStore.activeLanguage]" class="input-field" />
         </div>
         <div class="input-group">
-          <label for="entityClass" class="input-label">{{ staticContent.entitiyAdd.activityClass[sessionStore.activeLanguage] }}</label>
+          <label for="entityClass" class="input-label">{{
+            staticContent.entitiyAdd.activityClass[sessionStore.activeLanguage] }}</label>
           <select id="entityClass" v-model="selectedClass" class="input-field">
             <option disabled value="">{{ staticContent.entitiyAdd.selectClass[sessionStore.activeLanguage] }}</option>
             <option v-for="option in activityClassOptions" :key="option.label" :value="option.value">
@@ -149,12 +151,15 @@ const applyEntity = async () => {
   width: 100%;
   max-width: 90%;
 }
+
 .modal-container.light {
   background: white;
 }
+
 .modal-container.dark {
   background: #2d3748;
 }
+
 .close-btn {
   position: absolute;
   top: 0.5rem;
@@ -178,16 +183,19 @@ const applyEntity = async () => {
   display: flex;
   flex-direction: column;
 }
+
 .input-label {
   font-size: 0.875rem;
   margin-bottom: 0.25rem;
   color: #4a5568;
 }
+
 select {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }
+
 .input-field {
   padding: 8px;
   border: 1px solid #a6a4a4;
@@ -196,6 +204,7 @@ select {
   outline: none;
   width: 100%;
 }
+
 .input-field:focus {
   border-color: #3182ce;
 }
