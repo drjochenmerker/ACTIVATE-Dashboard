@@ -5,7 +5,7 @@ import TripleAdditionDialog from '@/components/TripleAdditionDialog.vue';
 import EntityAdditionDialog from '@/components/EntityAdditionDialog.vue';
 import Editor from '@/components/Editor.vue';
 import { useActivityPointsStore } from "@/stores/activityPointsStore";
-import { onMounted, ref } from 'vue';
+import { ref } from 'vue';
 import { useSessionStore } from '@/stores/sessionStore';
 import { staticContent } from '@/data/contentData';
 import { Button } from '@/components/ui/button';
