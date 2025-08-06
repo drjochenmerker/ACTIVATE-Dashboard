@@ -40,14 +40,12 @@ const toggleReplyInput = async () => {
 
 // Function to save a reply
 const saveReply = async (parentCommentId: string) => {
-    // console.log(`save comment for conflict with id: ${parentCommentId}:`, newReplyText.value);
     if (!newReplyText.value) return;
     try {
         await addComment(
             parentCommentId,
             newReplyText.value
         );
-        //console.log('reply saved successfully');
 
 
         replyInputVisible.value = false; // hide input field
@@ -120,8 +118,8 @@ const removeReply = (id: string) => {
 
         <div class="reply-content">
             <div class="reply-head">
-                <p class="reply-author">{{ props.parentComment.author.id }}</p>
-                <!-- TODO: correctly access the author in the active language -->
+                <p class="reply-author">{{ props.parentComment.author.labels[sessionStore.activeLanguage]
+                    || props.parentComment.author.labels['default'] }}</p>
                 <button class="icon-button" @click="handleDelete(props.parentComment.id, props.parentComment)">
                     <span class="material-symbols-outlined">delete</span>
                 </button>
@@ -129,7 +127,8 @@ const removeReply = (id: string) => {
             </div>
             <!-- <p class="reply-text">{{ props.parentComment.comment[sessionStore.activeLanguage] }}</p> -->
             <!-- TODO handle multi-language comments -->
-            <p class="reply-text">{{ props.parentComment.comment?.[sessionStore.activeLanguage] }}</p>
+            <p class="reply-text">{{ props.parentComment.comment?.[sessionStore.activeLanguage] ||
+                props.parentComment.comment?.['default'] }}</p>
         </div>
 
         <!-- Reply Button to hide input field -->

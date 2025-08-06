@@ -29,7 +29,8 @@ export async function addConflict(graph: string, conflict: Conflict): Promise<up
         "{{conflictId}}": conflictId,
         "{{participants}}": participantString,
         "{{description}}": conflict.description ? EscapeSparqlStringLiteral(getStringFromRecord(conflict.description)) : "",
-        "{{author}}": EscapeSparqlStringLiteral(getStringFromRecord(conflict.author)),
+        // "{{author}}": EscapeSparqlStringLiteral(getStringFromRecord(conflict.author.id)),
+        "{{author}}": "",
         "{{status}}": conflict.status,
         "{{created}}": timestamp,
         "{{title}}": EscapeSparqlStringLiteral(getStringFromRecord(conflict.title))
@@ -312,7 +313,9 @@ export async function updateActivity(activity: Activity): Promise<updateResponse
  * @returns updateResponse Object
  */
 export async function cloneActivity(activity: Activity): Promise<updateResponse> {
-    // // Handle missing props
+    // Handle missing props
+    console.log(activity.name);
+    // // todo
     // if (activity.name.trim() == "") activity.name = activity.graph + "_copy";
     // if (activity.description?.trim() == "") activity.description = "No description given";
     // // Clone activity

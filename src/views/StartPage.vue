@@ -62,7 +62,7 @@ watch(selectedActivity, async () => {
   sessionStore.availableRoles = buildTreeStructByLang(
     await getActivityClassIds(selectedActivity.value, KnowledgeGraphActivityClass.subject),
     sessionStore.activeLanguage);
-  sessionStore.sessionRole = ''; // Reset role selection
+  sessionStore.sessionRole = undefined; // Reset role selection
 });
 
 

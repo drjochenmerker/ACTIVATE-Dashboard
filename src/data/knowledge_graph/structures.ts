@@ -124,7 +124,7 @@ export interface Participant {
 export type Conflict = {
     title: Record<string, string>;
     participants: Participant[],
-    author: Record<string, string>,
+    author: Participant;
     status: conflictStatus,
     description: Record<string, string>,
     timestamp?: Date,
@@ -132,24 +132,17 @@ export type Conflict = {
     id?: string
 }
 
+
 /**
  * Comment in the knowledge graph
  */
 export type Comment = {
     id: string,
-    // author?: string,
-    author?: Author;   
-    // comment?: string,
+    author?: Participant;
     comment?: Record<string, string>,
     timestamp?: Date,
     replies?: Comment[]
 }
-
-export type Author = {
-    id: string;
-    labels: Record<string, string>;
-}
-
 
 /**
  * Enum for conflict status management
@@ -252,7 +245,15 @@ export type NestedMultiLangObject = {
     values?: MultiLangObject[],
     next?: NestedMultiLangObject[]
 }
-
+/**
+ * NestedMultiLangObject that allows the usage of multiple languages
+ */
+export type NestedMultiLangObjectWithId = {
+  id: string;
+  labels: Record<string, string>;
+  value?: string;
+  children?: NestedMultiLangObjectWithId[];
+}
 /**
  * Predicate Dictionary that allows fetching all predicates
  * for a given tuple of activity diagram classes

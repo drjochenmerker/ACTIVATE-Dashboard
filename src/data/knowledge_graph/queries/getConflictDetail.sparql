@@ -7,7 +7,7 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 SELECT * WHERE {
   GRAPH graph:{{graph}} {
     {
-      SELECT ?conflict_p ?conflict_o ?object_type ?participant_p ?participant_o
+      SELECT ?conflict_p ?conflict_o ?object_type ?participant_p ?participant_o ?authorLabel
       WHERE {
           :{{conflict}} ?conflict_p ?conflict_o .
           FILTER (?conflict_p != rdf:type) .
@@ -17,17 +17,26 @@ SELECT * WHERE {
             ?conflict_o ?participant_p ?participant_o .
             FILTER(?participant_p = rdfs:label)
           }
+          OPTIONAL {
+            FILTER(?conflict_p = :WrittenBy)
+            ?conflict_o ?participant_p ?participant_o .
+            FILTER(?participant_p = rdfs:label)
+          }
       }
     }
     UNION
     {
-      SELECT ?s ?p ?o ?oLang
+      SELECT ?s ?p ?o ?q
       WHERE {
         :{{conflict}} (<>|!<>)* ?s .
         ?s rdf:type :Comment .
         ?s ?p ?o .
         FILTER (?p != rdf:type) .
-        BIND(LANG(?o) AS ?oLang)
+        OPTIONAL {
+            FILTER(?p = :WrittenBy)
+            ?o ?r ?q .
+            FILTER(?r = rdfs:label)
+          }
       }
       ORDER BY ?s
     }

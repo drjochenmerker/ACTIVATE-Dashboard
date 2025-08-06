@@ -67,7 +67,7 @@ const filteredConflicts = computed(() => {
           <NoteCard :conflict="conflict"
             :title="conflict.title[sessionStore.activeLanguage] || conflict.title['default']"
             :content="conflict.description[sessionStore.activeLanguage] || conflict.description['default']"
-            :author="conflict.author[sessionStore.activeLanguage] || conflict.author['default']"
+            :author="conflict.author.labels[sessionStore.activeLanguage] || conflict.author['default']"
             :status="conflict.status" :isGrayedOut="!!highlightedConflictId && conflict.id !== highlightedConflictId" />
         </div>
 

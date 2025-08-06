@@ -150,7 +150,7 @@ export async function getConflictIds(graph: string): Promise<{ title: Record<str
 
   data.forEach((conflict: StringAccessObject) => {
     const id = conflict.conflict_id.value.split("#").pop();
-    const lang = conflict.conflict_title["xml:lang"] || "default"; // fallback to 'und' (undefined)
+    const lang = conflict.conflict_title["xml:lang"] || "default";
     const title = conflict.conflict_title.value;
 
     if (!conflictMap[id]) {
@@ -164,7 +164,6 @@ export async function getConflictIds(graph: string): Promise<{ title: Record<str
   });
 
   const conflicts = Object.values(conflictMap);
-  // console.log("Merged conflicts:", conflicts);
   return conflicts;
 }
 
@@ -190,21 +189,24 @@ export async function getConflictDetail(graph: string, conflictId: string): Prom
     // Conflict Data
     if (item.conflict_p) {
       switch (item.conflict_p.value.split("#").pop()) {
-        // case "WrittenBy":
-        //   parsedConflict.author = item.conflict_o.value.split("#").pop();
-        //   break;
-        case "WrittenBy":
-          if (!parsedConflict.author) parsedConflict.author = {};
-          const langTag = item.authorLabelLang || 'default';
-          parsedConflict.author[langTag] = item.authorLabel || item.conflict_o.value.split("#").pop();
-          break;
+        case "WrittenBy": {
+          const authorId = item.conflict_o.value.split("#").pop();
+          const langTag = item.participant_o?.["xml:lang"] || "default";
+          const labelValue = item.participant_o?.value || authorId;
 
-        // case "ConflictDescription":
-        //   parsedConflict.description = item.conflict_o.value;
-        //   break;
-        // case "ConflictTitle":
-        //   parsedConflict.title = item.conflict_o.value;
-        //   break;
+          if (!parsedConflict.author) {
+            parsedConflict.author = {
+              id: authorId,
+              labels: {
+                [langTag]: labelValue
+              },
+              type: "subject" // TODO: set the correct type
+            };
+          } else {
+            parsedConflict.author.labels[langTag] = labelValue;
+          }
+          break;
+        }
         case "ConflictDescription":
           if (!parsedConflict.description) {
             parsedConflict.description = {};
@@ -220,7 +222,6 @@ export async function getConflictDetail(graph: string, conflictId: string): Prom
           const langTitle = item.conflict_o["xml:lang"] || "default";
           parsedConflict.title[langTitle] = item.conflict_o.value;
           break;
-
         case "CreationDate":
           parsedConflict.timestamp = new Date(item.conflict_o.value);
           break;
@@ -267,42 +268,54 @@ export async function getConflictDetail(graph: string, conflictId: string): Prom
           const authorIRI = item.o.value;
           const authorId = authorIRI.split("#").pop() || authorIRI;
 
-          if (lookupMap.has(commentId)) {
+          const langTag = item.q?.["xml:lang"] || "default";
+          const labelValue = item.q?.value || authorId;
+
+          if (!lookupMap.has(commentId)) {
+            lookupMap.set(commentId, {
+              id: commentId,
+              author: {
+                id: authorId,
+                labels: { [langTag]: labelValue },
+                type: "subject"
+              }
+            } as Comment);
+          } else {
             const comment = lookupMap.get(commentId);
             if (!comment.author) {
-              comment.author = { id: authorId, labels: {} };
-            } else if (comment.author.id !== authorId) {
-              comment.author.id = authorId; // in case it's inconsistent
+              comment.author = {
+                id: authorId,
+                labels: { [langTag]: labelValue },
+                type: "subject"
+              };
+            } else {
+              comment.author.id = authorId;
+              if (!comment.author.labels) comment.author.labels = {};
+              comment.author.labels[langTag] = labelValue;
             }
-            // later, labels get filled from label triples
+          }
+
+          break;
+        }
+        case "CommentDescription": {
+          const commentId = item.s.value.split("#").pop()!;
+          const langTag = item.oLang || item.o["xml:lang"] || "default";
+          const commentText = item.o.value || item.o;
+
+          if (lookupMap.has(commentId)) {
+            const comment = lookupMap.get(commentId);
+            if (!comment.comment || typeof comment.comment === "string") {
+              comment.comment = {};
+            }
+            comment.comment[langTag] = commentText;
           } else {
             lookupMap.set(commentId, {
               id: commentId,
-              author: { id: authorId, labels: {} }
+              comment: { [langTag]: commentText }
             } as Comment);
           }
           break;
         }
-        case "CommentDescription": {
-  const commentId = item.s.value.split("#").pop()!;
-  const langTag = item.oLang || item.o["xml:lang"] || "default";
-  const commentText = item.o.value || item.o;
-
-  if (lookupMap.has(commentId)) {
-    const comment = lookupMap.get(commentId);
-    if (!comment.comment || typeof comment.comment === "string") {
-      comment.comment = {};
-    }
-    comment.comment[langTag] = commentText;
-  } else {
-    lookupMap.set(commentId, {
-      id: commentId,
-      comment: { [langTag]: commentText }
-    } as Comment);
-  }
-  break;
-}
-
         case "CreationDate":
           if (lookupMap.has(item.s.value.split("#").pop())) {
             lookupMap.get(item.s.value.split("#").pop()).timestamp = new Date(item.o.value);
@@ -361,7 +374,6 @@ export async function getConflictDetail(graph: string, conflictId: string): Prom
       parsedConflict.replies!.push(comment);
     }
   }
-  // console.log("parsedConflict:", parsedConflict);
   return parsedConflict;
 }
 

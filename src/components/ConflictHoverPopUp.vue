@@ -134,7 +134,7 @@ watch(() => props.position, updatePopupHeight);
         }}
       </p>
       <p><strong>{{ staticContent.terms.author[sessionStore.activeLanguage] }}:</strong> {{
-        hoveredConflictPoint.author[sessionStore.activeLanguage] || hoveredConflictPoint.author['default']
+        hoveredConflictPoint.author.labels[sessionStore.activeLanguage] || hoveredConflictPoint.author.labels['default']
         }}
       </p>
       <p>

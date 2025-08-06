@@ -147,9 +147,6 @@ const getRoles = async () => {
     } catch (error) {
         console.error("Error fetching roles:", error);
     }
-    // console.log("Available roles for activity:", sessionStore.availableRoles.values);
-    // console.log("Built tree structure:", sessionStore.availableRoles.values?.[0].labels[sessionStore.activeLanguage]);
-
 }
 
 const sessionStartAllowed = () => !sessionStore.sessionRole;
@@ -321,15 +318,18 @@ const showQrDialog = ref(false)
                                 </DialogTrigger>
                                 <DialogContent>
                                     <DialogHeader>
-                                        <DialogTitle>{{ staticContent.startPage.roleSelect[sessionStore.activeLanguage]
-                                            }}</DialogTitle>
+                                        <DialogTitle>
+                                            {{ staticContent.startPage.roleSelect[sessionStore.activeLanguage] }}
+                                        </DialogTitle>
                                         <DialogDescription>{{
                                             staticContent.startPage.roleSelectText[sessionStore.activeLanguage] }}
                                         </DialogDescription>
                                     </DialogHeader>
 
                                     <!-- Select a role-->
+                                    <!-- <Select v-model="sessionStore.sessionRole" id="roleSelect" class="my-4"> -->
                                     <Select v-model="sessionStore.sessionRole" id="roleSelect" class="my-4">
+
                                         <SelectTrigger>
                                             <SelectValue
                                                 :placeholder="staticContent.placeholders.roleSelect[sessionStore.activeLanguage]" />

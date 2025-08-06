@@ -5,9 +5,10 @@ PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 INSERT DATA {
     GRAPH graph:{{graph}} {
         :{{commentId}} rdf:type :Comment ;
-        :WrittenBy """{{author}}""" ;
+        :WrittenBy :{{author}} ;
         :CreationDate """{{created}}""" ;
-        :CommentDescription """{{comment}}""" .
+        :CommentDescription """{{comment}}"""@{{langTag}} .
+        # TODO language tag
         :{{parentId}} :HasComment :{{commentId}}
     }
 }

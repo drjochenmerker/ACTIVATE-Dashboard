@@ -41,7 +41,6 @@ export const useActivityStore = defineStore('ActivityStore', () => {
     const editActivity = async (activity: Activity) => {
         const updatedActivity = await updateActivity(activity);
         if (updatedActivity.status === "OK") {
-            //console.log("Updated activity successfully.")
         } else {
             console.log("Update failed.")
         }
@@ -54,7 +53,6 @@ export const useActivityStore = defineStore('ActivityStore', () => {
     const cloneThisActivity = async (clonedActivity: Activity) => {
         const savedClone = await cloneActivity(clonedActivity);
         if (savedClone.status === "OK") {
-           // console.log("Cloned activity successfully.")
         } else {
             console.log("Cloning failed.")
         }

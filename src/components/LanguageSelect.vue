@@ -3,19 +3,12 @@ import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@
 import { LanguageCode } from '@/data/knowledge_graph/structures';
 import { LanguagesIcon } from 'lucide-vue-next';
 import { useSessionStore } from '@/stores/sessionStore';
-import { useActivityStore } from '@/stores/activityStore';
-import { useConflictsStore } from '@/stores/conflictsStore';
 
 const sessionStore = useSessionStore();
-const activityStore = useActivityStore();
-const conflictsStore = useConflictsStore();
 
 
 function handleLanguageChange() {
-    activityStore.getAllActivities();
-    conflictsStore.refreshConflictList();
-
-    sessionStore.outdated = true
+    // console.log("Language changed to: ", sessionStore.activeLanguage);
 }
 </script>
 

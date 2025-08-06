@@ -45,10 +45,6 @@ const getRoles = async () => {
         roles,
         activeLang.value
     );
-    // available roles are now set in the sessionstore with
-    // {id: "", labels: {de: "", en: "", sv: ""}, value:""}
-    // console.log('Available roles:', sessionStore.availableRoles.values);
-
 }
 
 const submitFeedback = async () => {
@@ -68,9 +64,6 @@ const submitFeedback = async () => {
         data: fullData
     }
 
-    //sowohl antworten als fragen
-    // so strukturiert wie doc example 
-    // data: question und answer
     console.log('Submitted feedback object from student:', feedbackData)
 
     try {

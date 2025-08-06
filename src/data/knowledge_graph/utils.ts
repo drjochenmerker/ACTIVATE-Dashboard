@@ -53,7 +53,6 @@ export function findNestedComment(commentId: string, input: Conflict | Comment[]
         searchArray = input.replies;
     }
     for (const reply of searchArray) {
-        // console.log("Nested Search on", input, "for", commentId, "on", reply);
         const nestedReply = findNestedCommentR(commentId, reply);
         if (nestedReply) {
             return nestedReply;
@@ -65,7 +64,6 @@ export function findNestedComment(commentId: string, input: Conflict | Comment[]
 // Recursive part of nested comment search
 function findNestedCommentR(commentId: string, comment: Comment): Comment | undefined {
     const replyIndex = comment.replies?.find(reply => reply.id == commentId);
-    // console.log("Nested Search for", commentId, "in", comment.replies, "found", replyIndex);
     if (replyIndex) {
         return replyIndex;
     }

@@ -5,7 +5,7 @@ import TripleAdditionDialog from '@/components/TripleAdditionDialog.vue';
 import EntityAdditionDialog from '@/components/EntityAdditionDialog.vue';
 import Editor from '@/components/Editor.vue';
 import { useActivityPointsStore } from "@/stores/activityPointsStore";
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useSessionStore } from '@/stores/sessionStore';
 import { staticContent } from '@/data/contentData';
 import { Button } from '@/components/ui/button';
@@ -20,18 +20,13 @@ const isEntityAdditionDialogOpen = ref(false);
 
 const sessionStore = useSessionStore();
 
-
-// drawer:
 const isEditorDrawerOPen = ref(false);
+
 </script>
 
 <template>
   <h1 class="text-2xl font-semibold mb-4 text-center">
     {{ staticContent.terms.setting[sessionStore.activeLanguage] }}:
-    <!-- {{
-      activity.name ? activity.name : `${staticContent.errors.activityNameLoad[sessionStore.activeLanguage]} - Graph-ID:
-      ${activity.graph}`
-      }} -->
     {{
       activity.name && activity.name[sessionStore.activeLanguage] || activity.name['default']
         ? activity.name[sessionStore.activeLanguage] || activity.name['default']
@@ -45,7 +40,6 @@ const isEditorDrawerOPen = ref(false);
 
 
     <ActivityDiagram />
-
 
     <!-- Toggle Button with Dynamic Positioning -->
     <Button @click="isEditorDrawerOPen = !isEditorDrawerOPen"
