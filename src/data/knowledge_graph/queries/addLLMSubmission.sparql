@@ -1,0 +1,8 @@
+PREFIX : <http://activate.htwk-leipzig.de/model#> 
+PREFIX graph: <http://activate.htwk-leipzig.de/graph/>
+
+INSERT DATA {
+	GRAPH graph:{{graph}} {
+		:llmSubmission :{{predicate}} """{{object}}""" .
+	}
+}

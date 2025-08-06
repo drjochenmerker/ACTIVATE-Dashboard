@@ -45,6 +45,9 @@ export enum sparqlTemplate {
     getDiagramVocab = "getDiagramVocab",
     updateActivity = "updateActivity",
     cloneActivity = "cloneActivity",
+    getLLMDetail = "getLLMDetail",
+    addLLMSubmission = "addLLMSubmission",
+    getLLMSubmissions = "getLLMSubmissions",
 }
 
 /**
