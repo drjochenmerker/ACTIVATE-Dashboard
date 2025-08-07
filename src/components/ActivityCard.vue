@@ -40,16 +40,17 @@ sessionStore.availableRoles = {} as NestedMultiLangObject;
 let newTitle = '';
 let newDescription = '';
 
-const editTitle = ref('');
-const editDescription = ref('');
+// const editTitle = ref('');
+// const editDescription = ref('');
 
 // Refs for dialog interaction
 const isDeleteDialogOpen = ref(false);
 const isCloneDialogOpen = ref(false);
-const isEditDialogOpen = ref(false);
+// const isEditDialogOpen = ref(false);
 const cloneTitleError = ref(false);
-const editTitleError = ref(false);
+// const editTitleError = ref(false);
 const showPoolingDialog = ref(false)
+const loading = ref(false);
 
 
 // activity store management
@@ -105,36 +106,30 @@ const deleteThisActivity = async () => {
     isDeleteDialogOpen.value = false;
 }
 
-// edit activity:
-//      first step
+// first step
 // const openEditDialog = () => {
-//     editTitle.value = props.activity.name;
-//     editDescription.value = props.activity.description;
-//     isEditDialogOpen.value = true;
+//     editTitle.value = props.activity.name[sessionStore.activeLanguage] || ''
+//     editDescription.value = props.activity.description[sessionStore.activeLanguage] || ''
+//     isEditDialogOpen.value = true
 // }
-const openEditDialog = () => {
-    editTitle.value = props.activity.name[sessionStore.activeLanguage] || ''
-    editDescription.value = props.activity.description[sessionStore.activeLanguage] || ''
-    isEditDialogOpen.value = true
-}
 
 //      second step
-const updateActivity = async (newTitle: string, newDescription: string) => {
-    if (!newTitle.trim()) {
-        editTitleError.value = true;
-        return;
-    }
-    editTitleError.value = false;
+// const updateActivity = async (newTitle: string, newDescription: string) => {
+//     if (!newTitle.trim()) {
+//         editTitleError.value = true;
+//         return;
+//     }
+//     editTitleError.value = false;
 
-    const updatedActivity = {
-        graph: props.activity.graph,
-        name: { ...props.activity.name, [sessionStore.activeLanguage]: newTitle },
-        description: { ...props.activity.description, [sessionStore.activeLanguage]: newDescription || props.activity.description[sessionStore.activeLanguage] },
-    };
-    activityStore.editActivity(updatedActivity);
-    await activityStore.refreshActivityList();
-    isEditDialogOpen.value = false;
-}
+//     const updatedActivity = {
+//         graph: props.activity.graph,
+//         name: { ...props.activity.name, [sessionStore.activeLanguage]: newTitle },
+//         description: { ...props.activity.description, [sessionStore.activeLanguage]: newDescription || props.activity.description[sessionStore.activeLanguage] },
+//     };
+//     activityStore.editActivity(updatedActivity);
+//     await activityStore.refreshActivityList();
+//     isEditDialogOpen.value = false;
+// }
 
 /**
  * Retrieves available roles for the current activity graph.
@@ -152,16 +147,16 @@ const getRoles = async () => {
 
 const sessionStartAllowed = () => !sessionStore.sessionRole;
 const handlePoolingStart = async () => {
-    // todo handle pooling start
-    console.log("Pooling triggered!");
     try {
+        loading.value = true;
         const res = await llmPool(props.activity.graph);
         console.log("Pooling response:", res);
+        loading.value = false;
+        showPoolingDialog.value = false;
     } catch (error) {
         console.error("Error during pooling:", error);
     }
 }
-
 
 // work with the qr code
 const showQrDialog = ref(false)
@@ -180,10 +175,7 @@ const showQrDialog = ref(false)
                 </AccordionTrigger>
 
 
-
-
                 <AccordionContent class="pt-4 space-y-4 text-sm text-gray-600 dark:text-gray-300">
-                    <!-- slim line that separates the title from the content -->
                     <div class="h-[1px] bg-gray-200 dark:bg-gray-700 my-2"></div>
 
                     <!-- Description -->
@@ -218,7 +210,8 @@ const showQrDialog = ref(false)
                         </div>
 
                         <!-- Edit Button -->
-                        <div>
+                        <!-- TODO - CURRENTLY DISABLED BECAUSE OF NOT IMPLEMENTED FUNCTIONALITY -->
+                        <!-- <div>
                             <Dialog v-model:open="isEditDialogOpen">
                                 <DialogTrigger as-child>
                                     <Button variant="secondary" size="icon" @click="openEditDialog">
@@ -254,7 +247,7 @@ const showQrDialog = ref(false)
                                     </DialogFooter>
                                 </DialogContent>
                             </Dialog>
-                        </div>
+                        </div> -->
 
 
                         <!-- Clone Button -->
@@ -292,6 +285,7 @@ const showQrDialog = ref(false)
                                 </DialogContent>
                             </Dialog>
                         </div>
+
                         <!-- Feedback QR Code Button -->
                         <div>
                             <Dialog v-model:open="showQrDialog">
@@ -309,8 +303,6 @@ const showQrDialog = ref(false)
                                     </DialogHeader>
                                     <div class="flex justify-center py-4">
                                         <qrcode-vue :value="feedbackUrl" :size="200" />
-
-
                                     </div>
                                 </DialogContent>
                             </Dialog>
@@ -335,20 +327,16 @@ const showQrDialog = ref(false)
                                     </DialogHeader>
 
                                     <!-- Select a role-->
-                                    <!-- <Select v-model="sessionStore.sessionRole" id="roleSelect" class="my-4"> -->
                                     <Select v-model="sessionStore.sessionRole" id="roleSelect" class="my-4">
-
                                         <SelectTrigger>
                                             <SelectValue
                                                 :placeholder="staticContent.placeholders.roleSelect[sessionStore.activeLanguage]" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             <RecursiveSelect :node="sessionStore.availableRoles" />
-
                                         </SelectContent>
 
                                     </Select>
-
 
                                     <!-- Instructor mode toggle -->
                                     <div class="flex items-center space-x-2 mt-4">
@@ -359,33 +347,44 @@ const showQrDialog = ref(false)
                                         </Label>
                                     </div>
 
-
+                                    <!-- Pooling Button Dialog -->
                                     <DialogFooter class="flex justify-between">
-                                        <!-- button for triggering the pooling of ai generation of conflicts -->
                                         <Dialog v-model:open="showPoolingDialog">
                                             <DialogTrigger as-child>
                                                 <Button class="mr-auto" type="button">
-                                                    Pooling!
+                                                    {{
+                                                        staticContent.startPage.poolingButton[sessionStore.activeLanguage]
+                                                    }}
                                                 </Button>
                                             </DialogTrigger>
                                             <DialogContent>
                                                 <DialogHeader>
                                                     <DialogTitle>
-                                                        Confirm Pooling
+                                                        {{
+                                                            staticContent.startPage.confirmation[sessionStore.activeLanguage]
+                                                        }}
                                                     </DialogTitle>
                                                     <DialogDescription>
-                                                        This will start the pooling process. Do you want to continue?
+                                                        {{
+                                                            staticContent.startPage.confirmationText[sessionStore.activeLanguage]
+                                                        }}
                                                     </DialogDescription>
+                                                    <div class="flex justify-between items-center mt-4">
+                                                        <Button variant="secondary" @click="showPoolingDialog = false">
+                                                            Cancel
+                                                        </Button>
+                                                        <Button variant="destructive" @click="handlePoolingStart()">
+                                                            {{ staticContent.startPage.pool[sessionStore.activeLanguage]
+                                                            }}
+                                                        </Button>
+                                                    </div>
+                                                    <div v-if="loading">
+                                                        <Loader2 class="animate-spin h-5 w-5 ml-2 inline-block" />
+                                                        {{
+                                                            staticContent.placeholders.loading[sessionStore.activeLanguage]
+                                                        }}
+                                                    </div>
                                                 </DialogHeader>
-                                                <DialogFooter>
-                                                    <Button variant="secondary" @click="showPoolingDialog = false">
-                                                        Cancel
-                                                    </Button>
-                                                    <Button variant="destructive"
-                                                        @click="handlePoolingStart(); showPoolingDialog = false">
-                                                        Yes, start pooling
-                                                    </Button>
-                                                </DialogFooter>
                                             </DialogContent>
                                         </Dialog>
 

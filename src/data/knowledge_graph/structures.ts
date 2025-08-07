@@ -125,6 +125,7 @@ export interface Participant {
 //     id?: string
 // }
 export type Conflict = {
+    origin?: any; // TODO 
     title: Record<string, string>;
     participants: Participant[],
     author: Participant;

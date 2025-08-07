@@ -229,6 +229,11 @@ export const staticContent = {
             en: "Write your answer ...",
             de: "Schreiben Sie Ihre Antwort ...",
             sv: "Skriv ditt svar ...",
+        },
+        loading:{
+            en: "Loading...",
+            de: "Laden...",
+            sv: "Laddar..."
         }
     },
     editor: {
@@ -482,6 +487,26 @@ export const staticContent = {
             en: "Save changes",
             de: "Änderungen speichern",
             sv: "Spara ändringar",
+        },
+        poolingButton: {
+            en: "Combine!",
+            de: "Kombinieren!",
+            sv: "Kombinera!",
+        },
+        confirmation:{
+            en: "Confirm Combining",
+            de: "Bestätigen Sie die Zusammenführung",
+            sv: "Bekräfta kombination",
+        },
+        confirmationText: {
+            en: "This will start the combining process. Do you want to continue?",
+            de: "Dies wird die Zusammenführung starten. Möchten Sie fortfahren?",
+            sv: "Detta kommer att starta poolningsprocessen. Vill du fortsätta?"
+        },
+        pool:{
+            en: "Yes start.",
+            de: "Ja, starten.",
+            sv: "Ja, starta.",
         }
     },
     hoverText:{

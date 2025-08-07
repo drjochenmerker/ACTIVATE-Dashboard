@@ -26,7 +26,7 @@ import { useActivityStore } from '@/stores/activityStore';
 import { buildTreeStructByLang } from '@/data/knowledge_graph/utils';
 import { staticContent } from '@/data/contentData';
 import LanguageSelect from '@/components/LanguageSelect.vue';
-import { PlusIcon } from 'lucide-vue-next';
+import { Loader2, PlusIcon } from 'lucide-vue-next';
 import { llmSettingGeneration } from '@/data/knowledge_graph/llm_utils';
 
 useColorMode();
@@ -34,6 +34,7 @@ const sessionStore = useSessionStore();
 
 // refs
 const dialogOpen = ref(false);
+const loading = ref(false);
 
 // State management for activities
 const selectedActivity = ref<string>();
@@ -69,42 +70,24 @@ watch(selectedActivity, async () => {
 
 
 const addNewActivity = async () => {
-  // TODO: implement new functionality for AI creating basic activity
+  showValidationErrors.value = true;
   console.log("Adding new activity with title:", newTitle.value);
   console.log("Description:", newDescription.value);
   console.log("Default role:", defaultRole.value);
   try {
-
-    const res = await llmSettingGeneration(newDescription.value, newTitle.value, defaultRole.value);
-    console.log("LLM response:", res);
+    loading.value = true;
+    await llmSettingGeneration(newDescription.value, newTitle.value, defaultRole.value);
+    loading.value = false;
   } catch (error) {
     console.error("Error during LLM generation:", error);
   }
-  // showValidationErrors.value = true;
 
-  // if (!newDescription.value.trim()) {
-  //   return;
-  // }
-
-  // try {
-  //   // const res = await addActivity(newTitle.value, newDescription.value);
-  //   // TODO handle adding of activities
-  //   const res = await addActivity(newTitle.value);
-
-  //   if (defaultRole.value.trim()) {
-  //     await addEntity(res.modified, defaultRole.value, KnowledgeGraphActivityClass.subject, sessionStore.activeLanguage);
-  //   }
-
-  //   await activityStore.refreshActivityList();
-
-  //   dialogOpen.value = false;
-  //   newTitle.value = '';
-  //   newDescription.value = '';
-  //   defaultRole.value = '';
-  //   showValidationErrors.value = false; // Reset validation state
-  // } catch (error) {
-  //   console.error("Fehler beim Hinzufügen einer Aktivität:", error);
-  // }
+  dialogOpen.value = false;
+  newTitle.value = '';
+  newDescription.value = '';
+  defaultRole.value = '';
+  showValidationErrors.value = false; // Reset validation state
+  await activityStore.refreshActivityList();
 };
 
 
@@ -157,6 +140,10 @@ const addNewActivity = async () => {
               <input v-model="defaultRole" class="w-full border rounded p-2 mb-2 dark:bg-gray-900 border-gray-300" />
 
               <Button @click="addNewActivity">{{ staticContent.terms.done[sessionStore.activeLanguage] }}</Button>
+              <div v-if="loading">
+                <Loader2 class="animate-spin h-5 w-5 ml-2 inline-block" />
+                {{ staticContent.placeholders.loading[sessionStore.activeLanguage] }}
+              </div>
             </DialogHeader>
           </DialogContent>
         </Dialog>

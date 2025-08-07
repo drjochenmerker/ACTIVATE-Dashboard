@@ -253,6 +253,10 @@ export async function getConflictDetail(graph: string, conflictId: string): Prom
         case "HasComment":
           rootReplyIds.push(item.conflict_o.value.split("#").pop());
           break;
+        case "Origin":
+          parsedConflict.origin = item.conflict_o.value.split("#").pop();
+          // console.log("Conflict Origin:", parsedConflict.origin);
+          break;
         default:
           if (item.conflict_p !== undefined) {
             console.error("Unknown Property in Conflict Parsing", item.conflict_p.value);
@@ -515,10 +519,8 @@ export async function getActivityClassIds(
     "{{activityClass}}": activityClass,
   };
   query = query.replaceMultiple(mapObj);
-  console.log("Query:", query);
 
   const data = await fetchSparql(query);
-  console.log("Data:", data);
   let result: MultiLangObject[] = [];
 
   data.forEach((item: StringAccessObject) => {

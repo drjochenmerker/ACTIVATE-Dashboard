@@ -6,6 +6,7 @@ import { useRouter } from 'vue-router'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectTrigger, SelectValue } from '@/components/ui/select';
 import RecursiveSelect from '@/components/RecursiveSelect.vue';
+import { Loader2 } from 'lucide-vue-next';
 
 import LanguageSelect from '@/components/LanguageSelect.vue'
 
@@ -23,6 +24,7 @@ const sessionStore = useSessionStore()
 
 const activeLang = computed(() => sessionStore.activeLanguage)
 const answers = ref(['', '', ''])
+const loading = ref(false);
 
 
 const localizedQuestions = computed(() => [
@@ -105,10 +107,13 @@ const submitFeedback = async () => {
 
     console.log('Submitted feedback object from student:', feedbackData);
     try {
-        await llmSubmit(feedbackData.graph, feedbackData.role, feedbackData.data);
+        loading.value = true;
+        const res = await llmSubmit(feedbackData.graph, feedbackData.role, feedbackData.data);
+        console.log("LLM response:", res);
+        loading.value = false;
     } catch (error) {
         console.error("Error submitting feedback:", error);
-        alert('Failed to submit feedback. Please try again later.');
+        alert('Failed to submit feedback. Please try again.');
         return;
     }
     try {
@@ -134,13 +139,8 @@ const submitFeedback = async () => {
                     <Select :model-value="sessionStore.sessionRole"
                         @update:model-value="sessionStore.sessionRole = $event" id="roleSelect" class="my-4">
                         <SelectTrigger>
-                            <!-- <span>
-                                {{ selectedRoleLabel ||
-                                    staticContent.placeholders.roleSelect[sessionStore.activeLanguage] }}
-                            </span> -->
                             <SelectValue
                                 :placeholder="staticContent.placeholders.roleSelect[sessionStore.activeLanguage] || sessionStore.sessionRole" />
-
                         </SelectTrigger>
                         <SelectContent>
                             <RecursiveSelect :node="sessionStore.availableRoles" />
@@ -167,6 +167,10 @@ const submitFeedback = async () => {
             <Button class="w-full" @click="submitFeedback">
                 {{ staticContent.noteCards.save[activeLang] }}
             </Button>
+            <div v-if="loading">
+                <Loader2 class="animate-spin h-5 w-5 ml-2 inline-block" />
+                {{ staticContent.placeholders.loading[activeLang] }}
+            </div>
         </div>
     </div>
 </template>
