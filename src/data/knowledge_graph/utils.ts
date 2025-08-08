@@ -23,7 +23,7 @@ export async function getSparqlTemplate(template: sparqlTemplate): Promise<strin
  * @returns Response from the server (update == true) or the data (update == false)
  */
 export async function fetchSparql(query: string, update: boolean = false): Promise<StringAccessObject> {
-    const res = await fetch(`${import.meta.env.VITE_KNOWLEDGE_GRAPH_URL}:${import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT}`, {
+    const res = await fetch(`${import.meta.env.VITE_KNOWLEDGE_GRAPH_URL}${import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT == false ? '' : ':' + import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT}`, {
         method: "POST",
 
         headers: {
@@ -148,26 +148,26 @@ export function EscapeSparqlStringLiteral(input: string): string {
 //     currentObj.values.push(newValue);
 // }
 function pushNestedValue(
-  root: NestedMultiLangObject,
-  path: string[],
-  value: MultiLangObject
+    root: NestedMultiLangObject,
+    path: string[],
+    value: MultiLangObject
 ) {
-  let current = root;
+    let current = root;
 
-  for (const segment of path) {
-    if (!current.next) current.next = [];
+    for (const segment of path) {
+        if (!current.next) current.next = [];
 
-    let nextNode = current.next.find((n) => n.level === segment);
-    if (!nextNode) {
-      nextNode = { level: segment, values: [], next: [] };
-      current.next.push(nextNode);
+        let nextNode = current.next.find((n) => n.level === segment);
+        if (!nextNode) {
+            nextNode = { level: segment, values: [], next: [] };
+            current.next.push(nextNode);
+        }
+
+        current = nextNode;
     }
 
-    current = nextNode;
-  }
-
-  if (!current.values) current.values = [];
-  current.values.push(value);
+    if (!current.values) current.values = [];
+    current.values.push(value);
 }
 
 
@@ -187,28 +187,28 @@ function pushNestedValue(
 //     return result;
 // }
 export function buildTreeStructByLang(
-  input: MultiLangObject[],
-  lang: string
+    input: MultiLangObject[],
+    lang: string
 ): NestedMultiLangObject {
-  const result: NestedMultiLangObject = { level: "root", values: [], next: [] };
+    const result: NestedMultiLangObject = { level: "root", values: [], next: [] };
 
-  for (const item of input) {
-    const label =
-      item.labels[lang] ||
-      item.labels["default"] ||
-      Object.values(item.labels)[0];
+    for (const item of input) {
+        const label =
+            item.labels[lang] ||
+            item.labels["default"] ||
+            Object.values(item.labels)[0];
 
-    const nestingPath = label.split("/");
-    //const finalValue = nestingPath.pop(); // e.g., "Doctor" from "Medical/Doctor"
+        const nestingPath = label.split("/");
+        //const finalValue = nestingPath.pop(); // e.g., "Doctor" from "Medical/Doctor"
 
-    const currentObj: MultiLangObject = {
-        id: item.id,
-        labels: item.labels,
-        value: "", 
-    };
+        const currentObj: MultiLangObject = {
+            id: item.id,
+            labels: item.labels,
+            value: "",
+        };
 
-    pushNestedValue(result, nestingPath, currentObj);
-  }
+        pushNestedValue(result, nestingPath, currentObj);
+    }
 
-  return result;
+    return result;
 }

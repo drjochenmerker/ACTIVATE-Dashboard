@@ -1,23 +1,31 @@
-version: "3"
+version: '3'
 services:
-  backend:
-    build:
-      context: ./rdflib
-    ports:
-      - "8002:8000"
-    networks:
-      - activate-network
+    backend:
+        build:
+            context: ./rdflib
+        ports:
+            - '8002:8000'
+        networks:
+            - activate-network
 
-  frontend:
-    build:
-      context: .
-    ports:
-      - "8001:80"
-    depends_on:
-      - backend
-    networks:
-      - activate-network
+    frontend:
+        build:
+            context: .
+        ports:
+            - '8001:80'
+        depends_on:
+            - backend
+        networks:
+            - activate-network
+
+    llm-backend:
+        build:
+            context: ./feedback-parser
+        ports:
+            - '8003:8005'
+        networks:
+            - activate-network
 
 networks:
-  activate-network:
-    external: true
+    activate-network:
+        external: true
