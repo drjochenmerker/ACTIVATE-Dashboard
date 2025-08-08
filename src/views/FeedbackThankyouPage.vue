@@ -26,14 +26,10 @@ const thankYouText = computed(() =>
                 {{ thankYouText }}
             </h1>
 
-            <!-- Optional subtext -->
+            <!-- Subtext -->
             <p class="text-gray-500 text-base">
                 {{ staticContent.feedbackpage.thankYouSubtext[sessionStore.activeLanguage] }}
             </p>
         </div>
     </div>
 </template>
-
-<style scoped>
-/* Optionally add animation or fade-in */
-</style>

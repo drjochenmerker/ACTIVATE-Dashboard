@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-// TODO: implement the functionality for cloning activities, editing and maybe bring back the role selection from INPROGRESS FILE
-
 // functions
 import { onMounted, computed, ref } from 'vue';
 import { useSessionStore } from '@/stores/sessionStore';
@@ -9,17 +7,18 @@ import { useActivityStore } from '@/stores/activityStore';
 import { buildTreeStructByLang } from '@/data/knowledge_graph/utils';
 
 // functional components
+import RecursiveSelect from './RecursiveSelect.vue';
 import { Activity, KnowledgeGraphActivityClass, NestedMultiLangObject } from '@/data/knowledge_graph/structures';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog'
+import { Select, SelectContent, SelectTrigger, SelectValue } from '@/components/ui/select';
 import QrcodeVue from 'qrcode.vue'
 
 // ui components
 import { Button } from '@/components/ui/button';
-// import Label from '@/components/ui/label/Label.vue';
-// import Checkbox from '@/components/ui/checkbox/Checkbox.vue';
-// import { Play, Loader2 } from 'lucide-vue-next';
-import { Play } from 'lucide-vue-next';
+import Label from '@/components/ui/label/Label.vue';
+import Checkbox from '@/components/ui/checkbox/Checkbox.vue';
+import { Play, Loader2 } from 'lucide-vue-next';
 // import { BookCopy, Play, Loader2 } from 'lucide-vue-next';
 import { staticContent } from '@/data/contentData';
 import { llmPool } from '@/data/knowledge_graph/llm_utils';
@@ -69,7 +68,6 @@ onMounted(async () => {
 
 // Handle session start when user clicks start button
 const handleStartSession = async () => {
-    sessionStore.sessionRole = sessionStore.sessionRole || staticContent.startPage.defaultRoleName[sessionStore.activeLanguage];
     sessionStore.sessionActivity = {
         graph: props.activity.graph,
         name: props.activity.name,
@@ -152,7 +150,7 @@ const getRoles = async () => {
     }
 }
 
-const sessionStartAllowed = () => true; // TODO tmp for no role selection
+const sessionStartAllowed = () => !sessionStore.sessionRole;
 const handlePoolingStart = async () => {
     try {
         loading.value = true;
@@ -330,16 +328,15 @@ const showQrDialog = ref(false)
                                 <DialogContent>
                                     <DialogHeader>
                                         <DialogTitle>
-                                            {{ staticContent.startPage.startDebriefing[sessionStore.activeLanguage] }}
+                                            {{ staticContent.startPage.roleSelect[sessionStore.activeLanguage] }}
                                         </DialogTitle>
                                         <DialogDescription>{{
-                                            staticContent.startPage.withoutRoleSelectText[sessionStore.activeLanguage]
-                                            }}
+                                            staticContent.startPage.roleSelectText[sessionStore.activeLanguage] }}
                                         </DialogDescription>
                                     </DialogHeader>
 
                                     <!-- Select a role-->
-                                    <!-- <Select v-model="sessionStore.sessionRole" id="roleSelect" class="my-4">
+                                    <Select v-model="sessionStore.sessionRole" id="roleSelect" class="my-4">
                                         <SelectTrigger>
                                             <SelectValue
                                                 :placeholder="staticContent.placeholders.roleSelect[sessionStore.activeLanguage]" />
@@ -348,17 +345,16 @@ const showQrDialog = ref(false)
                                             <RecursiveSelect :node="sessionStore.availableRoles" />
                                         </SelectContent>
 
-                                    </Select> -->
+                                    </Select>
 
                                     <!-- Instructor mode toggle -->
-                                    <!-- TODO tmp maybe bring back -->
-                                    <!-- <div class="flex items-center space-x-2 mt-4">
+                                    <div class="flex items-center space-x-2 mt-4">
                                         <Checkbox id="cbInstructorMode" :checked="sessionStore.instructorMode"
                                             @update:checked="sessionStore.instructorMode = $event" />
                                         <Label for="cbInstructorMode" class="text-sm font-normal">
                                             {{ staticContent.startPage.instructorMode[sessionStore.activeLanguage] }}
                                         </Label>
-                                    </div> -->
+                                    </div>
 
                                     <!-- Pooling Button Dialog -->
                                     <DialogFooter class="flex justify-between">
@@ -404,12 +400,12 @@ const showQrDialog = ref(false)
                                         </Dialog>
 
                                         <!-- Start Session Button -->
-                                        <!-- TODO tmp maybe bring back
-                                        <Button type="submit" :disabled="sessionStartAllowed()" -->
-                                        <Button type="submit" @click="() => handleStartSession()">
+                                        <Button type="submit" :disabled="sessionStartAllowed()"
+                                            @click="() => handleStartSession()">
                                             <template v-if="sessionStartAllowed()">
+                                                <Loader2 class="w-4 h-4 mr-2 animate-spin" />
                                                 {{
-                                                    staticContent.startPage.startDebriefing[sessionStore.activeLanguage]
+                                                    staticContent.startPage.activityRoleSelect[sessionStore.activeLanguage]
                                                 }}
                                             </template>
                                             <template v-else>

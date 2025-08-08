@@ -71,12 +71,10 @@ watch(selectedActivity, async () => {
 
 const addNewActivity = async () => {
   showValidationErrors.value = true;
-  console.log("Adding new activity with title:", newTitle.value);
-  console.log("Description:", newDescription.value);
-  console.log("Default role:", defaultRole.value);
   try {
     loading.value = true;
-    await llmSettingGeneration(newDescription.value, newTitle.value, defaultRole.value);
+    const res = await llmSettingGeneration(newDescription.value, newTitle.value, defaultRole.value);
+    console.log("LLM Generation Result:", res);
     loading.value = false;
   } catch (error) {
     console.error("Error during LLM generation:", error);

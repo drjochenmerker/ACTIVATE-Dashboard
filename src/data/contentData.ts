@@ -231,9 +231,9 @@ export const staticContent = {
             sv: "Skriv ditt svar ...",
         },
         loading:{
-            en: "Loading...",
-            de: "Laden...",
-            sv: "Laddar..."
+            en: "Loading... This may take a while.",
+            de: "Laden... Dies kann einen Moment dauern.",
+            sv: "Laddar... Detta kan ta en stund.",
         }
     },
     editor: {
@@ -408,6 +408,11 @@ export const staticContent = {
             de: "Standardrolle eingeben",
             sv: "Ange standardroll",
         },
+        defaultRoleName: {
+            en: "Lecturer",
+            de: "Dozent",
+            sv: "Lärare",
+        },
         deleteActivity: {
             en: "Delete activity",
             de: "Aktivität löschen",
@@ -442,6 +447,11 @@ export const staticContent = {
             en: "Please select a role for the debriefing:",
             de: "Bitte wählen Sie eine Rolle für das Debriefing aus:",
             sv: "Vänligen välj en roll för debriefingen:",
+        },
+        withoutRoleSelectText: {
+            en: "You can start the debriefing or combine the feedback.",
+            de: "Sie können das Debriefing starten oder das Feedback kombinieren.",
+            sv: "Du kan starta debriefingen eller kombinera feedbacken.",
         },
         instructorMode: {
             en: "Enable instructor mode",
@@ -489,9 +499,9 @@ export const staticContent = {
             sv: "Spara ändringar",
         },
         poolingButton: {
-            en: "Combine!",
-            de: "Kombinieren!",
-            sv: "Kombinera!",
+            en: "Combine",
+            de: "Kombinieren",
+            sv: "Kombinera",
         },
         confirmation:{
             en: "Confirm Combining",
@@ -499,15 +509,20 @@ export const staticContent = {
             sv: "Bekräfta kombination",
         },
         confirmationText: {
-            en: "This will start the combining process. Do you want to continue?",
-            de: "Dies wird die Zusammenführung starten. Möchten Sie fortfahren?",
-            sv: "Detta kommer att starta poolningsprocessen. Vill du fortsätta?"
+            en: "This will start the combining process. Do you want to continue? This may take a while.",
+            de: "Dies wird die Zusammenführung starten. Möchten Sie fortfahren? Dies kann eine Weile dauern.",
+            sv: "Detta kommer att starta poolningsprocessen. Vill du fortsätta? Detta kan ta en stund.",
         },
         pool:{
             en: "Yes start.",
             de: "Ja, starten.",
             sv: "Ja, starta.",
-        }
+        },
+        noPoolAvailable: {
+            en: "There is no feedback to combine.",
+            de: "Es gibt kein Feedback zum Kombinieren.",
+            sv: "Det finns ingen feedback att kombinera."
+        },
     },
     hoverText:{
         object: {

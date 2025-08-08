@@ -6,7 +6,7 @@ import { useRouter } from 'vue-router'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectTrigger, SelectValue } from '@/components/ui/select';
 import RecursiveSelect from '@/components/RecursiveSelect.vue';
-import { Loader2 } from 'lucide-vue-next';
+import LoadingOverlay from '@/components/LoadingOverlay.vue'
 
 import LanguageSelect from '@/components/LanguageSelect.vue'
 
@@ -46,10 +46,6 @@ onMounted(async () => {
 const getRoles = async () => {
     const roles = await getActivityClassIds(props.graph, KnowledgeGraphActivityClass.subject);
 
-    roles.forEach(role => {
-        console.log("Role:", role);
-    });
-
     sessionStore.availableRoles = buildTreeStructByLang(
         roles,
         activeLang.value
@@ -61,23 +57,8 @@ const submitFeedback = async () => {
         alert('Please select your role before submitting.')
         return
     }
-    // console.log("sessionrole", sessionStore.sessionRole)
 
-    // const fullData = answers.value.map(answer => ({
-    //     question: localizedQuestions.value[answers.value.indexOf(answer)],
-    //     answer: answer
-    // }));
-    // const feedbackData = {
-    //     graph: props.graph,
-    //     role: sessionStore.sessionRole, // todo correct role_id
-    //     data: fullData
-    // }
-
-    // console.log('Submitted feedback object from student:', feedbackData)
-    // console.log("sessioinrole", sessionStore.sessionRole);
-    // Pick label in active language or fallback
     const roles = await getActivityClassIds(props.graph, KnowledgeGraphActivityClass.subject);
-
     const selectedRole = roles.find(role => role.id === sessionStore.sessionRole);
 
     if (!selectedRole) {
@@ -105,13 +86,13 @@ const submitFeedback = async () => {
         data: fullData
     };
 
-    console.log('Submitted feedback object from student:', feedbackData);
     try {
         loading.value = true;
-        const res = await llmSubmit(feedbackData.graph, feedbackData.role, feedbackData.data);
-        console.log("LLM response:", res);
+        await llmSubmit(feedbackData.graph, feedbackData.role, feedbackData.data);
+        // console.log("LLM response:", res);
         loading.value = false;
     } catch (error) {
+        loading.value = false;
         console.error("Error submitting feedback:", error);
         alert('Failed to submit feedback. Please try again.');
         return;
@@ -119,7 +100,6 @@ const submitFeedback = async () => {
     try {
         await router.push('/feedback-thank-you')
         // TODO maybe show feedback success message earlier because right now it takes too long
-        console.log('Navigation to FeedbackThankyouPage was successful')
     } catch (err) {
         console.error('Navigation failed:', err)
     }
@@ -167,14 +147,7 @@ const submitFeedback = async () => {
             <Button class="w-full" @click="submitFeedback">
                 {{ staticContent.noteCards.save[activeLang] }}
             </Button>
-            <div v-if="loading">
-                <Loader2 class="animate-spin h-5 w-5 ml-2 inline-block" />
-                {{ staticContent.placeholders.loading[activeLang] }}
-            </div>
         </div>
+        <LoadingOverlay :visible="loading" :message="staticContent.placeholders.loading[activeLang]" />
     </div>
 </template>
-
-<style scoped>
-/* Optional: Adjust vertical spacing for smaller screens */
-</style>

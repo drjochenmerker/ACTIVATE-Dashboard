@@ -24,6 +24,7 @@ export async function getSparqlTemplate(template: sparqlTemplate): Promise<strin
  */
 export async function fetchSparql(query: string, update: boolean = false): Promise<StringAccessObject> {
     const res = await fetch(`${import.meta.env.VITE_KNOWLEDGE_GRAPH_URL}${!import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT ? '' : ':' + import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT}`, {
+
         method: "POST",
 
         headers: {

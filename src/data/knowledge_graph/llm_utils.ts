@@ -42,7 +42,7 @@ export async function llmSettingGeneration(description: string, title?: string, 
         }
     }
     // Add TTL to Sparql Backend
-    const rdfRes = await fetch(`${import.meta.env.VITE_KNOWLEDGE_GRAPH_URL}${!import.meta.env.VITE_SPARQL_PORT ? '' : ':' + import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT}/upload-ttl/`, {
+    const rdfRes = await fetch(`${import.meta.env.VITE_KNOWLEDGE_GRAPH_URL}${!import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT ? '' : ':' + import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT}/upload-ttl/`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -161,6 +161,12 @@ export async function llmPool(graphID: string): Promise<LLMParsingResult> {
     // Fetch all submissions
     let query = await getSparqlTemplate(sparqlTemplate.getLLMSubmissions);
     const submissionRes = await fetchSparql(query.replace("{{graph}}", graphID));
+    if (submissionRes.length === 0) {
+        return {
+            success: false,
+            message:"Failed to fetch submissions"
+        }
+    }
     const entitySubmissions: string[] = [];
     const tensionSubmissions: string[] = [];
     submissionRes.forEach((triple: StringAccessObject) => {
@@ -190,7 +196,7 @@ export async function llmPool(graphID: string): Promise<LLMParsingResult> {
         }
     }
     // Add results from pooling to the graph
-    const backendRes = await fetch(`${import.meta.env.VITE_KNOWLEDGE_GRAPH_URL}${!import.meta.env.VITE_SPARQL_PORT ? '' : ':' + import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT}/parse-pool/`, {
+    const backendRes = await fetch(`${import.meta.env.VITE_KNOWLEDGE_GRAPH_URL}${!import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT ? '' : ':' + import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT}/parse-pool/`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

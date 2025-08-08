@@ -1,25 +1,25 @@
 <script setup lang="ts">
-import { storeToRefs } from 'pinia';
 import ActivityDiagram from '@/components/ActivityDiagram.vue';
-import TripleAdditionDialog from '@/components/TripleAdditionDialog.vue';
-import EntityAdditionDialog from '@/components/EntityAdditionDialog.vue';
-import Editor from '@/components/Editor.vue';
-import { useActivityPointsStore } from "@/stores/activityPointsStore";
 import { ref } from 'vue';
 import { useSessionStore } from '@/stores/sessionStore';
 import { staticContent } from '@/data/contentData';
-import { Button } from '@/components/ui/button';
+
+// TMP not showing the editor
+// import { storeToRefs } from 'pinia';
+// import TripleAdditionDialog from '@/components/TripleAdditionDialog.vue';
+// import EntityAdditionDialog from '@/components/EntityAdditionDialog.vue';
+// import Editor from '@/components/Editor.vue';
+// import { useActivityPointsStore } from "@/stores/activityPointsStore";
+// import { Button } from '@/components/ui/button';
 
 defineProps<{ conflicts: any[], activity: any }>();
 
-const activityPointStore = useActivityPointsStore();
-const { getActivePoints } = storeToRefs(activityPointStore);
-
-const isTripleAdditionDialogOpen = ref(false);
-const isEntityAdditionDialogOpen = ref(false);
+// const activityPointStore = useActivityPointsStore();
+// const { getActivePoints } = storeToRefs(activityPointStore);
+// const isTripleAdditionDialogOpen = ref(false);
+// const isEntityAdditionDialogOpen = ref(false);
 
 const sessionStore = useSessionStore();
-
 const isEditorDrawerOPen = ref(false);
 
 </script>
@@ -42,7 +42,7 @@ const isEditorDrawerOPen = ref(false);
     <ActivityDiagram />
 
     <!-- Toggle Button with Dynamic Positioning -->
-    <Button @click="isEditorDrawerOPen = !isEditorDrawerOPen"
+    <!-- <Button @click="isEditorDrawerOPen = !isEditorDrawerOPen"
       :title="isEditorDrawerOPen ? 'Hide Editor' : 'Show Editor'" variant="default" size="icon" :class="[
         'z-50 rounded-full shadow transition-all',
         isEditorDrawerOPen ? 'self-end mb-2' : 'fixed top-1/2 right-4 transform -translate-y-1/2'
@@ -50,11 +50,11 @@ const isEditorDrawerOPen = ref(false);
       <span class="text-xl font-bold">
         {{ isEditorDrawerOPen ? '›' : '‹' }}
       </span>
-    </Button>
+    </Button> -->
 
 
 
-    <div class="flex flex-col">
+    <!-- <div class="flex flex-col">
       <transition name="fade">
         <div v-if="isEditorDrawerOPen" class="transition-all duration-300 ease-in-out">
           <Editor :activePoints="getActivePoints" />
@@ -65,9 +65,10 @@ const isEditorDrawerOPen = ref(false);
         </div>
       </transition>
 
-    </div>
+    </div> -->
   </div>
 </template>
+
 <style scoped>
 .fade-enter-active,
 .fade-leave-active {
