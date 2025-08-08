@@ -22,7 +22,7 @@ export type LLMParsingResult = {
  */
 export async function llmSettingGeneration(description: string, title?: string, defaultRole?: string): Promise<LLMParsingResult> {
     // Generate TTL using the LLM Backend
-    const llmRes = await fetch(`${import.meta.env.VITE_LLM_URL}${import.meta.env.VITE_LLM_PORT == false ? '' : ':' + import.meta.env.VITE_LLM_PORT}/api/feedback/settingGen`, {
+    const llmRes = await fetch(`${import.meta.env.VITE_LLM_URL}${!import.meta.env.VITE_LLM_PORT ? '' : ':' + import.meta.env.VITE_LLM_PORT}/api/feedback/settingGen`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -42,7 +42,7 @@ export async function llmSettingGeneration(description: string, title?: string, 
         }
     }
     // Add TTL to Sparql Backend
-    const rdfRes = await fetch(`${import.meta.env.VITE_KNOWLEDGE_GRAPH_URL}${import.meta.env.VITE_SPARQL_PORT == false ? '' : ':' + import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT}/upload-ttl/`, {
+    const rdfRes = await fetch(`${import.meta.env.VITE_KNOWLEDGE_GRAPH_URL}${!import.meta.env.VITE_SPARQL_PORT ? '' : ':' + import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT}/upload-ttl/`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -98,7 +98,7 @@ export async function llmSubmit(graphID: string, role: { id: string, label: stri
         }
     });
     // Generate TTL using the LLM Backend
-    const llmRes = await fetch(`${import.meta.env.VITE_LLM_URL}${import.meta.env.VITE_LLM_PORT == false ? '' : ':' + import.meta.env.VITE_LLM_PORT}/api/feedback/submit`, {
+    const llmRes = await fetch(`${import.meta.env.VITE_LLM_URL}${!import.meta.env.VITE_LLM_PORT ? '' : ':' + import.meta.env.VITE_LLM_PORT}/api/feedback/submit`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -171,7 +171,7 @@ export async function llmPool(graphID: string): Promise<LLMParsingResult> {
         }
     });
     // Pool submissions
-    const poolRes = await fetch(`${import.meta.env.VITE_LLM_URL}${import.meta.env.VITE_LLM_PORT == false ? '' : ':' + import.meta.env.VITE_LLM_PORT}/api/feedback/pool`, {
+    const poolRes = await fetch(`${import.meta.env.VITE_LLM_URL}${!import.meta.env.VITE_LLM_PORT ? '' : ':' + import.meta.env.VITE_LLM_PORT}/api/feedback/pool`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -190,7 +190,7 @@ export async function llmPool(graphID: string): Promise<LLMParsingResult> {
         }
     }
     // Add results from pooling to the graph
-    const backendRes = await fetch(`${import.meta.env.VITE_KNOWLEDGE_GRAPH_URL}${import.meta.env.VITE_SPARQL_PORT == false ? '' : ':' + import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT}/parse-pool/`, {
+    const backendRes = await fetch(`${import.meta.env.VITE_KNOWLEDGE_GRAPH_URL}${!import.meta.env.VITE_SPARQL_PORT ? '' : ':' + import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT}/parse-pool/`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
