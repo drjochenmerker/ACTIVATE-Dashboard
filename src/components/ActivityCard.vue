@@ -21,6 +21,7 @@ import { Button } from '@/components/ui/button';
 // import { Play, Loader2 } from 'lucide-vue-next';
 import { Play } from 'lucide-vue-next';
 // import { BookCopy, Play, Loader2 } from 'lucide-vue-next';
+// import { contentData, staticContent } from '@/data/contentData';
 import { staticContent } from '@/data/contentData';
 import { llmPool } from '@/data/knowledge_graph/llm_utils';
 import LoadingOverlay from '@/components/LoadingOverlay.vue';
@@ -173,6 +174,8 @@ const handlePoolingStart = async () => {
 
 // work with the qr code
 const showQrDialog = ref(false)
+const showUrl = ref(false)
+
 
 </script>
 
@@ -315,13 +318,26 @@ const showQrDialog = ref(false)
                                             {{ staticContent.feedbackpage.description[sessionStore.activeLanguage] }}
                                         </DialogDescription>
                                     </DialogHeader>
+
+                                    <!-- QR code -->
                                     <div class="flex justify-center py-4">
                                         <qrcode-vue :value="feedbackUrl" :size="200" />
+                                    </div>
+
+                                    <!-- Button to show/copy URL -->
+                                    <div class="flex flex-col items-center gap-2">
+                                        <Button variant="outline" @click="showUrl = !showUrl">
+                                            {{ showUrl ? staticContent.startPage.hideQr[sessionStore.activeLanguage] :
+                                                staticContent.startPage.showQr[sessionStore.activeLanguage] }}
+                                        </Button>
+
+                                        <div v-if="showUrl" class="break-all text-center p-2 border rounded bg-gray-50">
+                                            {{ feedbackUrl }}
+                                        </div>
                                     </div>
                                 </DialogContent>
                             </Dialog>
                         </div>
-
                         <!-- Start Session Button -->
                         <div>
                             <Dialog>
@@ -337,7 +353,7 @@ const showQrDialog = ref(false)
                                         </DialogTitle>
                                         <DialogDescription>{{
                                             staticContent.startPage.withoutRoleSelectText[sessionStore.activeLanguage]
-                                            }}
+                                        }}
                                         </DialogDescription>
                                     </DialogHeader>
 

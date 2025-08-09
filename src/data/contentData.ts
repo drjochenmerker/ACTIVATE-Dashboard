@@ -523,6 +523,16 @@ export const staticContent = {
             de: "Es gibt kein Feedback zum Kombinieren.",
             sv: "Det finns ingen feedback att kombinera."
         },
+        showQr:{
+            en: "Show URL",
+            de: "URL anzeigen",
+            sv: "Visa URL"
+        },
+        hideQr: {
+            en: "Hide URL",
+            de: "URL ausblenden",
+            sv: "Dölj URL"
+        }
     },
     hoverText:{
         object: {

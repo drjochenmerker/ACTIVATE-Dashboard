@@ -126,6 +126,7 @@ export interface Participant {
 // }
 export type Conflict = {
     origin?: any; // TODO 
+    isAI?: any;
     title: Record<string, string>;
     participants: Participant[],
     author: Participant;

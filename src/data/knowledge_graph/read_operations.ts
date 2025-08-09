@@ -257,6 +257,11 @@ export async function getConflictDetail(graph: string, conflictId: string): Prom
           parsedConflict.origin = item.conflict_o.value.split("#").pop();
           // console.log("Conflict Origin:", parsedConflict.origin);
           break;
+        case "isAI":
+          parsedConflict.isAI = item.conflict_o.value.split("#").pop();
+          // TODO handle is ai bool
+          // console.log(parsedConflict.isAI );
+          break;
         default:
           if (item.conflict_p !== undefined) {
             console.error("Unknown Property in Conflict Parsing", item.conflict_p.value);
