@@ -21,18 +21,21 @@ import {
   DialogDescription,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import { addActivity, addEntity } from '@/data/knowledge_graph/write_operations';
+// import { addActivity, addEntity } from '@/data/knowledge_graph/write_operations';
 import { useActivityStore } from '@/stores/activityStore';
 import { buildTreeStructByLang } from '@/data/knowledge_graph/utils';
 import { staticContent } from '@/data/contentData';
 import LanguageSelect from '@/components/LanguageSelect.vue';
 import { PlusIcon } from 'lucide-vue-next';
+import { llmSettingGeneration } from '@/data/knowledge_graph/llm_utils';
+import LoadingOverlay from '@/components/LoadingOverlay.vue';
 
 useColorMode();
 const sessionStore = useSessionStore();
 
 // refs
 const dialogOpen = ref(false);
+const loading = ref(false);
 
 // State management for activities
 const selectedActivity = ref<string>();
@@ -42,8 +45,8 @@ const activities = computed(() => activityStore.activityList);
 const newTitle = ref('');
 const newDescription = ref('');
 const defaultRole = ref('');
-const titleError = ref(false);
-const roleError = ref(false);
+const showValidationErrors = ref(false);
+
 
 
 // Load all available activities on component mount
@@ -62,52 +65,35 @@ watch(selectedActivity, async () => {
   sessionStore.availableRoles = buildTreeStructByLang(
     await getActivityClassIds(selectedActivity.value, KnowledgeGraphActivityClass.subject),
     sessionStore.activeLanguage);
-  sessionStore.sessionRole = ''; // Reset role selection
+  sessionStore.sessionRole = undefined; // Reset role selection
 });
 
 
 
 const addNewActivity = async () => {
+  showValidationErrors.value = true;
   try {
-    let hasError = false;
-    if (!newTitle.value.trim()) {
-      titleError.value = true;
-      hasError = true;
-    } else {
-      titleError.value = false;
-    }
-    if (!defaultRole.value.trim()) {
-      roleError.value = true;
-      hasError = true;
-    } else {
-      roleError.value = false;
-    }
-    if (hasError) return;
-
-
-    const res = await addActivity(newTitle.value, newDescription.value);
-    await addEntity(res.modified, defaultRole.value, KnowledgeGraphActivityClass.subject, sessionStore.activeLanguage);
-
-    // Reload activities after adding a new one
-    await activityStore.refreshActivityList();
-
-    //close dialog
-    dialogOpen.value = false;
-    // reset form fields
-    newTitle.value = '';
-    newDescription.value = '';
-    defaultRole.value = '';
+    loading.value = true;
+    await llmSettingGeneration(newDescription.value, newTitle.value, defaultRole.value);
+    loading.value = false;
   } catch (error) {
-    console.error("Fehler beim Hinzufügen einer Aktivität:", error);
+    console.error("Error during LLM generation:", error);
   }
-}
+
+  dialogOpen.value = false;
+  newTitle.value = '';
+  newDescription.value = '';
+  defaultRole.value = '';
+  showValidationErrors.value = false; // Reset validation state
+  await activityStore.refreshActivityList();
+};
+
 
 </script>
 
 <template>
-  <!-- Main container with centered layout -->
   <div class="flex flex-col items-center justify-center py-10 px-4">
-    <LanguageSelect class="absolute top-0 right-0 mt-4 mr-4"/>
+    <LanguageSelect class="absolute top-0 right-0 mt-4 mr-4" />
     <Card class="w-full max-w-5xl">
 
       <!-- Card header with logo -->
@@ -130,31 +116,44 @@ const addNewActivity = async () => {
             <DialogHeader>
               <DialogTitle>{{ staticContent.startPage.createActivity[sessionStore.activeLanguage] }}</DialogTitle>
 
-              <DialogDescription>{{staticContent.startPage.enterTitle[sessionStore.activeLanguage]}}</DialogDescription>
-              <input type="text" v-model="newTitle" :class="[
-                'w-full border rounded p-2 mb-1 dark:bg-gray-900',
-                titleError ? 'border-red-500' : 'border-gray-300'
-              ]" />
-              <p v-if="titleError" class="text-red-500 text-sm mb-2">Title is required.</p>
-              <DialogDescription>{{staticContent.startPage.enterDescription[sessionStore.activeLanguage]}}</DialogDescription>
-              <textarea v-model="newDescription" class="w-full border rounded p-2 mb-2  dark:bg-gray-900" />
+              <!-- Optional Title -->
+              <DialogDescription>{{ staticContent.startPage.enterTitle[sessionStore.activeLanguage] }}
+              </DialogDescription>
+              <input type="text" v-model="newTitle"
+                class="w-full border rounded p-2 mb-2 dark:bg-gray-900 border-gray-300" />
 
-              <DialogDescription>{{staticContent.startPage.defaultRole[sessionStore.activeLanguage]}}</DialogDescription>
-              <input v-model="defaultRole" :class="[
-                'w-full border rounded p-2 mb-1  dark:bg-gray-900',
-                roleError ? 'border-red-500' : 'border-gray-300'
+              <!-- Required Description -->
+              <DialogDescription>{{ staticContent.startPage.enterDescription[sessionStore.activeLanguage] }}
+              </DialogDescription>
+              <textarea v-model="newDescription" class="w-full border rounded p-2 mb-1 dark:bg-gray-900" :class="[
+                showValidationErrors && !newDescription.trim() ? 'border-red-500' : 'border-gray-300'
               ]" />
-              <p v-if="roleError" class="text-red-500 text-sm mb-2">Default role is required.</p>
+              <p v-if="showValidationErrors && !newDescription.trim()" class="text-red-500 text-sm mb-2">
+                {{ staticContent.startPage.descriptionRequired[sessionStore.activeLanguage] }}
+              </p>
+
+              <!-- Optional Default Role -->
+              <DialogDescription>{{ staticContent.startPage.defaultRole[sessionStore.activeLanguage] }}
+              </DialogDescription>
+              <input v-model="defaultRole" class="w-full border rounded p-2 mb-2 dark:bg-gray-900 border-gray-300" />
 
               <Button @click="addNewActivity">{{ staticContent.terms.done[sessionStore.activeLanguage] }}</Button>
+
+              <!-- <div v-if="loading">
+                <Loader2 class="animate-spin h-5 w-5 ml-2 inline-block" />
+                {{ staticContent.placeholders.loading[sessionStore.activeLanguage] }}
+              </div> -->
             </DialogHeader>
+            <LoadingOverlay :visible="loading"
+              :message="staticContent.placeholders.loading[sessionStore.activeLanguage]"
+              class="mt-4 text-red-500 font-semibold" />
           </DialogContent>
         </Dialog>
       </div>
 
       <!-- Activities Grid -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 px-6 pb-6">
-        <ActivityCard v-for="activity in activities" :key="activity.name" :activity="activity" class="h-fit" />
+        <ActivityCard v-for="activity in activities" :key="activity.graph" :activity="activity" class="h-fit" />
       </div>
     </Card>
   </div>

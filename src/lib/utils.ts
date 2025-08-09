@@ -27,3 +27,4 @@ export function buildLanguageString(input: { id: string, labels: Record<string, 
   if (split) return res.split("/").pop();
   return res;
 }
+

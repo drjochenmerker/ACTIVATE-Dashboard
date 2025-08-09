@@ -1,0 +1,9 @@
+PREFIX : <http://activate.htwk-leipzig.de/model#> 
+PREFIX graph: <http://activate.htwk-leipzig.de/graph/>
+
+SELECT ?subject ?predicate ?object
+FROM graph:{{graph}}
+WHERE {
+    ?subject ?predicate ?object .
+    FILTER (?predicate = :llmSubmissionEntity || ?predicate = :llmSubmissionTension)
+}

@@ -45,15 +45,24 @@ export enum sparqlTemplate {
     getDiagramVocab = "getDiagramVocab",
     updateActivity = "updateActivity",
     cloneActivity = "cloneActivity",
+    getLLMDetail = "getLLMDetail",
+    addLLMSubmission = "addLLMSubmission",
+    getLLMSubmissions = "getLLMSubmissions",
 }
 
 /**
  * Activity in the knowledge graph
  */
+// OLD
+// export type Activity = {
+//     graph: string;
+//     name: string;
+//     description?: string;
+// }
 export type Activity = {
-    graph: string;
-    name: string;
-    description?: string;
+  graph: string;
+  name: Record<string, string>;
+  description: Record<string, string>;
 }
 
 /**
@@ -103,24 +112,39 @@ export interface Participant {
 /**
  * Conflict in the knowledge graph
  */
+// export type Conflict = {
+//     // title: string,
+//     title: Record<string, string>;
+//     participants: Participant[],
+//     author: string,
+//     status: conflictStatus,
+//     // description?: string,
+//     description: Record<string, string>,
+//     timestamp?: Date,
+//     replies?: Comment[],
+//     id?: string
+// }
 export type Conflict = {
-    title: string,
+    origin?: any; // TODO 
+    isAI?: any;
+    title: Record<string, string>;
     participants: Participant[],
-    author: string,
+    author: Participant;
     status: conflictStatus,
-    description?: string,
+    description: Record<string, string>,
     timestamp?: Date,
     replies?: Comment[],
     id?: string
 }
+
 
 /**
  * Comment in the knowledge graph
  */
 export type Comment = {
     id: string,
-    author?: string,
-    comment?: string,
+    author?: Participant;
+    comment?: Record<string, string>,
     timestamp?: Date,
     replies?: Comment[]
 }
@@ -226,7 +250,15 @@ export type NestedMultiLangObject = {
     values?: MultiLangObject[],
     next?: NestedMultiLangObject[]
 }
-
+/**
+ * NestedMultiLangObject that allows the usage of multiple languages
+ */
+export type NestedMultiLangObjectWithId = {
+  id: string;
+  labels: Record<string, string>;
+  value?: string;
+  children?: NestedMultiLangObjectWithId[];
+}
 /**
  * Predicate Dictionary that allows fetching all predicates
  * for a given tuple of activity diagram classes

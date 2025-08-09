@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { defineProps, ref, onMounted, nextTick, computed, watch } from 'vue';
+import { ref, onMounted, nextTick, computed, watch } from 'vue';
 import { conflictPredicate, conflictStatus, Participant } from '@/data/knowledge_graph/structures';
 import ReplyCard from './ReplyCard.vue';
 import { addComment, deleteConflict, updateConflict } from "@/data/knowledge_graph/write_operations";
@@ -224,6 +224,7 @@ const removeReply = (id: string) => {
       <!-- Author-->
       <span class="note-card-author">
         {{ staticContent.terms.author[sessionStore.activeLanguage] }}: {{ props.author }}
+        <!-- TODO: correctly access the author in the active language -->
       </span>
       <!-- Status selector -->
       <div class="status-selector">

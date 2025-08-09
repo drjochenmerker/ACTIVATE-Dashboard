@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { addComment, deleteComment } from '@/data/knowledge_graph/write_operations';
-import { defineProps, nextTick, ref, watch } from 'vue';
+import { nextTick, ref, watch } from 'vue';
 import Button from './ui/button/Button.vue';
 import ReplyCard from './ReplyCard.vue';
 import { useSessionStore } from '@/stores/sessionStore';

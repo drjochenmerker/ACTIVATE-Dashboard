@@ -3,7 +3,7 @@ import { Objective } from '@/data/knowledge_graph/structures';
 import { buildLanguageString } from '@/lib/utils';
 import { useSessionStore } from '@/stores/sessionStore';
 import { useColorMode } from '@vueuse/core';
-import { defineProps, nextTick, ref, watch, computed } from 'vue';
+import { nextTick, ref, watch, computed } from 'vue';
 
 /**
  * Props of the PointHoverPopUp component

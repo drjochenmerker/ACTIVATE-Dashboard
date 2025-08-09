@@ -6,15 +6,17 @@ import { useSessionStore } from '@/stores/sessionStore';
 
 const sessionStore = useSessionStore();
 
+
 function handleLanguageChange() {
-    sessionStore.outdated = true
+    // console.log("Language changed to: ", sessionStore.activeLanguage);
 }
 </script>
 
 <template>
     <div class="flex flex-row gap-2 items-center w-32">
         <LanguagesIcon class=" w-1/3" />
-        <Select :default-value="LanguageCode.English" v-model="sessionStore.activeLanguage" id="languageSelect" @update:model-value="handleLanguageChange">
+        <Select :default-value="LanguageCode.English" v-model="sessionStore.activeLanguage" id="languageSelect"
+            @update:model-value="handleLanguageChange">
             <SelectTrigger class="w-[180px] overflow-hidden whitespace-nowrap truncate">
                 <SelectValue />
             </SelectTrigger>

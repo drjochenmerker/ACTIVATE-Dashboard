@@ -58,7 +58,7 @@ export function calculateConflictPositions(
                 if (!triangleGroups.has(key)) triangleGroups.set(key, []);
                 triangleGroups.get(key)?.push(conflict);
             } else {
-                console.warn('Conflict with more than 3 participant types:', conflict);
+                // console.warn('Conflict with more than 3 participant types:', conflict);
             }
         });
 

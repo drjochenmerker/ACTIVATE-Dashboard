@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { defineProps, nextTick, onMounted, ref } from 'vue';
+import { nextTick, ref } from 'vue';
 import { Button } from '@/components/ui/button';
 import { addComment, deleteComment } from '@/data/knowledge_graph/write_operations';
 import { useConflictsStore } from '@/stores/conflictsStore';
@@ -30,10 +30,6 @@ const replyInputVisible = ref(false);
 const newReplyText = ref('');
 const textareaRef = ref<HTMLTextAreaElement | null>(null);
 
-onMounted(() => {
-    // console.log(props.parentComment)
-})
-
 const toggleReplyInput = async () => {
     replyInputVisible.value = !replyInputVisible.value;
     if (replyInputVisible.value) {
@@ -44,14 +40,12 @@ const toggleReplyInput = async () => {
 
 // Function to save a reply
 const saveReply = async (parentCommentId: string) => {
-    // console.log(`save comment for conflict with id: ${parentCommentId}:`, newReplyText.value);
     if (!newReplyText.value) return;
     try {
         await addComment(
             parentCommentId,
             newReplyText.value
         );
-        //console.log('reply saved successfully');
 
 
         replyInputVisible.value = false; // hide input field
@@ -124,13 +118,23 @@ const removeReply = (id: string) => {
 
         <div class="reply-content">
             <div class="reply-head">
-                <p class="reply-author">{{ props.parentComment.author }}</p>
+                <p class="reply-author">{{ props.parentComment.author.labels[sessionStore.activeLanguage]
+                    || props.parentComment.author.labels['default'] }}</p>
                 <button class="icon-button" @click="handleDelete(props.parentComment.id, props.parentComment)">
                     <span class="material-symbols-outlined">delete</span>
                 </button>
 
             </div>
-            <p class="reply-text">{{ props.parentComment.comment }}</p>
+            <!-- TODO handle multi-language comments -->
+            <p class="reply-text">
+                {{
+                    props.parentComment.comment?.[sessionStore.activeLanguage]?.trim() ||
+                    props.parentComment.comment?.['default']?.trim() ||
+                    Object.values(props.parentComment.comment || {}).find(c => typeof c === 'string' && c.trim() !== '') ||
+                    ''
+                }}
+            </p>
+
         </div>
 
         <!-- Reply Button to hide input field -->

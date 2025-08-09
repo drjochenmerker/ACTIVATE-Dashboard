@@ -171,7 +171,6 @@ export default {
     async transferText() {
       // consts
       const content = this.quill.root.innerHTML;
-      console.log("content ", content);
       const title = this.title || 'New Note';
       const author = this.isAnonymous ? 'Anonymous' : (useSessionStore().sessionRole);
       const participants = [];

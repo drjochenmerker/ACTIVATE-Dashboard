@@ -64,9 +64,11 @@ const filteredConflicts = computed(() => {
       <div class="conflict-container">
         <div class="note-container">
           <!-- NoteCard component for displaying conflict details -->
-          <NoteCard :conflict="conflict" :title="conflict.title" :content="conflict.description || ''"
-            :author="conflict.author" :status="conflict.status"
-            :isGrayedOut="!!highlightedConflictId && conflict.id !== highlightedConflictId" />
+          <NoteCard :conflict="conflict"
+            :title="conflict.title[sessionStore.activeLanguage] || conflict.title['default']"
+            :content="conflict.description[sessionStore.activeLanguage] || conflict.description['default']"
+            :author="conflict.author.labels[sessionStore.activeLanguage] || conflict.author.labels['default']"
+            :status="conflict.status" :isGrayedOut="!!highlightedConflictId && conflict.id !== highlightedConflictId" />
         </div>
 
       </div>

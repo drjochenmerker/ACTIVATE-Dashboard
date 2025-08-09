@@ -1,4 +1,4 @@
-version: "3"
+version: '3'
 services:
   backend:
     build:
@@ -10,16 +10,24 @@ services:
     volumes:
       - /home/projekt/infrastructure/apps/activate-dashboard/rdflib/data:/rdflib/data
 
-  frontend:
-    build:
-      context: .
-    ports:
-      - "8001:80"
-    depends_on:
-      - backend
-    networks:
-      - activate-network
+    frontend:
+        build:
+            context: .
+        ports:
+            - '8001:80'
+        depends_on:
+            - backend
+        networks:
+            - activate-network
+
+    llm-backend:
+        build:
+            context: ./feedback-parser
+        ports:
+            - '8003:8005'
+        networks:
+            - activate-network
 
 networks:
-  activate-network:
-    external: true
+    activate-network:
+        external: true

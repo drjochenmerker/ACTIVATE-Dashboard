@@ -28,11 +28,12 @@ export async function addConflict(graph: string, conflict: Conflict): Promise<up
         "{{graph}}": graph,
         "{{conflictId}}": conflictId,
         "{{participants}}": participantString,
-        "{{description}}": conflict.description ? EscapeSparqlStringLiteral(conflict.description) : "",
-        "{{author}}": EscapeSparqlStringLiteral(conflict.author),
+        "{{description}}": conflict.description ? EscapeSparqlStringLiteral(getStringFromRecord(conflict.description)) : "",
+        // "{{author}}": EscapeSparqlStringLiteral(getStringFromRecord(conflict.author.id)),
+        "{{author}}": "",
         "{{status}}": conflict.status,
         "{{created}}": timestamp,
-        "{{title}}": EscapeSparqlStringLiteral(conflict.title)
+        "{{title}}": EscapeSparqlStringLiteral(getStringFromRecord(conflict.title))
     };
     query = query.replaceMultiple(mapObj);
     // Exeucte Query in update mode
@@ -128,7 +129,7 @@ export async function addComment(parentId: string, comment: string): Promise<upd
         comment: comment,
         created: timestamp
     });
-
+    
     let query = await getSparqlTemplate(sparqlTemplate.addComment);
     const mapObj = {
         '{{graph}}': graph,
@@ -136,10 +137,10 @@ export async function addComment(parentId: string, comment: string): Promise<upd
         '{{commentId}}': commentId,
         '{{comment}}': EscapeSparqlStringLiteral(comment),
         '{{created}}': timestamp,
-        '{{parentId}}': parentId
+        '{{parentId}}': parentId,
+        '{{langTag}}': sessionStore.activeLanguage
     };
     query = query.replaceMultiple(mapObj);
-    //console.log(query)
     // Exeucte Query in update mode
     const data = await fetchSparql(query, true);
     return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: commentId, action: RDFOperation.insert } as updateResponse;
@@ -254,20 +255,23 @@ export async function addEntity(graph: string, entityLabel: string, activityClas
  * @param activityDescription Description of the new activity
  * @returns UpdateResponse Object
  */
-export async function addActivity(activityName: string, activityDescription: string): Promise<updateResponse> {
-    let query = await getSparqlTemplate(sparqlTemplate.addActivity);
-    const graphID = EscapeSparqlStringLiteral(CapitalizeFirstLetter(activityName.trim().replaceAll(" ", "_")));
-    const activityID = EscapeSparqlStringLiteral(CapitalizeFirstLetter(activityName.trim().replaceAll(" ", "")));
-    activityName = EscapeSparqlStringLiteral(CapitalizeFirstLetter(activityName.trim()));
-    const mapObj = {
-        "{{graphName}}": graphID,
-        "{{identifier}}": activityID,
-        "{{descriptions}}": `"${EscapeSparqlStringLiteral(activityDescription)}"`,
-        "{{name}}": activityName
-    }
-    query = query.replaceMultiple(mapObj);
-    const data = await fetchSparql(query, true);
-    return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: graphID, action: RDFOperation.insert } as updateResponse;
+// export async function addActivity(activityName: string, activityDescription: string): Promise<updateResponse> {
+export async function addActivity(activityName: string,): Promise<updateResponse> {
+    // let query = await getSparqlTemplate(sparqlTemplate.addActivity);
+    // const graphID = EscapeSparqlStringLiteral(CapitalizeFirstLetter(activityName.trim().replaceAll(" ", "_")));
+    // const activityID = EscapeSparqlStringLiteral(CapitalizeFirstLetter(activityName.trim().replaceAll(" ", "")));
+    // activityName = EscapeSparqlStringLiteral(CapitalizeFirstLetter(activityName.trim()));
+    // const mapObj = {
+    //     "{{graphName}}": graphID,
+    //     "{{identifier}}": activityID,
+    //     "{{descriptions}}": `"${EscapeSparqlStringLiteral(activityDescription)}"`,
+    //     "{{name}}": activityName
+    // }
+    // query = query.replaceMultiple(mapObj);
+    // const data = await fetchSparql(query, true);
+    // return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: graphID, action: RDFOperation.insert } as updateResponse;
+    // TODO handle adding of activities
+    return { code: 501, status: "Not Implemented", modified: activityName, action: RDFOperation.insert } as updateResponse;
 }
 
 /**
@@ -289,15 +293,18 @@ export async function deleteActivity(graph: string): Promise<updateResponse> {
  * @returns updateResponse Object
  */
 export async function updateActivity(activity: Activity): Promise<updateResponse> {
-    let query = await getSparqlTemplate(sparqlTemplate.updateActivity);
-    const mapObj = {
-        "{{graph}}": activity.graph,
-        "{{activityName}}": EscapeSparqlStringLiteral(activity.name),
-        "{{activityDescription}}": activity.description ? EscapeSparqlStringLiteral(activity.description) : "No description given",
-    }
-    query = query.replaceMultiple(mapObj);
-    const data = await fetchSparql(query, true);
-    return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: activity.graph, action: RDFOperation.insert } as updateResponse;
+    // let query = await getSparqlTemplate(sparqlTemplate.updateActivity);
+    // const mapObj = {
+    //     "{{graph}}": activity.graph,
+    //     // "{{activityName}}": EscapeSparqlStringLiteral(getStringFromRecord(activity.name)),
+    //     "{{activityName}}": EscapeSparqlStringLiteral(activity.name),
+    //     "{{activityDescription}}": activity.description ? EscapeSparqlStringLiteral(getStringFromRecord(activity.description)) : "No description given",
+    // }
+    // query = query.replaceMultiple(mapObj);
+    // const data = await fetchSparql(query, true);
+    // return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: activity.graph, action: RDFOperation.insert } as updateResponse;
+    // TODO handle updating of activities
+    return { code: 501, status: "Not Implemented", modified: activity.graph} as updateResponse;
 }
 
 /**
@@ -307,23 +314,30 @@ export async function updateActivity(activity: Activity): Promise<updateResponse
  */
 export async function cloneActivity(activity: Activity): Promise<updateResponse> {
     // Handle missing props
-    if (activity.name.trim() == "") activity.name = activity.graph + "_copy";
-    if (activity.description?.trim() == "") activity.description = "No description given";
-    // Clone activity
-    let query = await getSparqlTemplate(sparqlTemplate.cloneActivity);
-    const cloneHash = hash(activity)
-    const newGraphID = EscapeSparqlStringLiteral(CapitalizeFirstLetter(activity.name.trim().replaceAll(" ", "_") + "_" + cloneHash))
-    const mapObj = {
-        "{{graph}}": activity.graph,
-        "{{newName}}": newGraphID
-    }
-    query = query.replaceMultiple(mapObj);
-    const data = await fetchSparql(query, true);
-    // Update name and description
-    await updateActivity({
-        graph: newGraphID,
-        name: activity.name,
-        description: activity.description
-    });
-    return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: activity.graph, action: RDFOperation.insert } as updateResponse;
+    // // todo
+    // if (activity.name.trim() == "") activity.name = activity.graph + "_copy";
+    // if (activity.description?.trim() == "") activity.description = "No description given";
+    // // Clone activity
+    // let query = await getSparqlTemplate(sparqlTemplate.cloneActivity);
+    // const cloneHash = hash(activity)
+    // const newGraphID = EscapeSparqlStringLiteral(CapitalizeFirstLetter(activity.name.trim().replaceAll(" ", "_") + "_" + cloneHash))
+    // const mapObj = {
+    //     "{{graph}}": activity.graph,
+    //     "{{newName}}": newGraphID
+    // }
+    // query = query.replaceMultiple(mapObj);
+    // const data = await fetchSparql(query, true);
+    // // Update name and description
+    // await updateActivity({
+    //     graph: newGraphID,
+    //     name: activity.name,
+    //     description: activity.description
+    // });
+    // return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: activity.graph, action: RDFOperation.insert } as updateResponse;
+    // TODO handle cloning of activities
+    return { code: 501, status: "Not Implemented", modified: activity.graph, action: RDFOperation.insert } as updateResponse;
+}
+
+function getStringFromRecord(record: Record<string, string>, lang = "en"): string {
+  return record[lang] || Object.values(record)[0] || "";
 }

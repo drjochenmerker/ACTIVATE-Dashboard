@@ -1,32 +1,38 @@
 stages:
-  - build
-  - deploy
+    - build
+    - deploy
 
 cache:
-  key: ${CI_COMMIT_REF_SLUG}
-  paths:
-    - node_modules/
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+        - node_modules/
 
 build:
-  stage: build
-  image: node:lts-bookworm-slim
-  script:
-    - npm i
-    - npm run format
-    - npm run build
-  artifacts:
-    paths:
-      - dist/
+    stage: build
+    image: node:lts-bookworm-slim
+    script:
+        - npm i
+        - npm run format
+        - npm run build
+    artifacts:
+        paths:
+            - dist/
 
 deploy:
-  stage: deploy
-  only:
-    - prod
-  script:
-    - mkdir -p ~/.ssh
-    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
-    - chmod 600 ~/.ssh/id_ed25519
-    - eval "$(ssh-agent -s)"
-    - ssh-add ~/.ssh/id_ed25519
-    - ssh-keyscan "$SSH_HOST" >> ~/.ssh/known_hosts
-    - ssh -v -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "cd /home/projekt/infrastructure/apps/activate-dashboard && git pull origin prod && task create && task reload-nginx"
+    stage: deploy
+    only:
+        - prod
+    script:
+        - mkdir -p ~/.ssh
+        - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+        - chmod 600 ~/.ssh/id_ed25519
+        - eval "$(ssh-agent -s)"
+        - ssh-add ~/.ssh/id_ed25519
+        - ssh-keyscan "$SSH_HOST" >> ~/.ssh/known_hosts
+        - ssh -v -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "
+          cd /home/projekt/infrastructure/apps/activate-dashboard && \
+          git pull origin prod && \
+          git submodule update --init --recursive && \
+          task create && \
+          task reload-nginx
+          "
