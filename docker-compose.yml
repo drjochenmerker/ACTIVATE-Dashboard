@@ -1,12 +1,14 @@
 version: '3'
 services:
-    backend:
-        build:
-            context: ./rdflib
-        ports:
-            - '8002:8000'
-        networks:
-            - activate-network
+  backend:
+    build:
+      context: ./rdflib
+    ports:
+      - "8002:8000"
+    networks:
+      - activate-network
+    volumes:
+      - /home/projekt/infrastructure/apps/activate-dashboard/rdflib/data:/rdflib/data
 
     frontend:
         build:
