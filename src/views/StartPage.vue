@@ -26,8 +26,9 @@ import { useActivityStore } from '@/stores/activityStore';
 import { buildTreeStructByLang } from '@/data/knowledge_graph/utils';
 import { staticContent } from '@/data/contentData';
 import LanguageSelect from '@/components/LanguageSelect.vue';
-import { Loader2, PlusIcon } from 'lucide-vue-next';
+import { PlusIcon } from 'lucide-vue-next';
 import { llmSettingGeneration } from '@/data/knowledge_graph/llm_utils';
+import LoadingOverlay from '@/components/LoadingOverlay.vue';
 
 useColorMode();
 const sessionStore = useSessionStore();
@@ -73,8 +74,7 @@ const addNewActivity = async () => {
   showValidationErrors.value = true;
   try {
     loading.value = true;
-    const res = await llmSettingGeneration(newDescription.value, newTitle.value, defaultRole.value);
-    console.log("LLM Generation Result:", res);
+    await llmSettingGeneration(newDescription.value, newTitle.value, defaultRole.value);
     loading.value = false;
   } catch (error) {
     console.error("Error during LLM generation:", error);
@@ -138,11 +138,15 @@ const addNewActivity = async () => {
               <input v-model="defaultRole" class="w-full border rounded p-2 mb-2 dark:bg-gray-900 border-gray-300" />
 
               <Button @click="addNewActivity">{{ staticContent.terms.done[sessionStore.activeLanguage] }}</Button>
-              <div v-if="loading">
+
+              <!-- <div v-if="loading">
                 <Loader2 class="animate-spin h-5 w-5 ml-2 inline-block" />
                 {{ staticContent.placeholders.loading[sessionStore.activeLanguage] }}
-              </div>
+              </div> -->
             </DialogHeader>
+            <LoadingOverlay :visible="loading"
+              :message="staticContent.placeholders.loading[sessionStore.activeLanguage]"
+              class="mt-4 text-red-500 font-semibold" />
           </DialogContent>
         </Dialog>
       </div>

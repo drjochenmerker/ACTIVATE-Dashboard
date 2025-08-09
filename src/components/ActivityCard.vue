@@ -24,6 +24,8 @@ import { Play } from 'lucide-vue-next';
 import { staticContent } from '@/data/contentData';
 import { llmPool } from '@/data/knowledge_graph/llm_utils';
 import LoadingOverlay from '@/components/LoadingOverlay.vue';
+import RecursiveSelect from './RecursiveSelect.vue';
+import { Select, SelectTrigger, SelectContent, SelectValue } from '@/components/ui/select';
 
 // consts and props defintion
 const sessionStore = useSessionStore();
@@ -69,7 +71,8 @@ onMounted(async () => {
 
 // Handle session start when user clicks start button
 const handleStartSession = async () => {
-    sessionStore.sessionRole = sessionStore.sessionRole || staticContent.startPage.defaultRoleName[sessionStore.activeLanguage];
+    sessionStore.sessionRole = sessionStore.sessionRole || 'Lecturer'
+
     sessionStore.sessionActivity = {
         graph: props.activity.graph,
         name: props.activity.name,
@@ -339,7 +342,7 @@ const showQrDialog = ref(false)
                                     </DialogHeader>
 
                                     <!-- Select a role-->
-                                    <!-- <Select v-model="sessionStore.sessionRole" id="roleSelect" class="my-4">
+                                    <Select v-model="sessionStore.sessionRole" id="roleSelect" class="my-4">
                                         <SelectTrigger>
                                             <SelectValue
                                                 :placeholder="staticContent.placeholders.roleSelect[sessionStore.activeLanguage]" />
@@ -348,7 +351,7 @@ const showQrDialog = ref(false)
                                             <RecursiveSelect :node="sessionStore.availableRoles" />
                                         </SelectContent>
 
-                                    </Select> -->
+                                    </Select>
 
                                     <!-- Instructor mode toggle -->
                                     <!-- TODO tmp maybe bring back -->

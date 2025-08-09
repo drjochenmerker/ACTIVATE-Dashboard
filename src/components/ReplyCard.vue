@@ -125,10 +125,16 @@ const removeReply = (id: string) => {
                 </button>
 
             </div>
-            <!-- <p class="reply-text">{{ props.parentComment.comment[sessionStore.activeLanguage] }}</p> -->
             <!-- TODO handle multi-language comments -->
-            <p class="reply-text">{{ props.parentComment.comment?.[sessionStore.activeLanguage] ||
-                props.parentComment.comment?.['default'] }}</p>
+            <p class="reply-text">
+                {{
+                    props.parentComment.comment?.[sessionStore.activeLanguage]?.trim() ||
+                    props.parentComment.comment?.['default']?.trim() ||
+                    Object.values(props.parentComment.comment || {}).find(c => typeof c === 'string' && c.trim() !== '') ||
+                    ''
+                }}
+            </p>
+
         </div>
 
         <!-- Reply Button to hide input field -->

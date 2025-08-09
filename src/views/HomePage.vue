@@ -21,7 +21,6 @@ defineProps<{ conflicts: any[], activity: any }>();
 
 const sessionStore = useSessionStore();
 const isEditorDrawerOPen = ref(false);
-
 </script>
 
 <template>

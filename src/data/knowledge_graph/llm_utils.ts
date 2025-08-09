@@ -140,7 +140,6 @@ export async function llmSubmit(graphID: string, role: { id: string, label: stri
     query = query.replaceMultiple(TensionMapObj);
     const TensionRes = await fetchSparql(query, true);
     if (!EntityRes.ok || !TensionRes.ok) {
-        console.log(EntityRes, TensionRes);
         return {
             success: false,
             message: "Failed to stash results"

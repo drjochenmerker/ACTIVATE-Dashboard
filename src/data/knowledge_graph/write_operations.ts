@@ -129,7 +129,7 @@ export async function addComment(parentId: string, comment: string): Promise<upd
         comment: comment,
         created: timestamp
     });
-
+    
     let query = await getSparqlTemplate(sparqlTemplate.addComment);
     const mapObj = {
         '{{graph}}': graph,
@@ -137,10 +137,10 @@ export async function addComment(parentId: string, comment: string): Promise<upd
         '{{commentId}}': commentId,
         '{{comment}}': EscapeSparqlStringLiteral(comment),
         '{{created}}': timestamp,
-        '{{parentId}}': parentId
+        '{{parentId}}': parentId,
+        '{{langTag}}': sessionStore.activeLanguage
     };
     query = query.replaceMultiple(mapObj);
-    //console.log(query)
     // Exeucte Query in update mode
     const data = await fetchSparql(query, true);
     return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: commentId, action: RDFOperation.insert } as updateResponse;
@@ -314,7 +314,6 @@ export async function updateActivity(activity: Activity): Promise<updateResponse
  */
 export async function cloneActivity(activity: Activity): Promise<updateResponse> {
     // Handle missing props
-    console.log(activity.name);
     // // todo
     // if (activity.name.trim() == "") activity.name = activity.graph + "_copy";
     // if (activity.description?.trim() == "") activity.description = "No description given";
