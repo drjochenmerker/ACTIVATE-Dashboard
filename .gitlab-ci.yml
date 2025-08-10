@@ -29,9 +29,9 @@ deploy:
         - eval "$(ssh-agent -s)"
         - ssh-add ~/.ssh/id_ed25519
         - ssh-keyscan "$SSH_HOST" >> ~/.ssh/known_hosts
-        - ssh -v -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST \
-          'bash -lc "cd /home/projekt/infrastructure/apps/activate-dashboard && \
+        - ssh -v -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "
+          cd /home/projekt/infrastructure/apps/activate-dashboard && \
           git pull origin prod && \
-          git submodule update --init --recursive && \
           task create && \
-          task reload-nginx"'
+          task reload-nginx
+          "
