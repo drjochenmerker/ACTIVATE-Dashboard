@@ -29,4 +29,19 @@ deploy:
         - eval "$(ssh-agent -s)"
         - ssh-add ~/.ssh/id_ed25519
         - ssh-keyscan "$SSH_HOST" >> ~/.ssh/known_hosts
+        # Check git availability
         - ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "echo PATH=\$PATH && which git && git --version"
+        # Run deploy commands step-by-step with debug output
+        - ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST \
+          'bash -lc "
+          set -e
+          cd /home/projekt/infrastructure/apps/activate-dashboard
+          echo Running git pull...
+          git pull origin prod
+          echo Running submodule update...
+          git submodule update --init --recursive
+          echo Running task create...
+          task create
+          echo Running reload-nginx...
+          task reload-nginx
+          "'
