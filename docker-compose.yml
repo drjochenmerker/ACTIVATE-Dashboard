@@ -8,7 +8,7 @@ services:
         networks:
             - activate-network
         volumes:
-            - /home/projekt/infrastructure/apps/activate-dashboard/rdflib/data:/rdflib/data
+            - ./rdflib/data:/rdflib/data
 
     frontend:
         build:
