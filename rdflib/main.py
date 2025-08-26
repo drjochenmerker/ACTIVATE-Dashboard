@@ -61,7 +61,7 @@ from uuid import uuid4
 async def upload_ttl(request: Request):
     ttl_string = await request.body()
     # Debug log
-    print(f"Received TTL data: {ttl_string[:100]}...")
+    print(f"Received TTL data: \n{ttl_string.decode('utf-8')}")
     if not ttl_string:
         raise HTTPException(status_code=400, detail="No TTL data provided.")
 

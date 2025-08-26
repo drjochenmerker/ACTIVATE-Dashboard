@@ -451,17 +451,51 @@ export default defineComponent({
                     ctx.fillText(point.label, point.x + triangleWidth / 60 + ctx.measureText(point.label).width, point.y - triangleHeight / 30);
                 }
             });
-
             // Draw conflict points based on conflict positions and status
             if (conflictPositions.value.length > 0) {
-                conflictPositions.value.forEach((conflict: any) => {
-                    ctx.beginPath();
-                    ctx.arc(conflict.x, conflict.y, triangleHeight / 80, 0, 2 * Math.PI);
-                    ctx.fillStyle = conflict.status == conflictStatus.open ? "red" : conflict.status == conflictStatus.inDiscussion ? "yellow" : "green";
-                    ctx.fill();
-                    ctx.strokeStyle = "black";
-                    ctx.lineWidth = 1;
-                    ctx.stroke();
+                conflictPositions.value.forEach((conflict: Conflict) => {
+                    if (conflict.x && conflict.y) {
+                        // Check if the conflict point is currently hovered
+                        const isHovered = hoveredConflictPointData.value &&
+                            hoveredConflictPointData.value.id === conflict.id;
+                        const scalingFactor = isHovered ? 1.2 : 1;
+                        ctx.beginPath()
+                        if (conflict.hasIntent === "Negative") {
+                            // Drawn counter clockwise beginning at the top of the bolt
+                            ctx.moveTo(conflict.x + triangleHeight / 140 * scalingFactor, conflict.y - triangleHeight / 45 * scalingFactor)
+                            ctx.lineTo(conflict.x - triangleHeight / 80 * scalingFactor, conflict.y + triangleHeight / 420 * scalingFactor)
+                            ctx.lineTo(conflict.x - triangleHeight / 280 * scalingFactor, conflict.y + triangleHeight / 260 * scalingFactor)
+                            ctx.lineTo(conflict.x - triangleHeight / 140 * scalingFactor, conflict.y + triangleHeight / 45 * scalingFactor)
+                            ctx.lineTo(conflict.x + triangleHeight / 80 * scalingFactor, conflict.y - triangleHeight / 420 * scalingFactor)
+                            ctx.lineTo(conflict.x + triangleHeight / 280 * scalingFactor, conflict.y - triangleHeight / 260 * scalingFactor)
+                            ctx.lineTo(conflict.x + triangleHeight / 140 * scalingFactor, conflict.y - triangleHeight / 45 * scalingFactor)
+                        } else if (conflict.hasIntent === "Positive") {
+                            // Drawn counter clockwise beginning at the top of the star
+                            ctx.moveTo(conflict.x, conflict.y - triangleHeight / 45 * scalingFactor)
+                            ctx.lineTo(conflict.x - triangleHeight / 180 * scalingFactor, conflict.y - triangleHeight / 180 * scalingFactor)
+                            ctx.lineTo(conflict.x - triangleHeight / 45 * scalingFactor, conflict.y)
+                            ctx.lineTo(conflict.x - triangleHeight / 180 * scalingFactor, conflict.y + triangleHeight / 180 * scalingFactor)
+                            ctx.lineTo(conflict.x, conflict.y + triangleHeight / 45 * scalingFactor)
+                            ctx.lineTo(conflict.x + triangleHeight / 180 * scalingFactor, conflict.y + triangleHeight / 180 * scalingFactor)
+                            ctx.lineTo(conflict.x + triangleHeight / 45 * scalingFactor, conflict.y)
+                            ctx.lineTo(conflict.x + triangleHeight / 180 * scalingFactor, conflict.y - triangleHeight / 180 * scalingFactor)
+                            ctx.lineTo(conflict.x, conflict.y - triangleHeight / 45 * scalingFactor)
+                        } else {
+                            // Circle (Neutral intent)
+                            ctx.arc(conflict.x, conflict.y, triangleHeight / 70 * scalingFactor, 0, 2 * Math.PI);
+                        }
+
+                        ctx.fillStyle = conflict.status == conflictStatus.open ? "red" :
+                            conflict.status == conflictStatus.inDiscussion ? "yellow" : "green";
+                        ctx.fill();
+                        ctx.strokeStyle = mode.value === "dark" ? "white" : "black";
+                        // Highlight line width when conflict point is hovered
+                        ctx.lineWidth = 2.5 * scalingFactor;
+                        ctx.stroke();
+                    }
+                    else {
+                        console.log("ERROR: Conflict position is missing x or y coordinates");
+                    }
                 });
             }
         };
@@ -605,6 +639,11 @@ export default defineComponent({
             conflictPositions.value = calculateConflictPositions(conflictStore.getConflicts, points.value, 20).value;
             draw();
         }, { deep: true });
+
+        // Watcher to refresh activityDiagram when language is changed
+        watch(() => sessionStore.activeLanguage, async () => {
+            updateColors();
+        });
 
 
         return {
