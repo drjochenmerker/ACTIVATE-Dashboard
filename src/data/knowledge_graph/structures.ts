@@ -127,14 +127,17 @@ export interface Participant {
 export type Conflict = {
     origin?: any; // TODO 
     isAI?: any;
+    hasIntent?: string;
     title: Record<string, string>;
-    participants: Participant[],
+    participants: Participant[];
     author: Participant;
     status: conflictStatus,
-    description: Record<string, string>,
-    timestamp?: Date,
-    replies?: Comment[],
-    id?: string
+    description: Record<string, string>;
+    timestamp?: Date;
+    replies?: Comment[];
+    id?: string;
+    x?: number;
+    y?: number;
 }
 
 
