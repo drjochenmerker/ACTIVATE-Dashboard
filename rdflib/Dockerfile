@@ -3,6 +3,7 @@ FROM python:3.13
 WORKDIR /app
 COPY . .
 COPY ./data/backup/* ./data/
+COPY ./data/*.ttl ./data/
 
 RUN pip install --upgrade pip \
     && pip install git+https://github.com/Kejoka/rdflib-endpoint-ttl.git@main#egg=rdflib-endpoint \
