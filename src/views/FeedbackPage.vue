@@ -35,7 +35,6 @@ const localizedQuestions = computed(() => [
 
 onMounted(async () => {
     await getRoles();
-    // console.log("Available roles:", sessionStore.availableRoles);
 });
 
 
