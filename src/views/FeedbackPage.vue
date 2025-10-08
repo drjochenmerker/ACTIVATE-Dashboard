@@ -28,7 +28,7 @@ const loading = ref(false);
 
 
 const localizedQuestions = computed(() => [
-    staticContent.feedbackpage.question1[activeLang.value],
+    // staticContent.feedbackpage.question1[activeLang.value],
     staticContent.feedbackpage.question2[activeLang.value],
     staticContent.feedbackpage.question3[activeLang.value]
 ])
@@ -88,9 +88,16 @@ const submitFeedback = async () => {
 
     try {
         loading.value = true;
-        await llmSubmit(feedbackData.graph, feedbackData.role, feedbackData.data);
-        // console.log("LLM response:", res);
+        const res = await llmSubmit(feedbackData.graph, feedbackData.role, feedbackData.data);
+
         loading.value = false;
+        if (!res.success) {
+            console.error("LLM submission failed:", res.message);
+            alert(`Failed to submit feedback: ${res.message}`);
+            return;
+        }
+        console.log("LLM submission succeeded:", res.message);
+
     } catch (error) {
         loading.value = false;
         console.error("Error submitting feedback:", error);

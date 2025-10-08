@@ -25,8 +25,8 @@ import { Play } from 'lucide-vue-next';
 import { staticContent } from '@/data/contentData';
 import { llmPool } from '@/data/knowledge_graph/llm_utils';
 import LoadingOverlay from '@/components/LoadingOverlay.vue';
-import RecursiveSelect from './RecursiveSelect.vue';
-import { Select, SelectTrigger, SelectContent, SelectValue } from '@/components/ui/select';
+// import RecursiveSelect from './RecursiveSelect.vue';
+// import { Select, SelectTrigger, SelectContent, SelectValue } from '@/components/ui/select';
 
 // consts and props defintion
 const sessionStore = useSessionStore();
@@ -58,6 +58,8 @@ const isDeleteDialogOpen = ref(false);
 // const editTitleError = ref(false);
 const showPoolingDialog = ref(false)
 const nothingToPool = ref(false);
+const poolerror = ref(false);
+const poolsuccess = ref(false);
 const loading = ref(false);
 
 
@@ -167,7 +169,9 @@ const handlePoolingStart = async () => {
             return;
         }
         showPoolingDialog.value = false;
+        poolsuccess.value = true;
     } catch (error) {
+        poolerror.value = true;
         console.error("Error during pooling:", error);
     }
 }
@@ -358,7 +362,8 @@ const showUrl = ref(false)
                                     </DialogHeader>
 
                                     <!-- Select a role-->
-                                    <Select v-model="sessionStore.sessionRole" id="roleSelect" class="my-4">
+                                    <!-- TODO bring back?? -->
+                                    <!-- <Select v-model="sessionStore.sessionRole" id="roleSelect" class="my-4">
                                         <SelectTrigger>
                                             <SelectValue
                                                 :placeholder="staticContent.placeholders.roleSelect[sessionStore.activeLanguage]" />
@@ -366,8 +371,7 @@ const showUrl = ref(false)
                                         <SelectContent>
                                             <RecursiveSelect :node="sessionStore.availableRoles" />
                                         </SelectContent>
-
-                                    </Select>
+                                    </Select> -->
 
                                     <!-- Instructor mode toggle -->
                                     <!-- TODO tmp maybe bring back -->
@@ -418,9 +422,20 @@ const showUrl = ref(false)
                                                             staticContent.startPage.noPoolAvailable[sessionStore.activeLanguage]
                                                         }}
                                                     </p>
+
                                                 </DialogHeader>
                                             </DialogContent>
                                         </Dialog>
+                                        <p v-if="poolerror" class="mt-4 text-red-500 font-semibold">
+                                            {{
+                                                staticContent.startPage.poolError[sessionStore.activeLanguage]
+                                            }}
+                                        </p>
+                                        <p v-if="poolsuccess" class="mt-4 text-red-500 font-semibold">
+                                            {{
+                                                staticContent.startPage.noPoolError[sessionStore.activeLanguage]
+                                            }}
+                                        </p>
 
                                         <!-- Start Session Button -->
                                         <!-- TODO tmp maybe bring back

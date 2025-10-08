@@ -523,6 +523,16 @@ export const staticContent = {
             de: "Es gibt kein Feedback zum Kombinieren.",
             sv: "Det finns ingen feedback att kombinera."
         },
+        poolError:{
+            en: "Something went wrong. Try again later.",
+            de: "Etwas ist schief gelaufen. Versuche es später erneut.",
+            sv: "Något gick fel. Försök igen senare."
+        },
+        noPoolError:{
+            en: "Combining successful.",
+            de: "Kombinieren erfolgreich.",
+            sv: "Kombinera framgångsrik."
+        },
         showQr:{
             en: "Show URL",
             de: "URL anzeigen",
@@ -598,15 +608,16 @@ export const staticContent = {
             de: "1. Was denken Sie über die Simulation der interprofessionellen Zusammenarbeit, die Sie gerade abgeschlossen haben?",
             sv: "1. Vad tycker du om simuleringen av det interprofessionella samarbetet som du just har genomfört?"
         },
+        // todo check what questions should be asked
         question2: {
-            en: "2. Think of a part of the activity that you found very positive, constructive or satisfying. Please describe what happened in this phase in a few sentences.",
-            de: "2. Denken Sie an einen Teil der Aktivität, den Sie sehr positiv, konstruktiv oder befriedigend fanden. Bitte beschreiben Sie in einigen Sätzen, was in dieser Phase passiert ist.",
-            sv: "2. Tänk på en del av aktiviteten som du tyckte var mycket positiv, konstruktiv eller tillfredsställande. Beskriv vad som hände under den här fasen med några få meningar."
+            en: "1. Think of a part of the activity that you found very positive, constructive or satisfying. Please describe what happened in this phase in a few sentences.",
+            de: "1. Denken Sie an einen Teil der Aktivität, den Sie sehr positiv, konstruktiv oder befriedigend fanden. Bitte beschreiben Sie in einigen Sätzen, was in dieser Phase passiert ist.",
+            sv: "1. Tänk på en del av aktiviteten som du tyckte var mycket positiv, konstruktiv eller tillfredsställande. Beskriv vad som hände under den här fasen med några få meningar."
         },
         question3: {
-            en: "3. Think of a part of the activity that you found very negative, counterproductive or disappointing. Please describe what happened in this phase in a few sentences.",
-            de: "3. Denken Sie an einen Teil der Aktivität, den Sie sehr negativ, kontraproduktiv oder enttäuschend fanden. Bitte beschreiben Sie in einigen Sätzen, was in dieser Phase passiert ist.",
-            sv: "3. Tänk på en del av aktiviteten som du tyckte var mycket negativ, kontraproduktiv eller nedslående. Beskriv vad som hände i den här fasen med några få meningar."
+            en: "2. Think of a part of the activity that you found very negative, counterproductive or disappointing. Please describe what happened in this phase in a few sentences.",
+            de: "2. Denken Sie an einen Teil der Aktivität, den Sie sehr negativ, kontraproduktiv oder enttäuschend fanden. Bitte beschreiben Sie in einigen Sätzen, was in dieser Phase passiert ist.",
+            sv: "2. Tänk på en del av aktiviteten som du tyckte var mycket negativ, kontraproduktiv eller nedslående. Beskriv vad som hände i den här fasen med några få meningar."
         },
         thankYou: {
             en: "Thanks for your feedback!",
