@@ -127,7 +127,6 @@ export interface Participant {
 export type Conflict = {
     origin?: any; // TODO 
     isAI?: any;
-    hasParticipant?: any; // TODO
     hasIntent?: string;
     title: Record<string, string>;
     participants: Participant[];

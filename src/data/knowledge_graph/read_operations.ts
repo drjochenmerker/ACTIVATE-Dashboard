@@ -253,7 +253,6 @@ export async function getConflictDetail(graph: string, conflictId: string): Prom
         case "HasComment":
           rootReplyIds.push(item.conflict_o.value.split("#").pop());
           break;
-        
         case "Origin":
           parsedConflict.origin = item.conflict_o.value.split("#").pop();
           // console.log("Conflict Origin:", parsedConflict.origin);
@@ -360,7 +359,7 @@ export async function getConflictDetail(graph: string, conflictId: string): Prom
           break;
         case "IsAI":
           // TODO handle is ai bool
-          // console.log("isAI for comments not implemented yet")
+          console.log("isAI for comments not implemented yet")
           break;
         default:
           if (item.p !== undefined) {
