@@ -50,7 +50,14 @@ const sessionStore = useSessionStore();
                     </template>
                     <template v-else>
                         <User />
-                        <span>{{ sessionStore.sessionRole }}</span>
+                        <Select v-model="sessionStore.sessionRole" id="roleSelect">
+                            <SelectTrigger class="w-[180px] overflow-hidden whitespace-nowrap truncate">
+                                <SelectValue placeholder="Select your role" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <RecursiveSelect :node="sessionStore.availableRoles" />
+                            </SelectContent>
+                        </Select>
                     </template>
                 </div>
                 <SceneChangeButton />

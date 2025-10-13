@@ -542,6 +542,16 @@ export const staticContent = {
             en: "Hide URL",
             de: "URL ausblenden",
             sv: "Dölj URL"
+        },
+        copyLink:{
+            en: "Copy Link",
+            de: "Link kopieren",
+            sv: "Kopiera länk"
+        },
+        copiedLink:{
+            en: "Link copied!",
+            de: "Link kopiert!",
+            sv: "Länk kopierad!"
         }
     },
     hoverText:{
