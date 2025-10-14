@@ -48,12 +48,4 @@ router.beforeEach((to) => {
         return '/start';
     }
 });
-
-// router.beforeEach((to) => {
-//     const sessionStore = useSessionStore();
-//     if (!sessionStore.isSessionActive && to.path !== '/start') {
-//         return '/start';
-//     }
-// });
-
 export default router;

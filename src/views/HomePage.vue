@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import ActivityDiagram from '@/components/ActivityDiagram.vue';
-import { ref } from 'vue';
+// import { ref } from 'vue';
 import { useSessionStore } from '@/stores/sessionStore';
 import { staticContent } from '@/data/contentData';
 
@@ -20,10 +20,10 @@ defineProps<{ conflicts: any[], activity: any }>();
 // const isEntityAdditionDialogOpen = ref(false);
 
 const sessionStore = useSessionStore();
-const isEditorDrawerOPen = ref(false);
+// const isEditorDrawerOPen = ref(false); // todo check if editor is still needed
 </script>
 
-<template>
+<!-- <template>
   <h1 class="text-2xl font-semibold mb-4 text-center">
     {{ staticContent.terms.setting[sessionStore.activeLanguage] }}:
     {{
@@ -41,7 +41,7 @@ const isEditorDrawerOPen = ref(false);
     <ActivityDiagram />
 
     <!-- Toggle Button with Dynamic Positioning -->
-    <!-- <Button @click="isEditorDrawerOPen = !isEditorDrawerOPen"
+<!-- <Button @click="isEditorDrawerOPen = !isEditorDrawerOPen"
       :title="isEditorDrawerOPen ? 'Hide Editor' : 'Show Editor'" variant="default" size="icon" :class="[
         'z-50 rounded-full shadow transition-all',
         isEditorDrawerOPen ? 'self-end mb-2' : 'fixed top-1/2 right-4 transform -translate-y-1/2'
@@ -51,9 +51,7 @@ const isEditorDrawerOPen = ref(false);
       </span>
     </Button> -->
 
-
-
-    <!-- <div class="flex flex-col">
+<!-- <div class="flex flex-col">
       <transition name="fade">
         <div v-if="isEditorDrawerOPen" class="transition-all duration-300 ease-in-out">
           <Editor :activePoints="getActivePoints" />
@@ -64,7 +62,27 @@ const isEditorDrawerOPen = ref(false);
         </div>
       </transition>
 
-    </div> -->
+    </div> 
+  </div>
+</template> -->
+<template>
+  <div class="flex flex-col h-full">
+    <div>
+
+      <h1 class="text-2xl font-semibold mb-1 text-center">
+        {{ staticContent.terms.setting[sessionStore.activeLanguage] }}:
+        {{
+          activity.name && activity.name[sessionStore.activeLanguage] || activity.name['default']
+            ? activity.name[sessionStore.activeLanguage] || activity.name['default']
+            : `${staticContent.errors.activityNameLoad[sessionStore.activeLanguage]} - Graph-ID: ${activity.graph}`
+        }}
+      </h1>
+      <hr
+        class="mt-4 h-0.5 border-t-0 bg-transparent bg-gradient-to-r from-transparent via-neutral-900 to-transparent opacity-70 dark:via-neutral-400" />
+    </div>
+    <div class="flex mx-auto gap-4 justify-center w-full">
+      <ActivityDiagram />
+    </div>
   </div>
 </template>
 

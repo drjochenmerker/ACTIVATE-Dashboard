@@ -581,7 +581,26 @@ export default defineComponent({
 
         // Draws the activity diagram when mounted
         onMounted(async () => {
-            activityData.value = await getActivityDetail(sessionStore.sessionActivity as Activity)
+            const dpr = Math.floor(window.devicePixelRatio) || 1; // integer scaling
+            if (canvas.value) {
+                if (dpr > 1) {
+                    canvas.value.width = triangleWidth * dpr;
+                    canvas.value.height = triangleHeight * dpr;
+                    canvas.value.style.width = `${triangleWidth}px`;
+                    canvas.value.style.height = `${triangleHeight}px`;
+                    const ctx = canvas.value.getContext("2d");
+                    if (ctx) ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+                } else {
+                    // Normal DPI: use base sizes directly
+                    canvas.value.width = triangleWidth;
+                    canvas.value.height = triangleHeight;
+                    canvas.value.style.width = `${triangleWidth}px`;
+                    canvas.value.style.height = `${triangleHeight}px`;
+                }
+            }
+
+            activityData.value = await getActivityDetail(sessionStore.sessionActivity as Activity);
+
             await conflictStore.refreshConflictList();
             conflictData = conflictStore.getConflicts;
             conflictPositions.value = calculateConflictPositions(conflictData, points.value, 20).value;

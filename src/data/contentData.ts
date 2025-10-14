@@ -100,6 +100,13 @@ export const staticContent = {
             sv: "Inga element att välja mellan",
         }
     },
+    homepage:{
+        navbarScene: {
+            en: "Scene",
+            de: "Szene",
+            sv: "Scen",
+        }
+    },
     terms: {
         setting: {
             en: "Setting",
@@ -449,9 +456,9 @@ export const staticContent = {
             sv: "Vänligen välj en roll för debriefingen:",
         },
         withoutRoleSelectText: {
-            en: "You can start the debriefing or combine the feedback.",
-            de: "Sie können das Debriefing starten oder das Feedback kombinieren.",
-            sv: "Du kan starta debriefingen eller kombinera feedbacken.",
+            en: "You can choose a role (optional) and start the debriefing or combine the feedback.",
+            de: "Sie können eine Rolle wählen (optional) und das Debriefing starten oder das Feedback kombinieren.",
+            sv: "Du kan välja en roll (valfritt) och börja debriefingen eller kombinera feedbacken.",
         },
         instructorMode: {
             en: "Enable instructor mode",
