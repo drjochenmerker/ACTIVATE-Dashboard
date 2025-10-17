@@ -37,7 +37,7 @@ export default defineComponent({
     setup() {
         const canvas = ref<HTMLCanvasElement | null>(null);
 
-        // Dimensions of the activity diagram. Possibly dynamic in the future
+        // TODO Dimensions of the activity diagram. Possibly dynamic in the future
         const triangleWidth = 900;
         const triangleHeight = 800;
 
@@ -440,8 +440,7 @@ export default defineComponent({
                 point.active ? ctx.font = `bold ${triangleHeight / 40}px Arial` : ctx.font = `${triangleHeight / 40}px Arial`;
                 ctx.textAlign = "center";
 
-                // TODO Dynamic Positioning depending on language
-                // WORKAROUND: only the object label adjusted
+                // WORKAROUND of dynamic positioninig: only the object label adjusted
                 if (point.id === "rules" || point.id === "community" || point.id === "division_of_labour") ctx.fillText(point.label, point.x, point.y + triangleHeight / 20);
 
                 if (point.id === "instruments") ctx.fillText(point.label, point.x, point.y - triangleHeight / 30);
@@ -581,7 +580,26 @@ export default defineComponent({
 
         // Draws the activity diagram when mounted
         onMounted(async () => {
-            activityData.value = await getActivityDetail(sessionStore.sessionActivity as Activity)
+            const dpr = Math.floor(window.devicePixelRatio) || 1; // integer scaling
+            if (canvas.value) {
+                if (dpr > 1) {
+                    canvas.value.width = triangleWidth * dpr;
+                    canvas.value.height = triangleHeight * dpr;
+                    canvas.value.style.width = `${triangleWidth}px`;
+                    canvas.value.style.height = `${triangleHeight}px`;
+                    const ctx = canvas.value.getContext("2d");
+                    if (ctx) ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+                } else {
+                    // Normal DPI: use base sizes directly
+                    canvas.value.width = triangleWidth;
+                    canvas.value.height = triangleHeight;
+                    canvas.value.style.width = `${triangleWidth}px`;
+                    canvas.value.style.height = `${triangleHeight}px`;
+                }
+            }
+
+            activityData.value = await getActivityDetail(sessionStore.sessionActivity as Activity);
+
             await conflictStore.refreshConflictList();
             conflictData = conflictStore.getConflicts;
             conflictPositions.value = calculateConflictPositions(conflictData, points.value, 20).value;

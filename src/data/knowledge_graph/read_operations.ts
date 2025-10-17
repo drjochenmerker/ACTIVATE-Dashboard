@@ -200,7 +200,7 @@ export async function getConflictDetail(graph: string, conflictId: string): Prom
               labels: {
                 [langTag]: labelValue
               },
-              type: "subject" // TODO: set the correct type
+              type: "subject"
             };
           } else {
             parsedConflict.author.labels[langTag] = labelValue;
@@ -254,18 +254,24 @@ export async function getConflictDetail(graph: string, conflictId: string): Prom
           rootReplyIds.push(item.conflict_o.value.split("#").pop());
           break;
         case "Origin":
-          parsedConflict.origin = item.conflict_o.value.split("#").pop();
+          // tmp only showing origins answer
+          // parsedConflict.origin = item.conflict_o.value.split("#").pop();
           // console.log("Conflict Origin:", parsedConflict.origin);
+          // break;
+          const valueStr = item.conflict_o.value.split("#").pop();
+          try {
+            const obj = JSON.parse(valueStr);
+            parsedConflict.origin = obj.answer;
+          } catch (e) {
+            console.error("Failed to parse conflict origin JSON:", e);
+            parsedConflict.origin = valueStr; // fallback if not valid JSON
+          }
           break;
-        case "IsAI":
+        case "IsAI": // TODO do something with is ai bool
           parsedConflict.isAI = item.conflict_o.value.split("#").pop();
-          // TODO handle is ai bool
-          // console.log(parsedConflict.isAI );
           break;
         case "HasIntent":
           parsedConflict.hasIntent = item.conflict_o.value.split("#").pop();
-          // TODO handle intent
-          // console.log(parsedConflict.intent);
           break;
         default:
           if (item.conflict_p !== undefined) {
@@ -359,7 +365,6 @@ export async function getConflictDetail(graph: string, conflictId: string): Prom
           break;
         case "IsAI":
           // TODO handle is ai bool
-          console.log("isAI for comments not implemented yet")
           break;
         default:
           if (item.p !== undefined) {

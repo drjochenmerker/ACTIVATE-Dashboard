@@ -100,6 +100,13 @@ export const staticContent = {
             sv: "Inga element att välja mellan",
         }
     },
+    homepage:{
+        navbarScene: {
+            en: "Scene",
+            de: "Szene",
+            sv: "Scen",
+        }
+    },
     terms: {
         setting: {
             en: "Setting",
@@ -386,6 +393,16 @@ export const staticContent = {
             de: "Kommentar speichern",
             sv: "Spara kommentar",
         },
+        origin: {
+            en: "Origin",
+            de: "Herkunft",
+            sv: "Ursprung",
+        },
+        showOrigin:{
+            en: "Show origin",
+            de: "Herkunft anzeigen",
+            sv: "Visa ursprung",
+        }
     },
     startPage: {
         createActivity: {
@@ -449,9 +466,9 @@ export const staticContent = {
             sv: "Vänligen välj en roll för debriefingen:",
         },
         withoutRoleSelectText: {
-            en: "You can start the debriefing or combine the feedback.",
-            de: "Sie können das Debriefing starten oder das Feedback kombinieren.",
-            sv: "Du kan starta debriefingen eller kombinera feedbacken.",
+            en: "You can choose a role (optional) and start the debriefing or combine the feedback.",
+            de: "Sie können eine Rolle wählen (optional) und das Debriefing starten oder das Feedback kombinieren.",
+            sv: "Du kan välja en roll (valfritt) och börja debriefingen eller kombinera feedbacken.",
         },
         instructorMode: {
             en: "Enable instructor mode",
@@ -532,6 +549,16 @@ export const staticContent = {
             en: "Hide URL",
             de: "URL ausblenden",
             sv: "Dölj URL"
+        },
+        copyLink:{
+            en: "Copy Link",
+            de: "Link kopieren",
+            sv: "Kopiera länk"
+        },
+        copiedLink:{
+            en: "Link copied!",
+            de: "Link kopiert!",
+            sv: "Länk kopierad!"
         }
     },
     hoverText:{
@@ -593,11 +620,13 @@ export const staticContent = {
             de: "Scannen, um Feedback zu dieser Aktivität zu geben.",
             sv: "Skanna för att ge feedback på denna aktivitet."
         },
+        // tmp not asked
         question1: {
             en: "1. How do you feel about the interprofessional collaboration simulation you have just completed?",
             de: "1. Was denken Sie über die Simulation der interprofessionellen Zusammenarbeit, die Sie gerade abgeschlossen haben?",
             sv: "1. Vad tycker du om simuleringen av det interprofessionella samarbetet som du just har genomfört?"
         },
+        // TODO Finalize Questions that should be asked in the feedback form
         question2: {
             en: "2. Think of a part of the activity that you found very positive, constructive or satisfying. Please describe what happened in this phase in a few sentences.",
             de: "2. Denken Sie an einen Teil der Aktivität, den Sie sehr positiv, konstruktiv oder befriedigend fanden. Bitte beschreiben Sie in einigen Sätzen, was in dieser Phase passiert ist.",

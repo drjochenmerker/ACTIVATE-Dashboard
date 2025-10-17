@@ -8,6 +8,7 @@ import { useConflictsStore } from '@/stores/conflictsStore';
 import { useSessionStore } from '@/stores/sessionStore';
 import { activateTerms, staticContent } from '@/data/contentData';
 import { buildLanguageString } from '@/lib/utils';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog'
 
 const props = defineProps({
   conflict: {
@@ -19,6 +20,10 @@ const props = defineProps({
     required: true,
   },
   content: {
+    type: String,
+    required: true,
+  },
+  origin: {
     type: String,
     required: true,
   },
@@ -43,6 +48,7 @@ const props = defineProps({
  * - newReplyText: Stores temporary reply text for each conflict
  */
 const conflictDetail = ref<any>(null);
+const isShowOriginOpen = ref(false);
 const replyInputVisible = ref<Record<string, boolean>>({});
 const newReplyText = ref<Record<string, string>>({});
 
@@ -142,7 +148,9 @@ const handleEnterKey = (event: KeyboardEvent) => {
     saveReply(props.conflict.id);
   }
 };
-
+const showOrigin = async () => {
+  isShowOriginOpen.value = false;
+}
 /**
  * Deletes a specific conflict from the conflict store and updates the conflict list.
  * 
@@ -224,7 +232,6 @@ const removeReply = (id: string) => {
       <!-- Author-->
       <span class="note-card-author">
         {{ staticContent.terms.author[sessionStore.activeLanguage] }}: {{ props.author }}
-        <!-- TODO: correctly access the author in the active language -->
       </span>
       <!-- Status selector -->
       <div class="status-selector">
@@ -238,6 +245,7 @@ const removeReply = (id: string) => {
         </select>
       </div>
       <!-- Delete button -->
+      <!-- TODO implement "are you sure?" -->
       <button class="icon-button" @click="handleDelete(props.conflict.id)">
         <span class="material-symbols-outlined">delete</span>
       </button>
@@ -248,6 +256,29 @@ const removeReply = (id: string) => {
     <div class="note-card-content">
       <!-- Note title -->
       <div class="note-title" v-html="props.title"></div>
+      <div class="note-origin">
+        <Dialog v-model:open="isShowOriginOpen">
+          <DialogTrigger as-child>
+            <Button>
+              {{ staticContent.noteCards.showOrigin[sessionStore.activeLanguage] }}
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>{{
+                staticContent.noteCards.origin[sessionStore.activeLanguage] }}
+              </DialogTitle>
+              <DialogDescription>
+                {{ props.origin }}
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button @click="() => showOrigin()">{{ staticContent.noteCards.cancel[sessionStore.activeLanguage]
+              }}</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
 
       <!-- Participants grouped by type -->
       <div class="note-participants">
@@ -268,12 +299,15 @@ const removeReply = (id: string) => {
     </div>
 
     <!-- Note comment section starting with add comment button -->
-    <div class="note-comment-section">
+
+    <div v-if="!replyInputVisible[conflict.id]" class="note-comment-section">
       <Button @click="toggleReplyInput(conflict.id)">
         {{ staticContent.noteCards.addComment[sessionStore.activeLanguage] }} </Button>
     </div>
 
     <div v-if="replyInputVisible[conflict.id]" class="comment-input">
+      <Button @click="toggleReplyInput(conflict.id)">
+        {{ staticContent.noteCards.cancel[sessionStore.activeLanguage] }} </Button>
       <textarea ref="textareaRef" v-model="newReplyText[conflict.id]"
         :placeholder="staticContent.placeholders.answer[sessionStore.activeLanguage]"
         @keydown.enter="handleEnterKey($event)" />
@@ -443,6 +477,11 @@ const removeReply = (id: string) => {
 
 /* Content */
 .note-card-content {
+  margin-bottom: 10px;
+}
+
+.note-origin {
+  margin-top: 10px;
   margin-bottom: 10px;
 }
 

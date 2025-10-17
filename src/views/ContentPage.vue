@@ -16,8 +16,6 @@ const props = defineProps<{ conflicts: any[], activity: any }>();
 // Stores
 const sessionStore = useSessionStore();
 
-
-
 // Define the expected structure of pageData
 type PageDataType = { id: string; number: number } | undefined;
 // Assign pageData with a proper type

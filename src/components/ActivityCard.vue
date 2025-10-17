@@ -2,7 +2,7 @@
 // TODO: implement the functionality for cloning activities, editing and maybe bring back the role selection from INPROGRESS FILE
 
 // functions
-import { onMounted, computed, ref } from 'vue';
+import { onMounted, computed, ref, nextTick } from 'vue';
 import { useSessionStore } from '@/stores/sessionStore';
 import { getActivityClassIds } from '@/data/knowledge_graph/read_operations';
 import { useActivityStore } from '@/stores/activityStore';
@@ -59,6 +59,7 @@ const isDeleteDialogOpen = ref(false);
 const showPoolingDialog = ref(false)
 const nothingToPool = ref(false);
 const loading = ref(false);
+const copied = ref(false);
 
 
 // activity store management
@@ -72,7 +73,29 @@ onMounted(async () => {
 
 // Handle session start when user clicks start button
 const handleStartSession = async () => {
-    sessionStore.sessionRole = sessionStore.sessionRole || 'Lecturer'
+    const roles = sessionStore.availableRoles.next;
+    let instructorId = null;
+
+    if (roles && Array.isArray(roles)) {
+        for (const role of roles) {
+            // look for the role with the english label "Instructor"
+            if (
+                role.values &&
+                role.values.length > 0 &&
+                role.values[0].labels &&
+                (
+                    role.values[0].labels.en === "Instructor"
+                )
+            ) {
+                instructorId = role.values[0].id; // z.B. "Dozent"
+                break;
+            }
+        }
+    }
+    // set instructor ID as default if no role is selected
+    if (!sessionStore.sessionRole && instructorId) {
+        sessionStore.sessionRole = instructorId;
+    }
 
     sessionStore.sessionActivity = {
         graph: props.activity.graph,
@@ -80,6 +103,36 @@ const handleStartSession = async () => {
         description: props.activity.description
     };
     sessionStore.startSession();
+};
+
+// copy link functionality
+const copyUrlToClipboard = async () => {
+    try {
+        await navigator.clipboard.writeText(feedbackUrl.value);
+        copied.value = true;
+
+        // Auswahl des URL-Textes im sichtbaren Bereich
+        if (showUrl.value) {
+            await nextTick(); // Sicherstellen, dass DOM aktualisiert ist
+            const el = document.getElementById('feedback-url-text');
+            if (el) {
+                const selection = window.getSelection();
+                const range = document.createRange();
+                range.selectNodeContents(el);
+                selection?.removeAllRanges();
+                selection?.addRange(range);
+            }
+        }
+
+        setTimeout(() => {
+            copied.value = false;
+            // Auswahl aufheben nach 2 Sekunden
+            const selection = window.getSelection();
+            selection?.removeAllRanges();
+        }, 2000);
+    } catch (err) {
+        console.error('Fehler beim Kopieren: ', err);
+    }
 };
 
 // clone activity functionality
@@ -325,7 +378,7 @@ const showUrl = ref(false)
                                     </div>
 
                                     <!-- Button to show/copy URL -->
-                                    <div class="flex flex-col items-center gap-2">
+                                    <!-- <div class="flex flex-col items-center gap-2">
                                         <Button variant="outline" @click="showUrl = !showUrl">
                                             {{ showUrl ? staticContent.startPage.hideQr[sessionStore.activeLanguage] :
                                                 staticContent.startPage.showQr[sessionStore.activeLanguage] }}
@@ -334,7 +387,25 @@ const showUrl = ref(false)
                                         <div v-if="showUrl" class="break-all text-center p-2 border rounded bg-gray-50">
                                             {{ feedbackUrl }}
                                         </div>
+                                    </div> -->
+                                    <div class="flex flex-col items-center gap-2">
+                                        <Button variant="outline" @click="showUrl = !showUrl">
+                                            {{ showUrl ? staticContent.startPage.hideQr[sessionStore.activeLanguage] :
+                                                staticContent.startPage.showQr[sessionStore.activeLanguage] }}
+                                        </Button>
+
+                                        <div v-if="showUrl"
+                                            class="w-full max-w-md break-words text-center p-4 border rounded bg-gray-50 flex flex-col items-center gap-3">
+                                            <div id="feedback-url-text">{{ feedbackUrl }}</div>
+                                            <Button variant="outline" @click="copyUrlToClipboard">
+                                                {{ copied ?
+                                                    staticContent.startPage.copiedLink[sessionStore.activeLanguage] :
+                                                    staticContent.startPage.copyLink[sessionStore.activeLanguage] }}
+                                            </Button>
+                                        </div>
+
                                     </div>
+
                                 </DialogContent>
                             </Dialog>
                         </div>
@@ -353,7 +424,7 @@ const showUrl = ref(false)
                                         </DialogTitle>
                                         <DialogDescription>{{
                                             staticContent.startPage.withoutRoleSelectText[sessionStore.activeLanguage]
-                                        }}
+                                            }}
                                         </DialogDescription>
                                     </DialogHeader>
 
@@ -366,7 +437,6 @@ const showUrl = ref(false)
                                         <SelectContent>
                                             <RecursiveSelect :node="sessionStore.availableRoles" />
                                         </SelectContent>
-
                                     </Select>
 
                                     <!-- Instructor mode toggle -->

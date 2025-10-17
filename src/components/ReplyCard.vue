@@ -125,7 +125,7 @@ const removeReply = (id: string) => {
                 </button>
 
             </div>
-            <!-- TODO handle multi-language comments -->
+            <!-- TODO maybe handle multi-language comments -->
             <p class="reply-text">
                 {{
                     props.parentComment.comment?.[sessionStore.activeLanguage]?.trim() ||

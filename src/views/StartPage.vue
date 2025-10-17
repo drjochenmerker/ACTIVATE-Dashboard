@@ -99,7 +99,12 @@ const addNewActivity = async () => {
       <!-- Card header with logo -->
       <CardHeader class="flex justify-center items-center">
         <CardTitle class="flex justify-center w-full">
-          <img src="@/assets/images/activate-logo-full.gif" alt="Logo" class="mx-auto" />
+          <div class="flex flex-col items-center w-full">
+            <h1 class="text-center text-4xl font-semibold mb-4">
+              Debriefing-Dashboard
+            </h1>
+            <img src="@/assets/images/activate-logo-full.gif" alt="Logo" class="mx-auto mt-2" />
+          </div>
         </CardTitle>
       </CardHeader>
 

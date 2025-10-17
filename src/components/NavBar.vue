@@ -24,7 +24,7 @@ const sessionStore = useSessionStore();
             <!-- Homepage link -->
             <router-link to="/" class="flex items-center gap-2 font-semibold">
                 <img src="@/assets/images/activate-logo-small.png" class="w-10 h-10 rounded-xl" alt="Logo" />
-                <span>Dashboard</span>
+                <span>Debriefing-Dashboard</span>
             </router-link>
 
             <!-- Navigation links -->
@@ -51,7 +51,14 @@ const sessionStore = useSessionStore();
                     </template>
                     <template v-else>
                         <User />
-                        <span>{{ sessionStore.sessionRole }}</span>
+                        <Select v-model="sessionStore.sessionRole" id="roleSelect">
+                            <SelectTrigger class="w-[180px] overflow-hidden whitespace-nowrap truncate">
+                                <SelectValue placeholder="Select your role" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <RecursiveSelect :node="sessionStore.availableRoles" />
+                            </SelectContent>
+                        </Select>
                     </template>
                 </div>
                 <SceneChangeButton />
