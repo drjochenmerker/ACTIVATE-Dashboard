@@ -1,3 +1,4 @@
+<!-- NavBar Component -->
 <script setup lang="ts">
 import { activateTerms, contentData } from '@/data/contentData';
 import ThemeSwitchButton from './ThemeSwitchButton.vue';

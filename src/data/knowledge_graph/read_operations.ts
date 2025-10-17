@@ -253,7 +253,6 @@ export async function getConflictDetail(graph: string, conflictId: string): Prom
         case "HasComment":
           rootReplyIds.push(item.conflict_o.value.split("#").pop());
           break;
-        
         case "Origin":
           // tmp only showing origins answer
           // parsedConflict.origin = item.conflict_o.value.split("#").pop();

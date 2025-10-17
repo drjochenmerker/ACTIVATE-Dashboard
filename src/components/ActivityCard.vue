@@ -58,8 +58,6 @@ const isDeleteDialogOpen = ref(false);
 // const editTitleError = ref(false);
 const showPoolingDialog = ref(false)
 const nothingToPool = ref(false);
-const poolerror = ref(false);
-const poolsuccess = ref(false);
 const loading = ref(false);
 const copied = ref(false);
 
@@ -222,9 +220,7 @@ const handlePoolingStart = async () => {
             return;
         }
         showPoolingDialog.value = false;
-        poolsuccess.value = true;
     } catch (error) {
-        poolerror.value = true;
         console.error("Error during pooling:", error);
     }
 }
@@ -492,20 +488,9 @@ const showUrl = ref(false)
                                                             staticContent.startPage.noPoolAvailable[sessionStore.activeLanguage]
                                                         }}
                                                     </p>
-
                                                 </DialogHeader>
                                             </DialogContent>
                                         </Dialog>
-                                        <p v-if="poolerror" class="mt-4 text-red-500 font-semibold">
-                                            {{
-                                                staticContent.startPage.poolError[sessionStore.activeLanguage]
-                                            }}
-                                        </p>
-                                        <p v-if="poolsuccess" class="mt-4 text-red-500 font-semibold">
-                                            {{
-                                                staticContent.startPage.noPoolError[sessionStore.activeLanguage]
-                                            }}
-                                        </p>
 
                                         <!-- Start Session Button -->
                                         <!-- TODO tmp maybe bring back
