@@ -393,6 +393,16 @@ export const staticContent = {
             de: "Kommentar speichern",
             sv: "Spara kommentar",
         },
+        origin: {
+            en: "Origin",
+            de: "Herkunft",
+            sv: "Ursprung",
+        },
+        showOrigin:{
+            en: "Show origin",
+            de: "Herkunft anzeigen",
+            sv: "Visa ursprung",
+        }
     },
     startPage: {
         createActivity: {
@@ -620,12 +630,13 @@ export const staticContent = {
             de: "Scannen, um Feedback zu dieser Aktivität zu geben.",
             sv: "Skanna för att ge feedback på denna aktivitet."
         },
+        // tmp not asked
         question1: {
             en: "1. How do you feel about the interprofessional collaboration simulation you have just completed?",
             de: "1. Was denken Sie über die Simulation der interprofessionellen Zusammenarbeit, die Sie gerade abgeschlossen haben?",
             sv: "1. Vad tycker du om simuleringen av det interprofessionella samarbetet som du just har genomfört?"
         },
-        // todo check what questions should be asked
+        // TODO Finalize Questions that should be asked in the feedback form
         question2: {
             en: "1. Think of a part of the activity that you found very positive, constructive or satisfying. Please describe what happened in this phase in a few sentences.",
             de: "1. Denken Sie an einen Teil der Aktivität, den Sie sehr positiv, konstruktiv oder befriedigend fanden. Bitte beschreiben Sie in einigen Sätzen, was in dieser Phase passiert ist.",

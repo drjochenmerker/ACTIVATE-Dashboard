@@ -37,7 +37,7 @@ export default defineComponent({
     setup() {
         const canvas = ref<HTMLCanvasElement | null>(null);
 
-        // Dimensions of the activity diagram. Possibly dynamic in the future
+        // TODO Dimensions of the activity diagram. Possibly dynamic in the future
         const triangleWidth = 900;
         const triangleHeight = 800;
 
@@ -440,8 +440,7 @@ export default defineComponent({
                 point.active ? ctx.font = `bold ${triangleHeight / 40}px Arial` : ctx.font = `${triangleHeight / 40}px Arial`;
                 ctx.textAlign = "center";
 
-                // TODO Dynamic Positioning depending on language
-                // WORKAROUND: only the object label adjusted
+                // WORKAROUND of dynamic positioninig: only the object label adjusted
                 if (point.id === "rules" || point.id === "community" || point.id === "division_of_labour") ctx.fillText(point.label, point.x, point.y + triangleHeight / 20);
 
                 if (point.id === "instruments") ctx.fillText(point.label, point.x, point.y - triangleHeight / 30);

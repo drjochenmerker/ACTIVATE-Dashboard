@@ -428,12 +428,11 @@ const showUrl = ref(false)
                                         </DialogTitle>
                                         <DialogDescription>{{
                                             staticContent.startPage.withoutRoleSelectText[sessionStore.activeLanguage]
-                                        }}
+                                            }}
                                         </DialogDescription>
                                     </DialogHeader>
 
                                     <!-- Select a role-->
-                                    <!-- TODO bring back?? -->
                                     <Select v-model="sessionStore.sessionRole" id="roleSelect" class="my-4">
                                         <SelectTrigger>
                                             <SelectValue
