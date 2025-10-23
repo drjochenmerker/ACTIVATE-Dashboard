@@ -8,7 +8,7 @@ import { useConflictsStore } from '@/stores/conflictsStore';
 import { useSessionStore } from '@/stores/sessionStore';
 import { activateTerms, staticContent } from '@/data/contentData';
 import { buildLanguageString } from '@/lib/utils';
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog'
+// import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog'
 
 const props = defineProps({
   conflict: {
@@ -48,7 +48,8 @@ const props = defineProps({
  * - newReplyText: Stores temporary reply text for each conflict
  */
 const conflictDetail = ref<any>(null);
-const isShowOriginOpen = ref(false);
+// todo
+// const isShowOriginOpen = ref(false);
 const replyInputVisible = ref<Record<string, boolean>>({});
 const newReplyText = ref<Record<string, string>>({});
 
@@ -148,9 +149,10 @@ const handleEnterKey = (event: KeyboardEvent) => {
     saveReply(props.conflict.id);
   }
 };
-const showOrigin = async () => {
-  isShowOriginOpen.value = false;
-}
+// TODO
+// const showOrigin = async () => {
+//   isShowOriginOpen.value = false;
+// }
 /**
  * Deletes a specific conflict from the conflict store and updates the conflict list.
  * 
@@ -237,7 +239,7 @@ const removeReply = (id: string) => {
       <div class="status-selector">
         <select v-model="selectedStatus">
           <option :value="conflictStatus.open">{{ staticContent.terms.conflictStatus.open[sessionStore.activeLanguage]
-            }}</option>
+          }}</option>
           <option :value="conflictStatus.inDiscussion">{{
             staticContent.terms.conflictStatus.inDiscussion[sessionStore.activeLanguage] }}</option>
           <option :value="conflictStatus.resolved">{{
@@ -256,7 +258,8 @@ const removeReply = (id: string) => {
     <div class="note-card-content">
       <!-- Note title -->
       <div class="note-title" v-html="props.title"></div>
-      <div class="note-origin">
+      <!-- Note origin -->
+      <!-- <div class="note-origin">
         <Dialog v-model:open="isShowOriginOpen">
           <DialogTrigger as-child>
             <Button>
@@ -278,7 +281,7 @@ const removeReply = (id: string) => {
             </DialogFooter>
           </DialogContent>
         </Dialog>
-      </div>
+      </div> -->
 
       <!-- Participants grouped by type -->
       <div class="note-participants">
