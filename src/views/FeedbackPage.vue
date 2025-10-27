@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectTrigger, SelectValue } from '@/components/ui/select';
 import RecursiveSelect from '@/components/RecursiveSelect.vue';
 import LoadingOverlay from '@/components/LoadingOverlay.vue'
-
 import LanguageSelect from '@/components/LanguageSelect.vue'
 
 import { useSessionStore } from '@/stores/sessionStore'
@@ -16,6 +15,7 @@ import { buildTreeStructByLang } from '@/data/knowledge_graph/utils';
 import { getActivityClassIds } from '@/data/knowledge_graph/read_operations';
 import { KnowledgeGraphActivityClass } from '@/data/knowledge_graph/structures';
 import { llmSubmit } from '@/data/knowledge_graph/llm_utils';
+import { staticContentFeedback } from '@/data/feedbackQuestions';
 
 const props = defineProps<{ graph: string }>()
 
@@ -23,29 +23,79 @@ const router = useRouter()
 const sessionStore = useSessionStore()
 
 const activeLang = computed(() => sessionStore.activeLanguage)
-const answers = ref(['', '', ''])
 const loading = ref(false);
 
+// 1. Define groups
+const questionGroups = Object.keys(staticContentFeedback)
+    .filter(key => key !== 'feedbackpage') as (keyof typeof staticContentFeedback)[];
 
-const localizedQuestions = computed(() => [
-    staticContent.feedbackpage.question1[activeLang.value],
-    staticContent.feedbackpage.question2[activeLang.value],
-    staticContent.feedbackpage.question3[activeLang.value]
-])
+// 2. Helper function to initialize the 'answers' state
+const initializeAnswers = (): Record<string, Record<string, string>> => {
+    const initialState: Record<string, Record<string, string>> = {};
+    for (const groupKey of questionGroups) {
+        initialState[groupKey] = {};
+        const groupData = staticContentFeedback[groupKey];
+
+        // Find all 'questionX' keys in the group
+        const questionKeys = Object.keys(groupData)
+            .filter(key => key.startsWith('question'));
+
+        for (const questionKey of questionKeys) {
+            initialState[groupKey][questionKey] = '';
+        }
+    }
+    return initialState;
+};
+
+// 3. Initialize 'answers' as a reactive object
+const answers = ref<Record<string, Record<string, string>>>(initializeAnswers());
+
+const groupedQuestionData = computed(() => {
+    const lang = activeLang.value;
+
+    return questionGroups.map(groupKey => {
+        const groupData = staticContentFeedback[groupKey];
+
+        // 1. Get title of group
+        let title: string = String(groupKey);
+        if ('title' in groupData && groupData.title) {
+            title = groupData.title[lang] || groupData.title['de'] || String(groupKey);
+        }
+
+        // 2. Get all questions of the group
+        const questions = Object.keys(groupData)
+            .filter(key => key.startsWith('question'))
+            .map(questionKey => {
+                const gd = groupData as Record<string, Record<string, string>>;
+                const texts = gd[questionKey] || {};
+                const text = texts[lang] || texts['de'] || '';
+                return {
+                    key: questionKey,
+                    text: text
+                };
+            })
+            // Filter out empty questions
+            .filter(q => q.text && q.text.trim() !== '');
+
+        return {
+            key: groupKey,
+            title: title,
+            questions: questions
+        };
+    })
+        // Filter out entire groups if they have no questions for the language
+        .filter(g => g.questions.length > 0);
+});
 
 onMounted(async () => {
     await getRoles();
-    // console.log("Available roles:", sessionStore.availableRoles);
 });
-
 
 /**
  * Retrieves available roles for the current activity graph.
- * Fetches subject class IDs from the knowledge graph and populates the session store's available roles.
  */
 const getRoles = async () => {
     const roles = await getActivityClassIds(props.graph, KnowledgeGraphActivityClass.subject);
-
     sessionStore.availableRoles = buildTreeStructByLang(
         roles,
         activeLang.value
@@ -74,11 +124,32 @@ const submitFeedback = async () => {
         label: roleLabel
     };
 
-    // Build full feedback object
-    const fullData = answers.value.map(answer => ({
-        question: localizedQuestions.value[answers.value.indexOf(answer)],
-        answer: answer
-    }));
+    // --- Build full feedback object (NEUE LOGIK aus Version 2) ---
+    const fullData = [];
+    const lang = activeLang.value;
+
+    // Iterate through our 'answers' object
+    for (const groupKey in answers.value) {
+        const groupAnswers = answers.value[groupKey];
+
+        for (const questionKey in groupAnswers) {
+            const answer = groupAnswers[questionKey];
+
+            // Find the question text in the original data (with fallback)
+            const groupStatic = (staticContentFeedback as any)[groupKey];
+            const questionText = groupStatic?.[questionKey]?.[lang] || groupStatic?.[questionKey]?.['de'];
+
+            // Add only if question text exists
+            if (questionText && questionText.trim() !== '') {
+                fullData.push({
+                    question: questionText,
+                    answer: answer || ''
+                });
+            }
+        }
+    }
+
+    // TODO console.log("Submitting feedback data:", fullData);
 
     const feedbackData = {
         graph: props.graph,
@@ -89,7 +160,6 @@ const submitFeedback = async () => {
     try {
         loading.value = true;
         await llmSubmit(feedbackData.graph, feedbackData.role, feedbackData.data);
-        // console.log("LLM response:", res);
         loading.value = false;
     } catch (error) {
         loading.value = false;
@@ -114,7 +184,6 @@ const submitFeedback = async () => {
             </div>
             <div>
 
-                <!-- Role selection -->
                 <div class="mb-6">
                     <Select :model-value="sessionStore.sessionRole"
                         @update:model-value="sessionStore.sessionRole = $event" id="roleSelect" class="my-4">
@@ -128,21 +197,26 @@ const submitFeedback = async () => {
                     </Select>
                 </div>
 
+                <div v-for="group in groupedQuestionData" :key="group.key"
+                    class="mb-6 p-4 border rounded-lg bg-white shadow-sm space-y-4">
 
+                    <h2 class="text-xl font-semibold text-gray-900 border-b pb-2">
+                        {{ group.title }}
+                    </h2>
 
-                <!-- Questions -->
-                <div v-for="(question, index) in localizedQuestions" :key="index" class="space-y-2">
-                    <label :for="'q' + index" class="block text-lg font-medium">
-                        {{ question }}
-                    </label>
-                    <textarea :id="'q' + index" v-model="answers[index]"
-                        class="w-full p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
-                        rows="4" :placeholder="staticContent.placeholders.feedbackAnswer[activeLang]" />
+                    <div v-for="question in group.questions" :key="question.key" class="space-y-2">
+                        <label :for="group.key + question.key" class="block text-lg font-medium">
+                            {{ question.text }}
+                        </label>
+                        <textarea :id="group.key + question.key" v-model="answers[group.key][question.key]"
+                            class="w-full p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
+                            rows="4" :placeholder="staticContent.placeholders.feedbackAnswer[activeLang]" />
+                    </div>
                 </div>
+
             </div>
         </div>
 
-        <!-- Submit button -->
         <div class="mt-8">
             <Button class="w-full" @click="submitFeedback">
                 {{ staticContent.noteCards.save[activeLang] }}

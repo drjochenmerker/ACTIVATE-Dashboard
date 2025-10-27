@@ -620,23 +620,6 @@ export const staticContent = {
             de: "Scannen, um Feedback zu dieser Aktivität zu geben.",
             sv: "Skanna för att ge feedback på denna aktivitet."
         },
-        // tmp not asked
-        question1: {
-            en: "1. How do you feel about the interprofessional collaboration simulation you have just completed?",
-            de: "1. Was denken Sie über die Simulation der interprofessionellen Zusammenarbeit, die Sie gerade abgeschlossen haben?",
-            sv: "1. Vad tycker du om simuleringen av det interprofessionella samarbetet som du just har genomfört?"
-        },
-        // TODO Finalize Questions that should be asked in the feedback form
-        question2: {
-            en: "2. Think of a part of the activity that you found very positive, constructive or satisfying. Please describe what happened in this phase in a few sentences.",
-            de: "2. Denken Sie an einen Teil der Aktivität, den Sie sehr positiv, konstruktiv oder befriedigend fanden. Bitte beschreiben Sie in einigen Sätzen, was in dieser Phase passiert ist.",
-            sv: "2. Tänk på en del av aktiviteten som du tyckte var mycket positiv, konstruktiv eller tillfredsställande. Beskriv vad som hände under den här fasen med några få meningar."
-        },
-        question3: {
-            en: "3. Think of a part of the activity that you found very negative, counterproductive or disappointing. Please describe what happened in this phase in a few sentences.",
-            de: "3. Denken Sie an einen Teil der Aktivität, den Sie sehr negativ, kontraproduktiv oder enttäuschend fanden. Bitte beschreiben Sie in einigen Sätzen, was in dieser Phase passiert ist.",
-            sv: "3. Tänk på en del av aktiviteten som du tyckte var mycket negativ, kontraproduktiv eller nedslående. Beskriv vad som hände i den här fasen med några få meningar."
-        },
         thankYou: {
             en: "Thanks for your feedback!",
             de: "Danke für Ihr Feedback!",
