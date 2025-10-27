@@ -46,9 +46,9 @@ export const staticContentFeedback = {
     },
     subjectQuestion:{
         title: {
-            en: "Subject",
-            de: "Subjekt",
-            sv: "Ämne",
+            en: "Subject (Actors and their Perspectives)",
+            de: "Subjekt (Akteure und ihre Perspektiven)",
+            sv: "Ämne (Aktörer och deras perspektiv)",
         },
         question1: {
             en: "How did you experience your own role in the team – technically, professionally and personally?",

@@ -33,7 +33,7 @@ export const useSessionStore = defineStore('session', () => {
   const availableRoles = ref<NestedMultiLangObject>({} as NestedMultiLangObject);
   const instructorMode = ref(false);
   const isSessionActive = ref(false);
-  const activeLanguage = ref<LanguageCode>(LanguageCode.English);
+  const activeLanguage = ref<LanguageCode>(LanguageCode.Deutsch); // todo: default language
   const activeScene = ref<string>('Scene 1'); // Default scene
 
   const outdated = ref(false);
