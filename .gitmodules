@@ -2,3 +2,7 @@
 	path = feedback-parser
 	url = git@gitlab.dit.htwk-leipzig.de:iosse/activate/text-ttl/text-ttl-backend.git
 	branch = feedback-parser
+[submodule "whisper-backend"]
+	path = whisper-backend
+	url = git@gitlab.dit.htwk-leipzig.de:iosse/activate/whisper-backend.git
+	branch = dev
