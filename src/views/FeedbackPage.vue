@@ -87,7 +87,7 @@ const submitFeedback = async () => {
 
                 <!-- Feedback Formular Komponente -->
                 <FeedbackForm v-if="viewMode === 'form'" ref="formComponent" :graph="props.graph"
-                    :session-role="sessionStore.sessionRole" @update:role="sessionStore.sessionRole = $event" />
+                    :session-role="sessionStore.sessionRole ?? null" @update:role="sessionStore.sessionRole = $event" />
 
                 <!-- Audio Upload Komponente -->
                 <FeedbackAudio v-if="viewMode === 'upload'" ref="audioComponent" />
