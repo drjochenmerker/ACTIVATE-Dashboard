@@ -60,7 +60,7 @@ export async function uploadAndDiarizeAudio(
     // It uses VITE_LLM_URL/PORT because feedback-parser acts as the main backend entry point
     const baseUrl = `${import.meta.env.VITE_LLM_URL}${!import.meta.env.VITE_LLM_PORT ? '' : ':' + import.meta.env.VITE_LLM_PORT}`;
     // The path includes the proxy path prefix '/api/diarize' and the actual Python API path '/api/diarize_and_transcribe'
-    let apiUrl = `${baseUrl}/api/diarize/api/diarize_and_transcribe`;
+    let apiUrl = `${baseUrl}/whisper-proxy/api/diarize_and_transcribe`;
 
     if (languageCode) {
         apiUrl += `?language_code=${encodeURIComponent(languageCode)}`;

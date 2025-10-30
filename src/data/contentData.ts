@@ -555,6 +555,11 @@ export const staticContent = {
             de: "Link kopieren",
             sv: "Kopiera länk"
         },
+        openLink: {
+            en: "Open Link",
+            de: "Link öffnen",
+            sv: "Öppna länk"
+        },
         copiedLink:{
             en: "Link copied!",
             de: "Link kopiert!",

@@ -28,6 +28,7 @@ import LoadingOverlay from '@/components/LoadingOverlay.vue';
 import RecursiveSelect from './RecursiveSelect.vue';
 import { Select, SelectTrigger, SelectContent, SelectValue } from '@/components/ui/select';
 
+
 // consts and props defintion
 const sessionStore = useSessionStore();
 const props = defineProps({
@@ -38,7 +39,9 @@ const props = defineProps({
 });
 const graph = props.activity.graph;
 const feedbackUrl = computed(() => {
-    return `${window.location.origin}/feedback/${graph}`;
+    const ACTIVATE_URL = (import.meta.env as Record<string, any>).VITE_ACTIVATE_URL || window.location.origin;
+    const ACTIVATE_PORT = (import.meta.env as Record<string, any>).VITE_ACTIVATE_PORT || '';
+    return `${ACTIVATE_URL}${ACTIVATE_PORT ? `:${ACTIVATE_PORT}` : ''}/feedback/${graph}`;
 });
 
 //  state management for available roles
@@ -402,6 +405,11 @@ const showUrl = ref(false)
                                                     staticContent.startPage.copiedLink[sessionStore.activeLanguage] :
                                                     staticContent.startPage.copyLink[sessionStore.activeLanguage] }}
                                             </Button>
+                                            <a :href="feedbackUrl" target="_blank" rel="noopener noreferrer">
+                                                <Button variant="outline"> {{
+                                                    staticContent.startPage.openLink[sessionStore.activeLanguage] }}
+                                                </Button>
+                                            </a>
                                         </div>
 
                                     </div>

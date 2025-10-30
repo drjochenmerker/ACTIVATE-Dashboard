@@ -1,21 +1,17 @@
 <script setup lang="ts">
-import { computed, ref, onMounted } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 // UI components
 import { Button } from '@/components/ui/button'
-import { Select, SelectContent, SelectTrigger, SelectValue } from '@/components/ui/select';
-import RecursiveSelect from '@/components/RecursiveSelect.vue';
 import LoadingOverlay from '@/components/LoadingOverlay.vue'
 import LanguageSelect from '@/components/LanguageSelect.vue'
 
+import FeedbackForm from '@/components/FeedbackForm.vue'
+import FeedbackAudio from '@/components/FeedbackAudio.vue'
+
 import { useSessionStore } from '@/stores/sessionStore'
 import { staticContent } from '@/data/contentData'
-import { buildTreeStructByLang } from '@/data/knowledge_graph/utils';
-import { getActivityClassIds } from '@/data/knowledge_graph/read_operations';
-import { KnowledgeGraphActivityClass } from '@/data/knowledge_graph/structures';
-import { llmSubmit } from '@/data/knowledge_graph/llm_utils';
-import { staticContentFeedback } from '@/data/feedbackQuestions';
 
 const props = defineProps<{ graph: string }>()
 
@@ -25,154 +21,50 @@ const sessionStore = useSessionStore()
 const activeLang = computed(() => sessionStore.activeLanguage)
 const loading = ref(false);
 
-// 1. Define groups
-const questionGroups = Object.keys(staticContentFeedback)
-    .filter(key => key !== 'feedbackpage') as (keyof typeof staticContentFeedback)[];
+// Statusvariable für die Ansicht (default auf 'form')
+type ViewMode = 'form' | 'upload'
+const viewMode = ref<ViewMode>('form');
 
-// 2. Helper function to initialize the 'answers' state
-const initializeAnswers = (): Record<string, Record<string, string>> => {
-    const initialState: Record<string, Record<string, string>> = {};
-    for (const groupKey of questionGroups) {
-        initialState[groupKey] = {};
-        const groupData = staticContentFeedback[groupKey];
+// Refs, um auf die Methoden der Kind-Komponenten zuzugreifen
+const formComponent = ref<InstanceType<typeof FeedbackForm> | null>(null);
+const audioComponent = ref<InstanceType<typeof FeedbackAudio> | null>(null);
 
-        // Find all 'questionX' keys in the group
-        const questionKeys = Object.keys(groupData)
-            .filter(key => key.startsWith('question'));
+// Überprüft, ob im Audio-Modus eine Datei ausgewählt ist
+const audioHasFile = computed(() => audioComponent.value?.hasFile ?? false);
 
-        for (const questionKey of questionKeys) {
-            initialState[groupKey][questionKey] = '';
-        }
-    }
-    return initialState;
-};
-
-// 3. Initialize 'answers' as a reactive object
-const answers = ref<Record<string, Record<string, string>>>(initializeAnswers());
-
-const groupedQuestionData = computed(() => {
-    const lang = activeLang.value;
-
-    return questionGroups.map(groupKey => {
-        const groupData = staticContentFeedback[groupKey];
-
-        // 1. Get title of group
-        let title: string = String(groupKey);
-        if ('title' in groupData && groupData.title) {
-            title = groupData.title[lang] || groupData.title['de'] || String(groupKey);
-        }
-
-        // 2. Get all questions of the group
-        const questions = Object.keys(groupData)
-            .filter(key => key.startsWith('question'))
-            .map(questionKey => {
-                const gd = groupData as Record<string, Record<string, string>>;
-                const texts = gd[questionKey] || {};
-                const text = texts[lang] || texts['de'] || '';
-                return {
-                    key: questionKey,
-                    text: text
-                };
-            })
-            // Filter out empty questions
-            .filter(q => q.text && q.text.trim() !== '');
-
-        return {
-            key: groupKey,
-            title: title,
-            questions: questions
-        };
-    })
-        // Filter out entire groups if they have no questions for the language
-        .filter(g => g.questions.length > 0);
-});
-
-onMounted(async () => {
-    await getRoles();
-});
-
-/**
- * Retrieves available roles for the current activity graph.
- */
-const getRoles = async () => {
-    const roles = await getActivityClassIds(props.graph, KnowledgeGraphActivityClass.subject);
-    sessionStore.availableRoles = buildTreeStructByLang(
-        roles,
-        activeLang.value
-    );
-}
-
+// Angepasst: Ruft die 'submit'-Methode der aktiven Kind-Komponente auf
 const submitFeedback = async () => {
-    if (!sessionStore.sessionRole) {
-        alert('Please select your role before submitting.')
-        return
-    }
+    loading.value = true;
+    let success = false;
 
-    const roles = await getActivityClassIds(props.graph, KnowledgeGraphActivityClass.subject);
-    const selectedRole = roles.find(role => role.id === sessionStore.sessionRole);
-
-    if (!selectedRole) {
-        alert('Selected role not found!');
-        return;
-    }
-
-    const roleLabel = selectedRole.labels[activeLang.value] || selectedRole.labels['default'] || selectedRole.labels['en'];
-
-    // Build correct role object
-    const roleForSubmit = {
-        id: selectedRole.id,
-        label: roleLabel
-    };
-
-    // --- Build full feedback object (NEUE LOGIK aus Version 2) ---
-    const fullData = [];
-    const lang = activeLang.value;
-
-    // Iterate through our 'answers' object
-    for (const groupKey in answers.value) {
-        const groupAnswers = answers.value[groupKey];
-
-        for (const questionKey in groupAnswers) {
-            const answer = groupAnswers[questionKey];
-
-            // Find the question text in the original data (with fallback)
-            const groupStatic = (staticContentFeedback as any)[groupKey];
-            const questionText = groupStatic?.[questionKey]?.[lang] || groupStatic?.[questionKey]?.['de'];
-
-            // Add only if question text exists
-            if (questionText && questionText.trim() !== '') {
-                fullData.push({
-                    question: questionText,
-                    answer: answer || ''
-                });
+    try {
+        if (viewMode.value === 'form') {
+            if (formComponent.value) {
+                // Ruft die 'submit'-Methode der FeedbackForm-Komponente auf
+                success = await formComponent.value.submit();
+            }
+        } else { // 'upload'
+            if (audioComponent.value) {
+                // Ruft die 'submit'-Methode der FeedbackAudio-Komponente auf
+                success = await audioComponent.value.submit();
             }
         }
-    }
-
-    // TODO console.log("Submitting feedback data:", fullData);
-
-    const feedbackData = {
-        graph: props.graph,
-        role: roleForSubmit,
-        data: fullData
-    };
-
-    try {
-        loading.value = true;
-        await llmSubmit(feedbackData.graph, feedbackData.role, feedbackData.data);
-        loading.value = false;
     } catch (error) {
+        console.error("Ungefangener Fehler in submitFeedback (Parent):", error);
+        success = false;
+    } finally {
         loading.value = false;
-        console.error("Error submitting feedback:", error);
-        alert('Failed to submit feedback. Please try again.');
-        return;
     }
-    try {
-        await router.push('/feedback-thank-you')
-        // TODO maybe show feedback success message earlier because right now it takes too long
-    } catch (err) {
-        console.error('Navigation failed:', err)
+
+    // Navigation zur "Danke"-Seite nur bei erfolgreicher Formular-Übermittlung
+    if (success && viewMode.value === 'form') {
+        try {
+            await router.push('/feedback-thank-you')
+        } catch (err) {
+            console.error('Navigation failed:', err)
+        }
     }
+    // Bei Audio-Upload bleiben wir auf der Seite, um das Ergebnis anzuzeigen
 }
 </script>
 
@@ -183,45 +75,37 @@ const submitFeedback = async () => {
                 <LanguageSelect class="absolute top-0 right-0 mt-4 mr-4" />
             </div>
             <div>
-
-                <div class="mb-6">
-                    <Select :model-value="sessionStore.sessionRole"
-                        @update:model-value="sessionStore.sessionRole = $event" id="roleSelect" class="my-4">
-                        <SelectTrigger>
-                            <SelectValue
-                                :placeholder="staticContent.placeholders.roleSelect[sessionStore.activeLanguage] || sessionStore.sessionRole" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <RecursiveSelect :node="sessionStore.availableRoles" />
-                        </SelectContent>
-                    </Select>
+                <!-- Umschalter für die Ansicht -->
+                <div class="flex justify-center space-x-4 border-b pb-4 mb-6">
+                    <Button :variant="viewMode === 'form' ? 'default' : 'outline'" @click="viewMode = 'form'">
+                        Feedback-Formular
+                    </Button>
+                    <Button :variant="viewMode === 'upload' ? 'default' : 'outline'" @click="viewMode = 'upload'">
+                        Audio-Datei-Upload
+                    </Button>
                 </div>
 
-                <div v-for="group in groupedQuestionData" :key="group.key"
-                    class="mb-6 p-4 border rounded-lg bg-white shadow-sm space-y-4">
+                <!-- Feedback Formular Komponente -->
+                <FeedbackForm v-if="viewMode === 'form'" ref="formComponent" :graph="props.graph"
+                    :session-role="sessionStore.sessionRole" @update:role="sessionStore.sessionRole = $event" />
 
-                    <h2 class="text-xl font-semibold text-gray-900 border-b pb-2">
-                        {{ group.title }}
-                    </h2>
-
-                    <div v-for="question in group.questions" :key="question.key" class="space-y-2">
-                        <label :for="group.key + question.key" class="block text-lg font-medium">
-                            {{ question.text }}
-                        </label>
-                        <textarea :id="group.key + question.key" v-model="answers[group.key][question.key]"
-                            class="w-full p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
-                            rows="4" :placeholder="staticContent.placeholders.feedbackAnswer[activeLang]" />
-                    </div>
-                </div>
+                <!-- Audio Upload Komponente -->
+                <FeedbackAudio v-if="viewMode === 'upload'" ref="audioComponent" />
 
             </div>
         </div>
 
+        <!-- Globaler Submit-Button -->
         <div class="mt-8">
-            <Button class="w-full" @click="submitFeedback">
-                {{ staticContent.noteCards.save[activeLang] }}
+            <Button class="w-full" @click="submitFeedback"
+                :disabled="loading || (viewMode === 'upload' && !audioHasFile)">
+                <span v-if="viewMode === 'form'">{{ staticContent.noteCards.save[activeLang] }}</span>
+                <span v-else>
+                    {{ loading ? 'Verarbeite Audio...' : 'Audio hochladen & verarbeiten' }}
+                </span>
             </Button>
         </div>
-        <LoadingOverlay :visible="loading" :message="staticContent.placeholders.loading[activeLang]" />
+        <LoadingOverlay :visible="loading"
+            :message="loading ? (viewMode === 'upload' ? 'Audio wird verarbeitet...' : staticContent.placeholders.loading[activeLang]) : ''" />
     </div>
 </template>
