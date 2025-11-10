@@ -28,17 +28,27 @@ export const staticContentFeedback = {
             de: "Ziel (Ziel der gemeinsamen Aktivität)",
             sv: "Mål (Målet med den gemensamma aktiviteten)",
         },
+        // question1: {
+        //     en: "What, in your view, was the team's common goal in this situation?",
+        //     de: "Was war aus Ihrer Sicht das gemeinsame Ziel des Teams in dieser Situation?",
+        //     sv: "Vad var enligt din mening teamets gemensamma mål i denna situation?",
+        // },
+        // question2:{
+        //     en: "In your view, did all parties involved understand this objective in the same way?",
+        //     de: "Haben, aus Ihrer Sicht, alle Beteiligten dieses Ziel gleich verstanden?",
+        //     sv: "Har alla inblandade, enligt din uppfattning, förstått detta mål på samma sätt?"
+        // },
+        // question3:{
+        //     en: "(optional) Were there moments when differing professional perspectives or values influenced the common goal? How did you personally deal with this?",
+        //     de: "(optional) Gab es Momente, in denen unterschiedliche berufliche Perspektiven oder Werte das gemeinsame Ziel beeinflusst haben? Wie sind Sie persönlich damit umgegangen?",
+        //     sv: "(valfritt) Har det funnits tillfällen då olika yrkesmässiga perspektiv eller värderingar har påverkat det gemensamma målet? Hur hanterade du det personligen?"
+        // }
         question1: {
-            en: "What, in your view, was the team's common goal in this situation?",
-            de: "Was war aus Ihrer Sicht das gemeinsame Ziel des Teams in dieser Situation?",
-            sv: "Vad var enligt din mening teamets gemensamma mål i denna situation?",
+            en: "How did you understand the team's common goal, and were there different perspectives among the professional groups involved?",
+            de: "Wie haben Sie das gemeinsame Ziel des Teams verstanden, und gab es unterschiedliche Sichtweisen unter den beteiligten Berufsgruppen?",
+            sv: "Hur uppfattade du teamets gemensamma mål, och fanns det olika perspektiv bland de olika yrkesgrupperna som var involverade?"
         },
         question2:{
-            en: "In your view, did all parties involved understand this objective in the same way?",
-            de: "Haben, aus Ihrer Sicht, alle Beteiligten dieses Ziel gleich verstanden?",
-            sv: "Har alla inblandade, enligt din uppfattning, förstått detta mål på samma sätt?"
-        },
-        question3:{
             en: "(optional) Were there moments when differing professional perspectives or values influenced the common goal? How did you personally deal with this?",
             de: "(optional) Gab es Momente, in denen unterschiedliche berufliche Perspektiven oder Werte das gemeinsame Ziel beeinflusst haben? Wie sind Sie persönlich damit umgegangen?",
             sv: "(valfritt) Har det funnits tillfällen då olika yrkesmässiga perspektiv eller värderingar har påverkat det gemensamma målet? Hur hanterade du det personligen?"
@@ -50,21 +60,32 @@ export const staticContentFeedback = {
             de: "Subjekt (Akteure und ihre Perspektiven)",
             sv: "Ämne (Aktörer och deras perspektiv)",
         },
+        // question1: {
+        //     en: "How did you experience your own role in the team – technically, professionally and personally?",
+        //     de: "Wie haben Sie Ihre eigene Rolle im Team erlebt – fachlich, professionell und persönlich?",
+        //     sv: "Hur upplevde du din egen roll i teamet – tekniskt, professionellt och personligt?",
+        // },
+        // question2: {
+        //     en: "How did communication and consensus-building with other professional groups work out?",
+        //     de: "Wie gestalteten sich Kommunikation und Konsensfindung mit den anderen Berufsgruppen?",
+        //     sv: "Hur fungerade kommunikationen och konsensusbildningen med de andra yrkesgrupperna?"
+        // },
+        // question3:{
+        //     en: "(optional) Were there situations in which it was difficult to contribute or be understood? How did you deal with this?",
+        //     de: "(optional) Gab es Situationen, in denen es schwierig war, sich einzubringen oder verstanden zu werden? Wie sind Sie damit umgegangen?",
+        //     sv: "(valfritt) Har det funnits situationer där det varit svårt att engagera sig eller bli förstådd? Hur hanterade du det?"
+        // }
         question1: {
-            en: "How did you experience your own role in the team – technically, professionally and personally?",
-            de: "Wie haben Sie Ihre eigene Rolle im Team erlebt – fachlich, professionell und persönlich?",
-            sv: "Hur upplevde du din egen roll i teamet – tekniskt, professionellt och personligt?",
+            en: "To what extent were you able to use your social skills — agency skill (assertive, confident, decisive, and energetic behavior), communion skill (warm, friendly, and compassionate behavior), or interpersonal resilience (calm, relaxed, and emotionally balanced behavior) — when the interpersonal situation required it?",
+            de: "Inwieweit konnten Sie Ihre sozialen Kompetenzen – Handlungsfähigkeit (selbstbewusstes, entschlossenes und energisches Verhalten), Kommunikationsfähigkeit (herzliches, freundliches und mitfühlendes Verhalten) oder zwischenmenschliche Belastbarkeit (ruhiges, entspanntes und emotional ausgeglichenes Verhalten) – einsetzen, wenn es die zwischenmenschliche Situation erforderte?",
+            sv: "I vilken utsträckning kunde du använda dina sociala färdigheter – handlingskraft (assertivt, självsäkert, beslutsamt och energiskt beteende), gemenskap (varmt, vänligt och medkännande beteende) eller interpersonell resiliens (lugnt, avslappnat och emotionellt balanserat beteende) – när den interpersonella situationen krävde det?",
         },
-        question2: {
-            en: "How did communication and consensus-building with other professional groups work out?",
-            de: "Wie gestalteten sich Kommunikation und Konsensfindung mit den anderen Berufsgruppen?",
-            sv: "Hur fungerade kommunikationen och konsensusbildningen med de andra yrkesgrupperna?"
-        },
-        question3:{
-            en: "(optional) Were there situations in which it was difficult to contribute or be understood? How did you deal with this?",
-            de: "(optional) Gab es Situationen, in denen es schwierig war, sich einzubringen oder verstanden zu werden? Wie sind Sie damit umgegangen?",
-            sv: "(valfritt) Har det funnits situationer där det varit svårt att engagera sig eller bli förstådd? Hur hanterade du det?"
+        question2:{
+            en: "(optional) Were there moments when you were particularly successful in this or when you reached your limits?",
+            de: "(optional) Gab es Momente, in denen Sie dabei besonders erfolgreich waren oder an Ihre Grenzen gestoßen sind?",
+            sv: "(valfritt) Fanns det stunder när du var särskilt framgångsrik i detta eller när du nådde dina gränser?",
         }
+
     },
     communityQuestion:{
         title: {
@@ -73,7 +94,7 @@ export const staticContentFeedback = {
             sv: "Gemenskap (social miljö och kontextuella förhållanden)",
         },
         question1: {
-            en: "What expectations, conditions and values shaped teamwork (e.g. organisation, professional groups, patients, relatives)?",
+            en: "What expectations, framework conditions, and values shaped the teamwork (e.g., organization, professional groups, patients, relatives)?",
             de: "Welche Erwartungen, Rahmenbedingungen und Werte prägten die Zusammenarbeit im Team (z. B. Organisation, Berufsgruppen, Patient*innen, Angehörige)?",
             sv: "Vilka förväntningar, ramvillkor och värderingar präglade samarbetet i teamet (t.ex. organisation, yrkesgrupper, patienter, anhöriga)?"
         },
@@ -89,15 +110,25 @@ export const staticContentFeedback = {
             de: "Werkzeuge (Werkzeuge und Ressourcen)",
             sv: "Verktyg (Verktyg och resurser)",
         },
+        // question1: {
+        //     en: "What technical, communication or organisational tools helped you to understand the situation and contribute to the collaboration?",
+        //     de: "Welche fachlichen, kommunikativen oder organisatorischen Instrumente haben Ihnen geholfen, die Situation zu verstehen und zur Zusammenarbeit beizutragen?",
+        //     sv: "Vilka fackliga, kommunikativa eller organisatoriska verktyg har hjälpt dig att förstå situationen och bidra till samarbetet?"
+        // },
+        // question2: {
+        //     en: "(optional) What tools or methods would you have liked to have had in order to better understand and integrate your professional role or that of others?",
+        //     de: "(optional) Welche Werkzeuge oder Methoden hätten Sie sich gewünscht, um Ihre berufliche Rolle oder die der anderen besser zu verstehen und zu integrieren?",
+        //     sv: "(valfritt) Vilka verktyg eller metoder skulle du ha önskat dig för att bättre förstå och integrera din yrkesroll eller andras?"
+        // }
         question1: {
-            en: "What technical, communication or organisational tools helped you to understand the situation and contribute to the collaboration?",
-            de: "Welche fachlichen, kommunikativen oder organisatorischen Instrumente haben Ihnen geholfen, die Situation zu verstehen und zur Zusammenarbeit beizutragen?",
-            sv: "Vilka fackliga, kommunikativa eller organisatoriska verktyg har hjälpt dig att förstå situationen och bidra till samarbetet?"
+            en: "Which professional, communication, or organizational tools helped you to understand the situation and work well with others?",
+            de: "Welche beruflichen, kommunikativen oder organisatorischen Fähigkeiten haben Ihnen geholfen, die Situation zu verstehen und gut mit anderen zusammenzuarbeiten?",
+            sv: "Vilka professionella, kommunikativa eller organisatoriska verktyg hjälpte dig att förstå situationen och samarbeta bra med andra?",
         },
         question2: {
-            en: "(optional) What tools or methods would you have liked to have had in order to better understand and integrate your professional role or that of others?",
-            de: "(optional) Welche Werkzeuge oder Methoden hätten Sie sich gewünscht, um Ihre berufliche Rolle oder die der anderen besser zu verstehen und zu integrieren?",
-            sv: "(valfritt) Vilka verktyg eller metoder skulle du ha önskat dig för att bättre förstå och integrera din yrkesroll eller andras?"
+            en: "(optional) What additional tools could have further supported the collaboration?",
+            de: "(optional) Welche zusätzlichen Tools hätten die Zusammenarbeit noch weiter unterstützen können?",
+            sv: "(valfritt) Vilka ytterligare verktyg kunde ha stöttat samarbetet ytterligare?"
         }
     },
     rulesQuestion:{
@@ -111,10 +142,15 @@ export const staticContentFeedback = {
             de: "Welche expliziten oder impliziten Regeln haben das Handeln in dieser Situation beeinflusst (z. B. Leitlinien, gesetzliche Vorgaben, Teamkultur)?",
             sv: "Vilka explicita eller implicita regler har påverkat agerandet i denna situation (t.ex. riktlinjer, lagstadgade krav, teamkultur)?"
         },
+        // question2: {
+        //     en: "(optional) How have these rules affected your professional freedom of choice and sense of responsibility?",
+        //     de: "(optional) Wie haben diese Regeln Ihre berufliche Entscheidungsfreiheit und Ihr Verantwortungsgefühl beeinflusst?",
+        //     sv: "(valfritt) Hur har dessa regler påverkat din yrkesmässiga beslutsfrihet och ditt ansvarskännande?"
+        // }
         question2: {
-            en: "(optional) How have these rules affected your professional freedom of choice and sense of responsibility?",
-            de: "(optional) Wie haben diese Regeln Ihre berufliche Entscheidungsfreiheit und Ihr Verantwortungsgefühl beeinflusst?",
-            sv: "(valfritt) Hur har dessa regler påverkat din yrkesmässiga beslutsfrihet och ditt ansvarskännande?"
+            en: "(optional) How did these rules influence your professional freedom of decision-making and your sense of responsibility?",
+            de: "(optional) Wie haben diese Regeln Ihre berufliche Entscheidungsfreiheit und Ihr Verantwortungsbewusstsein beeinflusst?",
+            sv: "(valfritt) Hur påverkade dessa regler din professionella beslutsfrihet och ditt ansvarskänsla?",
         }
     },
     divisionOfLabourQuestion:{
@@ -124,9 +160,9 @@ export const staticContentFeedback = {
             sv: "Arbetsdelning (roller, ansvarsområden, maktförhållanden)",
         },
         question1: {
-            en: "How was the division of labour organised within the team, and who had a decisive influence on decisions?",
-            de: "Wie war die Arbeitsteilung im Team gestaltet, und wer hatte maßgeblichen Einfluss auf Entscheidungen?",
-            sv: "Hur var arbetsfördelningen i teamet utformad, och vem hade avgörande inflytande på besluten?"
+            en: "How was the division of labour organised within the team, and how were responsibility and decision-making power distributed?",
+            de: "Wie war die Arbeitsteilung innerhalb des Teams organisiert, und wie wurden Verantwortung und Entscheidungsbefugnisse verteilt?",
+            sv: "Hur var arbetsfördelningen organiserad inom teamet, och hur fördelades ansvar och beslutsfattande?",
         },
         question2: {
             en: "(optional) In your opinion, was this distribution appropriate and conducive to the joint task?",
