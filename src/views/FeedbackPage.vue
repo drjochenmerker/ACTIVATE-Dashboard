@@ -90,7 +90,7 @@ const submitFeedback = async () => {
                     :session-role="sessionStore.sessionRole ?? null" @update:role="sessionStore.sessionRole = $event" />
 
                 <!-- Audio Upload Komponente -->
-                <FeedbackAudio v-if="viewMode === 'upload'" ref="audioComponent" />
+                <FeedbackAudio v-if="viewMode === 'upload'" ref="audioComponent" :graph="props.graph" />
 
             </div>
         </div>

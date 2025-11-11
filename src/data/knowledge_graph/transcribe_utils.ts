@@ -44,47 +44,58 @@ export interface DiarizationErrorResult {
 }
 
 /**
- * Uploads an audio file (.wav, .flac, .ogg) to the backend for diarization and transcription.
- * The request goes through the Node.js proxy defined in feedback-parser.
+ * *** AKTUALISIERTE FUNKTION (ersetzt uploadAndDiarizeAudio) ***
+ *
+ * Lädt eine Audiodatei UND eine Liste von Session-Rollen an das Node.js-Backend
+ * zur vollständigen Verarbeitung (Diarisierung -> Transkription -> KI-Rollen-Mapping).
  *
  * @param audioFile The audio File object to upload.
- * @param languageCode Optional ISO-639-1 language code (e.g., 'de', 'en'). If null/undefined, auto-detection is attempted.
+ * @param languageCode Optional ISO-639-1 language code.
+ * @param roles Ein flaches Array von Rollennamen (z.B. ['Ausbilder', 'Arzt 01', ...]).
  * @returns Promise resolving to DiarizationSuccessResult or DiarizationErrorResult
  */
-export async function uploadAndDiarizeAudio(
+export async function processAudioSession(
     audioFile: File,
-    languageCode?: string | null
+    languageCode: string | null,
+    roles: string[] // Nimmt jetzt das korrekte string[] entgegen
 ): Promise<DiarizationSuccessResult | DiarizationErrorResult> {
 
-    // --- 1. Construct the API URL (pointing to the Node.js proxy) ---
-    // It uses VITE_LLM_URL/PORT because feedback-parser acts as the main backend entry point
-    const baseUrl = `${import.meta.env.VITE_LLM_URL}${!import.meta.env.VITE_LLM_PORT ? '' : ':' + import.meta.env.VITE_LLM_PORT}`;
-    // The path includes the proxy path prefix '/api/diarize' and the actual Python API path '/api/diarize_and_transcribe'
-    let apiUrl = `${baseUrl}/whisper-proxy/api/diarize_and_transcribe`;
+    console.log("processAudioSession: Starte Upload mit:", {
+        fileName: audioFile.name,
+        languageCode: languageCode,
+        roles: roles
+    });
 
-    if (languageCode) {
-        apiUrl += `?language_code=${encodeURIComponent(languageCode)}`;
-    }
+    // --- 1. Construct the API URL (pointing to the Node.js backend) ---
+    // Verwendet VITE_LLM_URL/PORT, da feedback-parser der Haupteinstiegspunkt ist
+    const baseUrl = `${import.meta.env.VITE_LLM_URL}${!import.meta.env.VITE_LLM_PORT ? '' : ':' + import.meta.env.VITE_LLM_PORT}`;
+
+    // *** NEUER ENDPUNKT (muss im Node.js-Backend erstellt werden) ***
+    // Wir rufen den neuen, intelligenten Orchestrator-Endpunkt auf.
+    const apiUrl = `${baseUrl}/api/process-audio-session`;
 
     // --- 2. Prepare FormData ---
+    // FormData ist erforderlich, um die Datei zu senden.
+    // Wir fügen die anderen Daten als JSON-Strings hinzu.
     const formData = new FormData();
     formData.append('audio_file', audioFile);
+    formData.append('language_code', languageCode || ''); // Sende leeren String statt null
+    formData.append('roles', JSON.stringify(roles)); // Sende die Rollenliste als JSON-String
 
     // --- 3. Make the Fetch Request ---
     try {
         const response = await fetch(apiUrl, {
             method: 'POST',
             body: formData,
-            // DO NOT set 'Content-Type': 'multipart/form-data'.
-            // The browser sets it automatically with the correct boundary for FormData.
+            // KEIN 'Content-Type' Header, der Browser setzt ihn für FormData korrekt
         });
 
         // --- 4. Handle Response ---
         const data = await response.json();
 
         if (!response.ok) {
-            // Handle errors reported by the backend (FastAPI validation or runtime errors)
-            console.error("Backend Error:", data);
+            // Fehler vom Backend (z.B. 404, 500)
+            console.error("Backend Error (von /api/process-audio-session):", data);
             return {
                 success: false,
                 message: data.detail || data.message || `Server error: ${response.status}`,
@@ -92,12 +103,12 @@ export async function uploadAndDiarizeAudio(
             };
         }
 
-        // Check if the response structure matches the expected success result
+        // Wir erwarten, dass 'data' jetzt das *endgültige* Ergebnis
+        // nach der Gemini-Verarbeitung ist.
         if (data.status === "success" && Array.isArray(data.diarized_transcription)) {
-             // Type assertion might be needed if TypeScript can't infer the type correctly
              return data as DiarizationSuccessResult;
         } else {
-             // Handle unexpected success response structure
+            // Backend meldet Erfolg, aber die Datenstruktur ist unerwartet
             console.error("Unexpected success response structure:", data);
             return {
                 success: false,
@@ -106,8 +117,8 @@ export async function uploadAndDiarizeAudio(
         }
 
     } catch (error) {
-        // Handle network errors or other fetch-related issues
-        console.error("Fetch Error:", error);
+        // Netzwerkfehler oder komplett fehlgeschlagene Anfrage
+        console.error("Fetch Error (processAudioSession):", error);
         let message = "Network error or failed to fetch.";
         if (error instanceof Error) {
             message = error.message;

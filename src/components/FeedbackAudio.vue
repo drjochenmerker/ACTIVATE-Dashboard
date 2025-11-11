@@ -1,50 +1,50 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-
-// *** Korrekten Pfad zur Diarisierungs-Utility sicherstellen ***
 import {
-    uploadAndDiarizeAudio,
+    processAudioSession,
     type DiarizationSuccessResult,
-    type DiarizationErrorResult
+    type DiarizationErrorResult,
 } from '@/data/knowledge_graph/transcribe_utils';
-
 import { useSessionStore } from '@/stores/sessionStore'
+import { getActivityClassIds } from '@/data/knowledge_graph/read_operations';
+import { buildTreeStructByLang } from '@/data/knowledge_graph/utils';
+import { KnowledgeGraphActivityClass } from '@/data/knowledge_graph/structures';
+
+// props
+const props = defineProps<{
+    graph: string,
+}>()
 
 const sessionStore = useSessionStore()
 
-// --- Refs für Datei-Upload ---
+// --- Refs for file upload---
 const selectedFile = ref<File | null>(null);
 
-// --- Refs für Diarisierungs-Ergebnis ---
+// --- Refs for diarisation-result ---
 const diarizationResult = ref<DiarizationSuccessResult | null>(null);
 const diarizationError = ref<DiarizationErrorResult | null>(null);
 
-// --- Refs für Mikrofon-Aufnahme ---
+// --- Refs for microphone recording ---
 const isRecording = ref(false);
 const mediaRecorderInstance = ref<MediaRecorder | null>(null);
 const audioChunks = ref<BlobPart[]>([]);
 
-// NEU: Wir benötigen zwei Blobs:
-// 1. previewBlob: Das Original-Blob vom Browser (z.B. webm) für die <audio>-Vorschau
+// 1. previewBlob: Original-Blob from browser (f.ex. webm) for <audio> preview
 const previewBlob = ref<Blob | null>(null);
-const previewUrl = ref<string | null>(null); // Für <audio> Player-Vorschau
+const previewUrl = ref<string | null>(null); // For <audio> player preview
 
-// 2. wavBlobForUpload: Das konvertierte WAV-Blob, das wir an das Backend senden
+// 2. wavBlobForUpload: The converted WAV blob that is sent to the backend
 const wavBlobForUpload = ref<Blob | null>(null);
 
 const recordingError = ref<string | null>(null);
-
-// --- NEU: AudioContext für die Konvertierung ---
-// Wir initialisieren ihn einmal. 'webkitAudioContext' ist für ältere Safari-Versionen.
 const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
 
 
-// Funktion für die Datei-Auswahl
+// function for file input change
 const handleFileChange = (event: Event) => {
     const target = event.target as HTMLInputElement;
     if (target.files && target.files[0]) {
         selectedFile.value = target.files[0];
-        // Stelle sicher, dass eine Aufnahme gelöscht wird, wenn eine Datei ausgewählt wird
         clearRecording();
         diarizationResult.value = null;
         diarizationError.value = null;
@@ -53,10 +53,10 @@ const handleFileChange = (event: Event) => {
     }
 };
 
-// --- Aufnahme-Funktionen ---
+// --- Live Recording functionality---
 
 /**
- * Löscht die aktuelle Aufnahme und setzt die Refs zurück.
+ * Deleted the current recording and reset the refs
  */
 const clearRecording = () => {
     previewBlob.value = null;
@@ -67,10 +67,10 @@ const clearRecording = () => {
 };
 
 /**
- * Startet die Mikrofon-Aufnahme.
+ * Starts microphone recording
  */
 const startRecording = async () => {
-    // Setze alle anderen Eingaben und Ergebnisse zurück
+    // resets all previous data
     selectedFile.value = null;
     diarizationResult.value = null;
     diarizationError.value = null;
@@ -82,7 +82,7 @@ const startRecording = async () => {
     }
 
     try {
-        // Sicherstellen, dass der AudioContext "aktiviert" wird (wichtig für einige Browser)
+        // Ensure the audioContext is "activated" (important for some browsers)
         if (audioContext.state === 'suspended') {
             await audioContext.resume();
         }
@@ -91,7 +91,7 @@ const startRecording = async () => {
         isRecording.value = true;
         recordingError.value = null;
 
-        console.log("Starte Aufnahme mit Standard-MimeType des Browsers (wird zu WAV konvertiert).");
+        console.log("Start recording with microphone.");
         let recorder: MediaRecorder = new MediaRecorder(stream);
 
         mediaRecorderInstance.value = recorder;
@@ -100,32 +100,32 @@ const startRecording = async () => {
             audioChunks.value.push(event.data);
         };
 
-        // Bei Stopp: Blob erstellen UND Konvertierung starten
+        // If stopped: Create Blob AND start conversion to WAV
         recorder.onstop = async () => {
             const mimeType = mediaRecorderInstance.value?.mimeType || 'audio/webm';
             const originalBlob = new Blob(audioChunks.value, { type: mimeType });
 
-            // Speichere das Original-Blob für die <audio>-Vorschau
+            // save blobs for preview and upload
             previewBlob.value = originalBlob;
             previewUrl.value = URL.createObjectURL(originalBlob);
             audioChunks.value = [];
 
-            // Stream-Tracks stoppen
+            // Stop all audio tracks
             stream.getTracks().forEach(track => track.stop());
 
-            // --- HIER PASSIERT DIE KONVERTIERUNG ---
+            // --- AUDIO CONVERSION ---
             try {
-                console.log("Konvertiere Aufnahme zu WAV...");
-                // 1. Lese das Blob als ArrayBuffer
+                console.log("Convert recording to WAV...");
+                // 1. Read the Blob as an ArrayBuffer
                 const arrayBuffer = await originalBlob.arrayBuffer();
-                // 2. Dekodiere den ArrayBuffer (webm/ogg/etc.) in rohe PCM-Daten (AudioBuffer)
+                // 2. Decode the ArrayBuffer (webm/ogg/etc.) into raw PCM data (AudioBuffer)
                 const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
-                // 3. Enkodiere die rohen PCM-Daten in ein WAV-Blob
+                // 3. Encode the raw PCM data into a WAV Blob
                 wavBlobForUpload.value = audioBufferToWav(audioBuffer);
-                console.log("Konvertierung zu WAV erfolgreich.");
+                console.log("Conversion to WAV successful.");
             } catch (convertError) {
-                console.error("Fehler bei der Audio-Konvertierung:", convertError);
-                recordingError.value = "Fehler bei der Konvertierung der Aufnahme in das WAV-Format.";
+                console.error("Error while converting to WAV:", convertError);
+                recordingError.value = "Error while converting to WAV.";
             }
         };
 
@@ -143,26 +143,24 @@ const startRecording = async () => {
 };
 
 /**
- * Stoppt die Mikrofon-Aufnahme.
+ * Stops the microphone recording.
  */
 const stopRecording = () => {
     if (mediaRecorderInstance.value && isRecording.value) {
         mediaRecorderInstance.value.stop();
         isRecording.value = false;
-        // Der 'onstop'-Handler kümmert sich um den Rest (inkl. Konvertierung)
     }
 };
 
 
-// Berechnet, ob eine Datei *oder* eine Aufnahme zum Absenden bereitsteht
-// *** GEÄNDERT: Prüft jetzt auf 'wavBlobForUpload' ***
+// Calculated property to check if there is a file selected or a recording ready
+// Checks now for 'wavBlobForUpload'
 const hasFile = computed(() => !!selectedFile.value || !!wavBlobForUpload.value);
 
 /**
- * Definiert die 'submit'-Methode, die von der Eltern-Komponente aufgerufen wird.
+ * Defines the 'submit' method that is called by the parent component.
  */
 
-// Type guard... (bleibt gleich)
 const isDiarizationError = (r: DiarizationSuccessResult | DiarizationErrorResult): r is DiarizationErrorResult => {
     if ('status' in r) return (r as any).status !== 'success';
     if ('success' in r) return (r as any).success === false;
@@ -172,7 +170,7 @@ const isDiarizationError = (r: DiarizationSuccessResult | DiarizationErrorResult
 defineExpose({
     hasFile,
     submit: async (): Promise<boolean> => {
-        // --- AKTUALISIERT: Prüft auf Datei ODER 'wavBlobForUpload' ---
+        // tests if neither an uploaded file nor a recording is available
         if (!selectedFile.value && !wavBlobForUpload.value) {
             alert('Bitte wählen Sie zuerst eine Datei aus oder nehmen Sie Audio auf (und warten Sie auf die Konvertierung).');
             return false;
@@ -183,14 +181,10 @@ defineExpose({
 
         let fileToUpload: File;
 
-        if (selectedFile.value) {
-            // Option 1: Eine Datei wurde hochgeladen (ist bereits .wav, .flac, .ogg)
+        if (selectedFile.value) { // Option 1: A file has been uploaded (already in correct format)
             fileToUpload = selectedFile.value;
             console.log('Starte Aktion mit hochgeladener Datei:', fileToUpload.name);
-        } else if (wavBlobForUpload.value) {
-            // Option 2: Eine Aufnahme wurde gemacht UND konvertiert
-
-            // *** ÄNDERUNG: Wir senden das konvertierte WAV-Blob ***
+        } else if (wavBlobForUpload.value) { // Option 2: A recording has been made AND converted
             const fileName = `recording.wav`;
             fileToUpload = new File([wavBlobForUpload.value], fileName, { type: 'audio/wav' });
             console.log('Starte Aktion mit konvertierter WAV-Aufnahme:', fileToUpload.name, fileToUpload.type);
@@ -199,44 +193,59 @@ defineExpose({
         }
 
         try {
-            // Sprache dynamisch aus dem Store holen
-            const result = await uploadAndDiarizeAudio(fileToUpload, sessionStore.activeLanguage);
+            // Get language from session store
+            const roles = await getRoles();
+            console.log('Verfügbare Rollen für die Sitzung:', roles);
+            const result = await processAudioSession(fileToUpload, sessionStore.activeLanguage, roles);
 
             console.log('Ergebnis der Aktion:', result); // Log das gesamte Ergebnis
 
-            if (!isDiarizationError(result)) {
-                // Erfolgreich - Ergebnis speichern
+            if (!isDiarizationError(result)) { // success
                 diarizationResult.value = result;
                 console.log("Diarisierung erfolgreich abgeschlossen.");
-                return true; // Erfolg
-            } else {
-                // Fehler vom Backend wurde zurückgegeben
+                return true;
+            } else { // error
                 diarizationError.value = result;
                 console.error("Fehler vom Backend:", result);
-                return false; // Fehler
+                return false;
             }
         } catch (error) {
-            // Unerwarteter Fehler (Netzwerk etc.) — set a structured error object
+            // unexpected error (network etc) — set a structured error object
             diarizationError.value = {
                 success: false,
                 message: error instanceof Error ? error.message : 'Ein unbekannter Fehler ist aufgetreten.'
             };
             console.error('Unerwarteter Fehler in executeUploadAction:', error);
-            return false; // Fehler
+            return false; // error
         }
     }
 });
 
-// --- HILFSFUNKTIONEN FÜR WAV-ENCODING (keine externen Libs nötig) ---
+
+// HELPER FUNCTION to get session roles
+const getRoles = async (): Promise<string[]> => {
+    const roles = await getActivityClassIds(props.graph, KnowledgeGraphActivityClass.subject);
+    sessionStore.availableRoles = buildTreeStructByLang(
+        roles,
+        sessionStore.activeLanguage
+    );
+    // Normalize to an array of string ids (safe fallback for various shape of returned objects)
+    return roles.map((r: any) => {
+        if (typeof r === 'string') return r;
+        return r?.id ?? r?.value ?? r?.name ?? String(r);
+    });
+};
+
+// --- HELPER FUNCTION FOR WAV-ENCODING ---
 function audioBufferToWav(buffer: AudioBuffer): Blob {
     const numOfChan = buffer.numberOfChannels;
-    const length = buffer.length * numOfChan * 2 + 44; // * 2 für 16-bit samples
+    const length = buffer.length * numOfChan * 2 + 44; // * 2 for 16-bit samples
     const dataView = new DataView(new ArrayBuffer(length));
     const channels: Float32Array[] = [];
     let offset = 0;
     let pos = 0;
 
-    // Header schreiben
+    // write header
     setUint32(0x46464952); // "RIFF"
     setUint32(length - 8); // file length - 8
     setUint32(0x45564157); // "WAVE"
@@ -251,12 +260,12 @@ function audioBufferToWav(buffer: AudioBuffer): Blob {
     setUint32(0x61746164); // "data" chunk
     setUint32(length - 44); // data chunk size
 
-    // PCM-Daten schreiben
+    // write PCM data
     for (let i = 0; i < buffer.numberOfChannels; i++) {
         channels.push(buffer.getChannelData(i));
     }
 
-    // Samples verschränken (Interleaving)
+    // Interleave samples
     for (let i = 0; i < buffer.length; i++) {
         for (let j = 0; j < numOfChan; j++) {
             let sample = Math.max(-1, Math.min(1, channels[j][i])); // clamp
@@ -277,14 +286,15 @@ function audioBufferToWav(buffer: AudioBuffer): Blob {
         pos += 4;
     }
 }
-// --- ENDE HILFSFUNKTIONEN ---
+
+// ---  END HELPER FUNCTIONS ---
 
 </script>
 
 <template>
-    <!-- Datei Upload Bereich -->
-    <div class="p-6 border rounded-lg bg-white shadow-sm space-y-4 text-center">
 
+    <div class="p-6 border rounded-lg bg-white shadow-sm space-y-4 text-center">
+        <!-- UPLOAD AREA -->
         <h2 class="text-xl font-semibold text-gray-900">
             Audio-Datei hochladen
         </h2>
@@ -302,7 +312,6 @@ function audioBufferToWav(buffer: AudioBuffer): Blob {
                 1024).toFixed(2) }} MB)
         </div>
 
-        <!-- *** NEU: Trennlinie *** -->
         <div class="relative my-6">
             <div class="absolute inset-0 flex items-center">
                 <span class="w-full border-t border-gray-300"></span>
@@ -314,7 +323,7 @@ function audioBufferToWav(buffer: AudioBuffer): Blob {
             </div>
         </div>
 
-        <!-- *** NEU: Aufnahme-Bereich *** -->
+        <!-- RECORDING AREA --->
         <div class="space-y-4">
             <h2 class="text-xl font-semibold text-gray-900">
                 Direktaufnahme
@@ -323,7 +332,6 @@ function audioBufferToWav(buffer: AudioBuffer): Blob {
                 Nehmen Sie Audio direkt über Ihr Mikrofon auf.
             </p>
 
-            <!-- Aufnahme-Buttons -->
             <div>
                 <button v-if="!isRecording" @click="startRecording" :disabled="selectedFile != null" type="button"
                     class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50">
@@ -349,14 +357,13 @@ function audioBufferToWav(buffer: AudioBuffer): Blob {
                 </button>
             </div>
 
-            <!-- Aufnahme-Fehleranzeige -->
+            <!-- recording errors -->
             <div v-if="recordingError"
                 class="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-left">
                 <p><strong>Fehler bei der Aufnahme:</strong> {{ recordingError }}</p>
             </div>
 
-            <!-- Aufnahme-Vorschau -->
-            <!-- *** GEÄNDERT: Verwendet jetzt 'previewUrl' *** -->
+            <!-- recording preview -->
             <div v-if="previewUrl" class="mt-4 space-y-2">
                 <p class="text-sm text-gray-600">Aufnahme-Vorschau (Originalformat):</p>
                 <audio :src="previewUrl" controls class="w-full"></audio>
@@ -364,14 +371,13 @@ function audioBufferToWav(buffer: AudioBuffer): Blob {
                     Aufnahme löschen
                 </button>
             </div>
-            <!-- Info-Box, während die Konvertierung läuft -->
             <div v-if="isRecording === false && audioChunks.length === 0 && previewUrl && !wavBlobForUpload && !recordingError"
                 class="mt-4 p-3 bg-blue-100 border border-blue-400 text-blue-700 rounded-lg text-left">
                 <p><strong>Bitte warten...</strong> Aufnahme wird in WAV konvertiert.</p>
             </div>
         </div>
 
-        <!-- Ergebnis- und Fehleranzeige (für Upload UND Aufnahme) -->
+        <!-- RESULT AND ERROR AREA (FOR UPLOAD AND RECORDING) -->
         <div v-if="diarizationError || diarizationResult" class="mt-6 text-left border-t pt-4">
             <div v-if="diarizationError" class="p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg">
                 <h3 class="font-semibold mb-1">Fehler bei der Verarbeitung:</h3>
