@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import LoadingOverlay from '@/components/LoadingOverlay.vue'
 import LanguageSelect from '@/components/LanguageSelect.vue'
 
+// NEUE Komponenten
 import FeedbackForm from '@/components/FeedbackForm.vue'
 import FeedbackAudio from '@/components/FeedbackAudio.vue'
 
@@ -19,7 +20,7 @@ const router = useRouter()
 const sessionStore = useSessionStore()
 
 const activeLang = computed(() => sessionStore.activeLanguage)
-const loading = ref(false);
+const loading = ref(false); // Globaler Lade-Status
 
 // Statusvariable für die Ansicht (default auf 'form')
 type ViewMode = 'form' | 'upload'
@@ -46,13 +47,19 @@ const submitFeedback = async () => {
         } else { // 'upload'
             if (audioComponent.value) {
                 // Ruft die 'submit'-Methode der FeedbackAudio-Komponente auf
+                // Diese gibt 'true' zurück, wenn der JOB GESTARTET wurde
                 success = await audioComponent.value.submit();
             }
         }
     } catch (error) {
         console.error("Ungefangener Fehler in submitFeedback (Parent):", error);
         success = false;
-    } finally {
+    }
+
+    // WICHTIG:
+    // Bei 'form' stoppen wir das Laden sofort
+    // Bei 'upload' bleibt 'loading.value' auf 'true', bis das Polling endet
+    if (viewMode.value === 'form') {
         loading.value = false;
     }
 
@@ -64,8 +71,18 @@ const submitFeedback = async () => {
             console.error('Navigation failed:', err)
         }
     }
-    // Bei Audio-Upload bleiben wir auf der Seite, um das Ergebnis anzuzeigen
 }
+
+/**
+ * NEU: Diese Funktion wird von FeedbackAudio.vue aufgerufen,
+ * wenn das Polling abgeschlossen (oder fehlgeschlagen) ist.
+ */
+const onAudioProcessingComplete = (success: boolean) => {
+    console.log(`FeedbackPage: Audio-Verarbeitung abgeschlossen (Erfolg: ${success}).`);
+    loading.value = false; // Stoppt das globale Lade-Overlay
+    // isPolling.value = false; // (Falls Sie isPolling hier auch verwalten)
+}
+
 </script>
 
 <template>
@@ -87,10 +104,12 @@ const submitFeedback = async () => {
 
                 <!-- Feedback Formular Komponente -->
                 <FeedbackForm v-if="viewMode === 'form'" ref="formComponent" :graph="props.graph"
-                    :session-role="sessionStore.sessionRole ?? null" @update:role="sessionStore.sessionRole = $event" />
+                    :active-lang="activeLang" :session-role="sessionStore.sessionRole ?? null"
+                    @update:role="sessionStore.sessionRole = $event" />
 
                 <!-- Audio Upload Komponente -->
-                <FeedbackAudio v-if="viewMode === 'upload'" ref="audioComponent" :graph="props.graph" />
+                <FeedbackAudio v-if="viewMode === 'upload'" ref="audioComponent" :graph="props.graph"
+                    :active-lang="activeLang" @processing-complete="onAudioProcessingComplete" />
 
             </div>
         </div>
@@ -101,10 +120,11 @@ const submitFeedback = async () => {
                 :disabled="loading || (viewMode === 'upload' && !audioHasFile)">
                 <span v-if="viewMode === 'form'">{{ staticContent.noteCards.save[activeLang] }}</span>
                 <span v-else>
-                    {{ loading ? 'Verarbeite Audio...' : 'Audio hochladen & verarbeiten' }}
+                    {{ loading ? 'Audio wird verarbeitet...' : 'Audio hochladen & verarbeiten' }}
                 </span>
             </Button>
         </div>
+        <!-- Globales Lade-Overlay -->
         <LoadingOverlay :visible="loading"
             :message="loading ? (viewMode === 'upload' ? 'Audio wird verarbeitet...' : staticContent.placeholders.loading[activeLang]) : ''" />
     </div>

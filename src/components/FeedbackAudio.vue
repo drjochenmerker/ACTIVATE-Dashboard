@@ -1,251 +1,316 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted, onUnmounted } from 'vue'
+
 import {
-    processAudioSession,
+    startAudioProcessingJob, // Umbenannt
+    checkJobStatus,        // NEU
+    fetchTranslation,
     type DiarizationSuccessResult,
     type DiarizationErrorResult,
+    type JobStatus // NEU
 } from '@/data/knowledge_graph/transcribe_utils';
+
 import { useSessionStore } from '@/stores/sessionStore'
 import { getActivityClassIds } from '@/data/knowledge_graph/read_operations';
-import { buildTreeStructByLang } from '@/data/knowledge_graph/utils';
 import { KnowledgeGraphActivityClass } from '@/data/knowledge_graph/structures';
+import { buildTreeStructByLang } from '@/data/knowledge_graph/utils';
 
-// props
+// (Typ-Definitionen für RoleNode etc. bleiben gleich)
+interface RoleLabel { de?: string; en?: string; sv?: string; }
+interface RoleValue { id: string; labels: RoleLabel; value: string; }
+interface RoleNode { level: string; values: RoleValue[]; next: RoleNode[]; }
+
+// *** HIER IST DER FIX: Fehlende Props hinzugefügt ***
 const props = defineProps<{
     graph: string,
+    activeLang: 'de' | 'en' | 'sv'
 }>()
 
 const sessionStore = useSessionStore()
 
-// --- Refs for file upload---
+// --- Refs (bleiben gleich) ---
 const selectedFile = ref<File | null>(null);
-
-// --- Refs for diarisation-result ---
 const diarizationResult = ref<DiarizationSuccessResult | null>(null);
 const diarizationError = ref<DiarizationErrorResult | null>(null);
-
-// --- Refs for microphone recording ---
 const isRecording = ref(false);
 const mediaRecorderInstance = ref<MediaRecorder | null>(null);
 const audioChunks = ref<BlobPart[]>([]);
-
-// 1. previewBlob: Original-Blob from browser (f.ex. webm) for <audio> preview
 const previewBlob = ref<Blob | null>(null);
-const previewUrl = ref<string | null>(null); // For <audio> player preview
-
-// 2. wavBlobForUpload: The converted WAV blob that is sent to the backend
+const previewUrl = ref<string | null>(null);
 const wavBlobForUpload = ref<Blob | null>(null);
-
 const recordingError = ref<string | null>(null);
 const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
 
+// --- NEU: Refs für Job-Polling ---
+const jobId = ref<string | null>(null);
+const isPolling = ref(false);
+const pollingInterval = ref<NodeJS.Timeout | null>(null);
+const pollingMessage = ref<string>("");
 
-// function for file input change
+// --- Refs für Übersetzung (bleiben gleich) ---
+const isTranslating = ref(false);
+const translationError = ref<string | null>(null);
+const translatedTextDE = ref<string | null>(null);
+const translatedTextSV = ref<string | null>(null);
+
+// --- Datei- & Aufnahme-Funktionen (bleiben unverändert) ---
+// (handleFileChange, clearRecording, startRecording, stopRecording, audioBufferToWav)
 const handleFileChange = (event: Event) => {
     const target = event.target as HTMLInputElement;
     if (target.files && target.files[0]) {
         selectedFile.value = target.files[0];
         clearRecording();
-        diarizationResult.value = null;
-        diarizationError.value = null;
+        clearResults();
     } else {
         selectedFile.value = null;
     }
 };
-
-// --- Live Recording functionality---
-
-/**
- * Deleted the current recording and reset the refs
- */
 const clearRecording = () => {
     previewBlob.value = null;
     previewUrl.value = null;
-    wavBlobForUpload.value = null; // Wichtig
+    wavBlobForUpload.value = null;
     audioChunks.value = [];
     recordingError.value = null;
 };
-
-/**
- * Starts microphone recording
- */
-const startRecording = async () => {
-    // resets all previous data
-    selectedFile.value = null;
+const clearResults = () => {
     diarizationResult.value = null;
     diarizationError.value = null;
+    translatedTextDE.value = null;
+    translatedTextSV.value = null;
+    translationError.value = null;
+    jobId.value = null;
+    isPolling.value = false;
+    pollingMessage.value = "";
+    if (pollingInterval.value) clearInterval(pollingInterval.value);
+}
+const startRecording = async () => {
+    selectedFile.value = null;
+    clearResults();
     clearRecording();
-
+    // ... (Rest der startRecording-Funktion) ...
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         recordingError.value = "Ihr Browser unterstützt keine Audio-Aufnahme.";
         return;
     }
-
     try {
-        // Ensure the audioContext is "activated" (important for some browsers)
-        if (audioContext.state === 'suspended') {
-            await audioContext.resume();
-        }
-
+        if (audioContext.state === 'suspended') await audioContext.resume();
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         isRecording.value = true;
         recordingError.value = null;
-
-        console.log("Start recording with microphone.");
         let recorder: MediaRecorder = new MediaRecorder(stream);
-
         mediaRecorderInstance.value = recorder;
-
-        recorder.ondataavailable = (event) => {
-            audioChunks.value.push(event.data);
-        };
-
-        // If stopped: Create Blob AND start conversion to WAV
+        recorder.ondataavailable = (event) => audioChunks.value.push(event.data);
         recorder.onstop = async () => {
             const mimeType = mediaRecorderInstance.value?.mimeType || 'audio/webm';
             const originalBlob = new Blob(audioChunks.value, { type: mimeType });
-
-            // save blobs for preview and upload
             previewBlob.value = originalBlob;
             previewUrl.value = URL.createObjectURL(originalBlob);
             audioChunks.value = [];
-
-            // Stop all audio tracks
             stream.getTracks().forEach(track => track.stop());
-
-            // --- AUDIO CONVERSION ---
             try {
-                console.log("Convert recording to WAV...");
-                // 1. Read the Blob as an ArrayBuffer
+                console.log("Konvertiere Aufnahme zu WAV...");
                 const arrayBuffer = await originalBlob.arrayBuffer();
-                // 2. Decode the ArrayBuffer (webm/ogg/etc.) into raw PCM data (AudioBuffer)
                 const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
-                // 3. Encode the raw PCM data into a WAV Blob
                 wavBlobForUpload.value = audioBufferToWav(audioBuffer);
-                console.log("Conversion to WAV successful.");
+                console.log("Konvertierung zu WAV erfolgreich.");
             } catch (convertError) {
-                console.error("Error while converting to WAV:", convertError);
-                recordingError.value = "Error while converting to WAV.";
+                console.error("Fehler bei der Audio-Konvertierung:", convertError);
+                recordingError.value = "Fehler bei der Konvertierung der Aufnahme in das WAV-Format.";
             }
         };
-
         recorder.start();
-
     } catch (err) {
         console.error("Fehler beim Zugriff auf das Mikrofon:", err);
         if (err instanceof DOMException && (err.name === "NotAllowedError" || err.name === "PermissionDeniedError")) {
             recordingError.value = "Mikrofon-Zugriff verweigert. Bitte Berechtigung in den Browser-Einstellungen erteilen.";
         } else {
-            // recordingError.value = `Fehler beim Start der Aufnahme: ${err.message}`;
+            recordingError.value = `Fehler beim Start der Aufnahme: ${err}`;
         }
         isRecording.value = false;
     }
 };
-
-/**
- * Stops the microphone recording.
- */
 const stopRecording = () => {
     if (mediaRecorderInstance.value && isRecording.value) {
         mediaRecorderInstance.value.stop();
         isRecording.value = false;
     }
 };
+// --- Ende Aufnahme-Funktionen ---
 
 
-// Calculated property to check if there is a file selected or a recording ready
-// Checks now for 'wavBlobForUpload'
+// (hasFile, flattenRoles, getRoles bleiben gleich)
 const hasFile = computed(() => !!selectedFile.value || !!wavBlobForUpload.value);
-
-/**
- * Defines the 'submit' method that is called by the parent component.
- */
-
-const isDiarizationError = (r: DiarizationSuccessResult | DiarizationErrorResult): r is DiarizationErrorResult => {
-    if ('status' in r) return (r as any).status !== 'success';
-    if ('success' in r) return (r as any).success === false;
-    return false;
+function flattenRoles(node: RoleNode | null, lang: 'de' | 'en' | 'sv'): string[] {
+    if (!node) return [];
+    let roles: string[] = [];
+    if (node.values) {
+        for (const val of node.values) {
+            const label = val.labels[lang] || val.labels['de'];
+            if (label) roles.push(label);
+        }
+    }
+    if (node.next) {
+        for (const nextNode of node.next) {
+            roles = roles.concat(flattenRoles(nextNode, lang));
+        }
+    }
+    return [...new Set(roles.filter(Boolean))];
+}
+const getRoles = async (): Promise<string[]> => {
+    const rolesData = await getActivityClassIds(props.graph, KnowledgeGraphActivityClass.subject);
+    sessionStore.availableRoles = buildTreeStructByLang(
+        rolesData,
+        sessionStore.activeLanguage
+    );
+    return flattenRoles(sessionStore.availableRoles as RoleNode, sessionStore.activeLanguage);
 };
+onMounted(async () => {
+    await getRoles();
+});
+
+// Stellt sicher, dass das Polling gestoppt wird, wenn die Komponente verlassen wird
+onUnmounted(() => {
+    if (pollingInterval.value) {
+        clearInterval(pollingInterval.value);
+    }
+});
+
+// --- NEU: Polling-Funktion ---
+const pollJobStatus = async () => {
+    if (!jobId.value) return;
+
+    console.log(`Polling-Status für Job: ${jobId.value}...`);
+    try {
+        const result: JobStatus = await checkJobStatus(jobId.value);
+
+        if (result.status === 'processing') {
+            pollingMessage.value = `Verarbeite... ${result.message} (${result.progress}%)`;
+        }
+        else if (result.status === 'complete') {
+            console.log("Job abgeschlossen!", result.data);
+            if (pollingInterval.value) clearInterval(pollingInterval.value);
+            isPolling.value = false;
+            diarizationResult.value = result.data; // Das finale Ergebnis
+
+            // WICHTIG: Die Parent-Komponente (FeedbackPage) muss 'loading' auf false setzen
+            // Wir emittieren ein Event
+            emit('processingComplete', true);
+        }
+        else if (result.status === 'error') {
+            console.error("Job fehlgeschlagen:", result.message);
+            if (pollingInterval.value) clearInterval(pollingInterval.value);
+            isPolling.value = false;
+            diarizationError.value = { success: false, message: result.message };
+            emit('processingComplete', false); // Fehler
+        }
+
+    } catch (error) {
+        console.error("Fehler beim Pollen:", error);
+        isPolling.value = false;
+        if (pollingInterval.value) clearInterval(pollingInterval.value);
+        diarizationError.value = { success: false, message: "Fehler beim Abrufen des Job-Status." };
+        emit('processingComplete', false); // Fehler
+    }
+};
+
+// --- 'submit'-Methode (STARK GEÄNDERT) ---
+const emit = defineEmits(['processingComplete']);
 
 defineExpose({
     hasFile,
-    submit: async (): Promise<boolean> => {
-        // tests if neither an uploaded file nor a recording is available
+    submit: async (): Promise<boolean> => { // Gibt jetzt nur noch 'true' zurück, wenn der Job GESTARTET wurde
         if (!selectedFile.value && !wavBlobForUpload.value) {
             alert('Bitte wählen Sie zuerst eine Datei aus oder nehmen Sie Audio auf (und warten Sie auf die Konvertierung).');
             return false;
         }
 
-        diarizationResult.value = null;
-        diarizationError.value = null;
+        clearResults(); // Alle alten Ergebnisse löschen
 
         let fileToUpload: File;
-
-        if (selectedFile.value) { // Option 1: A file has been uploaded (already in correct format)
+        if (selectedFile.value) {
             fileToUpload = selectedFile.value;
-            console.log('Starte Aktion mit hochgeladener Datei:', fileToUpload.name);
-        } else if (wavBlobForUpload.value) { // Option 2: A recording has been made AND converted
-            const fileName = `recording.wav`;
-            fileToUpload = new File([wavBlobForUpload.value], fileName, { type: 'audio/wav' });
-            console.log('Starte Aktion mit konvertierter WAV-Aufnahme:', fileToUpload.name, fileToUpload.type);
+        } else if (wavBlobForUpload.value) {
+            fileToUpload = new File([wavBlobForUpload.value], "recording.wav", { type: 'audio/wav' });
         } else {
             return false;
         }
 
+        // *** FIX: Greift jetzt auf props.activeLang zu ***
+        const rolesForSession = flattenRoles(sessionStore.availableRoles as RoleNode, props.activeLang);
+        if (!rolesForSession.includes("Schauspieler")) rolesForSession.push("Schauspieler");
+        if (!rolesForSession.includes("Lehrperson")) rolesForSession.push("Lehrperson");
+
+        console.log("Sende folgende Rollenliste an das Backend:", rolesForSession);
+
         try {
-            // Get language from session store
-            const roles = await getRoles();
-            console.log('Verfügbare Rollen für die Sitzung:', roles);
-            const result = await processAudioSession(fileToUpload, sessionStore.activeLanguage, roles);
+            // *** GEÄNDERT: Startet nur den Job ***
+            const { job_id } = await startAudioProcessingJob(
+                fileToUpload,
+                sessionStore.activeLanguage,
+                rolesForSession
+            );
 
-            console.log('Ergebnis der Aktion:', result); // Log das gesamte Ergebnis
+            jobId.value = job_id;
+            isPolling.value = true;
+            pollingMessage.value = "Job gestartet, warte auf ersten Status...";
 
-            if (!isDiarizationError(result)) { // success
-                diarizationResult.value = result;
-                console.log("Diarisierung erfolgreich abgeschlossen.");
-                return true;
-            } else { // error
-                diarizationError.value = result;
-                console.error("Fehler vom Backend:", result);
-                return false;
-            }
+            // Starte das Polling alle 5 Sekunden
+            pollingInterval.value = setInterval(pollJobStatus, 5000);
+
+            // Führe den ersten Poll sofort aus
+            await pollJobStatus();
+
+            return true; // Job wurde erfolgreich gestartet
+
         } catch (error) {
-            // unexpected error (network etc) — set a structured error object
             diarizationError.value = {
                 success: false,
                 message: error instanceof Error ? error.message : 'Ein unbekannter Fehler ist aufgetreten.'
             };
-            console.error('Unerwarteter Fehler in executeUploadAction:', error);
-            return false; // error
+            console.error('Fehler beim STARTEN des Jobs:', error);
+            return false; // Job konnte nicht gestartet werden
         }
     }
 });
 
-
-// HELPER FUNCTION to get session roles
-const getRoles = async (): Promise<string[]> => {
-    const roles = await getActivityClassIds(props.graph, KnowledgeGraphActivityClass.subject);
-    sessionStore.availableRoles = buildTreeStructByLang(
-        roles,
-        sessionStore.activeLanguage
-    );
-    // Normalize to an array of string ids (safe fallback for various shape of returned objects)
-    return roles.map((r: any) => {
-        if (typeof r === 'string') return r;
-        return r?.id ?? r?.value ?? r?.name ?? String(r);
-    });
+// --- Übersetzungsfunktion (bleibt gleich) ---
+const translateFullTranscription = async (targetLang: 'de' | 'sv') => {
+    // ... (Code bleibt unverändert) ...
+    if (!diarizationResult.value) return;
+    const fullText = diarizationResult.value.diarized_transcription
+        .map(seg => `${seg.speaker}: ${seg.text}`)
+        .join("\n");
+    if (fullText.trim().length === 0) {
+        translationError.value = "Es gibt keinen Text zum Übersetzen.";
+        return;
+    }
+    isTranslating.value = true;
+    translationError.value = null;
+    try {
+        const result = await fetchTranslation(fullText, targetLang);
+        if (result.status === 'success') {
+            if (targetLang === 'de') translatedTextDE.value = result.translatedText;
+            else if (targetLang === 'sv') translatedTextSV.value = result.translatedText;
+        } else {
+            throw new Error(result.message);
+        }
+    } catch (error) {
+        console.error(`Fehler bei der Übersetzung nach ${targetLang}:`, error);
+        translationError.value = error instanceof Error ? error.message : "Unbekannter Übersetzungsfehler.";
+    } finally {
+        isTranslating.value = false;
+    }
 };
 
-// --- HELPER FUNCTION FOR WAV-ENCODING ---
+// --- WAV-Encoding (bleibt gleich) ---
 function audioBufferToWav(buffer: AudioBuffer): Blob {
+    // ... (Code bleibt unverändert) ...
     const numOfChan = buffer.numberOfChannels;
-    const length = buffer.length * numOfChan * 2 + 44; // * 2 for 16-bit samples
+    const length = buffer.length * numOfChan * 2 + 44;
     const dataView = new DataView(new ArrayBuffer(length));
     const channels: Float32Array[] = [];
     let offset = 0;
     let pos = 0;
-
-    // write header
     setUint32(0x46464952); // "RIFF"
     setUint32(length - 8); // file length - 8
     setUint32(0x45564157); // "WAVE"
@@ -259,24 +324,18 @@ function audioBufferToWav(buffer: AudioBuffer): Blob {
     setUint16(16); // 16-bit
     setUint32(0x61746164); // "data" chunk
     setUint32(length - 44); // data chunk size
-
-    // write PCM data
     for (let i = 0; i < buffer.numberOfChannels; i++) {
         channels.push(buffer.getChannelData(i));
     }
-
-    // Interleave samples
     for (let i = 0; i < buffer.length; i++) {
         for (let j = 0; j < numOfChan; j++) {
-            let sample = Math.max(-1, Math.min(1, channels[j][i])); // clamp
-            sample = sample < 0 ? sample * 0x8000 : sample * 0x7FFF; // convert to 16-bit int
-            dataView.setInt16(offset + 44, sample, true); // true = little endian
+            let sample = Math.max(-1, Math.min(1, channels[j][i]));
+            sample = sample < 0 ? sample * 0x8000 : sample * 0x7FFF;
+            dataView.setInt16(offset + 44, sample, true);
             offset += 2;
         }
     }
-
     return new Blob([dataView], { type: 'audio/wav' });
-
     function setUint16(data: number) {
         dataView.setUint16(pos, data, true);
         pos += 2;
@@ -286,15 +345,13 @@ function audioBufferToWav(buffer: AudioBuffer): Blob {
         pos += 4;
     }
 }
-
-// ---  END HELPER FUNCTIONS ---
-
 </script>
 
 <template>
-
+    <!-- Datei Upload Bereich -->
     <div class="p-6 border rounded-lg bg-white shadow-sm space-y-4 text-center">
-        <!-- UPLOAD AREA -->
+
+        <!-- (Input und Aufnahme-UI bleibt gleich) -->
         <h2 class="text-xl font-semibold text-gray-900">
             Audio-Datei hochladen
         </h2>
@@ -303,15 +360,12 @@ function audioBufferToWav(buffer: AudioBuffer): Blob {
                 class="bg-gray-200 px-1 rounded">.flac</code>, oder <code class="bg-gray-200 px-1 rounded">.ogg</code>
             Datei hoch.
         </p>
-
-        <input type="file" @change="handleFileChange" accept=".wav,.flac,.ogg" :disabled="isRecording"
+        <input type="file" @change="handleFileChange" accept=".wav,.flac,.ogg" :disabled="isRecording || isPolling"
             class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 disabled:opacity-50" />
-
         <div v-if="selectedFile" class="mt-2 text-sm text-gray-600">
             Ausgewählt: <strong>{{ selectedFile.name }}</strong> ({{ (selectedFile.size / 1024 /
                 1024).toFixed(2) }} MB)
         </div>
-
         <div class="relative my-6">
             <div class="absolute inset-0 flex items-center">
                 <span class="w-full border-t border-gray-300"></span>
@@ -322,8 +376,6 @@ function audioBufferToWav(buffer: AudioBuffer): Blob {
                 </span>
             </div>
         </div>
-
-        <!-- RECORDING AREA --->
         <div class="space-y-4">
             <h2 class="text-xl font-semibold text-gray-900">
                 Direktaufnahme
@@ -331,10 +383,11 @@ function audioBufferToWav(buffer: AudioBuffer): Blob {
             <p class="text-lg text-gray-600">
                 Nehmen Sie Audio direkt über Ihr Mikrofon auf.
             </p>
-
             <div>
-                <button v-if="!isRecording" @click="startRecording" :disabled="selectedFile != null" type="button"
+                <button v-if="!isRecording" @click="startRecording" :disabled="selectedFile != null || isPolling"
+                    type="button"
                     class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50">
+                    <!-- (SVG) -->
                     <svg class="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
                         fill="currentColor">
                         <path fill-rule="evenodd"
@@ -345,47 +398,52 @@ function audioBufferToWav(buffer: AudioBuffer): Blob {
                     </svg>
                     Aufnahme starten
                 </button>
-
                 <button v-if="isRecording" @click="stopRecording" type="button"
                     class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                    <span class="relative flex h-3 w-3 mr-2">
-                        <span
-                            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-200 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-3 w-3 bg-red-100"></span>
-                    </span>
+                    <!-- (SVG) -->
+                    <span class="relative flex h-3 w-3 mr-2"><span
+                            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-200 opacity-75"></span><span
+                            class="relative inline-flex rounded-full h-3 w-3 bg-red-100"></span></span>
                     Aufnahme stoppen
                 </button>
             </div>
-
-            <!-- recording errors -->
             <div v-if="recordingError"
                 class="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-left">
                 <p><strong>Fehler bei der Aufnahme:</strong> {{ recordingError }}</p>
             </div>
-
-            <!-- recording preview -->
             <div v-if="previewUrl" class="mt-4 space-y-2">
                 <p class="text-sm text-gray-600">Aufnahme-Vorschau (Originalformat):</p>
                 <audio :src="previewUrl" controls class="w-full"></audio>
-                <button @click="clearRecording" type="button" class="text-sm text-red-600 hover:text-red-800">
+                <button @click="clearRecording" type="button" :disabled="isPolling"
+                    class="text-sm text-red-600 hover:text-red-800 disabled:opacity-50">
                     Aufnahme löschen
                 </button>
             </div>
-            <div v-if="isRecording === false && audioChunks.length === 0 && previewUrl && !wavBlobForUpload && !recordingError"
+            <div v-if="isRecording === false && audioChunks.length === 0 && previewUrl && !wavBlobForUpload && !recordingError && !isPolling"
                 class="mt-4 p-3 bg-blue-100 border border-blue-400 text-blue-700 rounded-lg text-left">
                 <p><strong>Bitte warten...</strong> Aufnahme wird in WAV konvertiert.</p>
             </div>
+            <!-- *** NEU: Polling-Statusanzeige *** -->
+            <div v-if="isPolling"
+                class="mt-4 p-3 bg-yellow-100 border border-yellow-400 text-yellow-800 rounded-lg text-left">
+                <p><strong>Verarbeitung läuft...</strong> {{ pollingMessage }}</p>
+                <!-- Optional: Ladebalken -->
+                <!-- <div class="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+                    <div class="bg-blue-600 h-2.5 rounded-full" :style="{ width: pollingProgress + '%' }"></div>
+                </div> -->
+            </div>
         </div>
 
-        <!-- RESULT AND ERROR AREA (FOR UPLOAD AND RECORDING) -->
+        <!-- Ergebnis- und Fehleranzeige (für Upload UND Aufnahme) -->
         <div v-if="diarizationError || diarizationResult" class="mt-6 text-left border-t pt-4">
             <div v-if="diarizationError" class="p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg">
                 <h3 class="font-semibold mb-1">Fehler bei der Verarbeitung:</h3>
                 <p>{{ diarizationError.message }}</p>
             </div>
 
+            <!-- ANZEIGE DES ORIGINAL-TRANSKRIPTS -->
             <div v-if="diarizationResult"
-                class="p-3 bg-green-100 border border-green-400 text-green-700 rounded-lg space-y-2">
+                class="p-4 bg-green-100 border border-green-400 text-green-800 rounded-lg space-y-3">
                 <h3 class="text-lg font-semibold text-gray-900">Ergebnis der Diarisierung & Transkription:
                 </h3>
                 <p class="text-sm text-gray-700">Erkannte Sprache: {{ diarizationResult.detected_language }}
@@ -401,6 +459,35 @@ function audioBufferToWav(buffer: AudioBuffer): Blob {
                         <span class="font-semibold">[{{ segment.start.toFixed(2) }}s - {{
                             segment.end.toFixed(2) }}s] {{ segment.speaker }}:</span>
                         <span class="ml-2">{{ segment.text }}</span>
+                    </div>
+                </div>
+
+                <!-- (Übersetzungs-UI bleibt gleich) -->
+                <div class="border-t border-green-300 pt-3 space-y-2">
+                    <h4 class="text-md font-semibold text-gray-800">Übersetzungen (via Gemini):</h4>
+                    <div class="flex gap-2">
+                        <button @click="translateFullTranscription('de')" :disabled="isTranslating"
+                            class="px-3 py-1 text-sm font-medium bg-white border border-gray-300 rounded-md shadow-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50">
+                            {{ isTranslating && !translatedTextDE ? 'Übersetze...' : 'Nach Deutsch' }}
+                        </button>
+                        <button @click="translateFullTranscription('sv')" :disabled="isTranslating"
+                            class="px-3 py-1 text-sm font-medium bg-white border border-gray-300 rounded-md shadow-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50">
+                            {{ isTranslating && !translatedTextSV ? 'Übersetze...' : 'Nach Schwedisch' }}
+                        </button>
+                    </div>
+                    <div v-if="translationError"
+                        class="mt-2 p-2 bg-red-100 border border-red-300 text-red-700 text-sm rounded-lg">
+                        <strong>Übersetzungsfehler:</strong> {{ translationError }}
+                    </div>
+                    <div v-if="translatedTextDE"
+                        class="mt-2 bg-white p-3 rounded border border-gray-300 text-sm text-gray-800 shadow-inner">
+                        <h5 class="font-semibold mb-1 text-gray-600">Übersetzung (Deutsch):</h5>
+                        <p class="whitespace-pre-wrap">{{ translatedTextDE }}</p>
+                    </div>
+                    <div v-if="translatedTextSV"
+                        class="mt-2 bg-white p-3 rounded border border-gray-300 text-sm text-gray-800 shadow-inner">
+                        <h5 class="font-semibold mb-1 text-gray-600">Übersetzung (Schwedisch):</h5>
+                        <p class="whitespace-pre-wrap">{{ translatedTextSV }}</p>
                     </div>
                 </div>
             </div>
