@@ -34,6 +34,7 @@ export async function llmSettingGeneration(description: string, title?: string, 
             defaultRole: defaultRole ?? ""
         })
     });
+    console.log("llm res", llmRes);
     const data = await llmRes.json();
     if (!llmRes.ok || data.error) {
         return {
