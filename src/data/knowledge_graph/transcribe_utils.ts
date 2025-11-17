@@ -2,19 +2,19 @@
  * Type definition for a single segment in the diarized transcription result.
  */
 export interface DiarizedSegment {
-    speaker: string; // e.g., "SPEAKER_00", "SPEAKER_01", or "Lehrperson"
+    speaker: string; // e.g., "SPEAKER_00", "SPEAKER_01", or "Instructor"
     start: number;   // Start time in seconds
     end: number;     // End time in seconds
     text: string;    // Transcribed text for this segment
 }
 
 /**
- * Type definition for the *final* successful result from the orchestration.
+ * Type definition for the successful result from the orchestration
  */
 export interface DiarizationSuccessResult {
     status: "success";
-    detected_language: string; // e.g., "de", "en"
-    diarized_transcription: DiarizedSegment[]; // Das endgültige, zugeordnete Transkript
+    detected_language: string; // e.g., "de", "en", "sv"
+    diarized_transcription: DiarizedSegment[]; // The final, assigned transcript
     total_duration_s: number;
     role_mapping?: { speaker_id: string; role: string; confidence: string; reason: string; }[];
 }
@@ -56,7 +56,7 @@ export async function startAudioProcessingJob(
     roles: string[]
 ): Promise<{ job_id: string }> {
 
-    console.log("startAudioProcessingJob: Starte Upload mit:", {
+    console.log("startAudioProcessingJob: Start upload with:", {
         fileName: audioFile.name,
         languageCode: languageCode,
         roles: roles
@@ -80,19 +80,19 @@ export async function startAudioProcessingJob(
         const data = await response.json();
 
         if (!response.ok || !data.job_id) {
-            // Fehler beim Starten des Jobs
-            throw new Error(data.message || "Fehler beim Starten des Jobs.");
+            // error starting the job 
+            throw new Error(data.message || "Error starting the job.");
         }
 
-        // Gibt nur die Job-ID zurück
+        // Returns the job ID
         return { job_id: data.job_id };
 
     } catch (error) {
         console.error("Fetch Error (startAudioProcessingJob):", error);
         if (error instanceof Error) {
-            throw error; // Fehler weiterwerfen, damit die Vue-Komponente ihn fangen kann
+            throw error; // Rethrow error so the Vue component can catch it
         }
-        throw new Error("Unbekannter Netzwerkfehler beim Starten des Jobs.");
+        throw new Error("Unknown network error while starting the job.");
     }
 }
 
@@ -138,10 +138,11 @@ export async function checkJobStatus(
 
 
 /**
- * *** FUNKTION 3 (ÜBERSETZUNG) ***
+ * TODO: is this important?
+ * *** FUNCTION 3 (TRANSLATION) ***
  *
- * Sendet Text an den Übersetzungs-Endpunkt.
- * (Exportiert, damit FeedbackAudio.vue es verwenden kann)
+ * Sends text to the translation endpoint.
+
  */
 export async function fetchTranslation(
     text: string,
@@ -159,11 +160,59 @@ export async function fetchTranslation(
         });
         const data = await response.json();
         if (!response.ok) {
-            throw new Error(data.message || "Fehler bei der Übersetzung.");
+            throw new Error(data.message || "Error during translation.");
         }
-        return data; // Erwartet { status: 'success', translatedText: '...' }
+        return data; // Expected { status: 'success', translatedText: '...' }
     } catch (error) {
          console.error("Fetch Error (fetchTranslation):", error);
-         return { status: 'error', message: error instanceof Error ? error.message : "Fehler." };
+         return { status: 'error', message: error instanceof Error ? error.message : "Error." };
+    }
+}
+// transcribe_utils.ts
+
+export async function startDirectDiarization(
+    audioFile: File,
+    languageCode: string | null
+): Promise<DiarizationSuccessResult> {
+
+    // 1. Basis-URL vom Node-Backend
+    const baseUrl = `${import.meta.env.VITE_LLM_URL}${!import.meta.env.VITE_LLM_PORT ? '' : ':' + import.meta.env.VITE_LLM_PORT}`;
+    
+    // 2. NEU: Wir rufen den neuen Endpunkt in audio.ts auf
+    // Beachte: In audio.ts ist der router wahrscheinlich unter '/api' gemountet? 
+    // Falls in deiner server.ts steht: app.use('/api', audioRouter); -> dann ist der Pfad '/api/direct-diarization'
+    let apiUrl = `${baseUrl}/api/direct-diarization`;
+
+    // Query Params anhängen
+    if (languageCode) {
+        apiUrl += `?language_code=${encodeURIComponent(languageCode)}`;
+    }
+
+    console.log("startDirectDiarization: Sende an Node-Backend:", apiUrl);
+
+    const formData = new FormData();
+    formData.append('audio_file', audioFile);
+    // language_code ist im Query-String, muss oft nicht nochmal in den Body, 
+    // aber deine audio.ts liest es aus req.body.language_code ODER du passt audio.ts an req.query an.
+    // Sicherer ist es, es auch in den Body zu packen:
+    if (languageCode) formData.append('language_code', languageCode);
+
+    try {
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            body: formData,
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.detail || data.message || `Server error: ${response.status}`);
+        }
+
+        return data as DiarizationSuccessResult;
+
+    } catch (error) {
+        console.error("Fetch Error:", error);
+        throw error;
     }
 }

@@ -130,7 +130,6 @@ defineExpose({
 </script>
 
 <template>
-    <!-- Feedback Formular Bereich -->
     <div class="space-y-6">
         <div class="mb-6">
             <Select :model-value="sessionRole ?? undefined" @update:model-value="emit('update:role', $event as string)"
