@@ -231,3 +231,44 @@ export async function llmPool(graphID: string): Promise<LLMParsingResult> {
         message: "Pooling successful"
     }
 }
+
+export async function mergeTranscript(graphID: string, diarizedTranscript: any): Promise<LLMParsingResult> {
+    console.log("Merging transcript for graph:", graphID);
+    try {
+        const mergeRes = await fetch(`${import.meta.env.VITE_LLM_URL}${!import.meta.env.VITE_LLM_PORT ? '' : ':' + import.meta.env.VITE_LLM_PORT}/api/feedback/transcriptionPool`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+            body: JSON.stringify({
+                graph_id: graphID,
+                diarizedTranscript: diarizedTranscript.diarized_transcription,
+            })
+        });
+        try {
+
+            const data = await mergeRes.json();
+            console.log("Merge response data:", data);
+            return {
+                success: true,
+                message: "backend called",
+            }
+        } catch (jsonError) {
+            console.error("Error parsing JSON response:", jsonError);
+        }
+
+        return {
+            success: true,
+            message: "Successfully called backend",
+
+        }
+    } catch(error){
+        console.log("Error merging transcript:", error);
+        return {
+            success: false,
+            message: "Failed to upload pooled TTL"
+        }
+    }
+    
+}

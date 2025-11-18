@@ -15,6 +15,7 @@ import { useSessionStore } from '@/stores/sessionStore'
 import { getActivityClassIds } from '@/data/knowledge_graph/read_operations';
 import { KnowledgeGraphActivityClass } from '@/data/knowledge_graph/structures';
 import { buildTreeStructByLang } from '@/data/knowledge_graph/utils';
+import { mergeTranscript } from '@/data/knowledge_graph/llm_utils';
 
 
 interface RoleLabel { de?: string; en?: string; sv?: string; }
@@ -173,7 +174,7 @@ onUnmounted(() => {
 const pollJobStatus = async () => {
     if (!jobId.value) return;
 
-    console.log(`Polling status for job: ${jobId.value}...`);
+    // console.log(`Polling status for job: ${jobId.value}...`);
     try {
         const result: JobStatus = await checkJobStatus(jobId.value);
 
@@ -375,6 +376,31 @@ function audioBufferToWav(buffer: AudioBuffer): Blob {
         pos += 4;
     }
 }
+
+const mergeTranscriptWithActivity = async () => {
+    try {
+        const res = await mergeTranscript(props.graph, diarizationResult.value);
+        if (res.success === false) {
+            console.log("Nothing to pool.");
+            return;
+        }
+    } catch (e) {
+        console.error("Error during merging transcript with activity:", e);
+        return;
+    }
+    // try {
+    //     loading.value = true;
+    //     const res = await llmPool(props.activity.graph);
+    //     if (res.success === false) {
+    //         nothingToPool.value = true;
+    //         loading.value = false;
+    //         return;
+    //     }
+    //     showPoolingDialog.value = false;
+    // } catch (error) {
+    //     console.error("Error during pooling:", error);
+}
+
 </script>
 
 <template>
@@ -479,13 +505,18 @@ function audioBufferToWav(buffer: AudioBuffer): Blob {
                         class="text-gray-500 italic">
                         No speaker segments found.
                     </p>
-                    <div v-else v-for="(segment, index) in diarizationResult.diarized_transcription" :key="index"
-                        class="mb-2 pb-2 border-b last:border-b-0">
-                        <span class="font-semibold">[{{ segment.start.toFixed(2) }}s - {{
-                            segment.end.toFixed(2) }}s] {{ segment.speaker }}:</span>
-                        <span class="ml-2">{{ segment.text }}</span>
+                    <div v-else v-for="(segment, index) in diarizationResult.diarized_transcription" :key="index">
+                        <div class="mb-2 pb-2 border-b last:border-b-0">
+                            <span class="font-semibold">[{{ segment.start.toFixed(2) }}s - {{
+                                segment.end.toFixed(2) }}s] {{ segment.speaker }}:</span>
+                            <span class="ml-2">{{ segment.text }}</span>
+                        </div>
                     </div>
+
                 </div>
+                <button @click="mergeTranscriptWithActivity()">
+                    Merge with activity session.
+                </button>
 
                 <!-- (Translation UI) -->
                 <!-- <div class="border-t border-green-300 pt-3 space-y-2">

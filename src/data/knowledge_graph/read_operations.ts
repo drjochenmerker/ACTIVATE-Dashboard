@@ -258,14 +258,14 @@ export async function getConflictDetail(graph: string, conflictId: string): Prom
           // parsedConflict.origin = item.conflict_o.value.split("#").pop();
           // console.log("Conflict Origin:", parsedConflict.origin);
           // break;
-          const valueStr = item.conflict_o.value.split("#").pop();
-          try {
-            const obj = JSON.parse(valueStr);
-            parsedConflict.origin = obj.answer;
-          } catch (e) {
-            console.error("Failed to parse conflict origin JSON:", e);
-            parsedConflict.origin = valueStr; // fallback if not valid JSON
-          }
+          // const valueStr = item.conflict_o.value.split("#").pop();
+          // try {
+          //   const obj = JSON.parse(valueStr);
+          //   parsedConflict.origin = obj.answer;
+          // } catch (e) {
+          //   console.error("Failed to parse conflict origin JSON:", e);
+          //   parsedConflict.origin = valueStr; // fallback if not valid JSON
+          // }
           break;
         case "IsAI": // TODO do something with is ai bool
           parsedConflict.isAI = item.conflict_o.value.split("#").pop();
