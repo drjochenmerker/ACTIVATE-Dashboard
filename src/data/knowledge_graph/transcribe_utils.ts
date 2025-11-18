@@ -64,7 +64,7 @@ export async function startAudioProcessingJob(
 
     // (URL-Konstruktion bleibt gleich)
     const baseUrl = `${import.meta.env.VITE_LLM_URL}${!import.meta.env.VITE_LLM_PORT ? '' : ':' + import.meta.env.VITE_LLM_PORT}`;
-    const apiUrl = `${baseUrl}/api/process-audio-session`; // Zielt auf den Orchestrator-Endpunkt
+    const apiUrl = `${baseUrl}/api/process-audio-session`;
 
     const formData = new FormData();
     formData.append('audio_file', audioFile);

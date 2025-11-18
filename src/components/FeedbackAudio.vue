@@ -53,6 +53,8 @@ const translationError = ref<string | null>(null);
 const translatedTextDE = ref<string | null>(null);
 const translatedTextSV = ref<string | null>(null);
 
+// ref for output debug
+
 // file and upload handling functions
 const handleFileChange = (event: Event) => {
     const target = event.target as HTMLInputElement;
@@ -383,22 +385,14 @@ const mergeTranscriptWithActivity = async () => {
         if (res.success === false) {
             console.log("Nothing to pool.");
             return;
+        } else {
+            console.log("Merged transcription: ", res.mergedTranscription); // funktiniert trotz roter underline?? todo
+
         }
     } catch (e) {
         console.error("Error during merging transcript with activity:", e);
         return;
     }
-    // try {
-    //     loading.value = true;
-    //     const res = await llmPool(props.activity.graph);
-    //     if (res.success === false) {
-    //         nothingToPool.value = true;
-    //         loading.value = false;
-    //         return;
-    //     }
-    //     showPoolingDialog.value = false;
-    // } catch (error) {
-    //     console.error("Error during pooling:", error);
 }
 
 </script>
@@ -517,6 +511,7 @@ const mergeTranscriptWithActivity = async () => {
                 <button @click="mergeTranscriptWithActivity()">
                     Merge with activity session.
                 </button>
+
 
                 <!-- (Translation UI) -->
                 <!-- <div class="border-t border-green-300 pt-3 space-y-2">

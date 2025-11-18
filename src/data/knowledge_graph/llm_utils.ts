@@ -231,44 +231,156 @@ export async function llmPool(graphID: string): Promise<LLMParsingResult> {
         message: "Pooling successful"
     }
 }
+// src/services/llm_utils.ts
 
+/**
+ * Helper to fetch the current graph content as TTL to serve as context for the LLM.
+ * Note: This assumes your SPARQL endpoint supports CONSTRUCT queries.
+ */
+async function fetchContextAsTTL(graphID: string): Promise<string> {
+    // Simple CONSTRUCT query to get all triples for the graph context
+    // You might need to adjust the WHERE clause if your named graphs are handled differently
+    const query = `
+        CONSTRUCT { ?s ?p ?o }
+        WHERE {
+            ?s ?p ?o .
+            FILTER(STRSTARTS(STR(?s), "http://activate.htwk-leipzig.de/model"))
+        }
+    `;
+    
+    try {
+        // Assuming fetchSparql can handle CONSTRUCT and return a string or N-Triples
+        // If fetchSparql only returns JSON bindings, you might need a different approach 
+        // or rely on fetchSparql returning the raw response for CONSTRUCT queries.
+        // For now, let's assume we pass the graphID context logic used in other functions.
+        
+        // If direct CONSTRUCT isn't available/working in your setup, 
+        // you can rely on the extraction logic you already used in llmSubmit (fetching entities & descriptions)
+        // and pass that as a string.
+        
+        // For this example, let's assume we construct a minimal context from what we know:
+        let context = "@prefix : <http://activate.htwk-leipzig.de/model#> .\n";
+        
+        // We reuse the logic from llmSubmit to at least get Entities
+        let entityQuery = await getSparqlTemplate(sparqlTemplate.getLLMDetail);
+        const graphRes = await fetchSparql(entityQuery.replace("{{graph}}", graphID));
+        
+        graphRes.forEach((triple: any) => {
+             if(triple.entity && triple.target) {
+                 const s = triple.entity.value.split("#").pop();
+                 const o = triple.target.value.split("#").pop();
+                 context += `:${s} a :${o} .\n`;
+                 if(triple.label) {
+                     context += `:${s} rdfs:label "${triple.label.value}" .\n`;
+                 }
+             }
+        });
+        return context;
+
+    } catch (e) {
+        console.error("Error fetching context graph:", e);
+        return ""; // Return empty string on error to allow process to continue without context
+    }
+}
+
+/**
+ * Merges a diarized transcript into the LLM backend for a specified knowledge graph.
+ */
 export async function mergeTranscript(graphID: string, diarizedTranscript: any): Promise<LLMParsingResult> {
     console.log("Merging transcript for graph:", graphID);
-    try {
-        const mergeRes = await fetch(`${import.meta.env.VITE_LLM_URL}${!import.meta.env.VITE_LLM_PORT ? '' : ':' + import.meta.env.VITE_LLM_PORT}/api/feedback/transcriptionPool`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json",
-            },
-            body: JSON.stringify({
-                graph_id: graphID,
-                diarizedTranscript: diarizedTranscript.diarized_transcription,
-            })
-        });
-        try {
 
-            const data = await mergeRes.json();
-            console.log("Merge response data:", data);
-            return {
-                success: true,
-                message: "backend called",
-            }
-        } catch (jsonError) {
-            console.error("Error parsing JSON response:", jsonError);
-        }
+    // 1. Fetch Context (Existing Entities/Conflicts)
+    const existingTTL = await fetchContextAsTTL(graphID);
 
-        return {
-            success: true,
-            message: "Successfully called backend",
+    // 2. Call Node Backend to Generate New Triples
+    const llmRes = await fetch(`${import.meta.env.VITE_LLM_URL}${!import.meta.env.VITE_LLM_PORT ? '' : ':'
+        + import.meta.env.VITE_LLM_PORT}/api/feedback/transcriptionPool`, { 
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+        },
+        body: JSON.stringify({
+            graph_id: graphID,
+            diarizedTranscript: diarizedTranscript.diarized_transcription,
+            existingTTL: existingTTL // Pass the context!
+        })
+    });
 
-        }
-    } catch(error){
-        console.log("Error merging transcript:", error);
+    const llmData = await llmRes.json();
+
+    if (!llmRes.ok || llmData.error) {
         return {
             success: false,
-            message: "Failed to upload pooled TTL"
+            message: llmData.error || "LLM Generation failed"
         }
     }
-    
+
+    console.log("Generated TTL from Audio:", llmData.ttl);
+
+    // 3. Upload Result to Knowledge Graph Backend (main.py /parse-pool/)
+    // main.py expects: { "graph_id": "...", "ttl": "..." }
+    const rdfRes = await fetch(`${import.meta.env.VITE_KNOWLEDGE_GRAPH_URL}${!import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT ? '' : ':' + import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT}/parse-pool/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            graph_id: graphID,
+            ttl: llmData.ttl
+        }),
+    });
+
+    if (!rdfRes.ok) {
+        const errText = await rdfRes.text();
+        console.error("KG Backend Error:", errText);
+        return {
+            success: false,
+            message: "Failed to save generated triples to Graph"
+        }
+    }
+
+    return {
+        success: true,
+        message: "Successfully merged audio transcription into graph.",
+        data: llmData.ttl
+    }
 }
+
+// export async function mergeTranscript(graphID: string, diarizedTranscript: any): Promise<LLMParsingResult> {
+//     console.log("Merging transcript for graph:", graphID);
+//     const mergeRes = await fetch(`${import.meta.env.VITE_LLM_URL}${!import.meta.env.VITE_LLM_PORT ? '' : ':'
+//         + import.meta.env.VITE_LLM_PORT}/api/feedback/transcriptionPool`, { // endpoint of the feedback-parser backend
+//         method: "POST",
+//         headers: {
+//             "Content-Type": "application/json",
+//             "Accept": "application/json",
+//         },
+//         body: JSON.stringify({
+//             graph_id: graphID,
+//             diarizedTranscript: diarizedTranscript.diarized_transcription,
+//         })
+//     });
+
+//     try {
+//         const data = await mergeRes.json();
+//         console.log("Merge response data:", data);
+//         return data;
+//     } catch (jsonError) {
+//         console.error("Error parsing JSON response:", jsonError);
+//     }
+
+//     if (!mergeRes.ok) {
+//         console.error("Network or runtime error during merge request.");
+//         return {
+//             success: false,
+//             message: "Failed to upload pooled TTL"
+//         }
+//     } else {
+//         return {
+//             success: true,
+//             message: "Successfully called backend",
+//         }
+//     }
+    
+// }
