@@ -11,6 +11,8 @@ import {
     type JobStatus
 } from '@/data/knowledge_graph/transcribe_utils';
 
+import { Mic } from "lucide-vue-next";
+
 import { useSessionStore } from '@/stores/sessionStore'
 import { getActivityClassIds } from '@/data/knowledge_graph/read_operations';
 import { KnowledgeGraphActivityClass } from '@/data/knowledge_graph/structures';
@@ -436,15 +438,7 @@ const mergeTranscriptWithActivity = async () => {
                 <button v-if="!isRecording" @click="startRecording" :disabled="selectedFile != null || isPolling"
                     type="button"
                     class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50">
-                    <!-- (SVG) -->
-                    <svg class="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
-                        fill="currentColor">
-                        <path fill-rule="evenodd"
-                            d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm-1 3a1 1 0 011-1h4a1 1 0 110 2H7a1 1 0 01-1-1zm1 10a3 3 0 003-3V9a3 3 0 10-6 0v5a3 3 0 003 3zm-1 0a1 1 0 001 1h.01a1 1 0 100-2H9a1 1 0 00-1 1z"
-                            clip-rule="evenodd" />
-                        <path
-                            d="M10 18a5 5 0 005-5V9a5 5 0 10-10 0v4a5 5 0 005 5zM4 9a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1z" />
-                    </svg>
+                    <Mic class="w-5 h-5 mr-2" />
                     Start Recording
                 </button>
                 <button v-if="isRecording" @click="stopRecording" type="button"
