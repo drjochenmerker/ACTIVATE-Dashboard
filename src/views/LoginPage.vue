@@ -62,16 +62,16 @@ const login = async () => {
 
       <div class="flex justify-center my-6">
 				<form>
-					<input v-model="passwordInput" type="password" class="dark:bg-gray-900" :placeholder="staticContent.placeholders.password[sessionStore.activeLanguage]" }}>
+					<input v-model="passwordInput" type="password" class="dark:bg-gray-900" :placeholder="staticContent.placeholders.password[sessionStore.activeLanguage]">
 				</form>
       </div>
 			<div v-if="showValidationErrors" class="flex justify-center my-6">
 				<p class="mt-4 text-red-500">{{ staticContent.errors.incorrectPassword[sessionStore.activeLanguage] }}</p>
 			</div>
 			<div class="flex justify-center my-6">
-				<Button @click="login" class="text-l px-6 py-3 rounded-full text-black bg-white border border-black hover:bg-black hover:text-white transition-colors duration-300">
+				<button @click="login" class="text-l px-6 py-3 rounded-full text-black bg-white border border-black hover:bg-black hover:text-white transition-colors duration-300">
           {{ staticContent.login.loginButton[sessionStore.activeLanguage] }}
-        </Button>
+        </button>
 			</div>
     </Card>
   </div>
