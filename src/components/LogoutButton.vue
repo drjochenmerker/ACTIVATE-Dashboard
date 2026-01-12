@@ -9,12 +9,14 @@ import {
     TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { staticContent } from '@/data/contentData';
+import { useRouter } from 'vue-router';
 
 const sessionStore = useSessionStore();
-
+const router = useRouter();
 
 const logout = () => {
     sessionStore.endSession();
+    router.replace('/login');
 };
 </script>
 

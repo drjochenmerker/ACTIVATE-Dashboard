@@ -29,6 +29,8 @@ import LanguageSelect from '@/components/LanguageSelect.vue';
 import { PlusIcon } from 'lucide-vue-next';
 import { llmSettingGeneration } from '@/data/knowledge_graph/llm_utils';
 import LoadingOverlay from '@/components/LoadingOverlay.vue';
+import ThemeSwitchButton from '@/components/ThemeSwitchButton.vue';
+import LogoutButton from '@/components/LogoutButton.vue';
 
 useColorMode();
 const sessionStore = useSessionStore();
@@ -93,7 +95,11 @@ const addNewActivity = async () => {
 
 <template>
   <div class="flex flex-col items-center justify-center py-10 px-4">
-    <LanguageSelect class="absolute top-0 right-0 mt-4 mr-4" />
+    <div class="flex items-center gap-2 justify-end w-full">
+      <LanguageSelect />
+      <LogoutButton />
+      <ThemeSwitchButton />
+    </div>
     <Card class="w-full max-w-5xl">
 
       <!-- Card header with logo -->
