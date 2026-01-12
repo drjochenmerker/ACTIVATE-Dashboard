@@ -98,7 +98,19 @@ export const staticContent = {
             en: "No elements to select from",
             de: "Keine Elemente zur Auswahl",
             sv: "Inga element att välja mellan",
+        },
+        incorrectPassword: {
+            en: "The provided password is incorrect. Please try again.",
+            de: "Das eingegebene Passwort ist falsch. Bitte versuch es nochmal.",
+            sv: "Det angivna lösenordet är felaktigt. Försök igen.",
         }
+    },
+    login: {
+        loginButton: {
+            en: "Login",
+            de: "Login",
+            sv: "Login",
+        },
     },
     homepage:{
         navbarScene: {
@@ -241,6 +253,11 @@ export const staticContent = {
             en: "Loading... This may take a while.",
             de: "Laden... Dies kann einen Moment dauern.",
             sv: "Laddar... Detta kan ta en stund.",
+        },
+        password: {
+            en: "Password",
+            de: "Passwort",
+            sv: "Lösenord",
         }
     },
     editor: {
