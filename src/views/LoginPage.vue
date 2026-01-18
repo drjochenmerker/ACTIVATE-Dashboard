@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/card';
 import LanguageSelect from '@/components/LanguageSelect.vue';
 import { ref } from 'vue';
-import { checkPassword } from '@/data/auth';
+import { ACCOUNT_ROLE, checkPassword } from '@/data/auth';
 import { useRouter } from 'vue-router';
 import { useSessionStore } from '@/stores/sessionStore';
 import { staticContent } from '@/data/contentData';
@@ -28,10 +28,17 @@ const login = async () => {
   try {
     showValidationErrors.value = false;
     loading.value = true;
-    let success = await checkPassword(passwordInput.value);
+
+    // Returns the role based on the entered password
+    let role = await checkPassword(passwordInput.value);
+
     loading.value = false;
-    if (success) {
+    
+    if (role == ACCOUNT_ROLE.STUDENT || role == ACCOUNT_ROLE.ROOT) {
       sessionStore.startSession();
+
+      // Set instructor mode as true if the root password has been entered
+      sessionStore.instructorMode = role == ACCOUNT_ROLE.ROOT; 
       router.push('/start');
     }
     else {
