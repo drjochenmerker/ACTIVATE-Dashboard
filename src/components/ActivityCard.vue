@@ -1,13 +1,13 @@
 <script lang="ts" setup>
 // TODO: implement the functionality for cloning activities, editing and maybe bring back the role selection from INPROGRESS FILE
-import { onMounted, computed, ref, nextTick } from "vue";
-import { useSessionStore } from "@/stores/sessionStore";
-import { getActivityClassIds } from "@/data/knowledge_graph/read_operations";
-import { useActivityStore } from "@/stores/activityStore";
-import { buildTreeStructByLang } from "@/data/knowledge_graph/utils";
+import { onMounted, computed, ref, nextTick } from 'vue';
+import { useSessionStore } from '@/stores/sessionStore';
+import { getActivityClassIds } from '@/data/knowledge_graph/read_operations';
+import { useActivityStore } from '@/stores/activityStore';
+import { buildTreeStructByLang } from '@/data/knowledge_graph/utils';
 
-import { Activity, KnowledgeGraphActivityClass, NestedMultiLangObject } from "@/data/knowledge_graph/structures";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Activity, KnowledgeGraphActivityClass, NestedMultiLangObject } from '@/data/knowledge_graph/structures';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import {
     Dialog,
     DialogContent,
@@ -16,18 +16,18 @@ import {
     DialogTitle,
     DialogDescription,
     DialogTrigger,
-} from "@/components/ui/dialog";
-import QrcodeVue from "qrcode.vue";
+} from '@/components/ui/dialog';
+import QrcodeVue from 'qrcode.vue';
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 
-import { Play } from "lucide-vue-next";
+import { Play } from 'lucide-vue-next';
 
-import { staticContent } from "@/data/contentData";
-import { llmPool } from "@/data/knowledge_graph/llm_utils";
-import LoadingOverlay from "@/components/LoadingOverlay.vue";
-import RecursiveSelect from "./RecursiveSelect.vue";
-import { Select, SelectTrigger, SelectContent, SelectValue } from "@/components/ui/select";
+import { staticContent } from '@/data/contentData';
+import { llmPool } from '@/data/knowledge_graph/llm_utils';
+import LoadingOverlay from '@/components/LoadingOverlay.vue';
+import RecursiveSelect from './RecursiveSelect.vue';
+import { Select, SelectTrigger, SelectContent, SelectValue } from '@/components/ui/select';
 
 // consts and props defintion
 const sessionStore = useSessionStore();
@@ -75,7 +75,7 @@ const handleStartSession = async () => {
                 role.values &&
                 role.values.length > 0 &&
                 role.values[0].labels &&
-                role.values[0].labels.en === "Instructor"
+                role.values[0].labels.en === 'Instructor'
             ) {
                 instructorId = role.values[0].id; // z.B. "Dozent"
                 break;
@@ -104,7 +104,7 @@ const copyUrlToClipboard = async () => {
         // Auswahl des URL-Textes im sichtbaren Bereich
         if (showUrl.value) {
             await nextTick(); // Sicherstellen, dass DOM aktualisiert ist
-            const el = document.getElementById("feedback-url-text");
+            const el = document.getElementById('feedback-url-text');
             if (el) {
                 const selection = window.getSelection();
                 const range = document.createRange();
@@ -121,7 +121,7 @@ const copyUrlToClipboard = async () => {
             selection?.removeAllRanges();
         }, 2000);
     } catch (err) {
-        console.error("Fehler beim Kopieren: ", err);
+        console.error('Fehler beim Kopieren: ', err);
     }
 };
 
@@ -142,7 +142,7 @@ const getRoles = async () => {
         const roles = await getActivityClassIds(props.activity.graph, KnowledgeGraphActivityClass.subject);
         sessionStore.availableRoles = buildTreeStructByLang(roles, sessionStore.activeLanguage);
     } catch (error) {
-        console.error("Error fetching roles:", error);
+        console.error('Error fetching roles:', error);
     }
 };
 
@@ -158,7 +158,7 @@ const handlePoolingStart = async () => {
         }
         showPoolingDialog.value = false;
     } catch (error) {
-        console.error("Error during pooling:", error);
+        console.error('Error during pooling:', error);
     }
 };
 
@@ -175,7 +175,7 @@ const showUrl = ref(false);
                     class="accordion-trigger text-lg font-semibold text-middle flex justify-center"
                     @click="getRoles"
                 >
-                    {{ props.activity.name[sessionStore.activeLanguage] || props.activity.name["default"] }}
+                    {{ props.activity.name[sessionStore.activeLanguage] || props.activity.name['default'] }}
                 </AccordionTrigger>
 
                 <AccordionContent class="pt-4 space-y-4 text-sm text-gray-600 dark:text-gray-300">
@@ -185,7 +185,7 @@ const showUrl = ref(false);
                     <p class="text-base">
                         {{
                             props.activity.description[sessionStore.activeLanguage] ||
-                            props.activity.description["default"]
+                            props.activity.description['default']
                         }}
                     </p>
 
@@ -289,7 +289,7 @@ const showUrl = ref(false);
                                     </DialogHeader>
 
                                     <!-- Select a role-->
-                                    <Select v-model="sessionStore.sessionRole" id="roleSelect" class="my-4">
+                                    <Select id="roleSelect" v-model="sessionStore.sessionRole" class="my-4">
                                         <SelectTrigger>
                                             <SelectValue
                                                 :placeholder="

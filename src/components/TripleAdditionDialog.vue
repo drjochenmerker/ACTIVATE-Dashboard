@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from "vue";
-import Button from "@/components/ui/button/Button.vue";
-import RDFAdditionDropdown from "./RDFAdditionDropdown.vue";
-import { useColorMode } from "@vueuse/core";
-import { addPredicate, updateTriple } from "@/data/knowledge_graph/write_operations";
+import { computed, onMounted, ref, watch } from 'vue';
+import Button from '@/components/ui/button/Button.vue';
+import RDFAdditionDropdown from './RDFAdditionDropdown.vue';
+import { useColorMode } from '@vueuse/core';
+import { addPredicate, updateTriple } from '@/data/knowledge_graph/write_operations';
 import {
     Activity,
     KnowledgeGraphActivityClass,
@@ -13,10 +13,10 @@ import {
     Predicate,
     PredicateDict,
     RDFOperation,
-} from "@/data/knowledge_graph/structures";
-import { getActivityDetail, getPredicateObject } from "@/data/knowledge_graph/read_operations";
-import { useSessionStore } from "@/stores/sessionStore";
-import { staticContent } from "@/data/contentData";
+} from '@/data/knowledge_graph/structures';
+import { getActivityDetail, getPredicateObject } from '@/data/knowledge_graph/read_operations';
+import { useSessionStore } from '@/stores/sessionStore';
+import { staticContent } from '@/data/contentData';
 
 /**
  * Props of the RDFTripleAdder component
@@ -106,7 +106,7 @@ onMounted(async () => {
  * Watch subject/object input to determine valid predicates
  */
 watch([subject, object], () => {
-    predicate.value = { id: "", labels: { en: "" } };
+    predicate.value = { id: '', labels: { en: '' } };
     selectedDuplicateClass.value = false;
     noExistingPredicates.value = false;
     noValidParticipants.value = false;
@@ -176,7 +176,7 @@ const applyTriple = async () => {
     updateTriple(
         sessionStore.sessionActivity!.graph,
         { subject: subject.value.id, predicate: predicate.value.id, object: object.value.id },
-        "insert" as RDFOperation,
+        'insert' as RDFOperation,
     );
 
     closeDialog();
@@ -226,9 +226,9 @@ const applyTriple = async () => {
                 <!-- Subject Field -->
                 <div class="flex-1">
                     <RDFAdditionDropdown
+                        v-model="subject"
                         label="Agent"
                         :options="activityParticipants"
-                        v-model="subject"
                         :disabled="false"
                     />
                 </div>
@@ -236,9 +236,9 @@ const applyTriple = async () => {
                 <!-- Predicate Field -->
                 <div class="flex-1">
                     <RDFAdditionDropdown
+                        v-model="predicate"
                         label="Predicate"
                         :options="predicateOptions"
-                        v-model="predicate"
                         :disabled="!isSubjectValid || !isObjectValid"
                     />
                 </div>
@@ -246,9 +246,9 @@ const applyTriple = async () => {
                 <!-- Object Field -->
                 <div class="flex-1">
                     <RDFAdditionDropdown
+                        v-model="object"
                         label="Target"
                         :options="activityParticipants"
-                        v-model="object"
                         :disabled="!isSubjectValid"
                     />
                 </div>

@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import { nextTick, ref } from "vue";
-import { Button } from "@/components/ui/button";
-import { addComment, deleteComment } from "@/data/knowledge_graph/write_operations";
-import { useConflictsStore } from "@/stores/conflictsStore";
-import { useSessionStore } from "@/stores/sessionStore";
-import { staticContent } from "@/data/contentData";
-import { useColorMode } from "@vueuse/core";
+import { nextTick, ref } from 'vue';
+import { Button } from '@/components/ui/button';
+import { addComment, deleteComment } from '@/data/knowledge_graph/write_operations';
+import { useConflictsStore } from '@/stores/conflictsStore';
+import { useSessionStore } from '@/stores/sessionStore';
+import { staticContent } from '@/data/contentData';
+import { useColorMode } from '@vueuse/core';
 
 /**
  * ReplyCard-Component
@@ -27,7 +27,7 @@ const conflictStore = useConflictsStore();
 
 // Toggle for visibility of reply input field
 const replyInputVisible = ref(false);
-const newReplyText = ref("");
+const newReplyText = ref('');
 const textareaRef = ref<HTMLTextAreaElement | null>(null);
 
 const toggleReplyInput = async () => {
@@ -45,9 +45,9 @@ const saveReply = async (parentCommentId: string) => {
         await addComment(parentCommentId, newReplyText.value);
 
         replyInputVisible.value = false; // hide input field
-        newReplyText.value = ""; // empty the text field
+        newReplyText.value = ''; // empty the text field
     } catch (error) {
-        console.error("Error while saving the reply: ", error);
+        console.error('Error while saving the reply: ', error);
     }
 
     await conflictStore.refreshConflictList();
@@ -55,7 +55,7 @@ const saveReply = async (parentCommentId: string) => {
 
 // Function to submit via Enter key in textarea
 const handleEnterKey = (event: KeyboardEvent) => {
-    if (event.key === "Enter" && !event.shiftKey) {
+    if (event.key === 'Enter' && !event.shiftKey) {
         event.preventDefault();
         saveReply(props.parentComment.id);
     }
@@ -64,7 +64,7 @@ const handleEnterKey = (event: KeyboardEvent) => {
 // help function
 const hasReplies = (comment: any) => Array.isArray(comment.replies) && comment.replies.length > 0;
 
-const emit = defineEmits(["deleteComment"]);
+const emit = defineEmits(['deleteComment']);
 // Delete comment
 const handleDelete = async (id: string, parentComment: any) => {
     try {
@@ -75,9 +75,9 @@ const handleDelete = async (id: string, parentComment: any) => {
         const response = await deleteComment(sessionStore.sessionActivity!.graph, id, isNestedComment);
         conflictStore.refreshConflictList();
 
-        if (response.status === "OK") {
+        if (response.status === 'OK') {
             // inform the parent
-            emit("deleteComment", id);
+            emit('deleteComment', id);
 
             //parentComment.comment = "This comment is deleted.";
             // if comment is nested, remove it from the replies
@@ -90,10 +90,10 @@ const handleDelete = async (id: string, parentComment: any) => {
                 //isDeleted.value = true;
             }
         } else {
-            console.error("Error while deleting the reply.");
+            console.error('Error while deleting the reply.');
         }
     } catch (error) {
-        console.error("Error while deleting the reply: ", error);
+        console.error('Error while deleting the reply: ', error);
     }
 };
 
@@ -111,7 +111,7 @@ const removeReply = (id: string) => {
                 <p class="reply-author">
                     {{
                         props.parentComment.author.labels[sessionStore.activeLanguage] ||
-                        props.parentComment.author.labels["default"]
+                        props.parentComment.author.labels['default']
                     }}
                 </p>
                 <button class="icon-button" @click="handleDelete(props.parentComment.id, props.parentComment)">
@@ -122,11 +122,11 @@ const removeReply = (id: string) => {
             <p class="reply-text">
                 {{
                     props.parentComment.comment?.[sessionStore.activeLanguage]?.trim() ||
-                    props.parentComment.comment?.["default"]?.trim() ||
+                    props.parentComment.comment?.['default']?.trim() ||
                     Object.values(props.parentComment.comment || {}).find(
-                        (c) => typeof c === "string" && c.trim() !== "",
+                        (c) => typeof c === 'string' && c.trim() !== '',
                     ) ||
-                    ""
+                    ''
                 }}
             </p>
         </div>
@@ -160,8 +160,8 @@ const removeReply = (id: string) => {
             <ReplyCard
                 v-for="nestedReply in props.parentComment.replies"
                 :key="nestedReply.id"
-                :parentComment="nestedReply"
-                @deleteComment="removeReply"
+                :parent-comment="nestedReply"
+                @delete-comment="removeReply"
             />
         </div>
     </div>

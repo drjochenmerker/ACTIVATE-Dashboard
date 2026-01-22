@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { useColorMode } from "@vueuse/core";
-import { getActivityClassIds } from "@/data/knowledge_graph/read_operations";
-import { ref, onMounted, watch, computed } from "vue";
-import { useSessionStore } from "@/stores/sessionStore";
-import { KnowledgeGraphActivityClass } from "@/data/knowledge_graph/structures";
-import { Card, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import ActivityCard from "@/components/ActivityCard.vue";
+import { useColorMode } from '@vueuse/core';
+import { getActivityClassIds } from '@/data/knowledge_graph/read_operations';
+import { ref, onMounted, watch, computed } from 'vue';
+import { useSessionStore } from '@/stores/sessionStore';
+import { KnowledgeGraphActivityClass } from '@/data/knowledge_graph/structures';
+import { Card, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import ActivityCard from '@/components/ActivityCard.vue';
 import {
     Dialog,
     DialogContent,
@@ -14,14 +14,14 @@ import {
     DialogTitle,
     DialogDescription,
     DialogTrigger,
-} from "@/components/ui/dialog";
-import { useActivityStore } from "@/stores/activityStore";
-import { buildTreeStructByLang } from "@/data/knowledge_graph/utils";
-import { staticContent } from "@/data/contentData";
-import LanguageSelect from "@/components/LanguageSelect.vue";
-import { PlusIcon } from "lucide-vue-next";
-import { llmSettingGeneration } from "@/data/knowledge_graph/llm_utils";
-import LoadingOverlay from "@/components/LoadingOverlay.vue";
+} from '@/components/ui/dialog';
+import { useActivityStore } from '@/stores/activityStore';
+import { buildTreeStructByLang } from '@/data/knowledge_graph/utils';
+import { staticContent } from '@/data/contentData';
+import LanguageSelect from '@/components/LanguageSelect.vue';
+import { PlusIcon } from 'lucide-vue-next';
+import { llmSettingGeneration } from '@/data/knowledge_graph/llm_utils';
+import LoadingOverlay from '@/components/LoadingOverlay.vue';
 
 useColorMode();
 const sessionStore = useSessionStore();
@@ -35,9 +35,9 @@ const selectedActivity = ref<string>();
 const activityStore = useActivityStore();
 const activities = computed(() => activityStore.activityList);
 
-const newTitle = ref("");
-const newDescription = ref("");
-const defaultRole = ref("");
+const newTitle = ref('');
+const newDescription = ref('');
+const defaultRole = ref('');
 const showValidationErrors = ref(false);
 
 // Load all available activities on component mount
@@ -45,7 +45,7 @@ onMounted(async () => {
     try {
         await activityStore.getAllActivities();
     } catch (error) {
-        console.error("Failed to load activities:", error);
+        console.error('Failed to load activities:', error);
     }
 });
 // Update available roles when selected activity changes
@@ -67,13 +67,13 @@ const addNewActivity = async () => {
         await llmSettingGeneration(newDescription.value, newTitle.value, defaultRole.value);
         loading.value = false;
     } catch (error) {
-        console.error("Error during LLM generation:", error);
+        console.error('Error during LLM generation:', error);
     }
 
     dialogOpen.value = false;
-    newTitle.value = "";
-    newDescription.value = "";
-    defaultRole.value = "";
+    newTitle.value = '';
+    newDescription.value = '';
+    defaultRole.value = '';
     showValidationErrors.value = false; // Reset validation state
     await activityStore.refreshActivityList();
 };
@@ -114,8 +114,8 @@ const addNewActivity = async () => {
                                 >{{ staticContent.startPage.enterTitle[sessionStore.activeLanguage] }}
                             </DialogDescription>
                             <input
-                                type="text"
                                 v-model="newTitle"
+                                type="text"
                                 class="w-full border rounded p-2 mb-2 dark:bg-gray-900 border-gray-300"
                             />
 

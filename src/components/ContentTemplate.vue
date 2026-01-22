@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import { computed } from "vue";
-import { useRoute } from "vue-router";
-import NoteCard from "./NoteCard.vue";
-import { useConflictsStore } from "@/stores/conflictsStore";
-import { staticContent } from "@/data/contentData";
-import { useSessionStore } from "@/stores/sessionStore";
+import { computed } from 'vue';
+import { useRoute } from 'vue-router';
+import NoteCard from './NoteCard.vue';
+import { useConflictsStore } from '@/stores/conflictsStore';
+import { staticContent } from '@/data/contentData';
+import { useSessionStore } from '@/stores/sessionStore';
 
 const props = defineProps({
     pageData: {
@@ -69,7 +69,7 @@ const filteredConflicts = computed(() => {
                             conflict.author.labels[sessionStore.activeLanguage] || conflict.author.labels['default']
                         "
                         :status="conflict.status"
-                        :isGrayedOut="!!highlightedConflictId && conflict.id !== highlightedConflictId"
+                        :is-grayed-out="!!highlightedConflictId && conflict.id !== highlightedConflictId"
                     />
                 </div>
             </div>

@@ -1,25 +1,25 @@
 <script>
-import Quill from "quill";
-import "quill/dist/quill.snow.css";
-import Button from "@/components/ui/button/Button.vue";
-import Dropdown from "./Dropdown.vue";
+import Quill from 'quill';
+import 'quill/dist/quill.snow.css';
+import Button from '@/components/ui/button/Button.vue';
+import Dropdown from './Dropdown.vue';
 
-import { useToast } from "vue-toastification";
-import "vue-toastification/dist/index.css";
+import { useToast } from 'vue-toastification';
+import 'vue-toastification/dist/index.css';
 
-import { useActivityPointsStore } from "@/stores/activityPointsStore";
-import { useConflictsStore } from "@/stores/conflictsStore";
-import { conflictStatus } from "@/data/knowledge_graph/structures";
+import { useActivityPointsStore } from '@/stores/activityPointsStore';
+import { useConflictsStore } from '@/stores/conflictsStore';
+import { conflictStatus } from '@/data/knowledge_graph/structures';
 import {
     getActivities,
     getActivityDetail,
     getConflictDetail,
     getConflictIds,
-} from "@/data/knowledge_graph/read_operations";
-import { addComment, addConflict } from "@/data/knowledge_graph/write_operations";
-import { useSessionStore } from "@/stores/sessionStore";
-import { staticContent } from "@/data/contentData";
-import { buildLanguageString } from "@/lib/utils";
+} from '@/data/knowledge_graph/read_operations';
+import { addComment, addConflict } from '@/data/knowledge_graph/write_operations';
+import { useSessionStore } from '@/stores/sessionStore';
+import { staticContent } from '@/data/contentData';
+import { buildLanguageString } from '@/lib/utils';
 
 /**
  * Editor-Component
@@ -27,7 +27,7 @@ import { buildLanguageString } from "@/lib/utils";
  * Allows to add new conflicts and miscellaneous comments to the graph
  */
 export default {
-    name: "Editor",
+    name: 'Editor',
     components: {
         Button,
         Dropdown,
@@ -35,7 +35,7 @@ export default {
     props: {
         value: {
             type: String,
-            default: "",
+            default: '',
         },
         // Active participants of the activity
         activePoints: {
@@ -44,12 +44,12 @@ export default {
         },
     },
     // Emit event for when the editor content changes
-    emits: ["input", "transfer"],
+    emits: ['input', 'transfer'],
     data() {
         return {
             quill: null,
             isAnonymous: false,
-            title: "",
+            title: '',
             activityDetails: null,
             selectedPoints: {
                 subject: [],
@@ -63,12 +63,6 @@ export default {
             staticContent: staticContent,
             toast: useToast(),
         };
-    },
-
-    async mounted() {
-        this.initQuill();
-        // Fetch activity details on mount
-        await this.fetchActivityDetails();
     },
     computed: {
         titlePlaceholder() {
@@ -120,6 +114,39 @@ export default {
             });
         },
     },
+
+    /**
+     * Watchers for the Editor component to handle dynamic updates
+     * - Synchronizes the Quill editor's content with the component's value
+     * - Manages session store updates and triggers activity details fetching
+     */
+    watch: {
+        value(newValue) {
+            if (this.quill && newValue !== this.quill.root.innerHTML) {
+                this.quill.root.innerHTML = newValue;
+            }
+        },
+        'sessionStore.outdated': {
+            handler: async function (newVal) {
+                if (useSessionStore().outdated) {
+                    await this.fetchActivityDetails();
+                    useSessionStore().outdated = false;
+                }
+            },
+        },
+        'sessionStore.activeLanguage': {
+            handler: function (newVal) {
+                this.quill.root.dataset.placeholder =
+                    this.staticContent.placeholders.title[newVal] || this.staticContent.placeholders.title.en;
+            },
+        },
+    },
+
+    async mounted() {
+        this.initQuill();
+        // Fetch activity details on mount
+        await this.fetchActivityDetails();
+    },
     methods: {
         /**
          * Initializes the Quill rich text editor with predefined configuration
@@ -128,23 +155,23 @@ export default {
          */
         initQuill() {
             this.quill = new Quill(this.$refs.editorContainer, {
-                theme: "snow",
+                theme: 'snow',
                 placeholder:
                     this.staticContent.placeholders.description[this.sessionStore.activeLanguage] ||
                     this.staticContent.placeholders.description.en,
                 modules: {
                     toolbar: [
-                        ["bold", "italic", "underline"],
-                        [{ list: "ordered" }, { list: "bullet" }],
+                        ['bold', 'italic', 'underline'],
+                        [{ list: 'ordered' }, { list: 'bullet' }],
                     ],
                 },
-                formats: ["bold", "italic", "underline", "list"],
+                formats: ['bold', 'italic', 'underline', 'list'],
             });
 
             this.quill.root.innerHTML = this.value;
 
-            this.quill.on("text-change", () => {
-                this.$emit("input", this.quill.root.innerHTML);
+            this.quill.on('text-change', () => {
+                this.$emit('input', this.quill.root.innerHTML);
             });
         },
 
@@ -153,13 +180,13 @@ export default {
          */
         clearEditor() {
             if (this.quill) {
-                this.quill.root.innerHTML = "";
+                this.quill.root.innerHTML = '';
                 this.quill.placeholder =
                     this.staticContent.placeholders.description[this.sessionStore.activeLanguage] ||
                     this.staticContent.placeholders.description.en;
             }
             this.isAnonymous = false;
-            this.title = "";
+            this.title = '';
             for (const point in this.selectedPoints) {
                 this.selectedPoints[point] = [];
             }
@@ -172,7 +199,7 @@ export default {
             try {
                 this.activityDetails = await getActivityDetail(useSessionStore().sessionActivity);
             } catch (error) {
-                console.error("Error fetching activity details:", error);
+                console.error('Error fetching activity details:', error);
                 this.activityDetails = {}; // Set to empty object to avoid errors
             }
         },
@@ -185,31 +212,31 @@ export default {
         async transferText() {
             // consts
             const content = this.quill.root.innerHTML;
-            const title = this.title || "New Note";
-            const author = this.isAnonymous ? "Anonymous" : useSessionStore().sessionRole;
+            const title = this.title || 'New Note';
+            const author = this.isAnonymous ? 'Anonymous' : useSessionStore().sessionRole;
             const participants = [];
 
             if (this.activePoints.length === 0) {
                 // WORKAROUND: merge title and content to later separate in miscellaneous comment section
                 // as the misc comments are stores without a title and only content
-                const titleAndContent = title + "|" + content; // '|', the safest separator for now
+                const titleAndContent = title + '|' + content; // '|', the safest separator for now
 
                 try {
                     const graph = useSessionStore().sessionActivity.graph;
                     // 'root' is the root node of the graph for misc comments as they are saved
                     // just like replies without a title and status
-                    const response = await addComment("root", titleAndContent);
+                    const response = await addComment('root', titleAndContent);
 
-                    if (response.status === "OK") {
+                    if (response.status === 'OK') {
                         // Zeige Toast-Nachricht bei erfolgreicher Speicherung
                         this.toast.success(staticContent.toastNotification.noteAdded[useSessionStore().activeLanguage]);
                     } else {
-                        console.warn("Error saving the comment: ", response);
-                        this.toast.error("Error");
+                        console.warn('Error saving the comment: ', response);
+                        this.toast.error('Error');
                     }
                 } catch (error) {
-                    console.error("Error with API call: ", error);
-                    this.toast.error("Error");
+                    console.error('Error with API call: ', error);
+                    this.toast.error('Error');
                 }
 
                 this.clearEditor();
@@ -217,7 +244,7 @@ export default {
             }
 
             if (!this.activityDetails) {
-                console.warn("Activity details not loaded yet. Please try again.");
+                console.warn('Activity details not loaded yet. Please try again.');
                 return; // Exit the function if data is not ready
             }
 
@@ -248,7 +275,7 @@ export default {
                 const graph = useSessionStore().sessionActivity.graph;
                 const addConflictResponse = await addConflict(graph, note);
 
-                if (addConflictResponse.status === "OK") {
+                if (addConflictResponse.status === 'OK') {
                     // Add the conflict to the conflictStore as well
                     const conflictId = addConflictResponse.modified;
                     const conflictDetail = await getConflictDetail(graph, conflictId);
@@ -257,12 +284,12 @@ export default {
 
                     this.toast.success(staticContent.toastNotification.conflictAdded[useSessionStore().activeLanguage]);
                 } else {
-                    console.warn("Error adding conflict.");
-                    this.toast.error("Error");
+                    console.warn('Error adding conflict.');
+                    this.toast.error('Error');
                 }
             } catch (error) {
-                console.error("Error adding conflict: ", error);
-                this.toast.error("Error");
+                console.error('Error adding conflict: ', error);
+                this.toast.error('Error');
             }
 
             // Deactivate all of the active points
@@ -281,36 +308,9 @@ export default {
             this.showDropdown = true;
             this.$nextTick(() => {
                 // dynamically increase Z-Index when dropdown is opened to make sure it's on top
-                const dropdownList = this.$el.querySelector(".dropdown-list");
+                const dropdownList = this.$el.querySelector('.dropdown-list');
                 dropdownList.style.zIndex = 1001 + this.$parent.activePoints.indexOf(this.label);
             });
-        },
-    },
-
-    /**
-     * Watchers for the Editor component to handle dynamic updates
-     * - Synchronizes the Quill editor's content with the component's value
-     * - Manages session store updates and triggers activity details fetching
-     */
-    watch: {
-        value(newValue) {
-            if (this.quill && newValue !== this.quill.root.innerHTML) {
-                this.quill.root.innerHTML = newValue;
-            }
-        },
-        "sessionStore.outdated": {
-            handler: async function (newVal) {
-                if (useSessionStore().outdated) {
-                    await this.fetchActivityDetails();
-                    useSessionStore().outdated = false;
-                }
-            },
-        },
-        "sessionStore.activeLanguage": {
-            handler: function (newVal) {
-                this.quill.root.dataset.placeholder =
-                    this.staticContent.placeholders.title[newVal] || this.staticContent.placeholders.title.en;
-            },
         },
     },
 };
@@ -323,10 +323,9 @@ export default {
             <p class="font-bold justify-start">
                 {{
                     activePoints.length === 0
-                        ? this.staticContent.editor.headerNoSelection[this.sessionStore.activeLanguage] ||
-                          this.staticContent.editor.headerNoSelection.en
-                        : this.staticContent.editor.header[this.sessionStore.activeLanguage] ||
-                          this.staticContent.editor.header.en
+                        ? staticContent.editor.headerNoSelection[sessionStore.activeLanguage] ||
+                          staticContent.editor.headerNoSelection.en
+                        : staticContent.editor.header[sessionStore.activeLanguage] || staticContent.editor.header.en
                 }}
             </p>
 
@@ -342,7 +341,7 @@ export default {
         <div class="dropdown-container">
             <div v-for="point in activePoints" :key="point">
                 <!-- Pass selectedPoints[point] as v-model to the Dropdown to manage multiple selections -->
-                <Dropdown :label="point" :options="pointData[point] || []" v-model="selectedPoints[point]" />
+                <Dropdown v-model="selectedPoints[point]" :label="point" :options="pointData[point] || []" />
             </div>
         </div>
         <!-- Second Separator TODO: Figure out why Tailwind won't render the separator when three points are selected and mt and mb are even -->
@@ -358,7 +357,7 @@ export default {
         <div>
             <!-- <h3>{{ this.staticContent.editor.addTitle[this.sessionStore.activeLanguage] || this.staticContent.editor.addTitle.en }}</h3> -->
             <div class="title-field">
-                <input type="text" v-model="title" :placeholder="titlePlaceholder" class="title-input" />
+                <input v-model="title" type="text" :placeholder="titlePlaceholder" class="title-input" />
             </div>
         </div>
 
@@ -367,15 +366,12 @@ export default {
 
         <!-- anonymous checkbox: -->
         <label class="anonymous-checkbox">
-            <input type="checkbox" v-model="isAnonymous" />
-            {{
-                this.staticContent.editor.anonymous[this.sessionStore.activeLanguage] ||
-                this.staticContent.editor.anonymous.en
-            }}
+            <input v-model="isAnonymous" type="checkbox" />
+            {{ staticContent.editor.anonymous[sessionStore.activeLanguage] || staticContent.editor.anonymous.en }}
         </label>
 
-        <Button variant="primary" size="large" class="transfer-button" @click="transferText" :disabled="isDoneDisabled">
-            {{ this.staticContent.terms.done[this.sessionStore.activeLanguage] || this.staticContent.terms.done.en }}
+        <Button variant="primary" size="large" class="transfer-button" :disabled="isDoneDisabled" @click="transferText">
+            {{ staticContent.terms.done[sessionStore.activeLanguage] || staticContent.terms.done.en }}
         </Button>
     </div>
 </template>

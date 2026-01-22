@@ -1,11 +1,11 @@
 <script>
-import { activateTerms, staticContent } from "@/data/contentData";
-import { buildLanguageString } from "@/lib/utils";
-import { useSessionStore } from "@/stores/sessionStore";
-import { Delete, DeleteIcon } from "lucide-vue-next";
+import { activateTerms, staticContent } from '@/data/contentData';
+import { buildLanguageString } from '@/lib/utils';
+import { useSessionStore } from '@/stores/sessionStore';
+import { Delete, DeleteIcon } from 'lucide-vue-next';
 
 export default {
-    name: "Dropdown",
+    name: 'Dropdown',
 
     /**
      * Props of the Dropdown component
@@ -32,7 +32,7 @@ export default {
             default: false,
         },
     },
-    emits: ["update:modelValue"],
+    emits: ['update:modelValue'],
 
     /**
      * Component's local state
@@ -41,7 +41,7 @@ export default {
      */
     data() {
         return {
-            search: "",
+            search: '',
             showDropdown: false,
             sessionStore: useSessionStore(),
             staticContent: staticContent,
@@ -60,7 +60,7 @@ export default {
             );
         },
         placeholderText() {
-            const lang = this.sessionStore.activeLanguage || "en";
+            const lang = this.sessionStore.activeLanguage || 'en';
             return this.staticContent.placeholders.search[lang];
         },
         buildLanguageString() {
@@ -68,6 +68,24 @@ export default {
                 return buildLanguageString(option, lang, isLabel);
             };
         },
+    },
+    watch: {
+        /**
+         * Updates local search value when modelValue prop changes
+         */
+        modelValue(newVal) {
+            try {
+                this.search = buildLanguageString(newVal, this.sessionStore.activeLanguage, true);
+            } catch (_error) {
+                this.search = '';
+            }
+        },
+    },
+    mounted() {
+        document.addEventListener('click', this.handleClickOutside);
+    },
+    beforeUnmount() {
+        document.removeEventListener('click', this.handleClickOutside);
     },
     methods: {
         /**
@@ -86,7 +104,7 @@ export default {
          */
         selectOption(option) {
             this.search = buildLanguageString(option, this.sessionStore.activeLanguage, true);
-            this.$emit("update:modelValue", option);
+            this.$emit('update:modelValue', option);
             this.showDropdown = false;
         },
 
@@ -103,45 +121,27 @@ export default {
          * Clears the current input value and hides the dropdown
          */
         clearInput() {
-            this.search = "";
-            this.$emit("update:modelValue", {});
+            this.search = '';
+            this.$emit('update:modelValue', {});
             this.showDropdown = false;
         },
-    },
-    watch: {
-        /**
-         * Updates local search value when modelValue prop changes
-         */
-        modelValue(newVal) {
-            try {
-                this.search = buildLanguageString(newVal, this.sessionStore.activeLanguage, true);
-            } catch (error) {
-                this.search = "";
-            }
-        },
-    },
-    mounted() {
-        document.addEventListener("click", this.handleClickOutside);
-    },
-    beforeUnmount() {
-        document.removeEventListener("click", this.handleClickOutside);
     },
 };
 </script>
 
 <template>
-    <div class="dropdown" ref="dropdownContainer">
+    <div ref="dropdownContainer" class="dropdown">
         <h3 class="label" :class="{ disabled: disabled }">{{ label }}:</h3>
         <div class="search-container" :class="{ disabled: disabled }">
             <input
+                v-model="search"
                 class="text-input"
                 :class="{ disabled: disabled }"
                 type="text"
-                v-model="search"
-                @focus="!disabled && (showDropdown = true)"
-                @input="handleInput"
                 :placeholder="placeholderText"
                 :disabled="disabled"
+                @focus="!disabled && (showDropdown = true)"
+                @input="handleInput"
             />
             <button v-if="search" type="button" class="clear-btn" @click="clearInput">×</button>
         </div>
@@ -150,9 +150,9 @@ export default {
             <li v-for="option in filteredOptions" :key="option.id" @mousedown.prevent="selectOption(option)">
                 {{
                     buildLanguageString(option, sessionStore.activeLanguage, true) +
-                    (activateTerms[this.sessionStore.activeLanguage][option.type]
-                        ? " (" + activateTerms[this.sessionStore.activeLanguage][option.type] + ")"
-                        : "")
+                    (activateTerms[sessionStore.activeLanguage][option.type]
+                        ? ' (' + activateTerms[sessionStore.activeLanguage][option.type] + ')'
+                        : '')
                 }}
             </li>
         </ul>

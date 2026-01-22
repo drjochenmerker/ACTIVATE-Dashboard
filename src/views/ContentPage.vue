@@ -1,12 +1,12 @@
 <script lang="ts" setup>
-import { onMounted, ref } from "vue";
-import { useRoute } from "vue-router";
-import NoteCardMisc from "@/components/NoteCardMisc.vue";
-import { activateTerms, contentData, staticContent } from "@/data/contentData";
-import ContentTemplate from "@/components/ContentTemplate.vue";
-import { Comment } from "@/data/knowledge_graph/structures";
-import { useSessionStore } from "@/stores/sessionStore";
-import { getMiscComments } from "@/data/knowledge_graph/read_operations";
+import { onMounted, ref } from 'vue';
+import { useRoute } from 'vue-router';
+import NoteCardMisc from '@/components/NoteCardMisc.vue';
+import { activateTerms, contentData, staticContent } from '@/data/contentData';
+import ContentTemplate from '@/components/ContentTemplate.vue';
+import { Comment } from '@/data/knowledge_graph/structures';
+import { useSessionStore } from '@/stores/sessionStore';
+import { getMiscComments } from '@/data/knowledge_graph/read_operations';
 
 const route = useRoute();
 
@@ -36,7 +36,7 @@ onMounted(async () => {
  * Updates the miscComments reactive reference with the retrieved comments.
  */
 const fetchMiscs = async () => {
-    if (route.params.id === "misc") {
+    if (route.params.id === 'misc') {
         // Get miscellaneous comments from the graph
         miscComments.value = await getMiscComments(graph);
     }
@@ -59,7 +59,7 @@ const removeComment = (id: string) => {
         <!-- When not on misc page, show the content -->
         <ContentTemplate
             v-if="route.params.id !== 'misc' && pageData"
-            :pageData="pageData"
+            :page-data="pageData"
             :conflicts="props.conflicts"
         />
 
@@ -68,7 +68,7 @@ const removeComment = (id: string) => {
             <div v-if="miscComments.length > 0">
                 <ul>
                     <li v-for="(comment, index) in miscComments" :key="index">
-                        <NoteCardMisc :comment="comment" @deleteComment="removeComment" @refresh="fetchMiscs" />
+                        <NoteCardMisc :comment="comment" @delete-comment="removeComment" @refresh="fetchMiscs" />
                     </li>
                 </ul>
             </div>

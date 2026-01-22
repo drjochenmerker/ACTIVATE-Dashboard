@@ -1,13 +1,13 @@
 <script lang="ts" setup>
-import { ref, onMounted, nextTick, computed, watch } from "vue";
-import { conflictPredicate, conflictStatus, Participant } from "@/data/knowledge_graph/structures";
-import ReplyCard from "./ReplyCard.vue";
-import { addComment, deleteConflict, updateConflict } from "@/data/knowledge_graph/write_operations";
-import { Button } from "@/components/ui/button";
-import { useConflictsStore } from "@/stores/conflictsStore";
-import { useSessionStore } from "@/stores/sessionStore";
-import { activateTerms, staticContent } from "@/data/contentData";
-import { buildLanguageString } from "@/lib/utils";
+import { ref, onMounted, nextTick, computed, watch } from 'vue';
+import { conflictPredicate, conflictStatus, Participant } from '@/data/knowledge_graph/structures';
+import ReplyCard from './ReplyCard.vue';
+import { addComment, deleteConflict, updateConflict } from '@/data/knowledge_graph/write_operations';
+import { Button } from '@/components/ui/button';
+import { useConflictsStore } from '@/stores/conflictsStore';
+import { useSessionStore } from '@/stores/sessionStore';
+import { activateTerms, staticContent } from '@/data/contentData';
+import { buildLanguageString } from '@/lib/utils';
 
 const props = defineProps({
     conflict: {
@@ -87,7 +87,7 @@ const toggleReplyInput = async (conflictId: string) => {
         textareaRef.value?.focus();
     }
     if (!replyInputVisible.value[conflictId]) {
-        newReplyText.value[conflictId] = "";
+        newReplyText.value[conflictId] = '';
     }
 };
 
@@ -136,15 +136,15 @@ const saveReply = async (conflictId: string) => {
         // Important to refresh the conflict list so that the UI shows the new comment immediately
         useConflictsStore().refreshConflictList();
         replyInputVisible.value[conflictId] = false;
-        newReplyText.value[conflictId] = "";
+        newReplyText.value[conflictId] = '';
     } catch (error) {
-        console.error("Error saving comment: ", error);
+        console.error('Error saving comment: ', error);
     }
 };
 
 // Function to submit via Enter key in textarea
 const handleEnterKey = (event: KeyboardEvent) => {
-    if (event.key === "Enter" && !event.shiftKey) {
+    if (event.key === 'Enter' && !event.shiftKey) {
         event.preventDefault();
         saveReply(props.conflict.id);
     }
@@ -161,11 +161,11 @@ const handleDelete = async (id: string) => {
         const response = await deleteConflict(sessionStore.sessionActivity!.graph, id);
 
         conflictStore.refreshConflictList(); // important to see result immediately as the conflicts are shown from the store
-        if (response.status === "OK") {
+        if (response.status === 'OK') {
             conflictStore.removeConflict(id); // delete conflict from store
         }
     } catch (error) {
-        console.error("Error deleting conflict: ", error);
+        console.error('Error deleting conflict: ', error);
     }
 };
 
@@ -260,9 +260,9 @@ const removeReply = (id: string) => {
             <ReplyCard
                 v-for="reply in conflictDetail.replies"
                 :key="reply.id"
-                :parentComment="reply"
-                :conflictId="conflict.id"
-                @deleteComment="removeReply"
+                :parent-comment="reply"
+                :conflict-id="conflict.id"
+                @delete-comment="removeReply"
             />
         </div>
     </div>

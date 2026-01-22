@@ -1,6 +1,6 @@
 <script>
-import { activateTerms, staticContent } from "@/data/contentData";
-import { useSessionStore } from "@/stores/sessionStore";
+import { activateTerms, staticContent } from '@/data/contentData';
+import { useSessionStore } from '@/stores/sessionStore';
 
 /**
  * Dropdown-Component
@@ -9,7 +9,7 @@ import { useSessionStore } from "@/stores/sessionStore";
  * Is used to show the possible explicit participants of an activity
  */
 export default {
-    name: "Dropdown",
+    name: 'Dropdown',
     props: {
         label: {
             type: String,
@@ -24,10 +24,10 @@ export default {
             default: () => [],
         },
     },
-    emits: ["update:modelValue"],
+    emits: ['update:modelValue'],
     data() {
         return {
-            search: "",
+            search: '',
             showDropdown: false,
             selectedOptions: this.modelValue,
             sessionStore: useSessionStore(),
@@ -49,9 +49,30 @@ export default {
             );
         },
         placeholderText() {
-            const lang = this.sessionStore.activeLanguage || "en";
+            const lang = this.sessionStore.activeLanguage || 'en';
             return this.staticContent.placeholders.search[lang];
         },
+    },
+    /**
+     * Watches for changes to the modelValue prop and updates the selectedOptions accordingly
+     * Ensures the component's internal state reflects the latest prop value
+     * @param {Array} newValue - The new value of the modelValue prop
+     */
+    watch: {
+        modelValue(newValue) {
+            this.selectedOptions = newValue;
+        },
+    },
+    mounted() {
+        // global click listener
+        document.addEventListener('click', this.handleClickOutside);
+    },
+    /**
+     * Removes the global click event listener when the component is about to be unmounted
+     * Prevents memory leaks by cleaning up event listeners
+     */
+    beforeUnmount() {
+        document.removeEventListener('click', this.handleClickOutside);
     },
     methods: {
         updateSearch(event) {
@@ -60,12 +81,12 @@ export default {
         },
         selectOption(option) {
             this.selectedOptions.push(option);
-            this.$emit("update:modelValue", this.selectedOptions);
-            this.search = "";
+            this.$emit('update:modelValue', this.selectedOptions);
+            this.search = '';
             this.showDropdown = false;
 
             this.$nextTick(() => {
-                const input = this.$el.querySelector("input");
+                const input = this.$el.querySelector('input');
                 if (input) {
                     input.focus();
                 }
@@ -78,7 +99,7 @@ export default {
          */
         removeOption(option) {
             this.selectedOptions = this.selectedOptions.filter((o) => o !== option);
-            this.$emit("update:modelValue", this.selectedOptions);
+            this.$emit('update:modelValue', this.selectedOptions);
         },
         /**
          * Handles clicks outside the dropdown container to close the dropdown
@@ -91,48 +112,27 @@ export default {
             }
         },
     },
-    mounted() {
-        // global click listener
-        document.addEventListener("click", this.handleClickOutside);
-    },
-    /**
-     * Removes the global click event listener when the component is about to be unmounted
-     * Prevents memory leaks by cleaning up event listeners
-     */
-    beforeUnmount() {
-        document.removeEventListener("click", this.handleClickOutside);
-    },
-    /**
-     * Watches for changes to the modelValue prop and updates the selectedOptions accordingly
-     * Ensures the component's internal state reflects the latest prop value
-     * @param {Array} newValue - The new value of the modelValue prop
-     */
-    watch: {
-        modelValue(newValue) {
-            this.selectedOptions = newValue;
-        },
-    },
 };
 </script>
 
 <template>
-    <div class="dropdown" ref="dropdownContainer">
+    <div ref="dropdownContainer" class="dropdown">
         <h3>{{ activateTerms[sessionStore.activeLanguage][label] }}:</h3>
         <div class="search-container">
             <!-- Show selected options -->
             <div v-for="option in selectedOptions" :key="option.id" class="selected-item">
-                {{ option.label.split("/").pop() }}
+                {{ option.label.split('/').pop() }}
                 <span class="remove-icon" @click="removeOption(option)">✕</span>
             </div>
 
             <!-- Input field for searching -->
             <input
-                type="text"
                 v-model="search"
+                type="text"
+                :placeholder="placeholderText"
                 @focus="showDropdown = true"
                 @click="showDropdown = true"
                 @input="updateSearch"
-                :placeholder="placeholderText"
             />
         </div>
 
@@ -141,8 +141,8 @@ export default {
             <li v-if="filteredOptions.length === 0" class="no-options">
                 {{ staticContent.errors.noElements[sessionStore.activeLanguage] || staticContent.errors.noElements.en }}
             </li>
-            <li v-else v-for="option in filteredOptions" :key="option.id" @mousedown.prevent="selectOption(option)">
-                {{ option.label.split("/").pop() }}
+            <li v-for="option in filteredOptions" v-else :key="option.id" @mousedown.prevent="selectOption(option)">
+                {{ option.label.split('/').pop() }}
             </li>
         </ul>
     </div>

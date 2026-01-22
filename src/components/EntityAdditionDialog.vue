@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
-import Button from "@/components/ui/button/Button.vue";
-import { useColorMode } from "@vueuse/core";
-import { useSessionStore } from "@/stores/sessionStore";
-import { KnowledgeGraphActivityClass } from "@/data/knowledge_graph/structures";
-import { addEntity } from "@/data/knowledge_graph/write_operations";
-import { activateTerms, staticContent } from "@/data/contentData";
+import { ref, watch } from 'vue';
+import Button from '@/components/ui/button/Button.vue';
+import { useColorMode } from '@vueuse/core';
+import { useSessionStore } from '@/stores/sessionStore';
+import { KnowledgeGraphActivityClass } from '@/data/knowledge_graph/structures';
+import { addEntity } from '@/data/knowledge_graph/write_operations';
+import { activateTerms, staticContent } from '@/data/contentData';
 
 /**
  * Props of the AddEntityModal component
@@ -23,8 +23,8 @@ const sessionStore = useSessionStore();
 
 // Local state for modal visibility and input values
 const isOpen = ref(false);
-const entityName = ref("");
-const selectedClass = ref<KnowledgeGraphActivityClass | "">("");
+const entityName = ref('');
+const selectedClass = ref<KnowledgeGraphActivityClass | ''>('');
 
 /**
  * Options for the activity class dropdown
@@ -84,8 +84,8 @@ const closeDialog = () => {
  * Resets input fields to default values
  */
 const resetInputs = () => {
-    entityName.value = "";
-    selectedClass.value = "";
+    entityName.value = '';
+    selectedClass.value = '';
 };
 
 /**
@@ -139,8 +139,8 @@ const applyEntity = async () => {
                     }}</label>
                     <input
                         id="entityName"
-                        type="text"
                         v-model="entityName"
+                        type="text"
                         :placeholder="staticContent.alerts.entityEnter[sessionStore.activeLanguage]"
                         class="input-field"
                     />

@@ -1,21 +1,21 @@
 <script setup lang="ts">
-import { computed, ref, onMounted } from "vue";
-import { useRouter } from "vue-router";
+import { computed, ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 
 // UI components
-import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectTrigger, SelectValue } from "@/components/ui/select";
-import RecursiveSelect from "@/components/RecursiveSelect.vue";
-import LoadingOverlay from "@/components/LoadingOverlay.vue";
-import LanguageSelect from "@/components/LanguageSelect.vue";
+import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectTrigger, SelectValue } from '@/components/ui/select';
+import RecursiveSelect from '@/components/RecursiveSelect.vue';
+import LoadingOverlay from '@/components/LoadingOverlay.vue';
+import LanguageSelect from '@/components/LanguageSelect.vue';
 
-import { useSessionStore } from "@/stores/sessionStore";
-import { staticContent } from "@/data/contentData";
-import { buildTreeStructByLang } from "@/data/knowledge_graph/utils";
-import { getActivityClassIds } from "@/data/knowledge_graph/read_operations";
-import { KnowledgeGraphActivityClass } from "@/data/knowledge_graph/structures";
-import { llmSubmit } from "@/data/knowledge_graph/llm_utils";
-import { staticContentFeedback } from "@/data/feedbackQuestions";
+import { useSessionStore } from '@/stores/sessionStore';
+import { staticContent } from '@/data/contentData';
+import { buildTreeStructByLang } from '@/data/knowledge_graph/utils';
+import { getActivityClassIds } from '@/data/knowledge_graph/read_operations';
+import { KnowledgeGraphActivityClass } from '@/data/knowledge_graph/structures';
+import { llmSubmit } from '@/data/knowledge_graph/llm_utils';
+import { staticContentFeedback } from '@/data/feedbackQuestions';
 
 const props = defineProps<{ graph: string }>();
 
@@ -27,7 +27,7 @@ const loading = ref(false);
 
 // 1. Define groups
 const questionGroups = Object.keys(staticContentFeedback).filter(
-    (key) => key !== "feedbackpage",
+    (key) => key !== 'feedbackpage',
 ) as (keyof typeof staticContentFeedback)[];
 
 // 2. Helper function to initialize the 'answers' state
@@ -38,10 +38,10 @@ const initializeAnswers = (): Record<string, Record<string, string>> => {
         const groupData = staticContentFeedback[groupKey];
 
         // Find all 'questionX' keys in the group
-        const questionKeys = Object.keys(groupData).filter((key) => key.startsWith("question"));
+        const questionKeys = Object.keys(groupData).filter((key) => key.startsWith('question'));
 
         for (const questionKey of questionKeys) {
-            initialState[groupKey][questionKey] = "";
+            initialState[groupKey][questionKey] = '';
         }
     }
     return initialState;
@@ -60,24 +60,24 @@ const groupedQuestionData = computed(() => {
 
                 // 1. Get title of group
                 let title: string = String(groupKey);
-                if ("title" in groupData && groupData.title) {
-                    title = groupData.title[lang] || groupData.title["de"] || String(groupKey);
+                if ('title' in groupData && groupData.title) {
+                    title = groupData.title[lang] || groupData.title['de'] || String(groupKey);
                 }
 
                 // 2. Get all questions of the group
                 const questions = Object.keys(groupData)
-                    .filter((key) => key.startsWith("question"))
+                    .filter((key) => key.startsWith('question'))
                     .map((questionKey) => {
                         const gd = groupData as Record<string, Record<string, string>>;
                         const texts = gd[questionKey] || {};
-                        const text = texts[lang] || texts["de"] || "";
+                        const text = texts[lang] || texts['de'] || '';
                         return {
                             key: questionKey,
                             text: text,
                         };
                     })
                     // Filter out empty questions
-                    .filter((q) => q.text && q.text.trim() !== "");
+                    .filter((q) => q.text && q.text.trim() !== '');
 
                 return {
                     key: groupKey,
@@ -104,7 +104,7 @@ const getRoles = async () => {
 
 const submitFeedback = async () => {
     if (!sessionStore.sessionRole) {
-        alert("Please select your role before submitting.");
+        alert('Please select your role before submitting.');
         return;
     }
 
@@ -112,12 +112,12 @@ const submitFeedback = async () => {
     const selectedRole = roles.find((role) => role.id === sessionStore.sessionRole);
 
     if (!selectedRole) {
-        alert("Selected role not found!");
+        alert('Selected role not found!');
         return;
     }
 
     const roleLabel =
-        selectedRole.labels[activeLang.value] || selectedRole.labels["default"] || selectedRole.labels["en"];
+        selectedRole.labels[activeLang.value] || selectedRole.labels['default'] || selectedRole.labels['en'];
 
     // Build correct role object
     const roleForSubmit = {
@@ -138,13 +138,13 @@ const submitFeedback = async () => {
 
             // Find the question text in the original data (with fallback)
             const groupStatic = (staticContentFeedback as any)[groupKey];
-            const questionText = groupStatic?.[questionKey]?.[lang] || groupStatic?.[questionKey]?.["de"];
+            const questionText = groupStatic?.[questionKey]?.[lang] || groupStatic?.[questionKey]?.['de'];
 
             // Add only if question text exists
-            if (questionText && questionText.trim() !== "") {
+            if (questionText && questionText.trim() !== '') {
                 fullData.push({
                     question: questionText,
-                    answer: answer || "",
+                    answer: answer || '',
                 });
             }
         }
@@ -164,15 +164,15 @@ const submitFeedback = async () => {
         loading.value = false;
     } catch (error) {
         loading.value = false;
-        console.error("Error submitting feedback:", error);
-        alert("Failed to submit feedback. Please try again.");
+        console.error('Error submitting feedback:', error);
+        alert('Failed to submit feedback. Please try again.');
         return;
     }
     try {
-        await router.push("/feedback-thank-you");
+        await router.push('/feedback-thank-you');
         // TODO maybe show feedback success message earlier because right now it takes too long
     } catch (err) {
-        console.error("Navigation failed:", err);
+        console.error('Navigation failed:', err);
     }
 };
 </script>
@@ -186,10 +186,10 @@ const submitFeedback = async () => {
             <div>
                 <div class="mb-6">
                     <Select
-                        :model-value="sessionStore.sessionRole"
-                        @update:model-value="sessionStore.sessionRole = $event"
                         id="roleSelect"
+                        :model-value="sessionStore.sessionRole"
                         class="my-4"
+                        @update:model-value="sessionStore.sessionRole = $event"
                     >
                         <SelectTrigger>
                             <SelectValue

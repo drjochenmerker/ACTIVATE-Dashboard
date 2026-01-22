@@ -1,14 +1,14 @@
 <!-- NavBar Component -->
 <script setup lang="ts">
-import { activateTerms, contentData } from "@/data/contentData";
-import ThemeSwitchButton from "./ThemeSwitchButton.vue";
-import { User, Users } from "lucide-vue-next";
-import { useSessionStore } from "@/stores/sessionStore";
-import { Select, SelectContent, SelectTrigger, SelectValue } from "@/components/ui/select";
-import LogoutButton from "./LogoutButton.vue";
-import RecursiveSelect from "./RecursiveSelect.vue";
-import SceneChangeButton from "./SceneChangeButton.vue";
-import LanguageSelect from "./LanguageSelect.vue";
+import { activateTerms, contentData } from '@/data/contentData';
+import ThemeSwitchButton from './ThemeSwitchButton.vue';
+import { User, Users } from 'lucide-vue-next';
+import { useSessionStore } from '@/stores/sessionStore';
+import { Select, SelectContent, SelectTrigger, SelectValue } from '@/components/ui/select';
+import LogoutButton from './LogoutButton.vue';
+import RecursiveSelect from './RecursiveSelect.vue';
+import SceneChangeButton from './SceneChangeButton.vue';
+import LanguageSelect from './LanguageSelect.vue';
 
 const sessionStore = useSessionStore();
 </script>
@@ -41,7 +41,7 @@ const sessionStore = useSessionStore();
                 <div class="flex flex-row gap-2 items-center my-2 w-32">
                     <template v-if="sessionStore.instructorMode">
                         <Users class="w-1/3" />
-                        <Select v-model="sessionStore.sessionRole" id="roleSelect">
+                        <Select id="roleSelect" v-model="sessionStore.sessionRole">
                             <SelectTrigger class="w-[180px] overflow-hidden whitespace-nowrap truncate">
                                 <SelectValue placeholder="Select your role" />
                             </SelectTrigger>
@@ -52,7 +52,7 @@ const sessionStore = useSessionStore();
                     </template>
                     <template v-else>
                         <User />
-                        <Select v-model="sessionStore.sessionRole" id="roleSelect">
+                        <Select id="roleSelect" v-model="sessionStore.sessionRole">
                             <SelectTrigger class="w-[180px] overflow-hidden whitespace-nowrap truncate">
                                 <SelectValue placeholder="Select your role" />
                             </SelectTrigger>
