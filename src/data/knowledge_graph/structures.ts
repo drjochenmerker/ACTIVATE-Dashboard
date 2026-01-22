@@ -11,10 +11,9 @@ export type KnowledgeGraphData = {
     [key: string]: any;
 };
 
-
 export type StringAccessObject = {
     [key: string]: any;
-}
+};
 
 /**
  * Enum containing all available SPARQL templates
@@ -55,10 +54,10 @@ export enum sparqlTemplate {
  * Activity in the knowledge graph
  */
 export type Activity = {
-  graph: string;
-  name: Record<string, string>;
-  description: Record<string, string>;
-}
+    graph: string;
+    name: Record<string, string>;
+    description: Record<string, string>;
+};
 
 /**
  * Action in the knowledge graph
@@ -66,17 +65,17 @@ export type Activity = {
 export type Action = {
     action: string;
     object: string | StringAccessObject;
-}
+};
 
 /**
  * Objective in the knowledge graph
  */
 export type Objective = {
-    id: string,
+    id: string;
     labels: Record<string, string>;
     type: string;
     properties: Action[];
-}
+};
 
 /**
  * Detail of an activity in the knowledge graph
@@ -89,51 +88,50 @@ export class ActivityDetail {
  * Response object of a update operation on sparql
  */
 export interface updateResponse {
-    code: number,
-    status: string,
-    modified: string,
-    action: RDFOperation
+    code: number;
+    status: string;
+    modified: string;
+    action: RDFOperation;
 }
 
 /**
  * Object used to save a participant
  */
 export interface Participant {
-    id: string,
-    labels: Record<string, string>,
-    type: string
+    id: string;
+    labels: Record<string, string>;
+    type: string;
 }
 
 /**
  * Conflict in the knowledge graph
  */
 export type Conflict = {
-    origin?: any; // TODO 
+    origin?: any; // TODO
     isAI?: any;
     hasIntent?: string;
     title: Record<string, string>;
     participants: Participant[];
     author: Participant;
-    status: conflictStatus,
+    status: conflictStatus;
     description: Record<string, string>;
     timestamp?: Date;
     replies?: Comment[];
     id?: string;
     x?: number;
     y?: number;
-}
-
+};
 
 /**
  * Comment in the knowledge graph
  */
 export type Comment = {
-    id: string,
+    id: string;
     author?: Participant;
-    comment?: Record<string, string>,
-    timestamp?: Date,
-    replies?: Comment[]
-}
+    comment?: Record<string, string>;
+    timestamp?: Date;
+    replies?: Comment[];
+};
 
 /**
  * Enum for conflict status management
@@ -141,7 +139,7 @@ export type Comment = {
 export enum conflictStatus {
     open = "open",
     inDiscussion = "inDiscussion",
-    resolved = "resolved"
+    resolved = "resolved",
 }
 
 /**
@@ -158,27 +156,27 @@ export enum conflictPredicate {
  * Note: The used terms refer to the RDF terminology, not the Activity diagram terminology
  */
 export type RDFTriple = {
-    subject: string,
-    predicate: string,
-    object: string
-}
+    subject: string;
+    predicate: string;
+    object: string;
+};
 
 /**
  * Enum for RDF operations
  */
 export enum RDFOperation {
     insert = "insert",
-    delete = "delete"
+    delete = "delete",
 }
 
 /**
  * Predicate type that holds all relevant information
  */
 export type Predicate = {
-    id: string,
-    labels: StringAccessObject,
-    lang?: string
-}
+    id: string;
+    labels: StringAccessObject;
+    lang?: string;
+};
 
 /**
  * Language Code enum to make sure this is very accessible
@@ -187,14 +185,14 @@ export type Predicate = {
 export enum LanguageCode {
     Deutsch = "de",
     English = "en",
-    Svenska = "sv"
+    Svenska = "sv",
 }
 /**
  * Scene Change Enum to allow easy switching between scenes
  */
 export enum SceneChange {
     Scene1 = "Scene 1",
-    Scene2 = "Scene 2"
+    Scene2 = "Scene 2",
 }
 
 /**
@@ -202,12 +200,12 @@ export enum SceneChange {
  * so they can easily be accessed and saved to the Vocabulary
  */
 export type LanguageLabel = {
-    label: string,
-    language: LanguageCode
-}
+    label: string;
+    language: LanguageCode;
+};
 
 /**
- * Knowledge Graph Activity Classes that allow the usage of 
+ * Knowledge Graph Activity Classes that allow the usage of
  * frontend access terms without messing up the backend
  */
 export enum KnowledgeGraphActivityClass {
@@ -216,35 +214,35 @@ export enum KnowledgeGraphActivityClass {
     rules = "Rule",
     instruments = "Instrument",
     divison_of_labour = "DivisionOfLabour",
-    community = "Community"
+    community = "Community",
 }
 
 /**
  * MultiLangObject that allows the usage of multiple languages
  */
 export type MultiLangObject = {
-    id: string,
-    labels: Record<string, string>,
-    value?: string
-}
+    id: string;
+    labels: Record<string, string>;
+    value?: string;
+};
 
 /**
  * NestedMultiLangObject that allows the usage of multiple languages
  */
 export type NestedMultiLangObject = {
-    level: string,
-    values?: MultiLangObject[],
-    next?: NestedMultiLangObject[]
-}
+    level: string;
+    values?: MultiLangObject[];
+    next?: NestedMultiLangObject[];
+};
 /**
  * NestedMultiLangObject that allows the usage of multiple languages
  */
 export type NestedMultiLangObjectWithId = {
-  id: string;
-  labels: Record<string, string>;
-  value?: string;
-  children?: NestedMultiLangObjectWithId[];
-}
+    id: string;
+    labels: Record<string, string>;
+    value?: string;
+    children?: NestedMultiLangObjectWithId[];
+};
 /**
  * Predicate Dictionary that allows fetching all predicates
  * for a given tuple of activity diagram classes
@@ -256,15 +254,14 @@ export class PredicateDict {
         if (this.dict[tuple.join("#")] === undefined) {
             this.dict[tuple.join("#")] = [];
         }
-        const existingInnerObj = this.dict[tuple.join("#")].find(innerObj => innerObj.id == obj.id);
+        const existingInnerObj = this.dict[tuple.join("#")].find((innerObj) => innerObj.id == obj.id);
         const langString = obj.lang || "default";
         if (existingInnerObj == undefined) {
             this.dict[tuple.join("#")].push({
                 id: obj.id,
-                labels: { [langString]: obj.labels }
+                labels: { [langString]: obj.labels },
             });
-        }
-        else {
+        } else {
             existingInnerObj.labels[langString] = obj.labels;
         }
     }
@@ -276,7 +273,7 @@ export class PredicateDict {
     getBidirectional(tuple: [string, string]): {} {
         return {
             given: this.dict[tuple.join("#")].sort((a, b) => a.id.localeCompare(b.id)) || [],
-            reversed: this.dict[tuple.reverse().join("#")].sort((a, b) => a.id.localeCompare(b.id)) || []
-        }
+            reversed: this.dict[tuple.reverse().join("#")].sort((a, b) => a.id.localeCompare(b.id)) || [],
+        };
     }
 }

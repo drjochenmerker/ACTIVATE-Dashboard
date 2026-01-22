@@ -1,35 +1,35 @@
-import ContentPage from '@/views/ContentPage.vue';
-import HomePage from '@/views/HomePage.vue';
-import StartPage from '@/views/StartPage.vue';
-import FeedbackPage from '@/views/FeedbackPage.vue';
-import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
-import MainLayout from '@/components/MainLayout.vue';
-import { useSessionStore } from '@/stores/sessionStore';
-import FeedbackThankyouPage from '@/views/FeedbackThankyouPage.vue';
+import ContentPage from "@/views/ContentPage.vue";
+import HomePage from "@/views/HomePage.vue";
+import StartPage from "@/views/StartPage.vue";
+import FeedbackPage from "@/views/FeedbackPage.vue";
+import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
+import MainLayout from "@/components/MainLayout.vue";
+import { useSessionStore } from "@/stores/sessionStore";
+import FeedbackThankyouPage from "@/views/FeedbackThankyouPage.vue";
 
 const routes: Array<RouteRecordRaw> = [
     {
-        path: '/start',
-        name: 'Start',
-        component: StartPage
+        path: "/start",
+        name: "Start",
+        component: StartPage,
     },
     {
-        path: '/feedback/:graph',
-        name: 'FeedbackPage',
+        path: "/feedback/:graph",
+        name: "FeedbackPage",
         component: FeedbackPage,
-        props: true
+        props: true,
     },
     {
-        path: '/feedback-thank-you',
-        name: 'FeedbackThankYouPage',
-        component: FeedbackThankyouPage
+        path: "/feedback-thank-you",
+        name: "FeedbackThankYouPage",
+        component: FeedbackThankyouPage,
     },
     {
-        path: '/',
+        path: "/",
         component: MainLayout,
         children: [
-            { path: '', name: 'HomePage', component: HomePage, props: true }, // Standard-Dashboard
-            { path: ':id', name: 'Content', component: ContentPage, props: true }, // Dynamische Inhalte
+            { path: "", name: "HomePage", component: HomePage, props: true }, // Standard-Dashboard
+            { path: ":id", name: "Content", component: ContentPage, props: true }, // Dynamische Inhalte
         ],
     },
 ];
@@ -42,10 +42,10 @@ const router = createRouter({
 router.beforeEach((to) => {
     const sessionStore = useSessionStore();
 
-    const isPublic = to.name === 'FeedbackPage' || to.name === 'FeedbackThankYouPage';
+    const isPublic = to.name === "FeedbackPage" || to.name === "FeedbackThankYouPage";
 
-    if (!sessionStore.isSessionActive && !isPublic && to.path !== '/start') {
-        return '/start';
+    if (!sessionStore.isSessionActive && !isPublic && to.path !== "/start") {
+        return "/start";
     }
 });
 export default router;

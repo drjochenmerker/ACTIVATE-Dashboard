@@ -4,7 +4,7 @@ const props = defineProps({
         type: Array,
         required: true,
     },
-},);
+});
 </script>
 <template>
     <div>
@@ -12,5 +12,4 @@ const props = defineProps({
     </div>
 </template>
 
-<script scoped>
-</script>
+<script scoped></script>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Skeleton } from '@/components/ui/skeleton';
+import { Skeleton } from "@/components/ui/skeleton";
 </script>
 
 <!-- Placeholder-Component to mock new pages, useful for development -->

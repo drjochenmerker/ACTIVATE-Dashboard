@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
-import { staticContent } from '@/data/contentData';
-import { SceneChange } from '@/data/knowledge_graph/structures';
-import { useSessionStore } from '@/stores/sessionStore';
+import { computed } from "vue";
+import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
+import { staticContent } from "@/data/contentData";
+import { SceneChange } from "@/data/knowledge_graph/structures";
+import { useSessionStore } from "@/stores/sessionStore";
 
 const sessionStore = useSessionStore();
 function handleSceneChange(newScene: string) {
@@ -14,7 +14,6 @@ const sceneLabels = computed(() => ({
     [SceneChange.Scene1]: staticContent.homepage.navbarScene[sessionStore.activeLanguage] + " 1",
     [SceneChange.Scene2]: staticContent.homepage.navbarScene[sessionStore.activeLanguage] + " 2",
 }));
-
 </script>
 
 <template>

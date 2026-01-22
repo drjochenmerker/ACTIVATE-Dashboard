@@ -1,4 +1,12 @@
-import type { Comment, Conflict, MultiLangObject, NestedMultiLangObject, RDFTriple, sparqlTemplate, StringAccessObject } from "./structures";
+import type {
+    Comment,
+    Conflict,
+    MultiLangObject,
+    NestedMultiLangObject,
+    RDFTriple,
+    sparqlTemplate,
+    StringAccessObject,
+} from "./structures";
 
 /**
  * Internal function that allows to load a SPARQL query template from the filesystem
@@ -9,9 +17,8 @@ export async function getSparqlTemplate(template: sparqlTemplate): Promise<strin
     const queries = import.meta.glob("./queries/*.sparql", { query: "?raw", import: "default" });
     const filepath = `./queries/${template}.sparql`;
     try {
-        return await queries[filepath]() as string;
-    }
-    catch (e) {
+        return (await queries[filepath]()) as string;
+    } catch (e) {
         throw new Error(`Query Template ${template} not found`);
     }
 }
@@ -23,19 +30,23 @@ export async function getSparqlTemplate(template: sparqlTemplate): Promise<strin
  * @returns Response from the server (update == true) or the data (update == false)
  */
 export async function fetchSparql(query: string, update: boolean = false): Promise<StringAccessObject> {
-    const res = await fetch(`${import.meta.env.VITE_KNOWLEDGE_GRAPH_URL}${!import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT ? '' : ':' + import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT}`, {
+    const res = await fetch(
+        `${import.meta.env.VITE_KNOWLEDGE_GRAPH_URL}${!import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT ? "" : ":" + import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT}`,
+        {
+            method: "POST",
 
-        method: "POST",
-
-        headers: {
-            "Content-Type": update ? "application/x-www-form-urlencoded" : "application/sparql-query",
-            "Accept": "application/json",
+            headers: {
+                "Content-Type": update ? "application/x-www-form-urlencoded" : "application/sparql-query",
+                Accept: "application/json",
+            },
+            body: update
+                ? new URLSearchParams({
+                      update: query,
+                  })
+                : query,
         },
-        body: update ? new URLSearchParams({
-            "update": query
-        }) : query
-    });
-    const response = update ? res : (await res.json() as StringAccessObject).results.bindings;
+    );
+    const response = update ? res : ((await res.json()) as StringAccessObject).results.bindings;
     return response;
 }
 
@@ -49,8 +60,7 @@ export function findNestedComment(commentId: string, input: Conflict | Comment[]
     let searchArray: any;
     if (Array.isArray(input)) {
         searchArray = input;
-    }
-    else {
+    } else {
         searchArray = input.replies;
     }
     for (const reply of searchArray) {
@@ -64,7 +74,7 @@ export function findNestedComment(commentId: string, input: Conflict | Comment[]
 
 // Recursive part of nested comment search
 function findNestedCommentR(commentId: string, comment: Comment): Comment | undefined {
-    const replyIndex = comment.replies?.find(reply => reply.id == commentId);
+    const replyIndex = comment.replies?.find((reply) => reply.id == commentId);
     if (replyIndex) {
         return replyIndex;
     }
@@ -83,13 +93,13 @@ function findNestedCommentR(commentId: string, comment: Comment): Comment | unde
  * @returns output string
  */
 export function camelToSnakeCase(str: string) {
-    return str.replace(/([a-z])([A-Z])/g, '$1_$2').toLowerCase();
+    return str.replace(/([a-z])([A-Z])/g, "$1_$2").toLowerCase();
 }
 
 /**
  * Checks if the input syntax of a RDF Triple or a string is correct
- * @param input 
- * @returns 
+ * @param input
+ * @returns
  */
 export function RDFSyntaxCheck(input: RDFTriple | string): boolean {
     const umlautRegex = /^[A-Za-z0-9äöüßÄÖÜ]+$/;
@@ -115,18 +125,14 @@ export function CapitalizeFirstLetter(input: string): string {
 
 export function EscapeSparqlStringLiteral(input: string): string {
     return input
-        .replace(/\\/g, '\\\\')
+        .replace(/\\/g, "\\\\")
         .replace(/"/g, '\\"')
-        .replace(/\n/g, '\\n')
-        .replace(/\r/g, '\\r')
-        .replace(/\t/g, '\\t');
+        .replace(/\n/g, "\\n")
+        .replace(/\r/g, "\\r")
+        .replace(/\t/g, "\\t");
 }
 
-function pushNestedValue(
-    root: NestedMultiLangObject,
-    path: string[],
-    value: MultiLangObject
-) {
+function pushNestedValue(root: NestedMultiLangObject, path: string[], value: MultiLangObject) {
     let current = root;
 
     for (const segment of path) {
@@ -145,17 +151,11 @@ function pushNestedValue(
     current.values.push(value);
 }
 
-export function buildTreeStructByLang(
-    input: MultiLangObject[],
-    lang: string
-): NestedMultiLangObject {
+export function buildTreeStructByLang(input: MultiLangObject[], lang: string): NestedMultiLangObject {
     const result: NestedMultiLangObject = { level: "root", values: [], next: [] };
 
     for (const item of input) {
-        const label =
-            item.labels[lang] ||
-            item.labels["default"] ||
-            Object.values(item.labels)[0];
+        const label = item.labels[lang] || item.labels["default"] || Object.values(item.labels)[0];
 
         const nestingPath = label.split("/"); // e.g., "Doctor" from "Medical/Doctor"
 

@@ -1,25 +1,33 @@
 <script lang="ts" setup>
 // TODO: implement the functionality for cloning activities, editing and maybe bring back the role selection from INPROGRESS FILE
-import { onMounted, computed, ref, nextTick } from 'vue';
-import { useSessionStore } from '@/stores/sessionStore';
-import { getActivityClassIds } from '@/data/knowledge_graph/read_operations';
-import { useActivityStore } from '@/stores/activityStore';
-import { buildTreeStructByLang } from '@/data/knowledge_graph/utils';
+import { onMounted, computed, ref, nextTick } from "vue";
+import { useSessionStore } from "@/stores/sessionStore";
+import { getActivityClassIds } from "@/data/knowledge_graph/read_operations";
+import { useActivityStore } from "@/stores/activityStore";
+import { buildTreeStructByLang } from "@/data/knowledge_graph/utils";
 
-import { Activity, KnowledgeGraphActivityClass, NestedMultiLangObject } from '@/data/knowledge_graph/structures';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog'
-import QrcodeVue from 'qrcode.vue'
+import { Activity, KnowledgeGraphActivityClass, NestedMultiLangObject } from "@/data/knowledge_graph/structures";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import {
+    Dialog,
+    DialogContent,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogDescription,
+    DialogTrigger,
+} from "@/components/ui/dialog";
+import QrcodeVue from "qrcode.vue";
 
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 
-import { Play } from 'lucide-vue-next';
+import { Play } from "lucide-vue-next";
 
-import { staticContent } from '@/data/contentData';
-import { llmPool } from '@/data/knowledge_graph/llm_utils';
-import LoadingOverlay from '@/components/LoadingOverlay.vue';
-import RecursiveSelect from './RecursiveSelect.vue';
-import { Select, SelectTrigger, SelectContent, SelectValue } from '@/components/ui/select';
+import { staticContent } from "@/data/contentData";
+import { llmPool } from "@/data/knowledge_graph/llm_utils";
+import LoadingOverlay from "@/components/LoadingOverlay.vue";
+import RecursiveSelect from "./RecursiveSelect.vue";
+import { Select, SelectTrigger, SelectContent, SelectValue } from "@/components/ui/select";
 
 // consts and props defintion
 const sessionStore = useSessionStore();
@@ -41,11 +49,10 @@ sessionStore.availableRoles = {} as NestedMultiLangObject;
 const isDeleteDialogOpen = ref(false);
 // todo
 
-const showPoolingDialog = ref(false)
+const showPoolingDialog = ref(false);
 const nothingToPool = ref(false);
 const loading = ref(false);
 const copied = ref(false);
-
 
 // activity store management
 const activityStore = useActivityStore();
@@ -68,9 +75,7 @@ const handleStartSession = async () => {
                 role.values &&
                 role.values.length > 0 &&
                 role.values[0].labels &&
-                (
-                    role.values[0].labels.en === "Instructor"
-                )
+                role.values[0].labels.en === "Instructor"
             ) {
                 instructorId = role.values[0].id; // z.B. "Dozent"
                 break;
@@ -85,7 +90,7 @@ const handleStartSession = async () => {
     sessionStore.sessionActivity = {
         graph: props.activity.graph,
         name: props.activity.name,
-        description: props.activity.description
+        description: props.activity.description,
     };
     sessionStore.startSession();
 };
@@ -99,7 +104,7 @@ const copyUrlToClipboard = async () => {
         // Auswahl des URL-Textes im sichtbaren Bereich
         if (showUrl.value) {
             await nextTick(); // Sicherstellen, dass DOM aktualisiert ist
-            const el = document.getElementById('feedback-url-text');
+            const el = document.getElementById("feedback-url-text");
             if (el) {
                 const selection = window.getSelection();
                 const range = document.createRange();
@@ -116,7 +121,7 @@ const copyUrlToClipboard = async () => {
             selection?.removeAllRanges();
         }, 2000);
     } catch (err) {
-        console.error('Fehler beim Kopieren: ', err);
+        console.error("Fehler beim Kopieren: ", err);
     }
 };
 
@@ -126,8 +131,7 @@ const deleteThisActivity = async () => {
     activityStore.refreshActivityList();
 
     isDeleteDialogOpen.value = false;
-}
-
+};
 
 /**
  * Retrieves available roles for the current activity graph.
@@ -135,13 +139,12 @@ const deleteThisActivity = async () => {
  */
 const getRoles = async () => {
     try {
-
         const roles = await getActivityClassIds(props.activity.graph, KnowledgeGraphActivityClass.subject);
         sessionStore.availableRoles = buildTreeStructByLang(roles, sessionStore.activeLanguage);
     } catch (error) {
         console.error("Error fetching roles:", error);
     }
-}
+};
 
 const sessionStartAllowed = () => true; // TODO tmp for no role selection
 const handlePoolingStart = async () => {
@@ -157,33 +160,34 @@ const handlePoolingStart = async () => {
     } catch (error) {
         console.error("Error during pooling:", error);
     }
-}
+};
 
 // work with the qr code
-const showQrDialog = ref(false)
-const showUrl = ref(false)
-
-
+const showQrDialog = ref(false);
+const showUrl = ref(false);
 </script>
 
 <template>
     <div class="rounded-xl shadow-md bg-white dark:bg-gray-900 p-4 transition-all hover:shadow-lg">
-
         <Accordion type="single" class="w-full" collapsible>
             <AccordionItem :value="props.activity.graph" class="accordion-item border-0">
-
-                <AccordionTrigger class="accordion-trigger text-lg font-semibold text-middle flex justify-center"
-                    @click="getRoles">
-                    {{ props.activity.name[sessionStore.activeLanguage] || props.activity.name['default'] }}
+                <AccordionTrigger
+                    class="accordion-trigger text-lg font-semibold text-middle flex justify-center"
+                    @click="getRoles"
+                >
+                    {{ props.activity.name[sessionStore.activeLanguage] || props.activity.name["default"] }}
                 </AccordionTrigger>
-
 
                 <AccordionContent class="pt-4 space-y-4 text-sm text-gray-600 dark:text-gray-300">
                     <div class="h-[1px] bg-gray-200 dark:bg-gray-700 my-2"></div>
 
                     <!-- Description -->
-                    <p class="text-base">{{ props.activity.description[sessionStore.activeLanguage]
-                        || props.activity.description['default'] }}</p>
+                    <p class="text-base">
+                        {{
+                            props.activity.description[sessionStore.activeLanguage] ||
+                            props.activity.description["default"]
+                        }}
+                    </p>
 
                     <!-- Buttons-->
                     <div class="flex justify-between items-center gap-4 flex-wrap">
@@ -197,8 +201,8 @@ const showUrl = ref(false)
                                 </DialogTrigger>
                                 <DialogContent>
                                     <DialogHeader>
-                                        <DialogTitle>{{
-                                            staticContent.startPage.deleteActivity[sessionStore.activeLanguage] }}
+                                        <DialogTitle
+                                            >{{ staticContent.startPage.deleteActivity[sessionStore.activeLanguage] }}
                                         </DialogTitle>
                                         <DialogDescription>
                                             {{ staticContent.startPage.deleteConfirm[sessionStore.activeLanguage] }}
@@ -206,7 +210,8 @@ const showUrl = ref(false)
                                     </DialogHeader>
                                     <DialogFooter>
                                         <Button @click="() => deleteThisActivity()">{{
-                                            staticContent.terms.delete[sessionStore.activeLanguage] }}</Button>
+                                            staticContent.terms.delete[sessionStore.activeLanguage]
+                                        }}</Button>
                                     </DialogFooter>
                                 </DialogContent>
                             </Dialog>
@@ -235,22 +240,29 @@ const showUrl = ref(false)
 
                                     <div class="flex flex-col items-center gap-2">
                                         <Button variant="outline" @click="showUrl = !showUrl">
-                                            {{ showUrl ? staticContent.startPage.hideQr[sessionStore.activeLanguage] :
-                                                staticContent.startPage.showQr[sessionStore.activeLanguage] }}
+                                            {{
+                                                showUrl
+                                                    ? staticContent.startPage.hideQr[sessionStore.activeLanguage]
+                                                    : staticContent.startPage.showQr[sessionStore.activeLanguage]
+                                            }}
                                         </Button>
 
-                                        <div v-if="showUrl"
-                                            class="w-full max-w-md break-words text-center p-4 border rounded bg-gray-50 flex flex-col items-center gap-3">
+                                        <div
+                                            v-if="showUrl"
+                                            class="w-full max-w-md break-words text-center p-4 border rounded bg-gray-50 flex flex-col items-center gap-3"
+                                        >
                                             <div id="feedback-url-text">{{ feedbackUrl }}</div>
                                             <Button variant="outline" @click="copyUrlToClipboard">
-                                                {{ copied ?
-                                                    staticContent.startPage.copiedLink[sessionStore.activeLanguage] :
-                                                    staticContent.startPage.copyLink[sessionStore.activeLanguage] }}
+                                                {{
+                                                    copied
+                                                        ? staticContent.startPage.copiedLink[
+                                                              sessionStore.activeLanguage
+                                                          ]
+                                                        : staticContent.startPage.copyLink[sessionStore.activeLanguage]
+                                                }}
                                             </Button>
                                         </div>
-
                                     </div>
-
                                 </DialogContent>
                             </Dialog>
                         </div>
@@ -267,8 +279,11 @@ const showUrl = ref(false)
                                         <DialogTitle>
                                             {{ staticContent.startPage.startDebriefing[sessionStore.activeLanguage] }}
                                         </DialogTitle>
-                                        <DialogDescription>{{
-                                            staticContent.startPage.withoutRoleSelectText[sessionStore.activeLanguage]
+                                        <DialogDescription
+                                            >{{
+                                                staticContent.startPage.withoutRoleSelectText[
+                                                    sessionStore.activeLanguage
+                                                ]
                                             }}
                                         </DialogDescription>
                                     </DialogHeader>
@@ -277,7 +292,10 @@ const showUrl = ref(false)
                                     <Select v-model="sessionStore.sessionRole" id="roleSelect" class="my-4">
                                         <SelectTrigger>
                                             <SelectValue
-                                                :placeholder="staticContent.placeholders.roleSelect[sessionStore.activeLanguage]" />
+                                                :placeholder="
+                                                    staticContent.placeholders.roleSelect[sessionStore.activeLanguage]
+                                                "
+                                            />
                                         </SelectTrigger>
                                         <SelectContent>
                                             <RecursiveSelect :node="sessionStore.availableRoles" />
@@ -290,7 +308,9 @@ const showUrl = ref(false)
                                             <DialogTrigger as-child>
                                                 <Button class="mr-auto" type="button">
                                                     {{
-                                                        staticContent.startPage.poolingButton[sessionStore.activeLanguage]
+                                                        staticContent.startPage.poolingButton[
+                                                            sessionStore.activeLanguage
+                                                        ]
                                                     }}
                                                 </Button>
                                             </DialogTrigger>
@@ -298,12 +318,16 @@ const showUrl = ref(false)
                                                 <DialogHeader>
                                                     <DialogTitle>
                                                         {{
-                                                            staticContent.startPage.confirmation[sessionStore.activeLanguage]
+                                                            staticContent.startPage.confirmation[
+                                                                sessionStore.activeLanguage
+                                                            ]
                                                         }}
                                                     </DialogTitle>
                                                     <DialogDescription>
                                                         {{
-                                                            staticContent.startPage.confirmationText[sessionStore.activeLanguage]
+                                                            staticContent.startPage.confirmationText[
+                                                                sessionStore.activeLanguage
+                                                            ]
                                                         }}
                                                     </DialogDescription>
                                                     <div class="flex justify-between items-center mt-4">
@@ -311,23 +335,33 @@ const showUrl = ref(false)
                                                             Cancel
                                                         </Button>
                                                         <Button variant="destructive" @click="handlePoolingStart()">
-                                                            {{ staticContent.startPage.pool[sessionStore.activeLanguage]
+                                                            {{
+                                                                staticContent.startPage.pool[
+                                                                    sessionStore.activeLanguage
+                                                                ]
                                                             }}
                                                         </Button>
                                                     </div>
 
-                                                    <LoadingOverlay :visible="loading"
-                                                        :message="staticContent.placeholders.loading[sessionStore.activeLanguage]" />
+                                                    <LoadingOverlay
+                                                        :visible="loading"
+                                                        :message="
+                                                            staticContent.placeholders.loading[
+                                                                sessionStore.activeLanguage
+                                                            ]
+                                                        "
+                                                    />
                                                     <p v-if="nothingToPool" class="mt-4 text-red-500 font-semibold">
                                                         {{
-                                                            staticContent.startPage.noPoolAvailable[sessionStore.activeLanguage]
+                                                            staticContent.startPage.noPoolAvailable[
+                                                                sessionStore.activeLanguage
+                                                            ]
                                                         }}
                                                     </p>
                                                 </DialogHeader>
                                             </DialogContent>
                                         </Dialog>
 
-                                   
                                         <Button type="submit" @click="() => handleStartSession()">
                                             <template v-if="sessionStartAllowed()">
                                                 {{
@@ -336,7 +370,8 @@ const showUrl = ref(false)
                                             </template>
                                             <template v-else>
                                                 <Play class="w-4 h-4 mr-2" />
-                                                {{ staticContent.startPage.startDebriefing[sessionStore.activeLanguage]
+                                                {{
+                                                    staticContent.startPage.startDebriefing[sessionStore.activeLanguage]
                                                 }}
                                             </template>
                                         </Button>
@@ -344,7 +379,6 @@ const showUrl = ref(false)
                                 </DialogContent>
                             </Dialog>
                         </div>
-
                     </div>
                 </AccordionContent>
             </AccordionItem>

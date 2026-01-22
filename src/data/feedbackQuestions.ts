@@ -8,18 +8,18 @@ export const staticContentFeedback = {
         question1: {
             en: "1. How do you feel about the interprofessional collaboration simulation you have just completed?",
             de: "1. Was denken Sie über die Simulation der interprofessionellen Zusammenarbeit, die Sie gerade abgeschlossen haben?",
-            sv: "1. Vad tycker du om simuleringen av det interprofessionella samarbetet som du just har genomfört?"
+            sv: "1. Vad tycker du om simuleringen av det interprofessionella samarbetet som du just har genomfört?",
         },
         // TODO Finalize Questions that should be asked in the feedback form
         question2: {
             en: "2. Think of a part of the activity that you found very positive, constructive or satisfying. Please describe what happened in this phase in a few sentences.",
             de: "2. Denken Sie an einen Teil der Aktivität, den Sie sehr positiv, konstruktiv oder befriedigend fanden. Bitte beschreiben Sie in einigen Sätzen, was in dieser Phase passiert ist.",
-            sv: "2. Tänk på en del av aktiviteten som du tyckte var mycket positiv, konstruktiv eller tillfredsställande. Beskriv vad som hände under den här fasen med några få meningar."
+            sv: "2. Tänk på en del av aktiviteten som du tyckte var mycket positiv, konstruktiv eller tillfredsställande. Beskriv vad som hände under den här fasen med några få meningar.",
         },
         question3: {
             en: "3. Think of a part of the activity that you found very negative, counterproductive or disappointing. Please describe what happened in this phase in a few sentences.",
             de: "3. Denken Sie an einen Teil der Aktivität, den Sie sehr negativ, kontraproduktiv oder enttäuschend fanden. Bitte beschreiben Sie in einigen Sätzen, was in dieser Phase passiert ist.",
-            sv: "3. Tänk på en del av aktiviteten som du tyckte var mycket negativ, kontraproduktiv eller nedslående. Beskriv vad som hände i den här fasen med några få meningar."
+            sv: "3. Tänk på en del av aktiviteten som du tyckte var mycket negativ, kontraproduktiv eller nedslående. Beskriv vad som hände i den här fasen med några få meningar.",
         },
     },
     objectQuestion: {
@@ -31,15 +31,15 @@ export const staticContentFeedback = {
         question1: {
             en: "How did you understand the team's common goal, and were there different perspectives among the professional groups involved?",
             de: "Wie haben Sie das gemeinsame Ziel des Teams verstanden, und gab es unterschiedliche Sichtweisen unter den beteiligten Berufsgruppen?",
-            sv: "Hur uppfattade du teamets gemensamma mål, och fanns det olika perspektiv bland de olika yrkesgrupperna som var involverade?"
+            sv: "Hur uppfattade du teamets gemensamma mål, och fanns det olika perspektiv bland de olika yrkesgrupperna som var involverade?",
         },
-        question2:{
+        question2: {
             en: "(optional) Were there moments when differing professional perspectives or values influenced the common goal? How did you personally deal with this?",
             de: "(optional) Gab es Momente, in denen unterschiedliche berufliche Perspektiven oder Werte das gemeinsame Ziel beeinflusst haben? Wie sind Sie persönlich damit umgegangen?",
-            sv: "(valfritt) Har det funnits tillfällen då olika yrkesmässiga perspektiv eller värderingar har påverkat det gemensamma målet? Hur hanterade du det personligen?"
-        }
+            sv: "(valfritt) Har det funnits tillfällen då olika yrkesmässiga perspektiv eller värderingar har påverkat det gemensamma målet? Hur hanterade du det personligen?",
+        },
     },
-    subjectQuestion:{
+    subjectQuestion: {
         title: {
             en: "Subject (Actors and their Perspectives)",
             de: "Subjekt (Akteure und ihre Perspektiven)",
@@ -50,14 +50,13 @@ export const staticContentFeedback = {
             de: "Inwieweit konnten Sie Ihre sozialen Kompetenzen – Handlungsfähigkeit (selbstbewusstes, entschlossenes und energisches Verhalten), Kommunikationsfähigkeit (herzliches, freundliches und mitfühlendes Verhalten) oder zwischenmenschliche Belastbarkeit (ruhiges, entspanntes und emotional ausgeglichenes Verhalten) – einsetzen, wenn es die zwischenmenschliche Situation erforderte?",
             sv: "I vilken utsträckning kunde du använda dina sociala färdigheter – handlingskraft (assertivt, självsäkert, beslutsamt och energiskt beteende), gemenskap (varmt, vänligt och medkännande beteende) eller interpersonell resiliens (lugnt, avslappnat och emotionellt balanserat beteende) – när den interpersonella situationen krävde det?",
         },
-        question2:{
+        question2: {
             en: "(optional) Were there moments when you were particularly successful in this or when you reached your limits?",
             de: "(optional) Gab es Momente, in denen Sie dabei besonders erfolgreich waren oder an Ihre Grenzen gestoßen sind?",
             sv: "(valfritt) Fanns det stunder när du var särskilt framgångsrik i detta eller när du nådde dina gränser?",
-        }
-
+        },
     },
-    communityQuestion:{
+    communityQuestion: {
         title: {
             en: "Community (social environment and contextual conditions)",
             de: "Gemeinschaft (soziale Umgebung und Kontextbedingungen)",
@@ -66,15 +65,15 @@ export const staticContentFeedback = {
         question1: {
             en: "What expectations, framework conditions, and values shaped the teamwork (e.g., organization, professional groups, patients, relatives)?",
             de: "Welche Erwartungen, Rahmenbedingungen und Werte prägten die Zusammenarbeit im Team (z. B. Organisation, Berufsgruppen, Patient*innen, Angehörige)?",
-            sv: "Vilka förväntningar, ramvillkor och värderingar präglade samarbetet i teamet (t.ex. organisation, yrkesgrupper, patienter, anhöriga)?"
+            sv: "Vilka förväntningar, ramvillkor och värderingar präglade samarbetet i teamet (t.ex. organisation, yrkesgrupper, patienter, anhöriga)?",
         },
         question2: {
             en: "(optional) Where did tensions or conflicts arise between these different actors/contexts, and how were they dealt with?",
             de: "(optional) Wo traten Spannungen oder Konflikte zwischen diesen unterschiedlichen Akteuren/Kontexten auf, und wie wurden sie bearbeitet?",
-            sv: "(valfritt) Var uppstod spänningar eller konflikter mellan dessa olika aktörer/sammanhang, och hur hanterades de?"
-        }
+            sv: "(valfritt) Var uppstod spänningar eller konflikter mellan dessa olika aktörer/sammanhang, och hur hanterades de?",
+        },
     },
-    instrumentsQuestion:{
+    instrumentsQuestion: {
         title: {
             en: "Tools (Tools and Resources)",
             de: "Werkzeuge (Werkzeuge und Ressourcen)",
@@ -88,10 +87,10 @@ export const staticContentFeedback = {
         question2: {
             en: "(optional) What additional tools could have further supported the collaboration?",
             de: "(optional) Welche zusätzlichen Tools hätten die Zusammenarbeit noch weiter unterstützen können?",
-            sv: "(valfritt) Vilka ytterligare verktyg kunde ha stöttat samarbetet ytterligare?"
-        }
+            sv: "(valfritt) Vilka ytterligare verktyg kunde ha stöttat samarbetet ytterligare?",
+        },
     },
-    rulesQuestion:{
+    rulesQuestion: {
         title: {
             en: "Rules (Norms, Guidelines and Implicit Expectations)",
             de: "Regeln (Normen, Leitlinien und implizite Erwartungen)",
@@ -100,15 +99,15 @@ export const staticContentFeedback = {
         question1: {
             en: "What explicit or implicit rules influenced actions in this situation (e.g. guidelines, legal requirements, team culture)?",
             de: "Welche expliziten oder impliziten Regeln haben das Handeln in dieser Situation beeinflusst (z. B. Leitlinien, gesetzliche Vorgaben, Teamkultur)?",
-            sv: "Vilka explicita eller implicita regler har påverkat agerandet i denna situation (t.ex. riktlinjer, lagstadgade krav, teamkultur)?"
+            sv: "Vilka explicita eller implicita regler har påverkat agerandet i denna situation (t.ex. riktlinjer, lagstadgade krav, teamkultur)?",
         },
         question2: {
             en: "(optional) How did these rules influence your professional freedom of decision-making and your sense of responsibility?",
             de: "(optional) Wie haben diese Regeln Ihre berufliche Entscheidungsfreiheit und Ihr Verantwortungsbewusstsein beeinflusst?",
             sv: "(valfritt) Hur påverkade dessa regler din professionella beslutsfrihet och ditt ansvarskänsla?",
-        }
+        },
     },
-    divisionOfLabourQuestion:{
+    divisionOfLabourQuestion: {
         title: {
             en: "Division of Labour (roles, responsibilities, power relations)",
             de: "Arbeitsteilung (Rollen, Zuständigkeiten, Machtverhältnisse)",
@@ -122,7 +121,7 @@ export const staticContentFeedback = {
         question2: {
             en: "(optional) In your opinion, was this distribution appropriate and conducive to the joint task?",
             de: "(optional) War diese Verteilung aus Ihrer Sicht angemessen und förderlich für die gemeinsame Aufgabe?",
-            sv: "(valfritt) Anser du att denna fördelning var lämplig och gynnsam för det gemensamma uppdraget?"
-        }
-    }
+            sv: "(valfritt) Anser du att denna fördelning var lämplig och gynnsam för det gemensamma uppdraget?",
+        },
+    },
 };

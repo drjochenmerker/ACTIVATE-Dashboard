@@ -1,57 +1,57 @@
 <script>
-import { activateTerms, staticContent } from '@/data/contentData';
-import { useSessionStore } from '@/stores/sessionStore';
+import { activateTerms, staticContent } from "@/data/contentData";
+import { useSessionStore } from "@/stores/sessionStore";
 
-/** 
+/**
  * Dropdown-Component
  * Component that is used in the Editor component to display a dropdown menu
- * Allows to select from a given list of options 
+ * Allows to select from a given list of options
  * Is used to show the possible explicit participants of an activity
  */
 export default {
-    name: 'Dropdown',
+    name: "Dropdown",
     props: {
         label: {
             type: String,
-            required: true
+            required: true,
         },
         options: {
             type: Array,
-            required: true
+            required: true,
         },
         modelValue: {
             type: Array,
-            default: () => []
-        }
+            default: () => [],
+        },
     },
-    emits: ['update:modelValue'],
+    emits: ["update:modelValue"],
     data() {
         return {
-            search: '',
+            search: "",
             showDropdown: false,
             selectedOptions: this.modelValue,
             sessionStore: useSessionStore(),
             staticContent: staticContent,
-            activateTerms: activateTerms
+            activateTerms: activateTerms,
         };
     },
     computed: {
-        /** 
+        /**
          * Filters available options based on search input and currently selected options
          * Returns options that match the search term and have not already been selected
          * @returns {Array} Filtered list of dropdown options
          */
         filteredOptions() {
             return this.options.filter(
-                option =>
+                (option) =>
                     option.label.toLowerCase().includes(this.search.toLowerCase()) &&
-                    !this.selectedOptions.some(selected => selected.label === option.label)
+                    !this.selectedOptions.some((selected) => selected.label === option.label),
             );
         },
         placeholderText() {
             const lang = this.sessionStore.activeLanguage || "en";
-            return this.staticContent.placeholders.search[lang]
-        }
+            return this.staticContent.placeholders.search[lang];
+        },
     },
     methods: {
         updateSearch(event) {
@@ -60,12 +60,12 @@ export default {
         },
         selectOption(option) {
             this.selectedOptions.push(option);
-            this.$emit('update:modelValue', this.selectedOptions);
-            this.search = '';
+            this.$emit("update:modelValue", this.selectedOptions);
+            this.search = "";
             this.showDropdown = false;
 
             this.$nextTick(() => {
-                const input = this.$el.querySelector('input');
+                const input = this.$el.querySelector("input");
                 if (input) {
                     input.focus();
                 }
@@ -77,8 +77,8 @@ export default {
          * @param {Object} option - The option to be removed from the selected options
          */
         removeOption(option) {
-            this.selectedOptions = this.selectedOptions.filter(o => o !== option);
-            this.$emit('update:modelValue', this.selectedOptions);
+            this.selectedOptions = this.selectedOptions.filter((o) => o !== option);
+            this.$emit("update:modelValue", this.selectedOptions);
         },
         /**
          * Handles clicks outside the dropdown container to close the dropdown
@@ -89,18 +89,18 @@ export default {
             if (this.$refs.dropdownContainer && !this.$refs.dropdownContainer.contains(event.target)) {
                 this.showDropdown = false;
             }
-        }
+        },
     },
     mounted() {
         // global click listener
-        document.addEventListener('click', this.handleClickOutside);
+        document.addEventListener("click", this.handleClickOutside);
     },
     /**
      * Removes the global click event listener when the component is about to be unmounted
      * Prevents memory leaks by cleaning up event listeners
      */
     beforeUnmount() {
-        document.removeEventListener('click', this.handleClickOutside);
+        document.removeEventListener("click", this.handleClickOutside);
     },
     /**
      * Watches for changes to the modelValue prop and updates the selectedOptions accordingly
@@ -110,8 +110,8 @@ export default {
     watch: {
         modelValue(newValue) {
             this.selectedOptions = newValue;
-        }
-    }
+        },
+    },
 };
 </script>
 
@@ -119,7 +119,6 @@ export default {
     <div class="dropdown" ref="dropdownContainer">
         <h3>{{ activateTerms[sessionStore.activeLanguage][label] }}:</h3>
         <div class="search-container">
-
             <!-- Show selected options -->
             <div v-for="option in selectedOptions" :key="option.id" class="selected-item">
                 {{ option.label.split("/").pop() }}
@@ -127,8 +126,14 @@ export default {
             </div>
 
             <!-- Input field for searching -->
-            <input type="text" v-model="search" @focus="showDropdown = true" @click="showDropdown = true"
-                @input="updateSearch" :placeholder="placeholderText" />
+            <input
+                type="text"
+                v-model="search"
+                @focus="showDropdown = true"
+                @click="showDropdown = true"
+                @input="updateSearch"
+                :placeholder="placeholderText"
+            />
         </div>
 
         <!-- Dropdown list -->
@@ -140,10 +145,8 @@ export default {
                 {{ option.label.split("/").pop() }}
             </li>
         </ul>
-
     </div>
 </template>
-
 
 <style scoped>
 .dropdown {
@@ -156,7 +159,6 @@ export default {
     background-color: #1e1e1e;
     color: #ffffff;
 }
-
 
 .search-container {
     display: flex;

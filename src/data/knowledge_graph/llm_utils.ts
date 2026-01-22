@@ -9,63 +9,73 @@ export type LLMParsingResult = {
     success: boolean;
     message: string;
     data?: any;
-}
+};
 
 /**
- * Generates a valid TTL of a setting containing everything needed to view it in the UI. 
- * The basis for the generation is the description. 
- * 
+ * Generates a valid TTL of a setting containing everything needed to view it in the UI.
+ * The basis for the generation is the description.
+ *
  * @param description Setting Description that the ttl will be generated from
  * @param title Title of the setting - will be generated from the description if not provided
  * @param defaultRole default role for the setting - will be generated if not provided
  * @returns LLMParsingResult
  */
-export async function llmSettingGeneration(description: string, title?: string, defaultRole?: string): Promise<LLMParsingResult> {
+export async function llmSettingGeneration(
+    description: string,
+    title?: string,
+    defaultRole?: string,
+): Promise<LLMParsingResult> {
     // Generate TTL using the LLM Backend
-    const llmRes = await fetch(`${import.meta.env.VITE_LLM_URL}${!import.meta.env.VITE_LLM_PORT ? '' : ':' + import.meta.env.VITE_LLM_PORT}/api/feedback/settingGen`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json",
+    const llmRes = await fetch(
+        `${import.meta.env.VITE_LLM_URL}${!import.meta.env.VITE_LLM_PORT ? "" : ":" + import.meta.env.VITE_LLM_PORT}/api/feedback/settingGen`,
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+            },
+            body: JSON.stringify({
+                description,
+                title: title ?? "",
+                defaultRole: defaultRole ?? "",
+            }),
         },
-        body: JSON.stringify({
-            description,
-            title: title ?? "",
-            defaultRole: defaultRole ?? ""
-        })
-    });
+    );
     const data = await llmRes.json();
     if (!llmRes.ok || data.error) {
         return {
             success: false,
-            message: data.error
-        }
+            message: data.error,
+        };
     }
     // Add TTL to Sparql Backend
-    const rdfRes = await fetch(`${import.meta.env.VITE_KNOWLEDGE_GRAPH_URL}${!import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT ? '' : ':' + import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT}/upload-ttl/`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
+    const rdfRes = await fetch(
+        `${import.meta.env.VITE_KNOWLEDGE_GRAPH_URL}${!import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT ? "" : ":" + import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT}/upload-ttl/`,
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: data.ttl,
         },
-        body: data.ttl,
-    });
+    );
     if (!rdfRes.ok) {
         return {
             success: false,
-            message: "Failed to upload generated TTL"
-        }
+            message: "Failed to upload generated TTL",
+        };
     }
     const rdfData = await rdfRes.json();
-    if (rdfData.message === 'success') {
+    if (rdfData.message === "success") {
         return {
             success: true,
             message: "Setting generated and added successfully",
-        }
+        };
     }
     return {
         success: false,
-        message: "Uncaught error while generating and adding TTL"
-    }
+        message: "Uncaught error while generating and adding TTL",
+    };
 }
 
 /**
@@ -75,7 +85,11 @@ export async function llmSettingGeneration(description: string, title?: string, 
  * @param data The question and answer pairs to submit
  * @returns LLMParsingResult
  */
-export async function llmSubmit(graphID: string, role: { id: string, label: string }, data: { question: string, answer: string }[]): Promise<LLMParsingResult> {
+export async function llmSubmit(
+    graphID: string,
+    role: { id: string; label: string },
+    data: { question: string; answer: string }[],
+): Promise<LLMParsingResult> {
     // Fetch description and entities from the graph
     let description: StringAccessObject = {};
     let entities: StringAccessObject[] = [];
@@ -84,41 +98,43 @@ export async function llmSubmit(graphID: string, role: { id: string, label: stri
     graphRes.forEach((triple: StringAccessObject) => {
         if (triple.description) {
             description[triple.description["xml:lang"]] = triple.description.value;
-        }
-        else if (triple.entity && triple.property.value.split("#").pop() === "type") {
-            const entity = entities.find(entity => entity.id === triple.entity.value.split("#").pop())
+        } else if (triple.entity && triple.property.value.split("#").pop() === "type") {
+            const entity = entities.find((entity) => entity.id === triple.entity.value.split("#").pop());
             if (entity) {
                 entity.classes.push(triple.target.value.split("#").pop());
             } else {
                 entities.push({
                     id: triple.entity.value.split("#").pop(),
                     classes: [triple.target.value.split("#").pop()],
-                })
+                });
             }
         }
     });
     // Generate TTL using the LLM Backend
-    const llmRes = await fetch(`${import.meta.env.VITE_LLM_URL}${!import.meta.env.VITE_LLM_PORT ? '' : ':' + import.meta.env.VITE_LLM_PORT}/api/feedback/submit`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json",
+    const llmRes = await fetch(
+        `${import.meta.env.VITE_LLM_URL}${!import.meta.env.VITE_LLM_PORT ? "" : ":" + import.meta.env.VITE_LLM_PORT}/api/feedback/submit`,
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+            },
+            body: JSON.stringify({
+                setting: description.en,
+                entities,
+                feedback: {
+                    role,
+                    data: data,
+                },
+            }),
         },
-        body: JSON.stringify({
-            setting: description.en,
-            entities,
-            feedback: {
-                role,
-                data: data
-            }
-        })
-    });
+    );
     const llmData = await llmRes.json();
     if (!llmRes.ok || llmData.error) {
         return {
             success: false,
-            message: llmData.error
-        }
+            message: llmData.error,
+        };
     }
     // Save results temporary in the graph as a literal
     // Entities
@@ -126,7 +142,7 @@ export async function llmSubmit(graphID: string, role: { id: string, label: stri
     const EntityMapObj = {
         "{{graph}}": graphID,
         "{{predicate}}": "llmSubmissionEntity",
-        "{{object}}": llmData.ttl.entities
+        "{{object}}": llmData.ttl.entities,
     };
     query = query.replaceMultiple(EntityMapObj);
     const EntityRes = await fetchSparql(query, true);
@@ -135,20 +151,20 @@ export async function llmSubmit(graphID: string, role: { id: string, label: stri
     const TensionMapObj = {
         "{{graph}}": graphID,
         "{{predicate}}": "llmSubmissionTension",
-        "{{object}}": llmData.ttl.tensions
+        "{{object}}": llmData.ttl.tensions,
     };
     query = query.replaceMultiple(TensionMapObj);
     const TensionRes = await fetchSparql(query, true);
     if (!EntityRes.ok || !TensionRes.ok) {
         return {
             success: false,
-            message: "Failed to stash results"
-        }
+            message: "Failed to stash results",
+        };
     }
     return {
         success: true,
-        message: "Results stashed successfully"
-    }
+        message: "Results stashed successfully",
+    };
 }
 
 /**
@@ -168,7 +184,7 @@ export async function llmPool(graphID: string): Promise<LLMParsingResult> {
             if (debugOn) {
                 console.error(...args);
             }
-        }
+        },
     };
 
     logger.log(`DEBUG: Starting llmPool for graphID: ${graphID}`);
@@ -179,16 +195,18 @@ export async function llmPool(graphID: string): Promise<LLMParsingResult> {
     let query = await getSparqlTemplate(sparqlTemplate.getLLMSubmissions);
     logger.log("DEBUG: Fetching submissions with query template...");
     const submissionRes = await fetchSparql(query.replace("{{graph}}", graphID));
-    
-    logger.log(`DEBUG: Fetched ${submissionRes.length} submission triples. (Duration: ${performance.now() - stepStartTime} ms)`);
+
+    logger.log(
+        `DEBUG: Fetched ${submissionRes.length} submission triples. (Duration: ${performance.now() - stepStartTime} ms)`,
+    );
 
     if (submissionRes.length === 0) {
         logger.error("DEBUG: No submissions found. Aborting.");
         logger.log(`DEBUG: llmPool finished (FAILURE) in ${performance.now() - totalStartTime} ms.`);
         return {
             success: false,
-            message:"Failed to fetch submissions"
-        }
+            message: "Failed to fetch submissions",
+        };
     }
     const entitySubmissions: string[] = [];
     const tensionSubmissions: string[] = [];
@@ -200,24 +218,31 @@ export async function llmPool(graphID: string): Promise<LLMParsingResult> {
         }
     });
 
-    logger.log(`DEBUG: Sorted submissions. Entities: ${entitySubmissions.length}, Tensions: ${tensionSubmissions.length}`);
+    logger.log(
+        `DEBUG: Sorted submissions. Entities: ${entitySubmissions.length}, Tensions: ${tensionSubmissions.length}`,
+    );
 
     // Step 2: Pool submissions (LLM API)
     stepStartTime = performance.now(); // Reset timer for step 2
     logger.log("DEBUG: Sending submissions to LLM pooling API...");
-    const poolRes = await fetch(`${import.meta.env.VITE_LLM_URL}${!import.meta.env.VITE_LLM_PORT ? '' : ':' + import.meta.env.VITE_LLM_PORT}/api/feedback/pool`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json",
+    const poolRes = await fetch(
+        `${import.meta.env.VITE_LLM_URL}${!import.meta.env.VITE_LLM_PORT ? "" : ":" + import.meta.env.VITE_LLM_PORT}/api/feedback/pool`,
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+            },
+            body: JSON.stringify({
+                entities: entitySubmissions,
+                tensions: tensionSubmissions,
+            }),
         },
-        body: JSON.stringify({
-            entities: entitySubmissions,
-            tensions: tensionSubmissions,
-        })
-    });
+    );
 
-    logger.log(`DEBUG: LLM pooling API response status: ${poolRes.status}. (Dauer: ${performance.now() - stepStartTime} ms)`);
+    logger.log(
+        `DEBUG: LLM pooling API response status: ${poolRes.status}. (Dauer: ${performance.now() - stepStartTime} ms)`,
+    );
 
     const data = await poolRes.json();
     if (!poolRes.ok || data.error) {
@@ -225,33 +250,38 @@ export async function llmPool(graphID: string): Promise<LLMParsingResult> {
         logger.log(`DEBUG: llmPool finished (FAILURE) in ${performance.now() - totalStartTime} ms.`);
         return {
             success: false,
-            message: data.error
-        }
+            message: data.error,
+        };
     }
-    
+
     // Step 3: Add results to knowledge graph
     stepStartTime = performance.now(); // Reset timer for step 3
     logger.log(`DEBUG: Adding pooled TTL to knowledge graph: ${graphID}`);
-    const backendRes = await fetch(`${import.meta.env.VITE_KNOWLEDGE_GRAPH_URL}${!import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT ? '' : ':' + import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT}/parse-pool/`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
+    const backendRes = await fetch(
+        `${import.meta.env.VITE_KNOWLEDGE_GRAPH_URL}${!import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT ? "" : ":" + import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT}/parse-pool/`,
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                graph_id: graphID,
+                ttl: data.ttl,
+            }),
         },
-        body: JSON.stringify({
-            graph_id: graphID,
-            ttl: data.ttl
-        }),
-    });
+    );
 
-    logger.log(`DEBUG: Knowledge graph API response status: ${backendRes.status}. (Dauer: ${performance.now() - stepStartTime} ms)`);
+    logger.log(
+        `DEBUG: Knowledge graph API response status: ${backendRes.status}. (Dauer: ${performance.now() - stepStartTime} ms)`,
+    );
 
     if (!backendRes.ok) {
         logger.error("DEBUG: Failed to upload pooled TTL to knowledge graph.");
         logger.log(`DEBUG: llmPool finished (FAILURE) in ${performance.now() - totalStartTime} ms.`);
         return {
             success: false,
-            message: "Failed to upload pooled TTL"
-        }
+            message: "Failed to upload pooled TTL",
+        };
     }
 
     // Step 4: Delete temporary submissions
@@ -265,21 +295,25 @@ export async function llmPool(graphID: string): Promise<LLMParsingResult> {
     query = query.replaceMultiple(mapObj);
     const graphRes = await fetchSparql(query, true);
 
-    logger.log(`DEBUG: Delete submissions response status: ${graphRes.status}. (Dauer: ${performance.now() - stepStartTime} ms)`);
+    logger.log(
+        `DEBUG: Delete submissions response status: ${graphRes.status}. (Dauer: ${performance.now() - stepStartTime} ms)`,
+    );
 
     if (!graphRes.ok) {
         logger.error("DEBUG: Failed to delete temporary submissions.");
         logger.log(`DEBUG: llmPool finished (FAILURE) in ${performance.now() - totalStartTime} ms.`);
         return {
             success: false,
-            message: "Failed to delete temporary submissions"
-        }
+            message: "Failed to delete temporary submissions",
+        };
     }
-    
+
     const totalEndTime = performance.now();
-    logger.log(`DEBUG: llmPool completed successfully for graphID: ${graphID}. (Gesamtdauer: ${totalEndTime - totalStartTime} ms)`);
+    logger.log(
+        `DEBUG: llmPool completed successfully for graphID: ${graphID}. (Gesamtdauer: ${totalEndTime - totalStartTime} ms)`,
+    );
     return {
         success: true,
-        message: "Pooling successful"
-    }
+        message: "Pooling successful",
+    };
 }

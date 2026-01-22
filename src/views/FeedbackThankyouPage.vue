@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { staticContent } from '@/data/contentData'
-import { useSessionStore } from '@/stores/sessionStore'
+import { computed } from "vue";
+import { staticContent } from "@/data/contentData";
+import { useSessionStore } from "@/stores/sessionStore";
 
-const sessionStore = useSessionStore()
+const sessionStore = useSessionStore();
 
-const thankYouText = computed(() =>
-    staticContent.feedbackpage.thankYou[sessionStore.activeLanguage] || "Thanks for your feedback!"
-)
+const thankYouText = computed(
+    () => staticContent.feedbackpage.thankYou[sessionStore.activeLanguage] || "Thanks for your feedback!",
+);
 </script>
 
 <template>
@@ -15,8 +15,13 @@ const thankYouText = computed(() =>
         <div class="space-y-6 max-w-md w-full">
             <!-- Optional checkmark icon -->
             <div class="flex justify-center">
-                <svg class="w-16 h-16 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                    stroke-width="2">
+                <svg
+                    class="w-16 h-16 text-green-500"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                >
                     <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
             </div>

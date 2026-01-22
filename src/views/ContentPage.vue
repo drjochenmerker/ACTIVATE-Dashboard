@@ -1,17 +1,17 @@
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue';
-import { useRoute } from 'vue-router';
-import NoteCardMisc from '@/components/NoteCardMisc.vue';
-import { activateTerms, contentData, staticContent } from '@/data/contentData';
-import ContentTemplate from '@/components/ContentTemplate.vue';
-import { Comment } from '@/data/knowledge_graph/structures';
-import { useSessionStore } from '@/stores/sessionStore';
-import { getMiscComments } from '@/data/knowledge_graph/read_operations';
+import { onMounted, ref } from "vue";
+import { useRoute } from "vue-router";
+import NoteCardMisc from "@/components/NoteCardMisc.vue";
+import { activateTerms, contentData, staticContent } from "@/data/contentData";
+import ContentTemplate from "@/components/ContentTemplate.vue";
+import { Comment } from "@/data/knowledge_graph/structures";
+import { useSessionStore } from "@/stores/sessionStore";
+import { getMiscComments } from "@/data/knowledge_graph/read_operations";
 
 const route = useRoute();
 
 // Define props
-const props = defineProps<{ conflicts: any[], activity: any }>();
+const props = defineProps<{ conflicts: any[]; activity: any }>();
 
 // Stores
 const sessionStore = useSessionStore();
@@ -36,11 +36,11 @@ onMounted(async () => {
  * Updates the miscComments reactive reference with the retrieved comments.
  */
 const fetchMiscs = async () => {
-    if (route.params.id === 'misc') {
+    if (route.params.id === "misc") {
         // Get miscellaneous comments from the graph
         miscComments.value = await getMiscComments(graph);
     }
-}
+};
 
 /**
  * Promised function
@@ -48,9 +48,8 @@ const fetchMiscs = async () => {
  * @param id The unique identifier of the comment to be removed.
  */
 const removeComment = (id: string) => {
-    miscComments.value = miscComments.value.filter(comment => comment.id !== id);
+    miscComments.value = miscComments.value.filter((comment) => comment.id !== id);
 };
-
 </script>
 
 <template>
@@ -58,9 +57,11 @@ const removeComment = (id: string) => {
         <h1 class="text-2xl font-semibold mb-4">{{ activateTerms[sessionStore.activeLanguage][pageData!.id] }}</h1>
 
         <!-- When not on misc page, show the content -->
-        <ContentTemplate v-if="route.params.id !== 'misc' && pageData" :pageData="pageData"
-            :conflicts="props.conflicts" />
-
+        <ContentTemplate
+            v-if="route.params.id !== 'misc' && pageData"
+            :pageData="pageData"
+            :conflicts="props.conflicts"
+        />
 
         <!-- When on misc page, show misc comments-->
         <div v-if="route.params.id === 'misc'">
@@ -76,6 +77,5 @@ const removeComment = (id: string) => {
                 {{ staticContent.errors.noMisc[sessionStore.activeLanguage] }}
             </div>
         </div>
-
     </div>
 </template>
