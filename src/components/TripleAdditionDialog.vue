@@ -113,13 +113,12 @@ watch([subject, object], () => {
 
     if (isSubjectValid.value && isObjectValid.value) {
         if (subject.value.type !== object.value.type) {
-            //let predicates: Array<{ predicate: string }> = [];
             if (subject.value.type && object.value.type && activityPredicates.value) {
                 try {
                     predicates.value =
                         (activityPredicates.value.get([subject.value.type, object.value.type]) as Array<Predicate>) ||
                         [];
-                } catch (error) {
+                } catch (_error) {
                     predicates.value = [];
                 }
             }

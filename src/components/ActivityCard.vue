@@ -56,7 +56,7 @@ const copied = ref(false);
 
 // activity store management
 const activityStore = useActivityStore();
-let activities = ref<Activity[]>([]);
+const activities = ref<Activity[]>([]);
 
 // load all activities on component mount
 onMounted(async () => {

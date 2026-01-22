@@ -1,22 +1,22 @@
-import { getActivities } from "@/data/knowledge_graph/read_operations";
-import { Activity } from "@/data/knowledge_graph/structures";
-import { cloneActivity, deleteActivity, updateActivity } from "@/data/knowledge_graph/write_operations";
-import { defineStore } from "pinia";
-import { ref } from "vue";
+import { getActivities } from '@/data/knowledge_graph/read_operations';
+import { Activity } from '@/data/knowledge_graph/structures';
+import { cloneActivity, deleteActivity, updateActivity } from '@/data/knowledge_graph/write_operations';
+import { defineStore } from 'pinia';
+import { ref } from 'vue';
 
 /**
  * Store: ActivityStore
  * Manages the list of excisting activities
  */
 
-export const useActivityStore = defineStore("ActivityStore", () => {
+export const useActivityStore = defineStore('ActivityStore', () => {
     /**
      * Reactive reference to the list of activities managed by the store.
      * Initialized as an empty array and can be dynamically updated.
      *
      * @type {Ref<Activity[]>}
      */
-    let activityList = ref<Activity[]>([]);
+    const activityList = ref<Activity[]>([]);
     /**
      * Retrieves all activities from the data source and updates the activity list.
      *
@@ -40,9 +40,9 @@ export const useActivityStore = defineStore("ActivityStore", () => {
     };
     const editActivity = async (activity: Activity) => {
         const updatedActivity = await updateActivity(activity);
-        if (updatedActivity.status === "OK") {
+        if (updatedActivity.status === 'OK') {
         } else {
-            console.log("Update failed.");
+            console.log('Update failed.');
         }
         refreshActivityList();
     };
@@ -52,18 +52,18 @@ export const useActivityStore = defineStore("ActivityStore", () => {
     };
     const cloneThisActivity = async (clonedActivity: Activity) => {
         const savedClone = await cloneActivity(clonedActivity);
-        if (savedClone.status === "OK") {
+        if (savedClone.status === 'OK') {
         } else {
-            console.log("Cloning failed.");
+            console.log('Cloning failed.');
         }
         refreshActivityList();
     };
     const removeActivity = async (graph: string) => {
         const deletion = await deleteActivity(graph);
-        if (deletion.status === "OK") {
+        if (deletion.status === 'OK') {
             //console.log("Deleted activity successfully.")
         } else {
-            console.log("Deletion failed.");
+            console.log('Deletion failed.');
         }
         refreshActivityList();
     };

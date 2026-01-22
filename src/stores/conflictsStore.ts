@@ -1,18 +1,18 @@
-import { getAllConflictsWithDetail, getConflictDetail } from "@/data/knowledge_graph/read_operations";
-import { Conflict } from "@/data/knowledge_graph/structures";
-import { defineStore } from "pinia";
-import { ref, computed } from "vue";
-import { useSessionStore } from "./sessionStore";
+import { getAllConflictsWithDetail, getConflictDetail } from '@/data/knowledge_graph/read_operations';
+import { Conflict } from '@/data/knowledge_graph/structures';
+import { defineStore } from 'pinia';
+import { ref, computed } from 'vue';
+import { useSessionStore } from './sessionStore';
 
 /**
  * Store: ActivityConflicts
  * Manages the list of conflicts associated with the current activity
  */
-export const useConflictsStore = defineStore("ActivityConflicts", () => {
+export const useConflictsStore = defineStore('ActivityConflicts', () => {
     /**
      * Reactive list of conflicts with detailed data
      */
-    let conflictDetails = ref<Conflict[]>([]);
+    const conflictDetails = ref<Conflict[]>([]);
 
     // Access to the current session/activity context
     const sessionStore = useSessionStore();

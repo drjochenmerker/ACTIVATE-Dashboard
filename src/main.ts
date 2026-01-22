@@ -1,10 +1,10 @@
-import { createApp } from "vue";
-import { createPinia } from "pinia";
-import "./style.css";
-import App from "./App.vue";
-import router from "./router";
-import Toast from "vue-toastification";
-import "vue-toastification/dist/index.css";
+import { createApp } from 'vue';
+import { createPinia } from 'pinia';
+import './style.css';
+import App from './App.vue';
+import router from './router';
+import Toast from 'vue-toastification';
+import 'vue-toastification/dist/index.css';
 
 // Added a function to the string type that allows to replace multiple strings at once
 declare global {
@@ -16,7 +16,7 @@ declare global {
 const pinia = createPinia();
 
 String.prototype.replaceMultiple = function (mapObj) {
-    var re = new RegExp(Object.keys(mapObj).join("|"), "gi");
+    const re = new RegExp(Object.keys(mapObj).join('|'), 'gi');
 
     return this.replace(re, function (matched) {
         return mapObj[matched];
@@ -28,4 +28,4 @@ const app = createApp(App);
 app.use(pinia);
 app.use(Toast);
 app.use(router);
-app.mount("#app");
+app.mount('#app');

@@ -11,8 +11,8 @@ import {
     KnowledgeGraphActivityClass,
     Objective,
     MultiLangObject,
-} from "./structures";
-import { fetchSparql, findNestedComment, getSparqlTemplate, camelToSnakeCase } from "./utils";
+} from './structures';
+import { fetchSparql, findNestedComment, getSparqlTemplate, camelToSnakeCase } from './utils';
 
 /**
  * Fetches all activities from the knowledge graph
@@ -29,7 +29,7 @@ export async function getActivities(): Promise<Activity[]> {
 
     data.forEach((triple: any) => {
         // Extract graph identifier (last part of the URI)
-        const graphId = triple.graph.value.split("/").pop() || triple.graph.value;
+        const graphId = triple.graph.value.split('/').pop() || triple.graph.value;
 
         // Initialize entry if not exists
         if (!grouped[graphId]) {
@@ -41,12 +41,12 @@ export async function getActivities(): Promise<Activity[]> {
         }
 
         // Extract language tag or default
-        const nameLang = triple.name["xml:lang"] || "default";
-        const descLang = triple.description["xml:lang"] || "default";
+        const nameLang = triple.name['xml:lang'] || 'default';
+        const descLang = triple.description['xml:lang'] || 'default';
 
         // Assign name and description under the correct language
-        grouped[graphId].name[nameLang] = triple.name.value || "Error - No Name given";
-        grouped[graphId].description[descLang] = triple.description.value || "Error - No Description given";
+        grouped[graphId].name[nameLang] = triple.name.value || 'Error - No Name given';
+        grouped[graphId].description[descLang] = triple.description.value || 'Error - No Description given';
     });
 
     // Convert grouped object to array
@@ -63,15 +63,15 @@ export async function getActivities(): Promise<Activity[]> {
  */
 export async function getActivityDetail(activity: Activity): Promise<ActivityDetail> {
     let query = await getSparqlTemplate(sparqlTemplate.getActivityDetail);
-    query = query.replace("{{graph}}", activity.graph);
+    query = query.replace('{{graph}}', activity.graph);
     const data = await fetchSparql(query);
-    let activityDetail = {} as ActivityDetail;
+    const activityDetail = {} as ActivityDetail;
     // Init Division of Labour as false
     data.map((item: StringAccessObject) => {
         // Parse label to make it easier for frontend
-        let type = camelToSnakeCase(item.type.value.split("#").pop());
-        if (type === "rule" || type === "instrument") {
-            type += "s";
+        let type = camelToSnakeCase(item.type.value.split('#').pop());
+        if (type === 'rule' || type === 'instrument') {
+            type += 's';
         }
         // Init Label Subject, Community, etc. if it doesn't exist yet
         if (type in activityDetail === false) {
@@ -79,35 +79,35 @@ export async function getActivityDetail(activity: Activity): Promise<ActivityDet
         }
         // Check if entity is already in the list
         const objectIndexInList = (activityDetail[type] as Objective[]).findIndex(
-            (obj: Objective) => obj.id == item.entity.value.split("#").pop(),
+            (obj: Objective) => obj.id == item.entity.value.split('#').pop(),
         );
         // Object not in list yet
         if (objectIndexInList < 0) {
-            if (item.property.value.split("#").pop() === "type" || item.property.value.split("#").pop() === "label") {
-                const langTag = item.target["xml:lang"] || undefined;
+            if (item.property.value.split('#').pop() === 'type' || item.property.value.split('#').pop() === 'label') {
+                const langTag = item.target['xml:lang'] || undefined;
                 activityDetail[type].push({
-                    id: item.entity.value.split("#").pop(),
+                    id: item.entity.value.split('#').pop(),
                     type: type,
                     labels: langTag
                         ? { [langTag]: item.target.value }
-                        : item.property.value.split("#").pop() === "label"
-                          ? { default: item.target.value ? item.target.value : item.entity.value.split("#").pop() }
+                        : item.property.value.split('#').pop() === 'label'
+                          ? { default: item.target.value ? item.target.value : item.entity.value.split('#').pop() }
                           : {},
                     properties: [] as Action[],
                 } as Objective);
             } else {
                 activityDetail[type].push({
-                    id: item.entity.value.split("#").pop(),
+                    id: item.entity.value.split('#').pop(),
                     labels: {},
                     type: type,
                     properties: [
                         {
-                            action: item.property.value.split("#").pop(),
+                            action: item.property.value.split('#').pop(),
                             object: item.language
                                 ? ({
-                                      [item.language.value]: item.target.value.split("#").pop(),
+                                      [item.language.value]: item.target.value.split('#').pop(),
                                   } as StringAccessObject)
-                                : item.target.value.split("#").pop(),
+                                : item.target.value.split('#').pop(),
                         } as Action,
                     ],
                 } as Objective);
@@ -115,30 +115,30 @@ export async function getActivityDetail(activity: Activity): Promise<ActivityDet
         }
         // Object already in list
         else {
-            if (item.property.value.split("#").pop() === "type") {
+            if (item.property.value.split('#').pop() === 'type') {
                 return;
-            } else if (item.property.value.split("#").pop() === "label") {
-                const langTag = item.target["xml:lang"] || undefined;
+            } else if (item.property.value.split('#').pop() === 'label') {
+                const langTag = item.target['xml:lang'] || undefined;
                 langTag
                     ? (activityDetail[type][objectIndexInList].labels[langTag] = item.target.value)
                     : (activityDetail[type][objectIndexInList].labels.default = item.target.value
                           ? item.target.value
-                          : item.entity.value.split("#").pop());
+                          : item.entity.value.split('#').pop());
                 return;
             }
             if (item.language) {
                 const propertyActionIndex = activityDetail[type][objectIndexInList].properties.findIndex(
-                    (action: Action) => action.action == item.action.value.split("#").pop(),
+                    (action: Action) => action.action == item.action.value.split('#').pop(),
                 );
                 // If no language version has been created yet
                 if (propertyActionIndex < 0) {
                     activityDetail[type][objectIndexInList].properties.push({
-                        action: item.action.value.split("#").pop(),
+                        action: item.action.value.split('#').pop(),
                         object: item.language
                             ? ({
-                                  [item.language.value]: item.target.value.split("#").pop(),
+                                  [item.language.value]: item.target.value.split('#').pop(),
                               } as StringAccessObject)
-                            : item.target.value.split("#").pop(),
+                            : item.target.value.split('#').pop(),
                     } as Action);
                 }
                 // Some language has been added already
@@ -146,16 +146,16 @@ export async function getActivityDetail(activity: Activity): Promise<ActivityDet
                     (
                         activityDetail[type][objectIndexInList].properties[propertyActionIndex]
                             .object as StringAccessObject
-                    )[item.language.value] = item.target.value.split("#").pop();
+                    )[item.language.value] = item.target.value.split('#').pop();
                 }
             } else {
                 activityDetail[type][objectIndexInList].properties.push({
-                    action: item.property.value.split("#").pop(),
+                    action: item.property.value.split('#').pop(),
                     object: item.language
                         ? ({
-                              [item.language.value]: item.target.value.split("#").pop(),
+                              [item.language.value]: item.target.value.split('#').pop(),
                           } as StringAccessObject)
-                        : item.target.value.split("#").pop(),
+                        : item.target.value.split('#').pop(),
                 } as Action);
             }
         }
@@ -171,15 +171,15 @@ export async function getActivityDetail(activity: Activity): Promise<ActivityDet
 
 export async function getConflictIds(graph: string): Promise<{ title: Record<string, string>; id: string }[]> {
     let query = await getSparqlTemplate(sparqlTemplate.getConflictIds);
-    query = query.replace("{{graph}}", graph);
+    query = query.replace('{{graph}}', graph);
     const data = await fetchSparql(query);
 
     // Use a map to group titles by conflict ID
     const conflictMap: Record<string, { id: string; title: Record<string, string> }> = {};
 
     data.forEach((conflict: StringAccessObject) => {
-        const id = conflict.conflict_id.value.split("#").pop();
-        const lang = conflict.conflict_title["xml:lang"] || "default";
+        const id = conflict.conflict_id.value.split('#').pop();
+        const lang = conflict.conflict_title['xml:lang'] || 'default';
         const title = conflict.conflict_title.value;
 
         if (!conflictMap[id]) {
@@ -205,8 +205,8 @@ export async function getConflictIds(graph: string): Promise<{ title: Record<str
 export async function getConflictDetail(graph: string, conflictId: string): Promise<Conflict> {
     let query = await getSparqlTemplate(sparqlTemplate.getConflictDetail);
     const mapObj = {
-        "{{graph}}": graph,
-        "{{conflict}}": conflictId,
+        '{{graph}}': graph,
+        '{{conflict}}': conflictId,
     };
     query = query.replaceMultiple(mapObj);
     const data = await fetchSparql(query);
@@ -217,10 +217,10 @@ export async function getConflictDetail(graph: string, conflictId: string): Prom
     data.map((item: StringAccessObject) => {
         // Conflict Data
         if (item.conflict_p) {
-            switch (item.conflict_p.value.split("#").pop()) {
-                case "WrittenBy": {
-                    const authorId = item.conflict_o.value.split("#").pop();
-                    const langTag = item.participant_o?.["xml:lang"] || "default";
+            switch (item.conflict_p.value.split('#').pop()) {
+                case 'WrittenBy': {
+                    const authorId = item.conflict_o.value.split('#').pop();
+                    const langTag = item.participant_o?.['xml:lang'] || 'default';
                     const labelValue = item.participant_o?.value || authorId;
 
                     if (!parsedConflict.author) {
@@ -229,107 +229,108 @@ export async function getConflictDetail(graph: string, conflictId: string): Prom
                             labels: {
                                 [langTag]: labelValue,
                             },
-                            type: "subject",
+                            type: 'subject',
                         };
                     } else {
                         parsedConflict.author.labels[langTag] = labelValue;
                     }
                     break;
                 }
-                case "ConflictDescription":
+                case 'ConflictDescription': {
                     if (!parsedConflict.description) {
                         parsedConflict.description = {};
                     }
-                    const lang = item.conflict_o["xml:lang"] || "default";
+                    const lang = item.conflict_o['xml:lang'] || 'default';
                     parsedConflict.description[lang] = item.conflict_o.value;
                     break;
+                }
 
-                case "ConflictTitle":
+                case 'ConflictTitle': {
                     if (!parsedConflict.title) {
                         parsedConflict.title = {};
                     }
-                    const langTitle = item.conflict_o["xml:lang"] || "default";
+                    const langTitle = item.conflict_o['xml:lang'] || 'default';
                     parsedConflict.title[langTitle] = item.conflict_o.value;
                     break;
-                case "CreationDate":
+                }
+                case 'CreationDate':
                     parsedConflict.timestamp = new Date(item.conflict_o.value);
                     break;
-                case "HasParticipant":
+                case 'HasParticipant': {
                     if (parsedConflict.participants === undefined) {
                         parsedConflict.participants = [] as Participant[];
                     }
                     if (item.object_type === undefined) {
-                        item.object_type = { value: "miscellaneous" };
+                        item.object_type = { value: 'miscellaneous' };
                     }
-                    let type = camelToSnakeCase(item.object_type.value.split("#").pop());
-                    if (type === "rule" || type === "instrument") {
-                        type += "s";
+                    let type = camelToSnakeCase(item.object_type.value.split('#').pop());
+                    if (type === 'rule' || type === 'instrument') {
+                        type += 's';
                     }
                     // Handle labels
-                    if (item.participant_o && item.participant_p.value.split("#").pop() === "label") {
+                    if (item.participant_o && item.participant_p.value.split('#').pop() === 'label') {
                         const existingParticipant = parsedConflict.participants.find(
-                            (participant) => participant.id == item.conflict_o.value.split("#").pop(),
+                            (participant) => participant.id == item.conflict_o.value.split('#').pop(),
                         );
-                        const langTag = item.participant_o["xml:lang"];
+                        const langTag = item.participant_o['xml:lang'];
                         if (existingParticipant) {
                             existingParticipant.labels[langTag] = item.participant_o.value;
                         } else {
                             parsedConflict.participants.push({
-                                id: item.conflict_o.value.split("#").pop(),
+                                id: item.conflict_o.value.split('#').pop(),
                                 labels: { [langTag]: item.participant_o.value },
                                 type: type,
                             });
                         }
                     } else {
                         parsedConflict.participants.push({
-                            id: item.conflict_o.value.split("#").pop(),
-                            labels: { default: item.conflict_o.value.split("#").pop() },
+                            id: item.conflict_o.value.split('#').pop(),
+                            labels: { default: item.conflict_o.value.split('#').pop() },
                             type: type,
                         });
                     }
                     break;
-                case "ConflictState":
+                }
+                case 'ConflictState':
                     parsedConflict.status = item.conflict_o.value;
                     break;
-                case "HasComment":
-                    rootReplyIds.push(item.conflict_o.value.split("#").pop());
+                case 'HasComment':
+                    rootReplyIds.push(item.conflict_o.value.split('#').pop());
                     break;
-                case "Origin":
-                    // tmp only showing origins answer
-                    // parsedConflict.origin = item.conflict_o.value.split("#").pop();
-                    // console.log("Conflict Origin:", parsedConflict.origin);
-                    // break;
-                    const valueStr = item.conflict_o.value.split("#").pop();
+                case 'Origin': // break; // console.log("Conflict Origin:", parsedConflict.origin); // parsedConflict.origin = item.conflict_o.value.split("#").pop(); // tmp only showing origins answer
+                {
+                    const valueStr = item.conflict_o.value.split('#').pop();
                     try {
                         const obj = JSON.parse(valueStr);
                         parsedConflict.origin = obj.answer;
                     } catch (e) {
-                        console.error("Failed to parse conflict origin JSON:", e);
+                        console.error('Failed to parse conflict origin JSON:', e);
                         parsedConflict.origin = valueStr; // fallback if not valid JSON
                     }
                     break;
-                case "IsAI": // TODO do something with is ai bool
-                    parsedConflict.isAI = item.conflict_o.value.split("#").pop();
+                }
+                case 'IsAI': // TODO do something with is ai bool
+                    parsedConflict.isAI = item.conflict_o.value.split('#').pop();
                     break;
-                case "HasIntent":
-                    parsedConflict.hasIntent = item.conflict_o.value.split("#").pop();
+                case 'HasIntent':
+                    parsedConflict.hasIntent = item.conflict_o.value.split('#').pop();
                     break;
                 default:
                     if (item.conflict_p !== undefined) {
-                        console.error("Unknown Property in Conflict Parsing", item.conflict_p.value.split("#").pop());
+                        console.error('Unknown Property in Conflict Parsing', item.conflict_p.value.split('#').pop());
                     }
                     break;
             }
         }
         // Comment Data
         else if (item.p) {
-            switch (item.p.value.split("#").pop()) {
-                case "WrittenBy": {
-                    const commentId = item.s.value.split("#").pop()!;
+            switch (item.p.value.split('#').pop()) {
+                case 'WrittenBy': {
+                    const commentId = item.s.value.split('#').pop()!;
                     const authorIRI = item.o.value;
-                    const authorId = authorIRI.split("#").pop() || authorIRI;
+                    const authorId = authorIRI.split('#').pop() || authorIRI;
 
-                    const langTag = item.q?.["xml:lang"] || "default";
+                    const langTag = item.q?.['xml:lang'] || 'default';
                     const labelValue = item.q?.value || authorId;
 
                     if (!lookupMap.has(commentId)) {
@@ -338,7 +339,7 @@ export async function getConflictDetail(graph: string, conflictId: string): Prom
                             author: {
                                 id: authorId,
                                 labels: { [langTag]: labelValue },
-                                type: "subject",
+                                type: 'subject',
                             },
                         } as Comment);
                     } else {
@@ -347,7 +348,7 @@ export async function getConflictDetail(graph: string, conflictId: string): Prom
                             comment.author = {
                                 id: authorId,
                                 labels: { [langTag]: labelValue },
-                                type: "subject",
+                                type: 'subject',
                             };
                         } else {
                             comment.author.id = authorId;
@@ -358,14 +359,14 @@ export async function getConflictDetail(graph: string, conflictId: string): Prom
 
                     break;
                 }
-                case "CommentDescription": {
-                    const commentId = item.s.value.split("#").pop()!;
-                    const langTag = item.oLang || item.o["xml:lang"] || "default";
+                case 'CommentDescription': {
+                    const commentId = item.s.value.split('#').pop()!;
+                    const langTag = item.oLang || item.o['xml:lang'] || 'default';
                     const commentText = item.o.value || item.o;
 
                     if (lookupMap.has(commentId)) {
                         const comment = lookupMap.get(commentId);
-                        if (!comment.comment || typeof comment.comment === "string") {
+                        if (!comment.comment || typeof comment.comment === 'string') {
                             comment.comment = {};
                         }
                         comment.comment[langTag] = commentText;
@@ -377,38 +378,38 @@ export async function getConflictDetail(graph: string, conflictId: string): Prom
                     }
                     break;
                 }
-                case "CreationDate":
-                    if (lookupMap.has(item.s.value.split("#").pop())) {
-                        lookupMap.get(item.s.value.split("#").pop()).timestamp = new Date(item.o.value);
+                case 'CreationDate':
+                    if (lookupMap.has(item.s.value.split('#').pop())) {
+                        lookupMap.get(item.s.value.split('#').pop()).timestamp = new Date(item.o.value);
                     } else {
-                        lookupMap.set(item.s.value.split("#").pop(), {
-                            id: item.s.value.split("#").pop(),
+                        lookupMap.set(item.s.value.split('#').pop(), {
+                            id: item.s.value.split('#').pop(),
                             timestamp: new Date(item.o.value),
                         } as Comment);
                     }
                     break;
-                case "HasComment":
-                    if (lookupMap.has(item.s.value.split("#").pop())) {
-                        if (lookupMap.get(item.s.value.split("#").pop()).replies === undefined) {
-                            lookupMap.get(item.s.value.split("#").pop()).replies = [
-                                item.o.value.split("#").pop(),
+                case 'HasComment':
+                    if (lookupMap.has(item.s.value.split('#').pop())) {
+                        if (lookupMap.get(item.s.value.split('#').pop()).replies === undefined) {
+                            lookupMap.get(item.s.value.split('#').pop()).replies = [
+                                item.o.value.split('#').pop(),
                             ] as Comment[];
                         } else {
-                            lookupMap.get(item.s.value.split("#").pop()).replies.push(item.o.value.split("#").pop());
+                            lookupMap.get(item.s.value.split('#').pop()).replies.push(item.o.value.split('#').pop());
                         }
                     } else {
-                        lookupMap.set(item.s.value.split("#").pop(), {
-                            id: item.s.value.split("#").pop(),
-                            replies: [item.o.value.split("#").pop()],
+                        lookupMap.set(item.s.value.split('#').pop(), {
+                            id: item.s.value.split('#').pop(),
+                            replies: [item.o.value.split('#').pop()],
                         } as Comment);
                     }
                     break;
-                case "IsAI":
+                case 'IsAI':
                     // TODO handle is ai bool
                     break;
                 default:
                     if (item.p !== undefined) {
-                        console.error("Unknown Property in Comment Parsing", item.p.value);
+                        console.error('Unknown Property in Comment Parsing', item.p.value);
                     }
                     break;
             }
@@ -425,7 +426,7 @@ export async function getConflictDetail(graph: string, conflictId: string): Prom
                 node.replies!.splice(node.replies!.indexOf(replyId), 1);
                 node.replies!.push(reply);
             } else {
-                console.log("Error in Database - reply not found in lookup map", replyId, lookupMap);
+                console.log('Error in Database - reply not found in lookup map', replyId, lookupMap);
             }
         }
     }
@@ -446,7 +447,7 @@ export async function getConflictDetail(graph: string, conflictId: string): Prom
  */
 export async function getAllConflictsWithDetail(graph: string): Promise<Conflict[]> {
     const conflicts = await getConflictIds(graph);
-    let detailedConflicts = [] as Conflict[];
+    const detailedConflicts = [] as Conflict[];
     for (const conflict of conflicts) {
         const detail = await getConflictDetail(graph, conflict.id);
 
@@ -462,23 +463,23 @@ export async function getAllConflictsWithDetail(graph: string): Promise<Conflict
  */
 export async function getPredicateObject(graph: string): Promise<PredicateDict> {
     let query = await getSparqlTemplate(sparqlTemplate.getPredicates);
-    query = query.replace("{{graph}}", graph);
+    query = query.replace('{{graph}}', graph);
     const data = await fetchSparql(query);
     const predDict = new PredicateDict();
     data.map((item: StringAccessObject) => {
-        let tuple: [string, string] = [
-            camelToSnakeCase(item.domain.value.split("#").pop()),
-            camelToSnakeCase(item.range.value.split("#").pop()),
+        const tuple: [string, string] = [
+            camelToSnakeCase(item.domain.value.split('#').pop()),
+            camelToSnakeCase(item.range.value.split('#').pop()),
         ];
-        for (let i in tuple) {
-            if (tuple[i] === "rule" || tuple[i] === "instrument") {
-                tuple[i] += "s";
+        for (const i in tuple) {
+            if (tuple[i] === 'rule' || tuple[i] === 'instrument') {
+                tuple[i] += 's';
             }
         }
         predDict.add(tuple, {
-            id: item.s.value.split("#").pop(),
+            id: item.s.value.split('#').pop(),
             labels: item.label.value,
-            lang: item.label["xml:lang"],
+            lang: item.label['xml:lang'],
         });
     });
     return predDict;
@@ -492,35 +493,35 @@ export async function getPredicateObject(graph: string): Promise<PredicateDict> 
 export async function getMiscComments(graph: string): Promise<Comment[]> {
     // Fetch data
     let query = await getSparqlTemplate(sparqlTemplate.getMiscComments);
-    query = query.replace("{{graph}}", graph);
+    query = query.replace('{{graph}}', graph);
     const data = await fetchSparql(query);
     // Preproccess data
-    let rootIds = [] as string[];
-    let parsedComments = [] as Comment[];
+    const rootIds = [] as string[];
+    const parsedComments = [] as Comment[];
     // Build data structure
     data.map((item: StringAccessObject) => {
         if (item.root_comment_id !== undefined) {
-            const commentObj = { id: item.root_comment_id.value.split("#").pop() };
+            const commentObj = { id: item.root_comment_id.value.split('#').pop() };
             rootIds.push(commentObj.id);
             parsedComments.push(commentObj);
-        } else if (item.p.value.split("#").pop() == "HasComment") {
-            const rootParent = parsedComments.find((comment) => comment.id == item.s.value.split("#").pop());
+        } else if (item.p.value.split('#').pop() == 'HasComment') {
+            const rootParent = parsedComments.find((comment) => comment.id == item.s.value.split('#').pop());
             if (rootParent) {
                 if (rootParent.replies === undefined) {
                     rootParent.replies = [];
                 }
                 rootParent.replies.push({
-                    id: item.o.value.split("#").pop(),
+                    id: item.o.value.split('#').pop(),
                 });
             } else {
                 let nestedComment = undefined;
-                nestedComment = findNestedComment(item.s.value.split("#").pop(), parsedComments);
+                nestedComment = findNestedComment(item.s.value.split('#').pop(), parsedComments);
                 if (nestedComment) {
                     if (nestedComment.replies === undefined) {
                         nestedComment.replies = [];
                     }
                     nestedComment.replies.push({
-                        id: item.o.value.split("#").pop(),
+                        id: item.o.value.split('#').pop(),
                     });
                 }
             }
@@ -532,35 +533,35 @@ export async function getMiscComments(graph: string): Promise<Comment[]> {
             return;
         }
         let comment = undefined;
-        switch (item.p.value.split("#").pop()) {
-            case "WrittenBy":
-                comment = parsedComments.find((comment) => comment.id == item.s.value.split("#").pop());
+        switch (item.p.value.split('#').pop()) {
+            case 'WrittenBy':
+                comment = parsedComments.find((comment) => comment.id == item.s.value.split('#').pop());
                 if (comment) {
                     comment.author = item.o.value;
                 } else {
-                    const nestedComment = findNestedComment(item.s.value.split("#").pop(), parsedComments);
+                    const nestedComment = findNestedComment(item.s.value.split('#').pop(), parsedComments);
                     if (nestedComment) {
                         nestedComment.author = item.o.value;
                     }
                 }
                 break;
-            case "CommentDescription":
-                comment = parsedComments.find((comment) => comment.id == item.s.value.split("#").pop());
+            case 'CommentDescription':
+                comment = parsedComments.find((comment) => comment.id == item.s.value.split('#').pop());
                 if (comment) {
                     comment.comment = item.o.value;
                 } else {
-                    const nestedComment = findNestedComment(item.s.value.split("#").pop(), parsedComments);
+                    const nestedComment = findNestedComment(item.s.value.split('#').pop(), parsedComments);
                     if (nestedComment) {
                         nestedComment.comment = item.o.value;
                     }
                 }
                 break;
-            case "CreationDate":
-                comment = parsedComments.find((comment) => comment.id == item.s.value.split("#").pop());
+            case 'CreationDate':
+                comment = parsedComments.find((comment) => comment.id == item.s.value.split('#').pop());
                 if (comment) {
                     comment.timestamp = new Date(item.o.value);
                 } else {
-                    const nestedComment = findNestedComment(item.s.value.split("#").pop(), parsedComments);
+                    const nestedComment = findNestedComment(item.s.value.split('#').pop(), parsedComments);
                     if (nestedComment) {
                         nestedComment.timestamp = new Date(item.o.value);
                     }
@@ -577,34 +578,34 @@ export async function getActivityClassIds(
 ): Promise<MultiLangObject[]> {
     let query = await getSparqlTemplate(sparqlTemplate.getActivityClassIds);
     const mapObj = {
-        "{{graph}}": graph,
-        "{{activityClass}}": activityClass,
+        '{{graph}}': graph,
+        '{{activityClass}}': activityClass,
     };
     query = query.replaceMultiple(mapObj);
 
     const data = await fetchSparql(query);
-    let result: MultiLangObject[] = [];
+    const result: MultiLangObject[] = [];
 
     data.forEach((item: StringAccessObject) => {
         const entityUri = item.entity.value;
         // Extract ID from URI (try # first, fallback to last slash)
-        let id = "";
-        if (entityUri.includes("#")) {
-            id = entityUri.split("#").pop() || "";
+        let id = '';
+        if (entityUri.includes('#')) {
+            id = entityUri.split('#').pop() || '';
         } else {
-            id = entityUri.split("/").pop() || "";
+            id = entityUri.split('/').pop() || '';
         }
 
         // Label extraction with type checks
         const labelObj = item.label;
-        let lang = "default";
-        let labelValue = "";
+        let lang = 'default';
+        let labelValue = '';
 
-        if (labelObj && typeof labelObj === "object") {
+        if (labelObj && typeof labelObj === 'object') {
             // label is an object with possibly xml:lang and value
-            lang = labelObj["xml:lang"] || "default";
+            lang = labelObj['xml:lang'] || 'default';
             labelValue = labelObj.value || id;
-        } else if (typeof labelObj === "string") {
+        } else if (typeof labelObj === 'string') {
             // label is just a string, no language info
             labelValue = labelObj;
         } else {
@@ -630,7 +631,7 @@ export async function getActivityClassIds(
     // Normalize single language labels to 'default'
     result.forEach((entry) => {
         const langs = Object.keys(entry.labels);
-        if (langs.length === 1 && langs[0] !== "default") {
+        if (langs.length === 1 && langs[0] !== 'default') {
             entry.labels = { default: entry.labels[langs[0]] };
         }
     });
@@ -644,21 +645,21 @@ export async function getActivityClassIds(
 export async function getDiagramVocab(): Promise<Record<string, Record<string, object>>> {
     const query = await getSparqlTemplate(sparqlTemplate.getDiagramVocab);
     const data = await fetchSparql(query);
-    let vocab: Record<string, Record<string, object>> = {};
+    const vocab: Record<string, Record<string, object>> = {};
     data.map((item: StringAccessObject) => {
         // Adapt types to frontend terms
-        let correctedType: string = item.type.value.split("#").pop().toLowerCase();
-        if (correctedType in ["rule", "instrument"]) {
-            correctedType += "s";
-        } else if (correctedType === "divisionoflabour") {
-            correctedType = "division_of_labour";
+        let correctedType: string = item.type.value.split('#').pop().toLowerCase();
+        if (correctedType in ['rule', 'instrument']) {
+            correctedType += 's';
+        } else if (correctedType === 'divisionoflabour') {
+            correctedType = 'division_of_labour';
         }
         // Init type if it doesn't exist yet
         if (vocab[correctedType] === undefined) {
             vocab[correctedType] = {};
         }
         // Add the language to the type
-        vocab[correctedType][item.label["xml:lang"]] = {
+        vocab[correctedType][item.label['xml:lang']] = {
             label: item.label.value,
             descripton: item.description.value,
         };

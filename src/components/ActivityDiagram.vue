@@ -70,7 +70,7 @@ export default defineComponent({
         const activityData = ref<any>(null);
 
         // Checks if the Activity-Diagram has to be cleared when a Comment is sent by the editor
-        let hasToBeCleared = computed(() => activityPointStore.getActivePoints.length === 0);
+        const hasToBeCleared = computed(() => activityPointStore.getActivePoints.length === 0);
 
         // Changes Point-Colors based on current Theme
         const getPointColor = () => (mode.value === 'dark' ? 'lightgray' : 'white');
@@ -532,7 +532,7 @@ export default defineComponent({
 
             hoverPosition.value = { x: event.clientX, y: event.clientY };
 
-            let foundPoint: { label: string; tooltip: String; content: Array<Objective> } | null = null;
+            let foundPoint: { label: string; tooltip: string; content: Array<Objective> } | null = null;
 
             // Check if a point is hovered -> if yes, set foundPoint to the hovered point, set hoveredPosition for hoverPopUp
             points.value.forEach((point) => {

@@ -1,5 +1,5 @@
-import { sparqlTemplate, StringAccessObject } from "./structures";
-import { fetchSparql, getSparqlTemplate } from "./utils";
+import { sparqlTemplate, StringAccessObject } from './structures';
+import { fetchSparql, getSparqlTemplate } from './utils';
 
 /**
  * Type definition for the result of LLM parsing operations.
@@ -27,17 +27,17 @@ export async function llmSettingGeneration(
 ): Promise<LLMParsingResult> {
     // Generate TTL using the LLM Backend
     const llmRes = await fetch(
-        `${import.meta.env.VITE_LLM_URL}${!import.meta.env.VITE_LLM_PORT ? "" : ":" + import.meta.env.VITE_LLM_PORT}/api/feedback/settingGen`,
+        `${import.meta.env.VITE_LLM_URL}${!import.meta.env.VITE_LLM_PORT ? '' : ':' + import.meta.env.VITE_LLM_PORT}/api/feedback/settingGen`,
         {
-            method: "POST",
+            method: 'POST',
             headers: {
-                "Content-Type": "application/json",
-                Accept: "application/json",
+                'Content-Type': 'application/json',
+                Accept: 'application/json',
             },
             body: JSON.stringify({
                 description,
-                title: title ?? "",
-                defaultRole: defaultRole ?? "",
+                title: title ?? '',
+                defaultRole: defaultRole ?? '',
             }),
         },
     );
@@ -50,11 +50,11 @@ export async function llmSettingGeneration(
     }
     // Add TTL to Sparql Backend
     const rdfRes = await fetch(
-        `${import.meta.env.VITE_KNOWLEDGE_GRAPH_URL}${!import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT ? "" : ":" + import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT}/upload-ttl/`,
+        `${import.meta.env.VITE_KNOWLEDGE_GRAPH_URL}${!import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT ? '' : ':' + import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT}/upload-ttl/`,
         {
-            method: "POST",
+            method: 'POST',
             headers: {
-                "Content-Type": "application/json",
+                'Content-Type': 'application/json',
             },
             body: data.ttl,
         },
@@ -62,19 +62,19 @@ export async function llmSettingGeneration(
     if (!rdfRes.ok) {
         return {
             success: false,
-            message: "Failed to upload generated TTL",
+            message: 'Failed to upload generated TTL',
         };
     }
     const rdfData = await rdfRes.json();
-    if (rdfData.message === "success") {
+    if (rdfData.message === 'success') {
         return {
             success: true,
-            message: "Setting generated and added successfully",
+            message: 'Setting generated and added successfully',
         };
     }
     return {
         success: false,
-        message: "Uncaught error while generating and adding TTL",
+        message: 'Uncaught error while generating and adding TTL',
     };
 }
 
@@ -91,33 +91,33 @@ export async function llmSubmit(
     data: { question: string; answer: string }[],
 ): Promise<LLMParsingResult> {
     // Fetch description and entities from the graph
-    let description: StringAccessObject = {};
-    let entities: StringAccessObject[] = [];
+    const description: StringAccessObject = {};
+    const entities: StringAccessObject[] = [];
     let query = await getSparqlTemplate(sparqlTemplate.getLLMDetail);
-    const graphRes = await fetchSparql(query.replace("{{graph}}", graphID));
+    const graphRes = await fetchSparql(query.replace('{{graph}}', graphID));
     graphRes.forEach((triple: StringAccessObject) => {
         if (triple.description) {
-            description[triple.description["xml:lang"]] = triple.description.value;
-        } else if (triple.entity && triple.property.value.split("#").pop() === "type") {
-            const entity = entities.find((entity) => entity.id === triple.entity.value.split("#").pop());
+            description[triple.description['xml:lang']] = triple.description.value;
+        } else if (triple.entity && triple.property.value.split('#').pop() === 'type') {
+            const entity = entities.find((entity) => entity.id === triple.entity.value.split('#').pop());
             if (entity) {
-                entity.classes.push(triple.target.value.split("#").pop());
+                entity.classes.push(triple.target.value.split('#').pop());
             } else {
                 entities.push({
-                    id: triple.entity.value.split("#").pop(),
-                    classes: [triple.target.value.split("#").pop()],
+                    id: triple.entity.value.split('#').pop(),
+                    classes: [triple.target.value.split('#').pop()],
                 });
             }
         }
     });
     // Generate TTL using the LLM Backend
     const llmRes = await fetch(
-        `${import.meta.env.VITE_LLM_URL}${!import.meta.env.VITE_LLM_PORT ? "" : ":" + import.meta.env.VITE_LLM_PORT}/api/feedback/submit`,
+        `${import.meta.env.VITE_LLM_URL}${!import.meta.env.VITE_LLM_PORT ? '' : ':' + import.meta.env.VITE_LLM_PORT}/api/feedback/submit`,
         {
-            method: "POST",
+            method: 'POST',
             headers: {
-                "Content-Type": "application/json",
-                Accept: "application/json",
+                'Content-Type': 'application/json',
+                Accept: 'application/json',
             },
             body: JSON.stringify({
                 setting: description.en,
@@ -140,30 +140,30 @@ export async function llmSubmit(
     // Entities
     query = await getSparqlTemplate(sparqlTemplate.addLLMSubmission);
     const EntityMapObj = {
-        "{{graph}}": graphID,
-        "{{predicate}}": "llmSubmissionEntity",
-        "{{object}}": llmData.ttl.entities,
+        '{{graph}}': graphID,
+        '{{predicate}}': 'llmSubmissionEntity',
+        '{{object}}': llmData.ttl.entities,
     };
     query = query.replaceMultiple(EntityMapObj);
     const EntityRes = await fetchSparql(query, true);
     // Tensions
     query = await getSparqlTemplate(sparqlTemplate.addLLMSubmission);
     const TensionMapObj = {
-        "{{graph}}": graphID,
-        "{{predicate}}": "llmSubmissionTension",
-        "{{object}}": llmData.ttl.tensions,
+        '{{graph}}': graphID,
+        '{{predicate}}': 'llmSubmissionTension',
+        '{{object}}': llmData.ttl.tensions,
     };
     query = query.replaceMultiple(TensionMapObj);
     const TensionRes = await fetchSparql(query, true);
     if (!EntityRes.ok || !TensionRes.ok) {
         return {
             success: false,
-            message: "Failed to stash results",
+            message: 'Failed to stash results',
         };
     }
     return {
         success: true,
-        message: "Results stashed successfully",
+        message: 'Results stashed successfully',
     };
 }
 
@@ -193,27 +193,27 @@ export async function llmPool(graphID: string): Promise<LLMParsingResult> {
     // Step 1: Fetch submissions
     let stepStartTime = performance.now();
     let query = await getSparqlTemplate(sparqlTemplate.getLLMSubmissions);
-    logger.log("DEBUG: Fetching submissions with query template...");
-    const submissionRes = await fetchSparql(query.replace("{{graph}}", graphID));
+    logger.log('DEBUG: Fetching submissions with query template...');
+    const submissionRes = await fetchSparql(query.replace('{{graph}}', graphID));
 
     logger.log(
         `DEBUG: Fetched ${submissionRes.length} submission triples. (Duration: ${performance.now() - stepStartTime} ms)`,
     );
 
     if (submissionRes.length === 0) {
-        logger.error("DEBUG: No submissions found. Aborting.");
+        logger.error('DEBUG: No submissions found. Aborting.');
         logger.log(`DEBUG: llmPool finished (FAILURE) in ${performance.now() - totalStartTime} ms.`);
         return {
             success: false,
-            message: "Failed to fetch submissions",
+            message: 'Failed to fetch submissions',
         };
     }
     const entitySubmissions: string[] = [];
     const tensionSubmissions: string[] = [];
     submissionRes.forEach((triple: StringAccessObject) => {
-        if (triple.predicate.value.split("#").pop() === "llmSubmissionEntity") {
+        if (triple.predicate.value.split('#').pop() === 'llmSubmissionEntity') {
             entitySubmissions.push(triple.object.value);
-        } else if (triple.predicate.value.split("#").pop() === "llmSubmissionTension") {
+        } else if (triple.predicate.value.split('#').pop() === 'llmSubmissionTension') {
             tensionSubmissions.push(triple.object.value);
         }
     });
@@ -224,14 +224,14 @@ export async function llmPool(graphID: string): Promise<LLMParsingResult> {
 
     // Step 2: Pool submissions (LLM API)
     stepStartTime = performance.now(); // Reset timer for step 2
-    logger.log("DEBUG: Sending submissions to LLM pooling API...");
+    logger.log('DEBUG: Sending submissions to LLM pooling API...');
     const poolRes = await fetch(
-        `${import.meta.env.VITE_LLM_URL}${!import.meta.env.VITE_LLM_PORT ? "" : ":" + import.meta.env.VITE_LLM_PORT}/api/feedback/pool`,
+        `${import.meta.env.VITE_LLM_URL}${!import.meta.env.VITE_LLM_PORT ? '' : ':' + import.meta.env.VITE_LLM_PORT}/api/feedback/pool`,
         {
-            method: "POST",
+            method: 'POST',
             headers: {
-                "Content-Type": "application/json",
-                Accept: "application/json",
+                'Content-Type': 'application/json',
+                Accept: 'application/json',
             },
             body: JSON.stringify({
                 entities: entitySubmissions,
@@ -258,11 +258,11 @@ export async function llmPool(graphID: string): Promise<LLMParsingResult> {
     stepStartTime = performance.now(); // Reset timer for step 3
     logger.log(`DEBUG: Adding pooled TTL to knowledge graph: ${graphID}`);
     const backendRes = await fetch(
-        `${import.meta.env.VITE_KNOWLEDGE_GRAPH_URL}${!import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT ? "" : ":" + import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT}/parse-pool/`,
+        `${import.meta.env.VITE_KNOWLEDGE_GRAPH_URL}${!import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT ? '' : ':' + import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT}/parse-pool/`,
         {
-            method: "POST",
+            method: 'POST',
             headers: {
-                "Content-Type": "application/json",
+                'Content-Type': 'application/json',
             },
             body: JSON.stringify({
                 graph_id: graphID,
@@ -276,21 +276,21 @@ export async function llmPool(graphID: string): Promise<LLMParsingResult> {
     );
 
     if (!backendRes.ok) {
-        logger.error("DEBUG: Failed to upload pooled TTL to knowledge graph.");
+        logger.error('DEBUG: Failed to upload pooled TTL to knowledge graph.');
         logger.log(`DEBUG: llmPool finished (FAILURE) in ${performance.now() - totalStartTime} ms.`);
         return {
             success: false,
-            message: "Failed to upload pooled TTL",
+            message: 'Failed to upload pooled TTL',
         };
     }
 
     // Step 4: Delete temporary submissions
     stepStartTime = performance.now(); // Reset timer for step 4
-    logger.log("DEBUG: Deleting temporary submissions...");
+    logger.log('DEBUG: Deleting temporary submissions...');
     query = await getSparqlTemplate(sparqlTemplate.deleteTriples);
     const mapObj = {
-        "{{graph}}": graphID,
-        "{{subject}}": "llmSubmission",
+        '{{graph}}': graphID,
+        '{{subject}}': 'llmSubmission',
     };
     query = query.replaceMultiple(mapObj);
     const graphRes = await fetchSparql(query, true);
@@ -300,11 +300,11 @@ export async function llmPool(graphID: string): Promise<LLMParsingResult> {
     );
 
     if (!graphRes.ok) {
-        logger.error("DEBUG: Failed to delete temporary submissions.");
+        logger.error('DEBUG: Failed to delete temporary submissions.');
         logger.log(`DEBUG: llmPool finished (FAILURE) in ${performance.now() - totalStartTime} ms.`);
         return {
             success: false,
-            message: "Failed to delete temporary submissions",
+            message: 'Failed to delete temporary submissions',
         };
     }
 
@@ -314,6 +314,6 @@ export async function llmPool(graphID: string): Promise<LLMParsingResult> {
     );
     return {
         success: true,
-        message: "Pooling successful",
+        message: 'Pooling successful',
     };
 }
