@@ -9,7 +9,6 @@ export async function checkPassword(password: string): Promise<ACCOUNT_ROLE> {
 	try {
 		// Encrypt password
 		const hash = await bcrypt.hash(password, 10);
-		console.log(hash);
 		const res = await fetch(`${import.meta.env.VITE_LLM_URL}${!import.meta.env.VITE_LLM_PORT ? '' : ':' + import.meta.env.VITE_LLM_PORT}/api/login`, {
 			method: 'POST',
 			headers: {
