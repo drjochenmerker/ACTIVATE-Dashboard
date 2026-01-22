@@ -54,12 +54,6 @@ export enum sparqlTemplate {
 /**
  * Activity in the knowledge graph
  */
-// OLD
-// export type Activity = {
-//     graph: string;
-//     name: string;
-//     description?: string;
-// }
 export type Activity = {
   graph: string;
   name: Record<string, string>;
@@ -113,18 +107,6 @@ export interface Participant {
 /**
  * Conflict in the knowledge graph
  */
-// export type Conflict = {
-//     // title: string,
-//     title: Record<string, string>;
-//     participants: Participant[],
-//     author: string,
-//     status: conflictStatus,
-//     // description?: string,
-//     description: Record<string, string>,
-//     timestamp?: Date,
-//     replies?: Comment[],
-//     id?: string
-// }
 export type Conflict = {
     origin?: any; // TODO 
     isAI?: any;

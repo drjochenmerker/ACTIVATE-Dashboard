@@ -48,11 +48,6 @@ const filteredConflicts = computed(() => {
     });
   }
   return conflicts;
-  // old:
-  /*return conflictStore.getConflicts.filter(conflict => {
-    return Array.isArray(conflict.participants) &&
-      conflict.participants.some(participant => participant.type === props.pageData.id);
-  });*/
 });
 
 </script>

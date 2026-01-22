@@ -8,7 +8,6 @@ import { useConflictsStore } from '@/stores/conflictsStore';
 import { useSessionStore } from '@/stores/sessionStore';
 import { activateTerms, staticContent } from '@/data/contentData';
 import { buildLanguageString } from '@/lib/utils';
-// import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog'
 
 const props = defineProps({
   conflict: {
@@ -48,8 +47,6 @@ const props = defineProps({
  * - newReplyText: Stores temporary reply text for each conflict
  */
 const conflictDetail = ref<any>(null);
-// todo
-// const isShowOriginOpen = ref(false);
 const replyInputVisible = ref<Record<string, boolean>>({});
 const newReplyText = ref<Record<string, string>>({});
 
@@ -149,10 +146,7 @@ const handleEnterKey = (event: KeyboardEvent) => {
     saveReply(props.conflict.id);
   }
 };
-// TODO
-// const showOrigin = async () => {
-//   isShowOriginOpen.value = false;
-// }
+
 /**
  * Deletes a specific conflict from the conflict store and updates the conflict list.
  * 
@@ -177,54 +171,6 @@ const removeReply = (id: string) => {
     conflictDetail.value.replies = conflictDetail.value.replies.filter((reply: { id: string; }) => reply.id !== id);
   }
 };
-
-// const cleanContent = computed(() => {
-//   if (!props.content) return '';
-
-//   // Remove all <span class="ql-ui" contenteditable="false"></span> from the string
-//   return props.content.replace(/<span class="ql-ui" contenteditable="false"><\/span>/g, '');
-// });
-
-// const cleanAndWrapLists = computed(() => {
-//   if (!props.content) return '';
-
-//   // 1. Remove the empty spans first
-//   let html = props.content.replace(/<span class="ql-ui" contenteditable="false"><\/span>/g, '');
-
-//   // 2. Convert li with data-list="ordered" into proper <ol><li>...</li></ol>
-//   // and li with data-list="bullet" into <ul><li>...</li></ul>
-
-//   // We do this by splitting content on li and grouping
-//   // Here is a simple regex-based approach:
-
-//   // Match all <li data-list="ordered">...</li>
-//   const orderedListItems = html.match(/<li data-list="ordered">(.*?)<\/li>/gs) || [];
-//   if (orderedListItems.length) {
-//     // Replace all these lis with just <li>content</li>
-//     const orderedLis = orderedListItems.map(item =>
-//       item.replace(/<li data-list="ordered">/, '<li>').replace('</li>', '</li>')
-//     ).join('');
-//     // Replace all ordered lis in original with empty string
-//     html = html.replace(/<li data-list="ordered">(.*?)<\/li>/gs, '');
-
-//     // Insert the <ol> wrapper before the first ordered li was, append after last
-//     // (Simple approach: prepend ol + joined lis + close ol to start of html)
-//     html = `<ol>${orderedLis}</ol>` + html;
-//   }
-
-//   // Similarly for bullet
-//   const bulletListItems = html.match(/<li data-list="bullet">(.*?)<\/li>/gs) || [];
-//   if (bulletListItems.length) {
-//     const bulletLis = bulletListItems.map(item =>
-//       item.replace(/<li data-list="bullet">/, '<li>').replace('</li>', '</li>')
-//     ).join('');
-//     html = html.replace(/<li data-list="bullet">(.*?)<\/li>/gs, '');
-//     html = `<ul>${bulletLis}</ul>` + html;
-//   }
-
-//   return html;
-// });
-
 
 </script>
 
@@ -258,30 +204,6 @@ const removeReply = (id: string) => {
     <div class="note-card-content">
       <!-- Note title -->
       <div class="note-title" v-html="props.title"></div>
-      <!-- Note origin -->
-      <!-- <div class="note-origin">
-        <Dialog v-model:open="isShowOriginOpen">
-          <DialogTrigger as-child>
-            <Button>
-              {{ staticContent.noteCards.showOrigin[sessionStore.activeLanguage] }}
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>{{
-                staticContent.noteCards.origin[sessionStore.activeLanguage] }}
-              </DialogTitle>
-              <DialogDescription>
-                {{ props.origin }}
-              </DialogDescription>
-            </DialogHeader>
-            <DialogFooter>
-              <Button @click="() => showOrigin()">{{ staticContent.noteCards.cancel[sessionStore.activeLanguage]
-              }}</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      </div> -->
 
       <!-- Participants grouped by type -->
       <div class="note-participants">
@@ -495,21 +417,6 @@ const removeReply = (id: string) => {
 
 .note-content {
   font-weight: normal;
-  /**display: block !important;*/
-
 }
 
-/**
-
-.note-content ul,
-.note-content ol {
-  list-style-type: disc !important;
-  margin-left: 1.5em !important;
-  padding-left: 1.5em !important;
-  display: block !important;
-}
-
-.note-content li {
-  display: list-item !important;
-} */
 </style>

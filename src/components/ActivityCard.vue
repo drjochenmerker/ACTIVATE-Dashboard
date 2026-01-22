@@ -1,27 +1,20 @@
 <script lang="ts" setup>
 // TODO: implement the functionality for cloning activities, editing and maybe bring back the role selection from INPROGRESS FILE
-
-// functions
 import { onMounted, computed, ref, nextTick } from 'vue';
 import { useSessionStore } from '@/stores/sessionStore';
 import { getActivityClassIds } from '@/data/knowledge_graph/read_operations';
 import { useActivityStore } from '@/stores/activityStore';
 import { buildTreeStructByLang } from '@/data/knowledge_graph/utils';
 
-// functional components
 import { Activity, KnowledgeGraphActivityClass, NestedMultiLangObject } from '@/data/knowledge_graph/structures';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog'
 import QrcodeVue from 'qrcode.vue'
 
-// ui components
 import { Button } from '@/components/ui/button';
-// import Label from '@/components/ui/label/Label.vue';
-// import Checkbox from '@/components/ui/checkbox/Checkbox.vue';
-// import { Play, Loader2 } from 'lucide-vue-next';
+
 import { Play } from 'lucide-vue-next';
-// import { BookCopy, Play, Loader2 } from 'lucide-vue-next';
-// import { contentData, staticContent } from '@/data/contentData';
+
 import { staticContent } from '@/data/contentData';
 import { llmPool } from '@/data/knowledge_graph/llm_utils';
 import LoadingOverlay from '@/components/LoadingOverlay.vue';
@@ -43,19 +36,11 @@ const feedbackUrl = computed(() => {
 
 //  state management for available roles
 sessionStore.availableRoles = {} as NestedMultiLangObject;
-// let newTitle = '';
-// let newDescription = '';
-
-// const editTitle = ref('');
-// const editDescription = ref('');
 
 // Refs for dialog interaction
 const isDeleteDialogOpen = ref(false);
 // todo
-// const isCloneDialogOpen = ref(false);
-// const isEditDialogOpen = ref(false);
-// const cloneTitleError = ref(false);
-// const editTitleError = ref(false);
+
 const showPoolingDialog = ref(false)
 const nothingToPool = ref(false);
 const loading = ref(false);
@@ -135,33 +120,6 @@ const copyUrlToClipboard = async () => {
     }
 };
 
-// clone activity functionality
-// TODO
-//      step 1:
-// const openCloneDialog = () => {
-//     newTitle = props.activity.name;
-//     newDescription = props.activity.description;
-//     isCloneDialogOpen.value = true;
-// }
-// //      step 2
-// const cloneThisActivity = async (newTitle: string, newDescription: string) => {
-//     if (!newTitle.trim()) {
-//         cloneTitleError.value = true;
-//         return;
-//     }
-//     cloneTitleError.value = false;
-
-//     const clonedActivity = {
-//         graph: props.activity.graph,
-//         name: { ...props.activity.name, [sessionStore.activeLanguage]: newTitle },
-//         description: { ...props.activity.description, [sessionStore.activeLanguage]: newDescription || props.activity.description[sessionStore.activeLanguage] },
-//     };
-//     activityStore.cloneThisActivity(clonedActivity);
-//     activityStore.refreshActivityList();
-
-//     isCloneDialogOpen.value = false;
-// }
-
 //delete activity function
 const deleteThisActivity = async () => {
     activityStore.removeActivity(graph);
@@ -170,30 +128,6 @@ const deleteThisActivity = async () => {
     isDeleteDialogOpen.value = false;
 }
 
-// first step
-// const openEditDialog = () => {
-//     editTitle.value = props.activity.name[sessionStore.activeLanguage] || ''
-//     editDescription.value = props.activity.description[sessionStore.activeLanguage] || ''
-//     isEditDialogOpen.value = true
-// }
-
-//      second step
-// const updateActivity = async (newTitle: string, newDescription: string) => {
-//     if (!newTitle.trim()) {
-//         editTitleError.value = true;
-//         return;
-//     }
-//     editTitleError.value = false;
-
-//     const updatedActivity = {
-//         graph: props.activity.graph,
-//         name: { ...props.activity.name, [sessionStore.activeLanguage]: newTitle },
-//         description: { ...props.activity.description, [sessionStore.activeLanguage]: newDescription || props.activity.description[sessionStore.activeLanguage] },
-//     };
-//     activityStore.editActivity(updatedActivity);
-//     await activityStore.refreshActivityList();
-//     isEditDialogOpen.value = false;
-// }
 
 /**
  * Retrieves available roles for the current activity graph.
@@ -278,84 +212,6 @@ const showUrl = ref(false)
                             </Dialog>
                         </div>
 
-                        <!-- Edit Button -->
-                        <!-- TODO - CURRENTLY DISABLED BECAUSE OF NOT IMPLEMENTED FUNCTIONALITY -->
-                        <!-- <div>
-                            <Dialog v-model:open="isEditDialogOpen">
-                                <DialogTrigger as-child>
-                                    <Button variant="secondary" size="icon" @click="openEditDialog">
-                                        <span class="material-symbols-outlined">edit</span>
-                                    </Button>
-                                </DialogTrigger>
-                                <DialogContent>
-                                    <DialogHeader>
-                                        <DialogTitle>{{ staticContent.startPage.editSetting[sessionStore.activeLanguage]
-                                            }}</DialogTitle>
-                                        <DialogDescription>
-                                            {{ staticContent.startPage.editTitle[sessionStore.activeLanguage] }}:
-                                        </DialogDescription>
-                                        <input v-model="editTitle" :class="[
-                                            'w-full border rounded p-2 my-2 dark:bg-gray-900',
-                                            editTitleError ? 'border-red-500' : 'border-gray-300'
-                                        ]"
-                                            :placeholder="staticContent.startPage.editTitle[sessionStore.activeLanguage]" />
-                                        <p v-if="editTitleError" class="text-red-500 text-sm mb-2">
-                                            {{ staticContent.startPage.titleRequired[sessionStore.activeLanguage] }}.
-                                        </p>
-
-                                        <DialogDescription>{{
-                                            staticContent.startPage.newTitle[sessionStore.activeLanguage] }}
-                                        </DialogDescription>
-                                        <textarea v-model="editDescription"
-                                            class="w-full border rounded p-2 my-2  dark:bg-gray-900"
-                                            :placeholder="staticContent.startPage.editDescription[sessionStore.activeLanguage]" />
-                                    </DialogHeader>
-                                    <DialogFooter>
-                                        <Button @click="() => updateActivity(editTitle, editDescription)">{{
-                                            staticContent.startPage.saveChanges[sessionStore.activeLanguage] }}</Button>
-                                    </DialogFooter>
-                                </DialogContent>
-                            </Dialog>
-                        </div> -->
-
-
-                        <!-- Clone Button -->
-                        <!-- TODO - CURRENTLY DISABLED BECAUSE OF NOT IMPLEMENTED FUNCTIONALITY -->
-                        <!-- <div>
-                            <Dialog v-model:open="isCloneDialogOpen">
-                                <DialogTrigger as-child>
-                                    <Button variant="secondary" size="icon" @click="openCloneDialog">
-                                        <BookCopy class="w-4 h-4" />
-                                    </Button>
-
-                                </DialogTrigger>
-                                <DialogContent>
-                                    <DialogHeader>
-                                        <DialogTitle>{{
-                                            staticContent.startPage.cloneActivity[sessionStore.activeLanguage] }}
-                                        </DialogTitle>
-                                        <input v-model="newTitle" :class="[
-                                            'w-full border rounded p-2 my-2  dark:bg-gray-900',
-                                            cloneTitleError ? 'border-red-500' : 'border-gray-300'
-                                        ]"
-                                            :placeholder="staticContent.placeholders.newTitle[sessionStore.activeLanguage]" />
-                                        <p v-if="cloneTitleError" class="text-red-500 text-sm mb-2">Title is required.
-                                        </p>
-                                        <DialogDescription>{{
-                                            staticContent.startPage.newDescription[sessionStore.activeLanguage] }}
-                                        </DialogDescription>
-                                        <textarea v-model="newDescription"
-                                            class="w-full border rounded p-2 my-2  dark:bg-gray-900"
-                                            :placeholder="staticContent.placeholders.newDescriptionOptional[sessionStore.activeLanguage]" />
-                                    </DialogHeader>
-                                    <DialogFooter>
-                                        <Button @click="cloneThisActivity(newTitle, newDescription)">{{
-                                            staticContent.terms.clone[sessionStore.activeLanguage] }}</Button>
-                                    </DialogFooter>
-                                </DialogContent>
-                            </Dialog>
-                        </div> -->
-
                         <!-- Feedback QR Code Button -->
                         <div>
                             <Dialog v-model:open="showQrDialog">
@@ -377,17 +233,6 @@ const showUrl = ref(false)
                                         <qrcode-vue :value="feedbackUrl" :size="200" />
                                     </div>
 
-                                    <!-- Button to show/copy URL -->
-                                    <!-- <div class="flex flex-col items-center gap-2">
-                                        <Button variant="outline" @click="showUrl = !showUrl">
-                                            {{ showUrl ? staticContent.startPage.hideQr[sessionStore.activeLanguage] :
-                                                staticContent.startPage.showQr[sessionStore.activeLanguage] }}
-                                        </Button>
-
-                                        <div v-if="showUrl" class="break-all text-center p-2 border rounded bg-gray-50">
-                                            {{ feedbackUrl }}
-                                        </div>
-                                    </div> -->
                                     <div class="flex flex-col items-center gap-2">
                                         <Button variant="outline" @click="showUrl = !showUrl">
                                             {{ showUrl ? staticContent.startPage.hideQr[sessionStore.activeLanguage] :
@@ -439,16 +284,6 @@ const showUrl = ref(false)
                                         </SelectContent>
                                     </Select>
 
-                                    <!-- Instructor mode toggle -->
-                                    <!-- TODO tmp maybe bring back -->
-                                    <!-- <div class="flex items-center space-x-2 mt-4">
-                                        <Checkbox id="cbInstructorMode" :checked="sessionStore.instructorMode"
-                                            @update:checked="sessionStore.instructorMode = $event" />
-                                        <Label for="cbInstructorMode" class="text-sm font-normal">
-                                            {{ staticContent.startPage.instructorMode[sessionStore.activeLanguage] }}
-                                        </Label>
-                                    </div> -->
-
                                     <!-- Pooling Button Dialog -->
                                     <DialogFooter class="flex justify-between">
                                         <Dialog v-model:open="showPoolingDialog">
@@ -492,9 +327,7 @@ const showUrl = ref(false)
                                             </DialogContent>
                                         </Dialog>
 
-                                        <!-- Start Session Button -->
-                                        <!-- TODO tmp maybe bring back
-                                        <Button type="submit" :disabled="sessionStartAllowed()" -->
+                                   
                                         <Button type="submit" @click="() => handleStartSession()">
                                             <template v-if="sessionStartAllowed()">
                                                 {{

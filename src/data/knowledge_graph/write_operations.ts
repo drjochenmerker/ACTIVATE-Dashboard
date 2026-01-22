@@ -257,19 +257,6 @@ export async function addEntity(graph: string, entityLabel: string, activityClas
  */
 // export async function addActivity(activityName: string, activityDescription: string): Promise<updateResponse> {
 export async function addActivity(activityName: string,): Promise<updateResponse> {
-    // let query = await getSparqlTemplate(sparqlTemplate.addActivity);
-    // const graphID = EscapeSparqlStringLiteral(CapitalizeFirstLetter(activityName.trim().replaceAll(" ", "_")));
-    // const activityID = EscapeSparqlStringLiteral(CapitalizeFirstLetter(activityName.trim().replaceAll(" ", "")));
-    // activityName = EscapeSparqlStringLiteral(CapitalizeFirstLetter(activityName.trim()));
-    // const mapObj = {
-    //     "{{graphName}}": graphID,
-    //     "{{identifier}}": activityID,
-    //     "{{descriptions}}": `"${EscapeSparqlStringLiteral(activityDescription)}"`,
-    //     "{{name}}": activityName
-    // }
-    // query = query.replaceMultiple(mapObj);
-    // const data = await fetchSparql(query, true);
-    // return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: graphID, action: RDFOperation.insert } as updateResponse;
     // TODO handle adding of activities
     return { code: 501, status: "Not Implemented", modified: activityName, action: RDFOperation.insert } as updateResponse;
 }
@@ -293,16 +280,6 @@ export async function deleteActivity(graph: string): Promise<updateResponse> {
  * @returns updateResponse Object
  */
 export async function updateActivity(activity: Activity): Promise<updateResponse> {
-    // let query = await getSparqlTemplate(sparqlTemplate.updateActivity);
-    // const mapObj = {
-    //     "{{graph}}": activity.graph,
-    //     // "{{activityName}}": EscapeSparqlStringLiteral(getStringFromRecord(activity.name)),
-    //     "{{activityName}}": EscapeSparqlStringLiteral(activity.name),
-    //     "{{activityDescription}}": activity.description ? EscapeSparqlStringLiteral(getStringFromRecord(activity.description)) : "No description given",
-    // }
-    // query = query.replaceMultiple(mapObj);
-    // const data = await fetchSparql(query, true);
-    // return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: activity.graph, action: RDFOperation.insert } as updateResponse;
     // TODO handle updating of activities
     return { code: 501, status: "Not Implemented", modified: activity.graph} as updateResponse;
 }
@@ -314,26 +291,6 @@ export async function updateActivity(activity: Activity): Promise<updateResponse
  */
 export async function cloneActivity(activity: Activity): Promise<updateResponse> {
     // Handle missing props
-    // // todo
-    // if (activity.name.trim() == "") activity.name = activity.graph + "_copy";
-    // if (activity.description?.trim() == "") activity.description = "No description given";
-    // // Clone activity
-    // let query = await getSparqlTemplate(sparqlTemplate.cloneActivity);
-    // const cloneHash = hash(activity)
-    // const newGraphID = EscapeSparqlStringLiteral(CapitalizeFirstLetter(activity.name.trim().replaceAll(" ", "_") + "_" + cloneHash))
-    // const mapObj = {
-    //     "{{graph}}": activity.graph,
-    //     "{{newName}}": newGraphID
-    // }
-    // query = query.replaceMultiple(mapObj);
-    // const data = await fetchSparql(query, true);
-    // // Update name and description
-    // await updateActivity({
-    //     graph: newGraphID,
-    //     name: activity.name,
-    //     description: activity.description
-    // });
-    // return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: activity.graph, action: RDFOperation.insert } as updateResponse;
     // TODO handle cloning of activities
     return { code: 501, status: "Not Implemented", modified: activity.graph, action: RDFOperation.insert } as updateResponse;
 }

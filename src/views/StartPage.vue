@@ -1,11 +1,9 @@
 <script setup lang="ts">
-// Import necessary dependencies and components
 import { useColorMode } from '@vueuse/core';
 import { getActivityClassIds } from '@/data/knowledge_graph/read_operations';
 import { ref, onMounted, watch, computed } from 'vue';
 import { useSessionStore } from '@/stores/sessionStore';
 import { KnowledgeGraphActivityClass } from '@/data/knowledge_graph/structures';
-// UI components imports...
 import {
   Card,
   CardHeader,
@@ -21,7 +19,6 @@ import {
   DialogDescription,
   DialogTrigger,
 } from '@/components/ui/dialog'
-// import { addActivity, addEntity } from '@/data/knowledge_graph/write_operations';
 import { useActivityStore } from '@/stores/activityStore';
 import { buildTreeStructByLang } from '@/data/knowledge_graph/utils';
 import { staticContent } from '@/data/contentData';
@@ -144,10 +141,6 @@ const addNewActivity = async () => {
 
               <Button @click="addNewActivity">{{ staticContent.terms.done[sessionStore.activeLanguage] }}</Button>
 
-              <!-- <div v-if="loading">
-                <Loader2 class="animate-spin h-5 w-5 ml-2 inline-block" />
-                {{ staticContent.placeholders.loading[sessionStore.activeLanguage] }}
-              </div> -->
             </DialogHeader>
             <LoadingOverlay :visible="loading"
               :message="staticContent.placeholders.loading[sessionStore.activeLanguage]"

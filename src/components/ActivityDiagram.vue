@@ -52,14 +52,6 @@ export default defineComponent({
         const conflictStore = useConflictsStore();
         const sessionStore = useSessionStore();
 
-        // labels for the points
-        // const communityLabel = computed(() => activateTerms[sessionStore.activeLanguage].community);
-        // const subjectLabel = computed(() => activateTerms[sessionStore.activeLanguage].subject);
-        // const objectLabel = computed(() => activateTerms[sessionStore.activeLanguage].object);
-        // const instrumentsLabel = computed(() => activateTerms[sessionStore.activeLanguage].instruments);
-        // const rulesLabel = computed(() => activateTerms[sessionStore.activeLanguage].rules);
-        // const divisionOfLabourLabel = computed(() => activateTerms[sessionStore.activeLanguage].division_of_labour);
-
         // Data of the hovered point
         const hoveredPointData = ref<null | {
             label: string;
@@ -94,14 +86,6 @@ export default defineComponent({
          * @property {boolean} active: Specifies if the point is active at the moment.
          * @property {boolean} highlighted: Specifies if the point is highlighted at the moment.
          */
-        // let points = ref([
-        //     { x: triangleWidth / 2, y: triangleHeight / 8, id: "instruments", label: instrumentsLabel, tooltip: staticContent.hoverText.instruments[sessionStore.activeLanguage], color: getPointColor(), active: false, highlighted: false }, // Ecke oben
-        //     { x: triangleWidth / 8, y: (triangleHeight / 8) * 7, id: "rules", label: rulesLabel, tooltip: staticContent.hoverText.rules[sessionStore.activeLanguage], color: getPointColor(), active: false, highlighted: false }, // Ecke Links Unten
-        //     { x: (triangleWidth / 8) * 7, y: (triangleHeight / 8) * 7, id: "division_of_labour", label: divisionOfLabourLabel, tooltip: staticContent.hoverText.division_of_labour[sessionStore.activeLanguage], color: getPointColor(), active: false, highlighted: false }, // Ecke Rechts Unten
-        //     { x: (triangleWidth / 16) * 5, y: triangleHeight / 2, id: "subject", label: subjectLabel, tooltip: staticContent.hoverText.subject[sessionStore.activeLanguage], color: getPointColor(), active: false, highlighted: false }, // Links Mitte
-        //     { x: (triangleWidth / 16) * 11, y: triangleHeight / 2, id: "object", label: objectLabel, tooltip: staticContent.hoverText.object[sessionStore.activeLanguage], color: getPointColor(), active: false, highlighted: false }, // Rechts Mitte
-        //     { x: triangleWidth / 2, y: (triangleHeight / 8) * 7, id: "community", label: communityLabel, tooltip: staticContent.hoverText.community[sessionStore.activeLanguage], color: getPointColor(), active: false, highlighted: false }, // Unten Mitte
-        // ]);
 
         const points = computed(() => [
             {
@@ -379,22 +363,6 @@ export default defineComponent({
             // Reset canvas
             ctx.clearRect(0, 0, triangleWidth, triangleHeight);
 
-            // If traingle is hovered, draw it with a slightly blue fill
-            // TEMPORARILY disabled because of confusion
-            // TRIANGLE IS STILL SELECTABLE but not hovered
-            /**if (hoveredTriangle.value) {
-                const [p1, p2, p3] = hoveredTriangle.value.pointIds.map((id) => points.value.find((p) => p.id === id));
-                if (p1 && p2 && p3) {
-                    ctx.beginPath();
-                    ctx.moveTo(p1.x, p1.y);
-                    ctx.lineTo(p2.x, p2.y);
-                    ctx.lineTo(p3.x, p3.y);
-                    ctx.closePath();
-                    ctx.fillStyle = "rgba(0, 191, 255, 0.5)";
-                    ctx.stroke();
-                    ctx.fill();
-                }
-            }*/
 
             // Draw blue triangle between 3 points if 3 points are currently selected
             if (selectedPoints.value.length === 3) {
@@ -611,25 +579,6 @@ export default defineComponent({
         watch(mode, () => {
             updateColors();
         });
-
-        // Watcher for the sessionStore to update diagram when the activityData changes
-        // watch(() => sessionStore.outdated, async () => {
-        //     if (sessionStore.outdated) {
-        //         points = ref([
-        //             { x: triangleWidth / 2, y: triangleHeight / 8, id: "instruments", label: activateTerms[sessionStore.activeLanguage].instruments, tooltip: staticContent.hoverText.instruments[sessionStore.activeLanguage], color: getPointColor(), active: false, highlighted: false }, // Ecke oben
-        //             { x: triangleWidth / 8, y: (triangleHeight / 8) * 7, id: "rules", label: activateTerms[sessionStore.activeLanguage].rules, tooltip: staticContent.hoverText.rules[sessionStore.activeLanguage], color: getPointColor(), active: false, highlighted: false }, // Ecke Links Unten
-        //             { x: (triangleWidth / 8) * 7, y: (triangleHeight / 8) * 7, id: "division_of_labour", label: activateTerms[sessionStore.activeLanguage].division_of_labour, tooltip: staticContent.hoverText.division_of_labour[sessionStore.activeLanguage], color: getPointColor(), active: false, highlighted: false }, // Ecke Rechts Unten
-        //             { x: (triangleWidth / 16) * 5, y: triangleHeight / 2, id: "subject", label: activateTerms[sessionStore.activeLanguage].subject, tooltip: staticContent.hoverText.subject[sessionStore.activeLanguage], color: getPointColor(), active: false, highlighted: false }, // Links Mitte
-        //             { x: (triangleWidth / 16) * 11, y: triangleHeight / 2, id: "object", label: activateTerms[sessionStore.activeLanguage].object, tooltip: staticContent.hoverText.object[sessionStore.activeLanguage], color: getPointColor(), active: false, highlighted: false }, // Rechts Mitte
-        //             { x: triangleWidth / 2, y: (triangleHeight / 8) * 7, id: "community", label: activateTerms[sessionStore.activeLanguage].community, tooltip: staticContent.hoverText.community[sessionStore.activeLanguage], color: getPointColor(), active: false, highlighted: false }, // Unten Mitte
-        //         ]);
-        //         activityData.value = await getActivityDetail(sessionStore.sessionActivity as Activity)
-        //         await conflictStore.refreshConflictList();
-        //         conflictData = conflictStore.getConflicts;
-        //         sessionStore.outdated = false;
-        //         draw();
-        //     }
-        // });
 
         // Watcher for the hasToBeCleared state
         watch(hasToBeCleared, () => {
