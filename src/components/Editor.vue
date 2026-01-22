@@ -10,12 +10,7 @@ import 'vue-toastification/dist/index.css';
 import { useActivityPointsStore } from '@/stores/activityPointsStore';
 import { useConflictsStore } from '@/stores/conflictsStore';
 import { conflictStatus } from '@/data/knowledge_graph/structures';
-import {
-    getActivities,
-    getActivityDetail,
-    getConflictDetail,
-    getConflictIds,
-} from '@/data/knowledge_graph/read_operations';
+import { getActivityDetail, getConflictDetail } from '@/data/knowledge_graph/read_operations';
 import { addComment, addConflict } from '@/data/knowledge_graph/write_operations';
 import { useSessionStore } from '@/stores/sessionStore';
 import { staticContent } from '@/data/contentData';
@@ -127,7 +122,7 @@ export default {
             }
         },
         'sessionStore.outdated': {
-            handler: async function (newVal) {
+            handler: async function (_newVal) {
                 if (useSessionStore().outdated) {
                     await this.fetchActivityDetails();
                     useSessionStore().outdated = false;
@@ -222,7 +217,6 @@ export default {
                 const titleAndContent = title + '|' + content; // '|', the safest separator for now
 
                 try {
-                    const graph = useSessionStore().sessionActivity.graph;
                     // 'root' is the root node of the graph for misc comments as they are saved
                     // just like replies without a title and status
                     const response = await addComment('root', titleAndContent);

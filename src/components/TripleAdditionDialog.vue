@@ -23,7 +23,7 @@ import { staticContent } from '@/data/contentData';
  * @property isOpen - Determines if the modal is open (controlled from parent)
  */
 defineProps<{
-    isOpen: Boolean;
+    isOpen: boolean;
 }>();
 
 // Global state

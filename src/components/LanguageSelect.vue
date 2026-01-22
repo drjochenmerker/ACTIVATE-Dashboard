@@ -24,7 +24,7 @@ function handleLanguageChange() {
                 <SelectValue />
             </SelectTrigger>
             <SelectContent>
-                <SelectItem v-for="lang in Object.entries(LanguageCode)" :value="lang[1]">
+                <SelectItem v-for="lang in Object.entries(LanguageCode)" :key="lang[1]" :value="lang[1]">
                     {{ lang[0] }}
                 </SelectItem>
             </SelectContent>

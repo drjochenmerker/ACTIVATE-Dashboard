@@ -12,7 +12,7 @@ import { activateTerms, staticContent } from '@/data/contentData';
  * @property isOpen - Indicates if the modal is open (passed from parent)
  */
 defineProps<{
-    isOpen: Boolean;
+    isOpen: boolean;
 }>();
 
 // Current color mode (Light- or Dark-Mode)

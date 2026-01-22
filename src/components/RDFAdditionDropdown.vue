@@ -2,7 +2,6 @@
 import { activateTerms, staticContent } from '@/data/contentData';
 import { buildLanguageString } from '@/lib/utils';
 import { useSessionStore } from '@/stores/sessionStore';
-import { Delete, DeleteIcon } from 'lucide-vue-next';
 
 export default {
     name: 'Dropdown',

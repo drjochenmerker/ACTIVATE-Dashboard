@@ -21,7 +21,7 @@ import { fetchSparql, findNestedComment, getSparqlTemplate, camelToSnakeCase } f
  */
 
 export async function getActivities(): Promise<Activity[]> {
-    let query = await getSparqlTemplate(sparqlTemplate.getActivities);
+    const query = await getSparqlTemplate(sparqlTemplate.getActivities);
     const data = await fetchSparql(query);
 
     // Group activities by graph ID
@@ -297,8 +297,7 @@ export async function getConflictDetail(graph: string, conflictId: string): Prom
                 case 'HasComment':
                     rootReplyIds.push(item.conflict_o.value.split('#').pop());
                     break;
-                case 'Origin': // break; // console.log("Conflict Origin:", parsedConflict.origin); // parsedConflict.origin = item.conflict_o.value.split("#").pop(); // tmp only showing origins answer
-                {
+                case 'Origin': { // break; // console.log("Conflict Origin:", parsedConflict.origin); // parsedConflict.origin = item.conflict_o.value.split("#").pop(); // tmp only showing origins answer
                     const valueStr = item.conflict_o.value.split('#').pop();
                     try {
                         const obj = JSON.parse(valueStr);

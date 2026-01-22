@@ -6,7 +6,7 @@ import type {
     RDFTriple,
     sparqlTemplate,
     StringAccessObject,
-} from "./structures";
+} from './structures';
 
 /**
  * Internal function that allows to load a SPARQL query template from the filesystem
@@ -14,11 +14,11 @@ import type {
  * @returns A Query template as a string
  */
 export async function getSparqlTemplate(template: sparqlTemplate): Promise<string> {
-    const queries = import.meta.glob("./queries/*.sparql", { query: "?raw", import: "default" });
+    const queries = import.meta.glob('./queries/*.sparql', { query: '?raw', import: 'default' });
     const filepath = `./queries/${template}.sparql`;
     try {
         return (await queries[filepath]()) as string;
-    } catch (e) {
+    } catch (_e) {
         throw new Error(`Query Template ${template} not found`);
     }
 }
@@ -31,13 +31,13 @@ export async function getSparqlTemplate(template: sparqlTemplate): Promise<strin
  */
 export async function fetchSparql(query: string, update: boolean = false): Promise<StringAccessObject> {
     const res = await fetch(
-        `${import.meta.env.VITE_KNOWLEDGE_GRAPH_URL}${!import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT ? "" : ":" + import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT}`,
+        `${import.meta.env.VITE_KNOWLEDGE_GRAPH_URL}${!import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT ? '' : ':' + import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT}`,
         {
-            method: "POST",
+            method: 'POST',
 
             headers: {
-                "Content-Type": update ? "application/x-www-form-urlencoded" : "application/sparql-query",
-                Accept: "application/json",
+                'Content-Type': update ? 'application/x-www-form-urlencoded' : 'application/sparql-query',
+                Accept: 'application/json',
             },
             body: update
                 ? new URLSearchParams({
@@ -93,7 +93,7 @@ function findNestedCommentR(commentId: string, comment: Comment): Comment | unde
  * @returns output string
  */
 export function camelToSnakeCase(str: string) {
-    return str.replace(/([a-z])([A-Z])/g, "$1_$2").toLowerCase();
+    return str.replace(/([a-z])([A-Z])/g, '$1_$2').toLowerCase();
 }
 
 /**
@@ -105,14 +105,14 @@ export function RDFSyntaxCheck(input: RDFTriple | string): boolean {
     const umlautRegex = /^[A-Za-z0-9äöüßÄÖÜ]+$/;
     const camelCaseRegex = /^[A-Za-zäöüßÄÖÜ]+(?:[A-Z0-9][a-z0-9äöüß]*)*$/;
 
-    if (typeof input == "string") {
+    if (typeof input == 'string') {
         if (!umlautRegex.test(input)) return false;
-        if (input.includes(" ")) return false;
+        if (input.includes(' ')) return false;
         return camelCaseRegex.test(input);
     } else {
         for (const [_, value] of Object.entries(input)) {
             if (!umlautRegex.test(value)) return false;
-            if (value.includes(" ")) return false;
+            if (value.includes(' ')) return false;
             if (!camelCaseRegex.test(value)) return false;
         }
     }
@@ -125,11 +125,11 @@ export function CapitalizeFirstLetter(input: string): string {
 
 export function EscapeSparqlStringLiteral(input: string): string {
     return input
-        .replace(/\\/g, "\\\\")
+        .replace(/\\/g, '\\\\')
         .replace(/"/g, '\\"')
-        .replace(/\n/g, "\\n")
-        .replace(/\r/g, "\\r")
-        .replace(/\t/g, "\\t");
+        .replace(/\n/g, '\\n')
+        .replace(/\r/g, '\\r')
+        .replace(/\t/g, '\\t');
 }
 
 function pushNestedValue(root: NestedMultiLangObject, path: string[], value: MultiLangObject) {
@@ -152,17 +152,17 @@ function pushNestedValue(root: NestedMultiLangObject, path: string[], value: Mul
 }
 
 export function buildTreeStructByLang(input: MultiLangObject[], lang: string): NestedMultiLangObject {
-    const result: NestedMultiLangObject = { level: "root", values: [], next: [] };
+    const result: NestedMultiLangObject = { level: 'root', values: [], next: [] };
 
     for (const item of input) {
-        const label = item.labels[lang] || item.labels["default"] || Object.values(item.labels)[0];
+        const label = item.labels[lang] || item.labels['default'] || Object.values(item.labels)[0];
 
-        const nestingPath = label.split("/"); // e.g., "Doctor" from "Medical/Doctor"
+        const nestingPath = label.split('/'); // e.g., "Doctor" from "Medical/Doctor"
 
         const currentObj: MultiLangObject = {
             id: item.id,
             labels: item.labels,
-            value: "",
+            value: '',
         };
 
         pushNestedValue(result, nestingPath, currentObj);
