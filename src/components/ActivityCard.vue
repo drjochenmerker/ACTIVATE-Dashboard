@@ -395,8 +395,8 @@ const showUrl = ref(false)
                                         </Button>
 
                                         <div v-if="showUrl"
-                                            class="w-full max-w-md break-words text-center p-4 border rounded bg-gray-50 flex flex-col items-center gap-3">
-                                            <div id="feedback-url-text">{{ feedbackUrl }}</div>
+                                            class="w-full max-w-md break-words text-center p-4 flex flex-col items-center gap-3 border rounded bg-gray-50 p-4  dark:bg-gray-900 border-gray-300">
+                                            <div id="feedback-url-text" class="max-w-full">{{ feedbackUrl }}</div>
                                             <Button variant="outline" @click="copyUrlToClipboard">
                                                 {{ copied ?
                                                     staticContent.startPage.copiedLink[sessionStore.activeLanguage] :
