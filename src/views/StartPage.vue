@@ -113,7 +113,6 @@ const addNewActivity = async () => {
           </div>
         </CardTitle>
       </CardHeader>
-      <p class="text-center text-sm text-gray-500">Current role: {{ sessionStore.instructorMode ? 'Instructor' : 'Student' }}</p>
       <!-- "add button" in the middle -->
       <div class="flex justify-center my-6">
         <Dialog v-model:open="dialogOpen">

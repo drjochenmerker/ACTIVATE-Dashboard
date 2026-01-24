@@ -29,7 +29,7 @@ const logout = () => {
                 </Button>
             </TooltipTrigger>
             <TooltipContent>
-                <p>{{staticContent.terms.endSession[sessionStore.activeLanguage]}}</p>
+                <p>{{ staticContent.terms.endSession[sessionStore.activeLanguage] }}</p>
             </TooltipContent>
         </Tooltip>
     </TooltipProvider>
