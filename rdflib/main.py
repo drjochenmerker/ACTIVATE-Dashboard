@@ -10,12 +10,12 @@ import uvicorn
 
 from lti import router as lti_router
 
-DATA_DIR = "./data"
+DATA_DIR = "./data/backup"
 FILES = [file for file in os.listdir(DATA_DIR) if file.endswith(".ttl")]
 
 # Create dataset with Namespaces and dynamically define graphs
 ds = Dataset()
-graphs = {file: ds.graph(URIRef(f"http://activate.htwk-leipzig.de/graph/{file[:-4].replace(" ", "_")}")) for file in FILES}
+graphs = {file: ds.graph(URIRef(f"http://activate.htwk-leipzig.de/graph/{file[:-4].replace(' ', '_')}")) for file in FILES}
 ttl_filepath_dict = {file[:-4].replace(" ", "_"): os.path.join(DATA_DIR, file) for file in FILES}
 
 # Load TTL files into graphs
