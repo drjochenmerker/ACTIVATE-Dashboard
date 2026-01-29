@@ -31,7 +31,7 @@ export const useSessionStore = defineStore('session', () => {
   const sessionActivity = ref<Activity | undefined>(undefined);
   const sessionRole = ref<string | undefined>(undefined);
   const availableRoles = ref<NestedMultiLangObject>({} as NestedMultiLangObject);
-  const instructorMode = ref(true);
+  const instructorMode = ref(false);
   const instructorView = ref(false);
   const isSessionActive = ref(false);
   const activeLanguage = ref<LanguageCode>(LanguageCode.Deutsch); // todo: default language
