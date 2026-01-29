@@ -9,7 +9,7 @@ import { useSessionStore } from '@/stores/sessionStore';
  * Is used to show the possible explicit participants of an activity
  */
 export default {
-    name: 'Dropdown',
+    name: 'CustomDropdown',
     props: {
         label: {
             type: String,

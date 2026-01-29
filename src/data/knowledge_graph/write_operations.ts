@@ -1,11 +1,11 @@
-import hash from "object-hash";
+import hash from 'object-hash';
 import {
     CapitalizeFirstLetter,
     fetchSparql,
     getSparqlTemplate,
     RDFSyntaxCheck,
     EscapeSparqlStringLiteral,
-} from "./utils";
+} from './utils';
 import {
     Activity,
     Conflict,
@@ -17,9 +17,10 @@ import {
     RDFOperation,
     RDFTriple,
     sparqlTemplate,
+    StringAccessObject,
     updateResponse,
-} from "./structures";
-import { useSessionStore } from "@/stores/sessionStore";
+} from './structures';
+import { useSessionStore } from '@/stores/sessionStore';
 
 /**
  * Adds a new conflict to the sparql database
@@ -42,27 +43,27 @@ export async function addConflict(graph: string, conflict: Conflict): Promise<up
         .map((participant) => {
             return `\t\t:HasParticipant :${participant.id} ;`;
         })
-        .join("\n");
+        .join('\n');
     let query = await getSparqlTemplate(sparqlTemplate.addConflict);
     const mapObj = {
-        "{{graph}}": graph,
-        "{{conflictId}}": conflictId,
-        "{{participants}}": participantString,
-        "{{description}}": conflict.description
+        '{{graph}}': graph,
+        '{{conflictId}}': conflictId,
+        '{{participants}}': participantString,
+        '{{description}}': conflict.description
             ? EscapeSparqlStringLiteral(getStringFromRecord(conflict.description))
-            : "",
+            : '',
         // "{{author}}": EscapeSparqlStringLiteral(getStringFromRecord(conflict.author.id)),
-        "{{author}}": "",
-        "{{status}}": conflict.status,
-        "{{created}}": timestamp,
-        "{{title}}": EscapeSparqlStringLiteral(getStringFromRecord(conflict.title)),
+        '{{author}}': '',
+        '{{status}}': conflict.status,
+        '{{created}}': timestamp,
+        '{{title}}': EscapeSparqlStringLiteral(getStringFromRecord(conflict.title)),
     };
     query = query.replaceMultiple(mapObj);
     // Exeucte Query in update mode
     const data = await fetchSparql(query, true);
     return {
         code: data.status,
-        status: data.status == 204 ? "OK" : "Error",
+        status: data.status == 204 ? 'OK' : 'Error',
         modified: conflictId,
         action: RDFOperation.insert,
     } as updateResponse;
@@ -77,33 +78,33 @@ export async function deleteConflict(graph: string, conflictId: string): Promise
     // Fetch all nested commentIDs related to conflictId
     let commentQuery = await getSparqlTemplate(sparqlTemplate.getNestedCommentIds);
     const commentMapObj = {
-        "{{graph}}": graph,
-        "{{conflict}}": conflictId,
+        '{{graph}}': graph,
+        '{{conflict}}': conflictId,
     };
     commentQuery = commentQuery.replaceMultiple(commentMapObj);
-    const commentIds = (await fetchSparql(commentQuery, false)).map((res: any) => {
-        return res.s.value ? res.s.value.split("#").pop() : null;
+    const commentIds = (await fetchSparql(commentQuery, false)).map((res: StringAccessObject) => {
+        return res.s.value ? res.s.value.split('#').pop() : null;
     });
     // Remove Conflict
     const deleteQueryBase = await getSparqlTemplate(sparqlTemplate.deleteTriples);
     const mapObj = {
-        "{{graph}}": graph,
-        "{{subject}}": conflictId,
+        '{{graph}}': graph,
+        '{{subject}}': conflictId,
     };
     const deleteQuery = deleteQueryBase.replaceMultiple(mapObj);
     const data = await fetchSparql(deleteQuery, true);
     // Delete all nested comments
     for (const id of commentIds) {
         const innerMapObj = {
-            "{{graph}}": graph,
-            "{{subject}}": id,
+            '{{graph}}': graph,
+            '{{subject}}': id,
         };
         const innerQuery = deleteQueryBase.replaceMultiple(innerMapObj);
         await fetchSparql(innerQuery, true);
     }
     return {
         code: data.status,
-        status: data.status == 204 ? "OK" : "Error",
+        status: data.status == 204 ? 'OK' : 'Error',
         modified: conflictId,
         action: RDFOperation.delete,
     } as updateResponse;
@@ -125,16 +126,16 @@ export async function updateConflict(
 ): Promise<updateResponse> {
     let query = await getSparqlTemplate(sparqlTemplate.updateConflict);
     const mapObj = {
-        "{{graph}}": graph,
-        "{{conflictId}}": conflictId,
-        "{{predicate}}": predicate,
-        "{{newValue}}": EscapeSparqlStringLiteral(newValue),
+        '{{graph}}': graph,
+        '{{conflictId}}': conflictId,
+        '{{predicate}}': predicate,
+        '{{newValue}}': EscapeSparqlStringLiteral(newValue),
     };
     query = query.replaceMultiple(mapObj);
     const data = await fetchSparql(query, true);
     return {
         code: data.status,
-        status: data.status == 204 ? "OK" : "Error",
+        status: data.status == 204 ? 'OK' : 'Error',
         modified: conflictId,
         action: RDFOperation.insert,
     } as updateResponse;
@@ -151,15 +152,15 @@ export async function updateConflictParticipants(
             ? await getSparqlTemplate(sparqlTemplate.addConflictParticipant)
             : await getSparqlTemplate(sparqlTemplate.deleteConflictParticipant);
     const mapObj = {
-        "{{graph}}": graph,
-        "{{conflictId}}": conflictId,
-        "{{participantId}}": participantId,
+        '{{graph}}': graph,
+        '{{conflictId}}': conflictId,
+        '{{participantId}}': participantId,
     };
     query = query.replaceMultiple(mapObj);
     const data = await fetchSparql(query, true);
     return {
         code: data.status,
-        status: data.status == 204 ? "OK" : "Error",
+        status: data.status == 204 ? 'OK' : 'Error',
         modified: conflictId,
         action: RDFOperation.insert,
     } as updateResponse;
@@ -174,7 +175,7 @@ export async function updateConflictParticipants(
 export async function addComment(parentId: string, comment: string): Promise<updateResponse> {
     const sessionStore = useSessionStore();
     const graph = sessionStore.sessionActivity!.graph;
-    const author = sessionStore.sessionRole || "";
+    const author = sessionStore.sessionRole || '';
 
     // Create unique hash as a conflict ID
     const timestamp = new Date().toISOString();
@@ -187,20 +188,20 @@ export async function addComment(parentId: string, comment: string): Promise<upd
 
     let query = await getSparqlTemplate(sparqlTemplate.addComment);
     const mapObj = {
-        "{{graph}}": graph,
-        "{{author}}": EscapeSparqlStringLiteral(author),
-        "{{commentId}}": commentId,
-        "{{comment}}": EscapeSparqlStringLiteral(comment),
-        "{{created}}": timestamp,
-        "{{parentId}}": parentId,
-        "{{langTag}}": sessionStore.activeLanguage,
+        '{{graph}}': graph,
+        '{{author}}': EscapeSparqlStringLiteral(author),
+        '{{commentId}}': commentId,
+        '{{comment}}': EscapeSparqlStringLiteral(comment),
+        '{{created}}': timestamp,
+        '{{parentId}}': parentId,
+        '{{langTag}}': sessionStore.activeLanguage,
     };
     query = query.replaceMultiple(mapObj);
     // Exeucte Query in update mode
     const data = await fetchSparql(query, true);
     return {
         code: data.status,
-        status: data.status == 204 ? "OK" : "Error",
+        status: data.status == 204 ? 'OK' : 'Error',
         modified: commentId,
         action: RDFOperation.insert,
     } as updateResponse;
@@ -218,21 +219,21 @@ export async function deleteComment(
     commentId: string,
     isNestedComment: boolean,
 ): Promise<updateResponse> {
-    let query = "";
+    let query = '';
     if (isNestedComment) {
         query = await getSparqlTemplate(sparqlTemplate.deleteNestedComment);
     } else {
         query = await getSparqlTemplate(sparqlTemplate.deleteComment);
     }
     const mapObj = {
-        "{{graph}}": graph,
-        "{{commentId}}": commentId,
+        '{{graph}}': graph,
+        '{{commentId}}': commentId,
     };
     query = query.replaceMultiple(mapObj);
     const data = await fetchSparql(query, true);
     return {
         code: data.status,
-        status: data.status == 204 ? "OK" : "Error",
+        status: data.status == 204 ? 'OK' : 'Error',
         modified: commentId,
         action: RDFOperation.delete,
     } as updateResponse;
@@ -248,27 +249,27 @@ export async function updateTriple(graph: string, triple: RDFTriple, operation: 
     if (RDFSyntaxCheck(triple) == false)
         return {
             code: 400,
-            status: "Error",
-            modified: Object.values(triple).join(" "),
+            status: 'Error',
+            modified: Object.values(triple).join(' '),
             action: operation,
         } as updateResponse;
     let query =
-        operation === "insert"
+        operation === 'insert'
             ? await getSparqlTemplate(sparqlTemplate.addTriple)
             : await getSparqlTemplate(sparqlTemplate.deleteTriple);
     const mapObj = {
-        "{{graph}}": graph,
-        "{{subject}}": triple.subject,
-        "{{predicate}}": triple.predicate,
-        "{{object}}": triple.object,
+        '{{graph}}': graph,
+        '{{subject}}': triple.subject,
+        '{{predicate}}': triple.predicate,
+        '{{object}}': triple.object,
     };
     query = query.replaceMultiple(mapObj);
     // Exeucte Query in update mode
     const data = await fetchSparql(query, true);
     return {
         code: data.status,
-        status: data.status == 204 ? "OK" : "Error",
-        modified: Object.values(triple).join(" "),
+        status: data.status == 204 ? 'OK' : 'Error',
+        modified: Object.values(triple).join(' '),
         action: operation,
     } as updateResponse;
 }
@@ -290,27 +291,27 @@ export async function addPredicate(
     labels: LanguageLabel[],
 ): Promise<updateResponse> {
     if (RDFSyntaxCheck(predicate) == false)
-        return { code: 400, status: "Error", modified: predicate, action: RDFOperation.insert } as updateResponse;
+        return { code: 400, status: 'Error', modified: predicate, action: RDFOperation.insert } as updateResponse;
     let query = await getSparqlTemplate(sparqlTemplate.addPredicate);
     const labelString = labels
         .map((label) => {
             return `"${label.label}"@${label.language}`;
         })
-        .join(", ");
-    const stringDomains = domains.map((domain) => ":" + domain);
-    const stringRanges = ranges.map((range) => ":" + range);
+        .join(', ');
+    const stringDomains = domains.map((domain) => ':' + domain);
+    const stringRanges = ranges.map((range) => ':' + range);
     const mapObj = {
-        "{{graph}}": graph,
-        "{{label}}": CapitalizeFirstLetter(predicate),
-        "{{domains}}": stringDomains.join(", "),
-        "{{ranges}}": stringRanges.join(", "),
-        "{{labels}}": labelString,
+        '{{graph}}': graph,
+        '{{label}}': CapitalizeFirstLetter(predicate),
+        '{{domains}}': stringDomains.join(', '),
+        '{{ranges}}': stringRanges.join(', '),
+        '{{labels}}': labelString,
     };
     query = query.replaceMultiple(mapObj);
     const data = await fetchSparql(query, true);
     return {
         code: data.status,
-        status: data.status == 204 ? "OK" : "Error",
+        status: data.status == 204 ? 'OK' : 'Error',
         modified: predicate,
         action: RDFOperation.insert,
     } as updateResponse;
@@ -337,17 +338,17 @@ export async function addEntity(
         graph: graph,
     });
     const mapObj = {
-        "{{graph}}": graph,
-        "{{entityId}}": entityId,
-        "{{entity}}": EscapeSparqlStringLiteral(CapitalizeFirstLetter(entityLabel.trim())),
-        "{{activityClass}}": activityClass,
-        "{{lang}}": language,
+        '{{graph}}': graph,
+        '{{entityId}}': entityId,
+        '{{entity}}': EscapeSparqlStringLiteral(CapitalizeFirstLetter(entityLabel.trim())),
+        '{{activityClass}}': activityClass,
+        '{{lang}}': language,
     };
     query = query.replaceMultiple(mapObj);
     const data = await fetchSparql(query, true);
     return {
         code: data.status,
-        status: data.status == 204 ? "OK" : "Error",
+        status: data.status == 204 ? 'OK' : 'Error',
         modified: entityLabel,
         action: RDFOperation.insert,
     } as updateResponse;
@@ -364,7 +365,7 @@ export async function addActivity(activityName: string): Promise<updateResponse>
     // TODO handle adding of activities
     return {
         code: 501,
-        status: "Not Implemented",
+        status: 'Not Implemented',
         modified: activityName,
         action: RDFOperation.insert,
     } as updateResponse;
@@ -377,11 +378,11 @@ export async function addActivity(activityName: string): Promise<updateResponse>
  */
 export async function deleteActivity(graph: string): Promise<updateResponse> {
     let query = await getSparqlTemplate(sparqlTemplate.deleteActivity);
-    query = query.replace("{{graph}}", graph);
+    query = query.replace('{{graph}}', graph);
     const data = await fetchSparql(query, true);
     return {
         code: data.status,
-        status: data.status == 204 ? "OK" : "Error",
+        status: data.status == 204 ? 'OK' : 'Error',
         modified: graph,
         action: RDFOperation.insert,
     } as updateResponse;
@@ -395,7 +396,7 @@ export async function deleteActivity(graph: string): Promise<updateResponse> {
  */
 export async function updateActivity(activity: Activity): Promise<updateResponse> {
     // TODO handle updating of activities
-    return { code: 501, status: "Not Implemented", modified: activity.graph } as updateResponse;
+    return { code: 501, status: 'Not Implemented', modified: activity.graph } as updateResponse;
 }
 
 /**
@@ -408,12 +409,12 @@ export async function cloneActivity(activity: Activity): Promise<updateResponse>
     // TODO handle cloning of activities
     return {
         code: 501,
-        status: "Not Implemented",
+        status: 'Not Implemented',
         modified: activity.graph,
         action: RDFOperation.insert,
     } as updateResponse;
 }
 
-function getStringFromRecord(record: Record<string, string>, lang = "en"): string {
-    return record[lang] || Object.values(record)[0] || "";
+function getStringFromRecord(record: Record<string, string>, lang = 'en'): string {
+    return record[lang] || Object.values(record)[0] || '';
 }

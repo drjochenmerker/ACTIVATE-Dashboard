@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { addComment, deleteComment } from '@/data/knowledge_graph/write_operations';
 import { nextTick, ref, watch } from 'vue';
-import Button from './ui/button/Button.vue';
+import CustomButton from './ui/button/CustomButton.vue';
 import ReplyCard from './ReplyCard.vue';
 import { useSessionStore } from '@/stores/sessionStore';
 import { useConflictsStore } from '@/stores/conflictsStore';
@@ -157,12 +157,15 @@ const removeReply = (id: string) => {
         <hr class="misc-note-divider" />
 
         <div class="misc-note-content">
+            <!-- v-html is okay because it's not an input field -->
+            <!-- eslint-disable-next-line vue/no-v-html -->
             <div class="misc-note-title" v-html="extractedTitle"></div>
+            <!-- eslint-disable-next-line vue/no-v-html -->
             <div class="misc-note-description" v-html="extractedContent"></div>
         </div>
 
         <div class="note-comment-section">
-            <Button @click="toggleReplyInput(props.comment.id)"> Add comment </Button>
+            <CustomButton @click="toggleReplyInput(props.comment.id)"> Add comment </CustomButton>
         </div>
 
         <div v-if="replyInputVisible[props.comment.id]" class="comment-input">
@@ -172,7 +175,7 @@ const removeReply = (id: string) => {
                 placeholder="Write a reply..."
                 @keydown.enter="handleEnterKey($event)"
             />
-            <Button @click="saveReply(props.comment.id)">Save</Button>
+            <CustomButton @click="saveReply(props.comment.id)">Save</CustomButton>
         </div>
 
         <div v-if="props.comment && props.comment.replies && props.comment.replies.length > 0" class="reply-container">

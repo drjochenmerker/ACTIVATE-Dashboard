@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue';
-import Button from '@/components/ui/button/Button.vue';
+import CustomButton from '@/components/ui/button/CustomButton.vue';
 import RDFAdditionDropdown from './RDFAdditionDropdown.vue';
 import { useColorMode } from '@vueuse/core';
 import { addPredicate, updateTriple } from '@/data/knowledge_graph/write_operations';
@@ -22,7 +22,7 @@ import { staticContent } from '@/data/contentData';
  * Props of the RDFTripleAdder component
  * @property isOpen - Determines if the modal is open (controlled from parent)
  */
-defineProps<{
+const props = defineProps<{
     isOpen: boolean;
 }>();
 
@@ -31,7 +31,7 @@ const sessionStore = useSessionStore();
 const mode = useColorMode();
 
 // State variables
-const isOpen = ref(false);
+const isOpen = ref(props.isOpen);
 const subject = ref({} as Objective);
 const predicate = ref({} as Predicate);
 const object = ref({} as Objective);
@@ -183,9 +183,9 @@ const applyTriple = async () => {
 </script>
 
 <template>
-    <Button class="mb-4" @click="openDialog">
+    <CustomButton class="mb-4" @click="openDialog">
         {{ staticContent.tripleAdd.addTripleText[sessionStore.activeLanguage] }}
-    </Button>
+    </CustomButton>
 
     <div
         v-if="isOpen"
@@ -254,9 +254,9 @@ const applyTriple = async () => {
             </div>
 
             <div class="flex gap-4">
-                <Button class="w-full" :disabled="!isApplyEnabled" @click="applyTriple">{{
+                <CustomButton class="w-full" :disabled="!isApplyEnabled" @click="applyTriple">{{
                     staticContent.tripleAdd.addTripleText[sessionStore.activeLanguage]
-                }}</Button>
+                }}</CustomButton>
             </div>
         </div>
     </div>

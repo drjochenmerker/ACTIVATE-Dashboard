@@ -3,8 +3,8 @@ import { computed, ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 
 // UI components
-import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { CustomButton } from '@/components/ui/button';
+import { CustomSelect, SelectContent, SelectTrigger, SelectValue } from '@/components/ui/select';
 import RecursiveSelect from '@/components/RecursiveSelect.vue';
 import LoadingOverlay from '@/components/LoadingOverlay.vue';
 import LanguageSelect from '@/components/LanguageSelect.vue';
@@ -15,7 +15,12 @@ import { buildTreeStructByLang } from '@/data/knowledge_graph/utils';
 import { getActivityClassIds } from '@/data/knowledge_graph/read_operations';
 import { KnowledgeGraphActivityClass } from '@/data/knowledge_graph/structures';
 import { llmSubmit } from '@/data/knowledge_graph/llm_utils';
-import { staticContentFeedback } from '@/data/feedbackQuestions';
+import {
+    QuestionGroupType,
+    QuestionKeyType,
+    StaticContentFeedback,
+    staticContentFeedback,
+} from '@/data/feedbackQuestions';
 
 const props = defineProps<{ graph: string }>();
 
@@ -28,7 +33,7 @@ const loading = ref(false);
 // 1. Define groups
 const questionGroups = Object.keys(staticContentFeedback).filter(
     (key) => key !== 'feedbackpage',
-) as (keyof typeof staticContentFeedback)[];
+) as (keyof StaticContentFeedback)[];
 
 // 2. Helper function to initialize the 'answers' state
 const initializeAnswers = (): Record<string, Record<string, string>> => {
@@ -137,8 +142,11 @@ const submitFeedback = async () => {
             const answer = groupAnswers[questionKey];
 
             // Find the question text in the original data (with fallback)
-            const groupStatic = (staticContentFeedback as any)[groupKey];
-            const questionText = groupStatic?.[questionKey]?.[lang] || groupStatic?.[questionKey]?.['de'];
+            const groupStatic = (staticContentFeedback as StaticContentFeedback)[groupKey as QuestionGroupType];
+
+            const questionText =
+                groupStatic?.[questionKey as QuestionKeyType]?.[lang] ||
+                groupStatic?.[questionKey as QuestionKeyType]?.['de'];
 
             // Add only if question text exists
             if (questionText && questionText.trim() !== '') {
@@ -185,7 +193,7 @@ const submitFeedback = async () => {
             </div>
             <div>
                 <div class="mb-6">
-                    <Select
+                    <CustomSelect
                         id="roleSelect"
                         :model-value="sessionStore.sessionRole"
                         class="my-4"
@@ -202,7 +210,7 @@ const submitFeedback = async () => {
                         <SelectContent>
                             <RecursiveSelect :node="sessionStore.availableRoles" />
                         </SelectContent>
-                    </Select>
+                    </CustomSelect>
                 </div>
 
                 <div
@@ -231,9 +239,9 @@ const submitFeedback = async () => {
         </div>
 
         <div class="mt-8">
-            <Button class="w-full" @click="submitFeedback">
+            <CustomButton class="w-full" @click="submitFeedback">
                 {{ staticContent.noteCards.save[activeLang] }}
-            </Button>
+            </CustomButton>
         </div>
         <LoadingOverlay :visible="loading" :message="staticContent.placeholders.loading[activeLang]" />
     </div>

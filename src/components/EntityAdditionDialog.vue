@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
-import Button from '@/components/ui/button/Button.vue';
+import CustomButton from '@/components/ui/button/CustomButton.vue';
 import { useColorMode } from '@vueuse/core';
 import { useSessionStore } from '@/stores/sessionStore';
 import { KnowledgeGraphActivityClass } from '@/data/knowledge_graph/structures';
@@ -11,7 +11,7 @@ import { activateTerms, staticContent } from '@/data/contentData';
  * Props of the AddEntityModal component
  * @property isOpen - Indicates if the modal is open (passed from parent)
  */
-defineProps<{
+const props = defineProps<{
     isOpen: boolean;
 }>();
 
@@ -22,7 +22,7 @@ const mode = useColorMode();
 const sessionStore = useSessionStore();
 
 // Local state for modal visibility and input values
-const isOpen = ref(false);
+const isOpen = ref(props.isOpen);
 const entityName = ref('');
 const selectedClass = ref<KnowledgeGraphActivityClass | ''>('');
 
@@ -116,9 +116,9 @@ const applyEntity = async () => {
 </script>
 
 <template>
-    <Button class="mb-4" @click="openDialog">
+    <CustomButton class="mb-4" @click="openDialog">
         {{ staticContent.entitiyAdd.addButton[sessionStore.activeLanguage] }}
-    </Button>
+    </CustomButton>
 
     <div
         v-if="isOpen"
@@ -161,9 +161,9 @@ const applyEntity = async () => {
             </div>
 
             <div class="flex gap-4">
-                <Button class="w-full" @click="applyEntity">{{
+                <CustomButton class="w-full" @click="applyEntity">{{
                     staticContent.terms.add[sessionStore.activeLanguage]
-                }}</Button>
+                }}</CustomButton>
             </div>
         </div>
     </div>

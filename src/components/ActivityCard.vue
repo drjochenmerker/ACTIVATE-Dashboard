@@ -7,9 +7,9 @@ import { useActivityStore } from '@/stores/activityStore';
 import { buildTreeStructByLang } from '@/data/knowledge_graph/utils';
 
 import { Activity, KnowledgeGraphActivityClass, NestedMultiLangObject } from '@/data/knowledge_graph/structures';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { CustomAccordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import {
-    Dialog,
+    CustomDialog,
     DialogContent,
     DialogFooter,
     DialogHeader,
@@ -19,7 +19,7 @@ import {
 } from '@/components/ui/dialog';
 import QrcodeVue from 'qrcode.vue';
 
-import { Button } from '@/components/ui/button';
+import { CustomButton } from '@/components/ui/button';
 
 import { Play } from 'lucide-vue-next';
 
@@ -27,7 +27,7 @@ import { staticContent } from '@/data/contentData';
 import { llmPool } from '@/data/knowledge_graph/llm_utils';
 import LoadingOverlay from '@/components/LoadingOverlay.vue';
 import RecursiveSelect from './RecursiveSelect.vue';
-import { Select, SelectTrigger, SelectContent, SelectValue } from '@/components/ui/select';
+import { CustomSelect, SelectTrigger, SelectContent, SelectValue } from '@/components/ui/select';
 
 // consts and props defintion
 const sessionStore = useSessionStore();
@@ -169,7 +169,7 @@ const showUrl = ref(false);
 
 <template>
     <div class="rounded-xl shadow-md bg-white dark:bg-gray-900 p-4 transition-all hover:shadow-lg">
-        <Accordion type="single" class="w-full" collapsible>
+        <CustomAccordion type="single" class="w-full" collapsible>
             <AccordionItem :value="props.activity.graph" class="accordion-item border-0">
                 <AccordionTrigger
                     class="accordion-trigger text-lg font-semibold text-middle flex justify-center"
@@ -193,7 +193,7 @@ const showUrl = ref(false);
                     <div class="flex justify-between items-center gap-4 flex-wrap">
                         <!-- Delete Button -->
                         <div>
-                            <Dialog v-model:open="isDeleteDialogOpen">
+                            <CustomDialog v-model:open="isDeleteDialogOpen">
                                 <DialogTrigger as-child>
                                     <button class="icon-button">
                                         <span class="material-symbols-outlined">delete</span>
@@ -209,21 +209,21 @@ const showUrl = ref(false);
                                         </DialogDescription>
                                     </DialogHeader>
                                     <DialogFooter>
-                                        <Button @click="() => deleteThisActivity()">{{
+                                        <CustomButton @click="() => deleteThisActivity()">{{
                                             staticContent.terms.delete[sessionStore.activeLanguage]
-                                        }}</Button>
+                                        }}</CustomButton>
                                     </DialogFooter>
                                 </DialogContent>
-                            </Dialog>
+                            </CustomDialog>
                         </div>
 
                         <!-- Feedback QR Code Button -->
                         <div>
-                            <Dialog v-model:open="showQrDialog">
+                            <CustomDialog v-model:open="showQrDialog">
                                 <DialogTrigger as-child>
-                                    <Button variant="secondary" size="icon">
+                                    <CustomButton variant="secondary" size="icon">
                                         <span class="material-symbols-outlined">qr_code</span>
-                                    </Button>
+                                    </CustomButton>
                                 </DialogTrigger>
                                 <DialogContent>
                                     <DialogHeader>
@@ -239,20 +239,20 @@ const showUrl = ref(false);
                                     </div>
 
                                     <div class="flex flex-col items-center gap-2">
-                                        <Button variant="outline" @click="showUrl = !showUrl">
+                                        <CustomButton variant="outline" @click="showUrl = !showUrl">
                                             {{
                                                 showUrl
                                                     ? staticContent.startPage.hideQr[sessionStore.activeLanguage]
                                                     : staticContent.startPage.showQr[sessionStore.activeLanguage]
                                             }}
-                                        </Button>
+                                        </CustomButton>
 
                                         <div
                                             v-if="showUrl"
                                             class="w-full max-w-md break-words text-center p-4 border rounded bg-gray-50 flex flex-col items-center gap-3"
                                         >
                                             <div id="feedback-url-text">{{ feedbackUrl }}</div>
-                                            <Button variant="outline" @click="copyUrlToClipboard">
+                                            <CustomButton variant="outline" @click="copyUrlToClipboard">
                                                 {{
                                                     copied
                                                         ? staticContent.startPage.copiedLink[
@@ -260,19 +260,19 @@ const showUrl = ref(false);
                                                           ]
                                                         : staticContent.startPage.copyLink[sessionStore.activeLanguage]
                                                 }}
-                                            </Button>
+                                            </CustomButton>
                                         </div>
                                     </div>
                                 </DialogContent>
-                            </Dialog>
+                            </CustomDialog>
                         </div>
                         <!-- Start Session Button -->
                         <div>
-                            <Dialog>
+                            <CustomDialog>
                                 <DialogTrigger as-child>
-                                    <Button variant="default" size="icon">
+                                    <CustomButton variant="default" size="icon">
                                         <Play class="w-4 h-4" />
-                                    </Button>
+                                    </CustomButton>
                                 </DialogTrigger>
                                 <DialogContent>
                                     <DialogHeader>
@@ -289,7 +289,7 @@ const showUrl = ref(false);
                                     </DialogHeader>
 
                                     <!-- Select a role-->
-                                    <Select id="roleSelect" v-model="sessionStore.sessionRole" class="my-4">
+                                    <CustomSelect id="roleSelect" v-model="sessionStore.sessionRole" class="my-4">
                                         <SelectTrigger>
                                             <SelectValue
                                                 :placeholder="
@@ -300,19 +300,19 @@ const showUrl = ref(false);
                                         <SelectContent>
                                             <RecursiveSelect :node="sessionStore.availableRoles" />
                                         </SelectContent>
-                                    </Select>
+                                    </CustomSelect>
 
                                     <!-- Pooling Button Dialog -->
                                     <DialogFooter class="flex justify-between">
-                                        <Dialog v-model:open="showPoolingDialog">
+                                        <CustomDialog v-model:open="showPoolingDialog">
                                             <DialogTrigger as-child>
-                                                <Button class="mr-auto" type="button">
+                                                <CustomButton class="mr-auto" type="button">
                                                     {{
                                                         staticContent.startPage.poolingButton[
                                                             sessionStore.activeLanguage
                                                         ]
                                                     }}
-                                                </Button>
+                                                </CustomButton>
                                             </DialogTrigger>
                                             <DialogContent>
                                                 <DialogHeader>
@@ -331,16 +331,22 @@ const showUrl = ref(false);
                                                         }}
                                                     </DialogDescription>
                                                     <div class="flex justify-between items-center mt-4">
-                                                        <Button variant="secondary" @click="showPoolingDialog = false">
+                                                        <CustomButton
+                                                            variant="secondary"
+                                                            @click="showPoolingDialog = false"
+                                                        >
                                                             Cancel
-                                                        </Button>
-                                                        <Button variant="destructive" @click="handlePoolingStart()">
+                                                        </CustomButton>
+                                                        <CustomButton
+                                                            variant="destructive"
+                                                            @click="handlePoolingStart()"
+                                                        >
                                                             {{
                                                                 staticContent.startPage.pool[
                                                                     sessionStore.activeLanguage
                                                                 ]
                                                             }}
-                                                        </Button>
+                                                        </CustomButton>
                                                     </div>
 
                                                     <LoadingOverlay
@@ -360,9 +366,9 @@ const showUrl = ref(false);
                                                     </p>
                                                 </DialogHeader>
                                             </DialogContent>
-                                        </Dialog>
+                                        </CustomDialog>
 
-                                        <Button type="submit" @click="() => handleStartSession()">
+                                        <CustomButton type="submit" @click="() => handleStartSession()">
                                             <template v-if="sessionStartAllowed()">
                                                 {{
                                                     staticContent.startPage.startDebriefing[sessionStore.activeLanguage]
@@ -374,15 +380,15 @@ const showUrl = ref(false);
                                                     staticContent.startPage.startDebriefing[sessionStore.activeLanguage]
                                                 }}
                                             </template>
-                                        </Button>
+                                        </CustomButton>
                                     </DialogFooter>
                                 </DialogContent>
-                            </Dialog>
+                            </CustomDialog>
                         </div>
                     </div>
                 </AccordionContent>
             </AccordionItem>
-        </Accordion>
+        </CustomAccordion>
     </div>
 </template>
 

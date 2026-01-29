@@ -1,44 +1,26 @@
 <script lang="ts" setup>
 import { ref, onMounted, nextTick, computed, watch } from 'vue';
-import { conflictPredicate, conflictStatus, Participant } from '@/data/knowledge_graph/structures';
+import { Conflict, conflictPredicate, conflictStatus, Participant } from '@/data/knowledge_graph/structures';
 import ReplyCard from './ReplyCard.vue';
 import { addComment, deleteConflict, updateConflict } from '@/data/knowledge_graph/write_operations';
-import { Button } from '@/components/ui/button';
+import { CustomButton } from '@/components/ui/button';
 import { useConflictsStore } from '@/stores/conflictsStore';
 import { useSessionStore } from '@/stores/sessionStore';
 import { activateTerms, staticContent } from '@/data/contentData';
 import { buildLanguageString } from '@/lib/utils';
 
-const props = defineProps({
-    conflict: {
-        type: Object,
-        required: true,
-    },
-    title: {
-        type: String,
-        required: true,
-    },
-    content: {
-        type: String,
-        required: true,
-    },
-    origin: {
-        type: String,
-        required: true,
-    },
-    author: {
-        type: String,
-        required: true,
-    },
-    status: {
-        type: String,
-        required: true,
-    },
-    isGrayedOut: {
-        type: Boolean,
-        default: false,
-    },
-});
+export interface ConflictWithId extends Conflict {
+    id: string;
+}
+const props = defineProps<{
+    conflict: ConflictWithId;
+    title: string;
+    content: string;
+    origin: string;
+    author: string;
+    status: string;
+    isGrayedOut: boolean;
+}>();
 
 /**
  * Reactive references for managing conflict details and reply input state
@@ -46,12 +28,12 @@ const props = defineProps({
  * - replyInputVisible: Tracks visibility of reply input for each conflict
  * - newReplyText: Stores temporary reply text for each conflict
  */
-const conflictDetail = ref<any>(null);
+const conflictDetail = ref<ConflictWithId | null>(null);
 const replyInputVisible = ref<Record<string, boolean>>({});
 const newReplyText = ref<Record<string, string>>({});
 
 // Set status from props
-const selectedStatus = ref<any>(props.status);
+const selectedStatus = ref<string>(props.status);
 
 // Stores for the conflicts and the session
 const conflictStore = useConflictsStore();
@@ -208,6 +190,8 @@ const removeReply = (id: string) => {
 
         <div class="note-card-content">
             <!-- Note title -->
+            <!-- // v-html is fine here because it's not a user input field -->
+            <!-- eslint-disable-next-line vue/no-v-html -->
             <div class="note-title" v-html="props.title"></div>
 
             <!-- Participants grouped by type -->
@@ -227,30 +211,32 @@ const removeReply = (id: string) => {
             </div>
 
             <!-- Content -->
+            <!-- // v-html is fine here because it's not a user input field -->
+            <!-- eslint-disable-next-line vue/no-v-html -->
             <div class="note-content" v-html="props.content"></div>
         </div>
 
         <!-- Note comment section starting with add comment button -->
 
         <div v-if="!replyInputVisible[conflict.id]" class="note-comment-section">
-            <Button @click="toggleReplyInput(conflict.id)">
+            <CustomButton @click="toggleReplyInput(conflict.id)">
                 {{ staticContent.noteCards.addComment[sessionStore.activeLanguage] }}
-            </Button>
+            </CustomButton>
         </div>
 
         <div v-if="replyInputVisible[conflict.id]" class="comment-input">
-            <Button @click="toggleReplyInput(conflict.id)">
+            <CustomButton @click="toggleReplyInput(conflict.id)">
                 {{ staticContent.noteCards.cancel[sessionStore.activeLanguage] }}
-            </Button>
+            </CustomButton>
             <textarea
                 ref="textareaRef"
                 v-model="newReplyText[conflict.id]"
                 :placeholder="staticContent.placeholders.answer[sessionStore.activeLanguage]"
                 @keydown.enter="handleEnterKey($event)"
             />
-            <Button @click="saveReply(conflict.id)">{{
+            <CustomButton @click="saveReply(conflict.id)">{{
                 staticContent.noteCards.save[sessionStore.activeLanguage]
-            }}</Button>
+            }}</CustomButton>
         </div>
 
         <div

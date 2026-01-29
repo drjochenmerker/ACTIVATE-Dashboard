@@ -1,17 +1,15 @@
 /**
  * TS Workaround for SPARQL responses
- * This is a dirty fix which prevent TS form comlaining about dynamic keys
+ * This is a dirty fix which prevent TS form comlaining about dynamic keys - feel free to type correctly
  */
 
-/**
- * Type for data returned by the knowledge graph
- * in order to prevent VSCode from complaining about dynamic keys
- */
 export type KnowledgeGraphData = {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     [key: string]: any;
 };
 
 export type StringAccessObject = {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     [key: string]: any;
 };
 
@@ -19,35 +17,35 @@ export type StringAccessObject = {
  * Enum containing all available SPARQL templates
  */
 export enum sparqlTemplate {
-    getActivities = "getActivities",
-    getActivityDetail = "getActivityDetail",
-    getExampleActivity = "getExampleActivity",
-    getConflictIds = "getConflictIds",
-    getConflictDetail = "getConflictDetail",
-    getNestedCommentIds = "getNestedCommentIds",
-    getPredicates = "getPredicates",
-    addConflict = "addConflict",
-    addComment = "addComment",
-    addTriple = "addTriple",
-    addPredicate = "addPredicate",
-    deleteComment = "deleteComment",
-    deleteNestedComment = "deleteNestedComment",
-    deleteTriple = "deleteTriple",
-    deleteTriples = "deleteTriples",
-    updateConflict = "updateConflict",
-    deleteConflictParticipant = "deleteConflictParticipant",
-    addConflictParticipant = "addConflictParticipant",
-    getMiscComments = "getMiscComments",
-    addEntity = "addEntity",
-    getActivityClassIds = "getActivityClassIds",
-    addActivity = "addActivity",
-    deleteActivity = "deleteActivity",
-    getDiagramVocab = "getDiagramVocab",
-    updateActivity = "updateActivity",
-    cloneActivity = "cloneActivity",
-    getLLMDetail = "getLLMDetail",
-    addLLMSubmission = "addLLMSubmission",
-    getLLMSubmissions = "getLLMSubmissions",
+    getActivities = 'getActivities',
+    getActivityDetail = 'getActivityDetail',
+    getExampleActivity = 'getExampleActivity',
+    getConflictIds = 'getConflictIds',
+    getConflictDetail = 'getConflictDetail',
+    getNestedCommentIds = 'getNestedCommentIds',
+    getPredicates = 'getPredicates',
+    addConflict = 'addConflict',
+    addComment = 'addComment',
+    addTriple = 'addTriple',
+    addPredicate = 'addPredicate',
+    deleteComment = 'deleteComment',
+    deleteNestedComment = 'deleteNestedComment',
+    deleteTriple = 'deleteTriple',
+    deleteTriples = 'deleteTriples',
+    updateConflict = 'updateConflict',
+    deleteConflictParticipant = 'deleteConflictParticipant',
+    addConflictParticipant = 'addConflictParticipant',
+    getMiscComments = 'getMiscComments',
+    addEntity = 'addEntity',
+    getActivityClassIds = 'getActivityClassIds',
+    addActivity = 'addActivity',
+    deleteActivity = 'deleteActivity',
+    getDiagramVocab = 'getDiagramVocab',
+    updateActivity = 'updateActivity',
+    cloneActivity = 'cloneActivity',
+    getLLMDetail = 'getLLMDetail',
+    addLLMSubmission = 'addLLMSubmission',
+    getLLMSubmissions = 'getLLMSubmissions',
 }
 
 /**
@@ -107,8 +105,10 @@ export interface Participant {
  * Conflict in the knowledge graph
  */
 export type Conflict = {
-    origin?: any; // TODO
-    isAI?: any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    origin?: any; // TODO: add correct types and remove disable lint
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    isAI?: any; // TODO
     hasIntent?: string;
     title: Record<string, string>;
     participants: Participant[];
@@ -137,18 +137,18 @@ export type Comment = {
  * Enum for conflict status management
  */
 export enum conflictStatus {
-    open = "open",
-    inDiscussion = "inDiscussion",
-    resolved = "resolved",
+    open = 'open',
+    inDiscussion = 'inDiscussion',
+    resolved = 'resolved',
 }
 
 /**
  * Enum containing conflict predicates that can be updated
  */
 export enum conflictPredicate {
-    description = "ConflictDescription",
-    title = "ConflictTitle",
-    status = "ConflictState",
+    description = 'ConflictDescription',
+    title = 'ConflictTitle',
+    status = 'ConflictState',
 }
 
 /**
@@ -165,8 +165,8 @@ export type RDFTriple = {
  * Enum for RDF operations
  */
 export enum RDFOperation {
-    insert = "insert",
-    delete = "delete",
+    insert = 'insert',
+    delete = 'delete',
 }
 
 /**
@@ -183,16 +183,16 @@ export type Predicate = {
  * WARNING: Should be replaced with a better solution later on
  */
 export enum LanguageCode {
-    Deutsch = "de",
-    English = "en",
-    Svenska = "sv",
+    Deutsch = 'de',
+    English = 'en',
+    Svenska = 'sv',
 }
 /**
  * Scene Change Enum to allow easy switching between scenes
  */
 export enum SceneChange {
-    Scene1 = "Scene 1",
-    Scene2 = "Scene 2",
+    Scene1 = 'Scene 1',
+    Scene2 = 'Scene 2',
 }
 
 /**
@@ -209,12 +209,12 @@ export type LanguageLabel = {
  * frontend access terms without messing up the backend
  */
 export enum KnowledgeGraphActivityClass {
-    subject = "Subject",
-    object = "Object",
-    rules = "Rule",
-    instruments = "Instrument",
-    divison_of_labour = "DivisionOfLabour",
-    community = "Community",
+    subject = 'Subject',
+    object = 'Object',
+    rules = 'Rule',
+    instruments = 'Instrument',
+    divison_of_labour = 'DivisionOfLabour',
+    community = 'Community',
 }
 
 /**
@@ -251,13 +251,13 @@ export class PredicateDict {
     private dict: Record<string, Predicate[]> = {};
 
     add(tuple: [string, string], obj: Predicate): void {
-        if (this.dict[tuple.join("#")] === undefined) {
-            this.dict[tuple.join("#")] = [];
+        if (this.dict[tuple.join('#')] === undefined) {
+            this.dict[tuple.join('#')] = [];
         }
-        const existingInnerObj = this.dict[tuple.join("#")].find((innerObj) => innerObj.id == obj.id);
-        const langString = obj.lang || "default";
+        const existingInnerObj = this.dict[tuple.join('#')].find((innerObj) => innerObj.id == obj.id);
+        const langString = obj.lang || 'default';
         if (existingInnerObj == undefined) {
-            this.dict[tuple.join("#")].push({
+            this.dict[tuple.join('#')].push({
                 id: obj.id,
                 labels: { [langString]: obj.labels },
             });
@@ -266,14 +266,14 @@ export class PredicateDict {
         }
     }
 
-    get(tuple: [string, string]): {}[] {
-        return this.dict[tuple.join("#")].sort((a, b) => a.id.localeCompare(b.id)) || [];
+    get(tuple: [string, string]): Predicate[] {
+        return this.dict[tuple.join('#')].sort((a, b) => a.id.localeCompare(b.id)) || [];
     }
 
-    getBidirectional(tuple: [string, string]): {} {
+    getBidirectional(tuple: [string, string]): { given: Predicate[]; reversed: Predicate[] } {
         return {
-            given: this.dict[tuple.join("#")].sort((a, b) => a.id.localeCompare(b.id)) || [],
-            reversed: this.dict[tuple.reverse().join("#")].sort((a, b) => a.id.localeCompare(b.id)) || [],
+            given: this.dict[tuple.join('#')].sort((a, b) => a.id.localeCompare(b.id)) || [],
+            reversed: this.dict[tuple.reverse().join('#')].sort((a, b) => a.id.localeCompare(b.id)) || [],
         };
     }
 }

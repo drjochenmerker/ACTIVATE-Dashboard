@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import { getAllConflictsWithDetail } from "@/data/knowledge_graph/read_operations";
-import { Activity } from "@/data/knowledge_graph/structures";
-import { useConflictsStore } from "@/stores/conflictsStore";
-import { ref, onMounted } from "vue";
-import NavBar from "./NavBar.vue";
-import { useSessionStore } from "@/stores/sessionStore";
+import { getAllConflictsWithDetail } from '@/data/knowledge_graph/read_operations';
+import { Activity, Conflict } from '@/data/knowledge_graph/structures';
+import { useConflictsStore } from '@/stores/conflictsStore';
+import { ref, onMounted } from 'vue';
+import NavBar from './NavBar.vue';
+import { useSessionStore } from '@/stores/sessionStore';
 
 const sessionStore = useSessionStore();
 const activity = ref<Activity | undefined>(undefined);
 
 const conflictsStore = useConflictsStore();
-const conflictDetails = ref<any[]>([]);
+const conflictDetails = ref<Conflict[]>([]);
 
 const loadConflicts = async () => {
     activity.value = sessionStore.sessionActivity;
@@ -25,7 +25,7 @@ onMounted(async () => {
     try {
         await loadConflicts();
     } catch (error) {
-        console.error("Fehler beim Laden der Konflikte:", error);
+        console.error('Fehler beim Laden der Konflikte:', error);
     }
 });
 </script>

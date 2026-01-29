@@ -1,5 +1,5 @@
-import { computed, ComputedRef } from "vue";
-import { Conflict } from "@/data/knowledge_graph/structures";
+import { computed, ComputedRef } from 'vue';
+import { Conflict } from '@/data/knowledge_graph/structures';
 
 /**
  * Definition of a Point in the Activity-Diagram.
@@ -31,9 +31,9 @@ export function calculateConflictPositions(
     conflictData: Conflict[],
     points: Point[],
     spacing: number = 20,
-): ComputedRef<any[]> {
+): ComputedRef<Conflict[]> {
     return computed(() => {
-        const result: Array<any> = [];
+        const result: Array<Conflict> = [];
 
         // Define possible groups
         const singlePointGroups: Map<string, Conflict[]> = new Map();
@@ -49,12 +49,12 @@ export function calculateConflictPositions(
                 singlePointGroups.get(key)?.push(conflict);
             } else if (uniqueTypes.size === 2) {
                 const types = Array.from(uniqueTypes).sort();
-                const key = types.join("-");
+                const key = types.join('-');
                 if (!lineGroups.has(key)) lineGroups.set(key, []);
                 lineGroups.get(key)?.push(conflict);
             } else if (uniqueTypes.size === 3) {
                 const types = Array.from(uniqueTypes).sort();
-                const key = types.join("-");
+                const key = types.join('-');
                 if (!triangleGroups.has(key)) triangleGroups.set(key, []);
                 triangleGroups.get(key)?.push(conflict);
             } else {
@@ -92,7 +92,7 @@ export function calculateConflictPositions(
          * - offset leads to vacant space between the conflicts
          */
         lineGroups.forEach((conflicts, key) => {
-            const types = key.split("-");
+            const types = key.split('-');
             const pointA = points.find((p) => p.id === types[0]);
             const pointB = points.find((p) => p.id === types[1]);
 
@@ -144,7 +144,7 @@ export function calculateConflictPositions(
          * - offset leads to vacant space between the conflicts
          */
         triangleGroups.forEach((conflicts, key) => {
-            const types = key.split("-");
+            const types = key.split('-');
             const pts = types.map((type) => points.find((p) => p.id === type)).filter(Boolean);
             if (pts.length === 3 && pts[0] && pts[1] && pts[2]) {
                 const midX = (pts[0].x + pts[1].x + pts[2].x) / 3;

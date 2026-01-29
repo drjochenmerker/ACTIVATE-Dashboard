@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
-import NoteCard from './NoteCard.vue';
+import NoteCard, { ConflictWithId } from './NoteCard.vue';
 import { useConflictsStore } from '@/stores/conflictsStore';
 import { staticContent } from '@/data/contentData';
 import { useSessionStore } from '@/stores/sessionStore';
@@ -32,14 +32,16 @@ const highlightedConflictId = route.query.conflictId;
  *
  * @returns {Array} An array of conflicts relevant to the current page context
  */
-const filteredConflicts = computed(() => {
+const filteredConflicts = computed((): ConflictWithId[] => {
     // with the higlighted conflict on top
-    const conflicts = conflictStore.getConflicts.filter((conflict) => {
-        return (
-            Array.isArray(conflict.participants) &&
-            conflict.participants.some((participant) => participant.type === props.pageData.id)
-        );
-    });
+    const conflicts: ConflictWithId[] = conflictStore.getConflicts
+        .filter((conflict) => {
+            return (
+                Array.isArray(conflict.participants) &&
+                conflict.participants.some((participant) => participant.type === props.pageData.id)
+            );
+        })
+        .filter((conflict) => conflict.id ?? conflict) as unknown as ConflictWithId[];
 
     // If there is a highlightedConflictId, sort so it comes first
     if (highlightedConflictId) {

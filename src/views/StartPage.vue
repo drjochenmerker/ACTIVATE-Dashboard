@@ -4,11 +4,11 @@ import { getActivityClassIds } from '@/data/knowledge_graph/read_operations';
 import { ref, onMounted, watch, computed } from 'vue';
 import { useSessionStore } from '@/stores/sessionStore';
 import { KnowledgeGraphActivityClass } from '@/data/knowledge_graph/structures';
-import { Card, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { CustomCard, CardHeader, CardTitle } from '@/components/ui/card';
+import { CustomButton } from '@/components/ui/button';
 import ActivityCard from '@/components/ActivityCard.vue';
 import {
-    Dialog,
+    CustomDialog,
     DialogContent,
     DialogHeader,
     DialogTitle,
@@ -82,7 +82,7 @@ const addNewActivity = async () => {
 <template>
     <div class="flex flex-col items-center justify-center py-10 px-4">
         <LanguageSelect class="absolute top-0 right-0 mt-4 mr-4" />
-        <Card class="w-full max-w-5xl">
+        <CustomCard class="w-full max-w-5xl">
             <!-- Card header with logo -->
             <CardHeader class="flex justify-center items-center">
                 <CardTitle class="flex justify-center w-full">
@@ -95,13 +95,13 @@ const addNewActivity = async () => {
 
             <!-- "add button" in the middle -->
             <div class="flex justify-center my-6">
-                <Dialog v-model:open="dialogOpen">
+                <CustomDialog v-model:open="dialogOpen">
                     <DialogTrigger as-child>
-                        <Button
+                        <CustomButton
                             class="text-3xl px-6 py-3 rounded-full text-black bg-white border border-black hover:bg-black hover:text-white transition-colors duration-300"
                         >
                             <PlusIcon class="h-6 w-6" />
-                        </Button>
+                        </CustomButton>
                     </DialogTrigger>
                     <DialogContent class="sm:max-w-[425px]">
                         <DialogHeader>
@@ -145,9 +145,9 @@ const addNewActivity = async () => {
                                 class="w-full border rounded p-2 mb-2 dark:bg-gray-900 border-gray-300"
                             />
 
-                            <Button @click="addNewActivity">{{
+                            <CustomButton @click="addNewActivity">{{
                                 staticContent.terms.done[sessionStore.activeLanguage]
-                            }}</Button>
+                            }}</CustomButton>
                         </DialogHeader>
                         <LoadingOverlay
                             :visible="loading"
@@ -155,13 +155,13 @@ const addNewActivity = async () => {
                             class="mt-4 text-red-500 font-semibold"
                         />
                     </DialogContent>
-                </Dialog>
+                </CustomDialog>
             </div>
 
             <!-- Activities Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 px-6 pb-6">
                 <ActivityCard v-for="activity in activities" :key="activity.graph" :activity="activity" class="h-fit" />
             </div>
-        </Card>
+        </CustomCard>
     </div>
 </template>

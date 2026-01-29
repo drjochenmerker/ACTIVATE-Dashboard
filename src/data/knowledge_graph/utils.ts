@@ -57,11 +57,11 @@ export async function fetchSparql(query: string, update: boolean = false): Promi
  * @returns nested Comment or undefined if nothing was found
  */
 export function findNestedComment(commentId: string, input: Conflict | Comment[]): Comment | undefined {
-    let searchArray: any;
+    let searchArray: Conflict | Comment[];
     if (Array.isArray(input)) {
         searchArray = input;
     } else {
-        searchArray = input.replies;
+        searchArray = input.replies || [];
     }
     for (const reply of searchArray) {
         const nestedReply = findNestedCommentR(commentId, reply);

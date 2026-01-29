@@ -4,7 +4,7 @@ import { buildLanguageString } from '@/lib/utils';
 import { useSessionStore } from '@/stores/sessionStore';
 
 export default {
-    name: 'Dropdown',
+    name: 'RDFDropdown',
 
     /**
      * Props of the Dropdown component
@@ -24,7 +24,7 @@ export default {
         },
         modelValue: {
             type: Object,
-            default: {},
+            default: () => {},
         },
         disabled: {
             type: Boolean,

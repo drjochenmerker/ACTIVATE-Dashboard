@@ -27,7 +27,7 @@ export async function getActivities(): Promise<Activity[]> {
     // Group activities by graph ID
     const grouped: Record<string, Activity> = {};
 
-    data.forEach((triple: any) => {
+    data.forEach((triple: StringAccessObject) => {
         // Extract graph identifier (last part of the URI)
         const graphId = triple.graph.value.split('/').pop() || triple.graph.value;
 
@@ -119,11 +119,15 @@ export async function getActivityDetail(activity: Activity): Promise<ActivityDet
                 return;
             } else if (item.property.value.split('#').pop() === 'label') {
                 const langTag = item.target['xml:lang'] || undefined;
-                langTag
-                    ? (activityDetail[type][objectIndexInList].labels[langTag] = item.target.value)
-                    : (activityDetail[type][objectIndexInList].labels.default = item.target.value
-                          ? item.target.value
-                          : item.entity.value.split('#').pop());
+
+                if (langTag) {
+                    activityDetail[type][objectIndexInList].labels[langTag] = item.target.value;
+                } else {
+                    activityDetail[type][objectIndexInList].labels.default = item.target.value
+                        ? item.target.value
+                        : item.entity.value.split('#').pop();
+                }
+
                 return;
             }
             if (item.language) {
@@ -297,7 +301,8 @@ export async function getConflictDetail(graph: string, conflictId: string): Prom
                 case 'HasComment':
                     rootReplyIds.push(item.conflict_o.value.split('#').pop());
                     break;
-                case 'Origin': { // break; // console.log("Conflict Origin:", parsedConflict.origin); // parsedConflict.origin = item.conflict_o.value.split("#").pop(); // tmp only showing origins answer
+                case 'Origin': {
+                    // break; // console.log("Conflict Origin:", parsedConflict.origin); // parsedConflict.origin = item.conflict_o.value.split("#").pop(); // tmp only showing origins answer
                     const valueStr = item.conflict_o.value.split('#').pop();
                     try {
                         const obj = JSON.parse(valueStr);

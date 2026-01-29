@@ -4,14 +4,14 @@ import { useRoute } from 'vue-router';
 import NoteCardMisc from '@/components/NoteCardMisc.vue';
 import { activateTerms, contentData, staticContent } from '@/data/contentData';
 import ContentTemplate from '@/components/ContentTemplate.vue';
-import { Comment } from '@/data/knowledge_graph/structures';
+import { Activity, Comment, Conflict } from '@/data/knowledge_graph/structures';
 import { useSessionStore } from '@/stores/sessionStore';
 import { getMiscComments } from '@/data/knowledge_graph/read_operations';
 
 const route = useRoute();
 
 // Define props
-const props = defineProps<{ conflicts: any[]; activity: any }>();
+const props = defineProps<{ conflicts: Conflict[]; activity: Activity }>();
 
 // Stores
 const sessionStore = useSessionStore();

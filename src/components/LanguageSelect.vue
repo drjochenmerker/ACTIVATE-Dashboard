@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
+import { CustomSelect, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
 import { LanguageCode } from '@/data/knowledge_graph/structures';
 import { LanguagesIcon } from 'lucide-vue-next';
 import { useSessionStore } from '@/stores/sessionStore';
@@ -14,7 +14,7 @@ function handleLanguageChange() {
 <template>
     <div class="flex flex-row gap-2 items-center w-32">
         <LanguagesIcon class="w-1/3" />
-        <Select
+        <CustomSelect
             id="languageSelect"
             v-model="sessionStore.activeLanguage"
             :default-value="LanguageCode.English"
@@ -28,6 +28,6 @@ function handleLanguageChange() {
                     {{ lang[0] }}
                 </SelectItem>
             </SelectContent>
-        </Select>
+        </CustomSelect>
     </div>
 </template>

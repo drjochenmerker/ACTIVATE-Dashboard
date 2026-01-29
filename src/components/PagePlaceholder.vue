@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Skeleton } from "@/components/ui/skeleton";
+import { CustomSkeleton } from '@/components/ui/skeleton';
 </script>
 
 <!-- Placeholder-Component to mock new pages, useful for development -->
@@ -7,13 +7,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 <template>
     <div class="space-y-6">
         <div class="space-y-2">
-            <Skeleton class="h-8 w-full" />
-            <Skeleton class="h-6 w-1/2" />
+            <CustomSkeleton class="h-8 w-full" />
+            <CustomSkeleton class="h-6 w-1/2" />
         </div>
         <div class="space-y-4">
-            <Skeleton class="h-32 w-full rounded-md" />
-            <Skeleton class="h-64 w-full rounded-md" />
-            <Skeleton class="h-64 w-full rounded-md" />
+            <CustomSkeleton class="h-32 w-full rounded-md" />
+            <CustomSkeleton class="h-64 w-full rounded-md" />
+            <CustomSkeleton class="h-64 w-full rounded-md" />
         </div>
     </div>
 </template>

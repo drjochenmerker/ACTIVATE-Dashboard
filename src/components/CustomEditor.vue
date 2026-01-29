@@ -1,8 +1,8 @@
 <script>
 import Quill from 'quill';
 import 'quill/dist/quill.snow.css';
-import Button from '@/components/ui/button/Button.vue';
-import Dropdown from './Dropdown.vue';
+import CustomButton from '@/components/ui/button/CustomButton.vue';
+import CustomDropdown from './CustomDropdown.vue';
 
 import { useToast } from 'vue-toastification';
 import 'vue-toastification/dist/index.css';
@@ -22,10 +22,10 @@ import { buildLanguageString } from '@/lib/utils';
  * Allows to add new conflicts and miscellaneous comments to the graph
  */
 export default {
-    name: 'Editor',
+    name: 'CustomEditor',
     components: {
-        Button,
-        Dropdown,
+        CustomButton,
+        CustomDropdown,
     },
     props: {
         value: {
@@ -335,7 +335,7 @@ export default {
         <div class="dropdown-container">
             <div v-for="point in activePoints" :key="point">
                 <!-- Pass selectedPoints[point] as v-model to the Dropdown to manage multiple selections -->
-                <Dropdown v-model="selectedPoints[point]" :label="point" :options="pointData[point] || []" />
+                <CustomDropdown v-model="selectedPoints[point]" :label="point" :options="pointData[point] || []" />
             </div>
         </div>
         <!-- Second Separator TODO: Figure out why Tailwind won't render the separator when three points are selected and mt and mb are even -->
@@ -364,9 +364,15 @@ export default {
             {{ staticContent.editor.anonymous[sessionStore.activeLanguage] || staticContent.editor.anonymous.en }}
         </label>
 
-        <Button variant="primary" size="large" class="transfer-button" :disabled="isDoneDisabled" @click="transferText">
+        <CustomButton
+            variant="primary"
+            size="large"
+            class="transfer-button"
+            :disabled="isDoneDisabled"
+            @click="transferText"
+        >
             {{ staticContent.terms.done[sessionStore.activeLanguage] || staticContent.terms.done.en }}
-        </Button>
+        </CustomButton>
     </div>
 </template>
 

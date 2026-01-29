@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import ActivityDiagram from "@/components/ActivityDiagram.vue";
+import ActivityDiagram from '@/components/ActivityDiagram.vue';
 // import { ref } from 'vue';
-import { useSessionStore } from "@/stores/sessionStore";
-import { staticContent } from "@/data/contentData";
+import { useSessionStore } from '@/stores/sessionStore';
+import { staticContent } from '@/data/contentData';
+import { Activity, Conflict } from '@/data/knowledge_graph/structures';
 
-defineProps<{ conflicts: any[]; activity: any }>();
+defineProps<{ conflicts: Conflict[]; activity: Activity }>();
 
 const sessionStore = useSessionStore();
 </script>
@@ -15,8 +16,8 @@ const sessionStore = useSessionStore();
             <h1 class="text-2xl font-semibold mb-1 text-center">
                 {{ staticContent.terms.setting[sessionStore.activeLanguage] }}:
                 {{
-                    (activity.name && activity.name[sessionStore.activeLanguage]) || activity.name["default"]
-                        ? activity.name[sessionStore.activeLanguage] || activity.name["default"]
+                    (activity.name && activity.name[sessionStore.activeLanguage]) || activity.name['default']
+                        ? activity.name[sessionStore.activeLanguage] || activity.name['default']
                         : `${staticContent.errors.activityNameLoad[sessionStore.activeLanguage]} - Graph-ID: ${activity.graph}`
                 }}
             </h1>

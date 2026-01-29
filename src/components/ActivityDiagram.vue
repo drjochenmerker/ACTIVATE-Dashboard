@@ -10,9 +10,8 @@ import { useActivityPointsStore } from '@/stores/activityPointsStore';
 import { calculateConflictPositions } from '@/composables/calculateConflictPositions';
 import { getActivityDetail } from '@/data/knowledge_graph/read_operations';
 import { activateTerms, staticContent } from '@/data/contentData';
-import { Activity, Conflict, conflictStatus, Objective } from '@/data/knowledge_graph/structures';
+import { Activity, ActivityDetail, Conflict, conflictStatus, Objective } from '@/data/knowledge_graph/structures';
 
-import { Button } from '@/components/ui/button';
 import PointHoverPopUp from '@/components/PointHoverPopUp.vue';
 import ConflictHoverPopUp from './ConflictHoverPopUp.vue';
 
@@ -25,7 +24,6 @@ export default defineComponent({
     components: {
         ConflictHoverPopUp,
         PointHoverPopUp,
-        Button,
     },
 
     /**
@@ -67,7 +65,7 @@ export default defineComponent({
 
         // Conflict Data
         let conflictData = conflictStore.getConflicts;
-        const activityData = ref<any>(null);
+        const activityData = ref<ActivityDetail | null>(null);
 
         // Checks if the Activity-Diagram has to be cleared when a Comment is sent by the editor
         const hasToBeCleared = computed(() => activityPointStore.getActivePoints.length === 0);
@@ -189,10 +187,7 @@ export default defineComponent({
         const hoveredTriangle = ref<{ pointIds: string[] } | null>(null);
 
         // Positions of the conflict points
-        //old
-        //  let conflictPositions = calculateConflictPositions(conflictData, points.value, 20);
-        // new
-        const conflictPositions = ref<any[]>([]);
+        const conflictPositions = ref<Conflict[]>([]);
         /**
          * Updates the selected points using the activityPointStore based on the active property of the points
          */
@@ -415,9 +410,7 @@ export default defineComponent({
 
                 // Draw labels for each point
                 ctx.fillStyle = mode.value === 'dark' ? 'white' : 'black';
-                point.active
-                    ? (ctx.font = `bold ${triangleHeight / 40}px Arial`)
-                    : (ctx.font = `${triangleHeight / 40}px Arial`);
+                ctx.font = point.active ? `bold ${triangleHeight / 40}px Arial` : `${triangleHeight / 40}px Arial`;
                 ctx.textAlign = 'center';
 
                 // WORKAROUND of dynamic positioninig: only the object label adjusted
@@ -541,7 +534,7 @@ export default defineComponent({
                     foundPoint = {
                         label: point.label,
                         tooltip: point.tooltip,
-                        content: activityData.value[point.id] || [],
+                        content: activityData.value ? activityData.value[point.id] : [],
                     };
                 }
             });
@@ -550,6 +543,7 @@ export default defineComponent({
 
             // Check if a conflict point is hovered -> if yes, set foundConflictPoint to the hovered conflict point
             conflictPositions.value.forEach((conflict) => {
+                if (!conflict.x || !conflict.y) return;
                 const distance = Math.sqrt((mouseX - conflict.x) ** 2 + (mouseY - conflict.y) ** 2);
                 if (distance < triangleHeight / 80) {
                     foundConflictPoint = conflict;
@@ -585,12 +579,13 @@ export default defineComponent({
             });
 
             conflictPositions.value.forEach((conflict) => {
+                if (!conflict.x || !conflict.y) return;
                 const distance = Math.sqrt((mouseX - conflict.x) ** 2 + (mouseY - conflict.y) ** 2);
                 if (distance < triangleHeight / 80) {
                     conflictPointWasClicked = true;
 
                     const conflictParticipantTypes = conflict.participants.map(
-                        (participant: { type: any }) => participant.type,
+                        (participant: { type: string }) => participant.type,
                     );
                     router.push({
                         path: `/${conflictParticipantTypes[0]}`,
@@ -681,6 +676,11 @@ export default defineComponent({
             },
         );
 
+        const onKeyCleaned = (key: string, newKey: string) => {
+            if (!hoveredConflictPointData.value) return;
+            hoveredConflictPointData.value.description[key] = newKey;
+        };
+
         return {
             canvas,
             triangleWidth,
@@ -690,6 +690,7 @@ export default defineComponent({
             hoveredPointData,
             hoveredConflictPointData,
             hoverPosition,
+            onKeyCleaned,
         };
     },
 });
@@ -710,6 +711,7 @@ export default defineComponent({
             v-if="hoveredConflictPointData"
             :hovered-conflict-point="hoveredConflictPointData"
             :position="hoverPosition"
+            @key-cleaned="onKeyCleaned"
         />
     </div>
 </template>

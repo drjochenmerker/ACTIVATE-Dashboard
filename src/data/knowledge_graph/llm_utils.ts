@@ -8,7 +8,7 @@ import { fetchSparql, getSparqlTemplate } from './utils';
 export type LLMParsingResult = {
     success: boolean;
     message: string;
-    data?: any;
+    data?: { question: string; answer: string };
 };
 
 /**
@@ -175,12 +175,12 @@ export async function llmSubmit(
 export async function llmPool(graphID: string): Promise<LLMParsingResult> {
     const debugOn = true; // DEBUG: SET TO TRUE IF DEBUGGING IS NEEDED
     const logger = {
-        log: (...args: any[]) => {
+        log: (...args: string[]) => {
             if (debugOn) {
                 console.log(...args);
             }
         },
-        error: (...args: any[]) => {
+        error: (...args: string[]) => {
             if (debugOn) {
                 console.error(...args);
             }

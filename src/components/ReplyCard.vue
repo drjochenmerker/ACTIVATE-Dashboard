@@ -1,23 +1,21 @@
 <script lang="ts" setup>
 import { nextTick, ref } from 'vue';
-import { Button } from '@/components/ui/button';
+import { CustomButton } from '@/components/ui/button';
 import { addComment, deleteComment } from '@/data/knowledge_graph/write_operations';
 import { useConflictsStore } from '@/stores/conflictsStore';
 import { useSessionStore } from '@/stores/sessionStore';
 import { staticContent } from '@/data/contentData';
 import { useColorMode } from '@vueuse/core';
+import { Comment } from '@/data/knowledge_graph/structures';
 
 /**
  * ReplyCard-Component
  * Shows a reply for a specific parent element
  */
 
-const props = defineProps({
-    parentComment: {
-        type: Object,
-        required: true,
-    },
-});
+const props = defineProps<{
+    parentComment: Comment;
+}>();
 
 const colorMode = useColorMode();
 
@@ -62,11 +60,11 @@ const handleEnterKey = (event: KeyboardEvent) => {
 };
 
 // help function
-const hasReplies = (comment: any) => Array.isArray(comment.replies) && comment.replies.length > 0;
+const hasReplies = (comment: Comment) => Array.isArray(comment.replies) && comment.replies.length > 0;
 
 const emit = defineEmits(['deleteComment']);
 // Delete comment
-const handleDelete = async (id: string, parentComment: any) => {
+const handleDelete = async (id: string, parentComment: Comment) => {
     try {
         // Delete the comment (is it a nested comment?)
         const isNestedComment = hasReplies(parentComment);
@@ -82,7 +80,7 @@ const handleDelete = async (id: string, parentComment: any) => {
             //parentComment.comment = "This comment is deleted.";
             // if comment is nested, remove it from the replies
             if (parentComment.replies) {
-                parentComment.replies = parentComment.replies.filter((reply: any) => reply.id !== id);
+                parentComment.replies = parentComment.replies.filter((reply: Comment) => reply.id !== id);
             }
 
             // if comment is not nested, delete it directly
@@ -96,12 +94,6 @@ const handleDelete = async (id: string, parentComment: any) => {
         console.error('Error while deleting the reply: ', error);
     }
 };
-
-const removeReply = (id: string) => {
-    if (!Array.isArray(props.parentComment.replies)) return;
-    props.parentComment.replies = props.parentComment.replies.filter((reply) => reply.id !== id);
-    conflictStore.refreshConflictList();
-};
 </script>
 
 <template>
@@ -110,8 +102,8 @@ const removeReply = (id: string) => {
             <div class="reply-head">
                 <p class="reply-author">
                     {{
-                        props.parentComment.author.labels[sessionStore.activeLanguage] ||
-                        props.parentComment.author.labels['default']
+                        props.parentComment.author?.labels[sessionStore.activeLanguage] ||
+                        props.parentComment.author?.labels['default']
                     }}
                 </p>
                 <button class="icon-button" @click="handleDelete(props.parentComment.id, props.parentComment)">
@@ -132,13 +124,13 @@ const removeReply = (id: string) => {
         </div>
 
         <!-- Reply Button to hide input field -->
-        <Button @click="toggleReplyInput()">
+        <CustomButton @click="toggleReplyInput()">
             {{
                 replyInputVisible
                     ? staticContent.noteCards.cancel[sessionStore.activeLanguage]
                     : staticContent.noteCards.answer[sessionStore.activeLanguage]
             }}
-        </Button>
+        </CustomButton>
 
         <!-- Reply input field -->
         <div v-if="replyInputVisible" class="reply-input">
@@ -148,9 +140,9 @@ const removeReply = (id: string) => {
                 :placeholder="staticContent.placeholders.answer[sessionStore.activeLanguage]"
                 @keydown.enter="handleEnterKey($event)"
             ></textarea>
-            <Button @click="saveReply(props.parentComment.id)">{{
+            <CustomButton @click="saveReply(props.parentComment.id)">{{
                 staticContent.noteCards.saveComment[sessionStore.activeLanguage]
-            }}</Button>
+            }}</CustomButton>
         </div>
 
         <div
@@ -161,7 +153,7 @@ const removeReply = (id: string) => {
                 v-for="nestedReply in props.parentComment.replies"
                 :key="nestedReply.id"
                 :parent-comment="nestedReply"
-                @delete-comment="removeReply"
+                @delete-comment="handleDelete(props.parentComment.id, props.parentComment)"
             />
         </div>
     </div>
