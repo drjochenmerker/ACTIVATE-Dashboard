@@ -31,7 +31,8 @@ export const useSessionStore = defineStore('session', () => {
   const sessionActivity = ref<Activity | undefined>(undefined);
   const sessionRole = ref<string | undefined>(undefined);
   const availableRoles = ref<NestedMultiLangObject>({} as NestedMultiLangObject);
-  const instructorMode = ref(false);
+  const instructorMode = ref(true);
+  const instructorView = ref(false);
   const isSessionActive = ref(false);
   const activeLanguage = ref<LanguageCode>(LanguageCode.Deutsch); // todo: default language
   const activeScene = ref<string>('Scene 1'); // Default scene
@@ -51,5 +52,5 @@ export const useSessionStore = defineStore('session', () => {
     isSessionActive.value = false;
   }
 
-  return { startSession, endSession, sessionActivity, sessionRole, availableRoles, isSessionActive, instructorMode, outdated, activeLanguage, activeScene };
+  return { startSession, endSession, sessionActivity, sessionRole, availableRoles, isSessionActive, instructorMode, instructorView, outdated, activeLanguage, activeScene };
 });

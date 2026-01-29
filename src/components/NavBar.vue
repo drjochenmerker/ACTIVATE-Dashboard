@@ -14,6 +14,7 @@ import LogoutButton from './LogoutButton.vue';
 import RecursiveSelect from './RecursiveSelect.vue';
 import SceneChangeButton from './SceneChangeButton.vue';
 import LanguageSelect from './LanguageSelect.vue';
+import InstructorViewSelect from './InstructorViewSelect.vue';
 
 const sessionStore = useSessionStore();
 </script>
@@ -62,6 +63,7 @@ const sessionStore = useSessionStore();
                     </template>
                 </div>
                 <SceneChangeButton />
+                <InstructorViewSelect v-if="sessionStore.instructorMode" />
                 <LanguageSelect />
                 <LogoutButton />
                 <ThemeSwitchButton />

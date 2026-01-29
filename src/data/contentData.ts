@@ -107,6 +107,18 @@ export const staticContent = {
             sv: "Scen",
         }
     },
+    instructorView: {
+        standard: {
+            en: "Standard view",
+            de: "Standardansicht",
+            sv: "Standardvy",
+        },
+        instructor: {
+            en: "Instructor view",
+            de: "Instructoransicht",
+            sv: "Instruktörsvy",
+        },
+    },
     terms: {
         setting: {
             en: "Setting",
