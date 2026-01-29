@@ -2,13 +2,13 @@
 import { computed, ref, onMounted, onUnmounted } from 'vue'
 
 import {
-    startAudioProcessingJob,
-    checkJobStatus,
+    // startAudioProcessingJob,
+    // checkJobStatus,
     // fetchTranslation,
     startDirectDiarization,
     type DiarizationSuccessResult,
     type DiarizationErrorResult,
-    type JobStatus
+    // type JobStatus
 } from '@/data/knowledge_graph/transcribe_utils';
 
 import { Mic } from "lucide-vue-next";
@@ -17,7 +17,7 @@ import { useSessionStore } from '@/stores/sessionStore'
 import { getActivityClassIds } from '@/data/knowledge_graph/read_operations';
 import { KnowledgeGraphActivityClass } from '@/data/knowledge_graph/structures';
 import { buildTreeStructByLang } from '@/data/knowledge_graph/utils';
-import { mergeTranscript } from '@/data/knowledge_graph/llm_utils';
+import { mapRolesToTranscript, transformMappedTrascriptToTtl } from '@/data/knowledge_graph/llm_utils';
 
 
 interface RoleLabel { de?: string; en?: string; sv?: string; }
@@ -27,6 +27,7 @@ interface RoleNode { level: string; values: RoleValue[]; next: RoleNode[]; }
 const props = defineProps<{
     graph: string,
     activeLang: 'de' | 'en' | 'sv',
+    isMapped: boolean
 }>()
 
 const sessionStore = useSessionStore()
@@ -34,7 +35,12 @@ const sessionStore = useSessionStore()
 const selectedFile = ref<File | null>(null);
 const diarizationResult = ref<DiarizationSuccessResult | null>(null);
 const diarizationError = ref<DiarizationErrorResult | null>(null);
+
+const mappedTranscript = ref<DiarizationSuccessResult | null>(null);
+const mappedSpeakers = ref<Record<string, string> | null>(null); // speaker to role mapping array
+
 const isRecording = ref(false);
+const isMapped = ref(false);
 const mediaRecorderInstance = ref<MediaRecorder | null>(null);
 const audioChunks = ref<BlobPart[]>([]);
 const previewBlob = ref<Blob | null>(null);
@@ -50,14 +56,11 @@ const pollingInterval = ref<NodeJS.Timeout | null>(null);
 const pollingMessage = ref<string>("");
 
 // refs for translation
-// const isTranslating = ref(false);
 const translationError = ref<string | null>(null);
 const translatedTextDE = ref<string | null>(null);
 const translatedTextSV = ref<string | null>(null);
 
-// ref for output debug
-
-// file and upload handling functions
+// file and recording handlers
 const handleFileChange = (event: Event) => {
     const target = event.target as HTMLInputElement;
     if (target.files && target.files[0]) {
@@ -138,207 +141,7 @@ const stopRecording = () => {
     }
 };
 
-
-const hasFile = computed(() => !!selectedFile.value || !!wavBlobForUpload.value);
-function flattenRoles(node: RoleNode | null, lang: 'de' | 'en' | 'sv'): string[] {
-    if (!node) return [];
-    let roles: string[] = [];
-    if (node.values) {
-        for (const val of node.values) {
-            const label = val.labels[lang] || val.labels['de'];
-            if (label) roles.push(label);
-        }
-    }
-    if (node.next) {
-        for (const nextNode of node.next) {
-            roles = roles.concat(flattenRoles(nextNode, lang));
-        }
-    }
-    return [...new Set(roles.filter(Boolean))];
-}
-const getRoles = async (): Promise<string[]> => {
-    const rolesData = await getActivityClassIds(props.graph, KnowledgeGraphActivityClass.subject);
-    sessionStore.availableRoles = buildTreeStructByLang(
-        rolesData,
-        sessionStore.activeLanguage
-    );
-    return flattenRoles(sessionStore.availableRoles as RoleNode, sessionStore.activeLanguage);
-};
-onMounted(async () => {
-    await getRoles();
-});
-
-onUnmounted(() => {
-    if (pollingInterval.value) {
-        clearInterval(pollingInterval.value);
-    }
-});
-
-// polling function
-const pollJobStatus = async () => {
-    if (!jobId.value) return;
-
-    // console.log(`Polling status for job: ${jobId.value}...`);
-    try {
-        const result: JobStatus = await checkJobStatus(jobId.value);
-
-        if (result.status === 'processing') {
-            pollingMessage.value = `Processing... ${result.message} (${result.progress}%)`;
-        }
-        else if (result.status === 'complete') {
-            console.log("Job completed!", result.data);
-            if (pollingInterval.value) clearInterval(pollingInterval.value);
-            isPolling.value = false;
-            diarizationResult.value = result.data; // final result
-
-            emit('processingComplete', true);
-        }
-        else if (result.status === 'error') {
-            console.error("Job failed:", result.message);
-            if (pollingInterval.value) clearInterval(pollingInterval.value);
-            isPolling.value = false;
-            diarizationError.value = { success: false, message: result.message };
-            emit('processingComplete', false); // Error
-        }
-
-    } catch (error) {
-        console.error("Error while polling:", error);
-        isPolling.value = false;
-        if (pollingInterval.value) clearInterval(pollingInterval.value);
-        diarizationError.value = { success: false, message: "Error while fetching job status." };
-        emit('processingComplete', false); // Error
-    }
-};
-
-const emit = defineEmits(['processingComplete']);
-
-defineExpose({
-    hasFile,
-    submit: async (): Promise<boolean> => { // only returns true if job started successfully
-        if (!selectedFile.value && !wavBlobForUpload.value) {
-            alert('Bitte wählen Sie zuerst eine Datei aus oder nehmen Sie Audio auf (und warten Sie auf die Konvertierung).');
-            return false;
-        }
-
-        clearResults();
-
-        let fileToUpload: File;
-        if (selectedFile.value) {
-            fileToUpload = selectedFile.value;
-        } else if (wavBlobForUpload.value) {
-            fileToUpload = new File([wavBlobForUpload.value], "recording.wav", { type: 'audio/wav' });
-        } else {
-            return false;
-        }
-
-        const rolesForSession = flattenRoles(sessionStore.availableRoles as RoleNode, props.activeLang);
-        if (!rolesForSession.includes("Actor")) rolesForSession.push("Actor");
-        if (!rolesForSession.includes("Instructor")) rolesForSession.push("Instructor");
-
-        // console.log("Sende folgende Rollenliste an das Backend:", rolesForSession);
-
-        try {
-            const { job_id } = await startAudioProcessingJob(
-                fileToUpload,
-                sessionStore.activeLanguage,
-                rolesForSession
-            );
-
-            jobId.value = job_id;
-            isPolling.value = true;
-            pollingMessage.value = "Job started, waiting for first status...";
-
-            // start polling every 5 seconds
-            pollingInterval.value = setInterval(pollJobStatus, 5000);
-
-            // execute the first poll immediately
-            await pollJobStatus();
-
-            return true; // job has been started successfully
-
-        } catch (error) {
-            diarizationError.value = {
-                success: false,
-                message: error instanceof Error ? error.message : 'An unknown error occurred.'
-            };
-            console.error('Error while STARTING the job:', error);
-            return false; // job couldnt be started
-        }
-    },
-    submitOnlyDiarization: async (): Promise<boolean> => {
-        if (!selectedFile.value && !wavBlobForUpload.value) {
-            alert('Bitte wählen Sie zuerst eine Datei aus oder nehmen Sie Audio auf.');
-            return false;
-        }
-
-        clearResults();
-
-        let fileToUpload: File;
-        if (selectedFile.value) {
-            fileToUpload = selectedFile.value;
-        } else if (wavBlobForUpload.value) {
-            fileToUpload = new File([wavBlobForUpload.value], "recording.wav", { type: 'audio/wav' });
-        } else {
-            return false;
-        }
-
-        try {
-            // Da dies kein Polling ist, setzen wir den Status manuell, damit der User sieht, dass etwas passiert
-            isPolling.value = true;
-            pollingMessage.value = "Transcribing & Diarizing (No Role mapping)...";
-            const result = await startDirectDiarization(
-                fileToUpload,
-                sessionStore.activeLanguage
-            );
-
-            // Erfolg
-            diarizationResult.value = result;
-            isPolling.value = false;
-            emit('processingComplete', true);
-            return true;
-
-        } catch (error) {
-            diarizationError.value = {
-                success: false,
-                message: error instanceof Error ? error.message : 'An unknown error occurred during direct transcription.'
-            };
-            isPolling.value = false;
-            emit('processingComplete', false);
-            console.error('Error while DIRECT processing:', error);
-            return false;
-        }
-    },
-});
-
-// todo
-// const translateFullTranscription = async (targetLang: 'de' | 'sv') => {
-//     if (!diarizationResult.value) return;
-//     const fullText = diarizationResult.value.diarized_transcription
-//         .map(seg => `${seg.speaker}: ${seg.text}`)
-//         .join("\n");
-//     if (fullText.trim().length === 0) {
-//         translationError.value = "There is no text to translate.";
-//         return;
-//     }
-//     isTranslating.value = true;
-//     translationError.value = null;
-//     try {
-//         const result = await fetchTranslation(fullText, targetLang);
-//         if (result.status === 'success') {
-//             if (targetLang === 'de') translatedTextDE.value = result.translatedText;
-//             else if (targetLang === 'sv') translatedTextSV.value = result.translatedText;
-//         } else {
-//             throw new Error(result.message);
-//         }
-//     } catch (error) {
-//         console.error(`Error while translating to ${targetLang}:`, error);
-//         translationError.value = error instanceof Error ? error.message : "Unknown translation error.";
-//     } finally {
-//         isTranslating.value = false;
-//     }
-// };
-
-// WAV-Encoding 
+// WAV-Encoding because of browser compatibility 
 function audioBufferToWav(buffer: AudioBuffer): Blob {
     const numOfChan = buffer.numberOfChannels;
     const length = buffer.length * numOfChan * 2 + 44;
@@ -381,31 +184,270 @@ function audioBufferToWav(buffer: AudioBuffer): Blob {
     }
 }
 
-const mergeTranscriptWithActivity = async () => {
-    try {
-        const res = await mergeTranscript(props.graph, diarizationResult.value);
-        if (res.success === false) {
-            console.log("Nothing to pool.");
-            return;
-        } else {
-            console.log("Merged transcription: ", res.mergedTranscription); // funktiniert trotz roter underline?? todo
 
+const hasFile = computed(() => !!selectedFile.value || !!wavBlobForUpload.value);
+function flattenRoles(node: RoleNode | null, lang: 'de' | 'en' | 'sv'): string[] {
+    if (!node) return [];
+    let roles: string[] = [];
+    if (node.values) {
+        for (const val of node.values) {
+            const label = val.labels[lang] || val.labels['de'];
+            if (label) roles.push(label);
         }
-    } catch (e) {
-        console.error("Error during merging transcript with activity:", e);
-        return;
     }
+    if (node.next) {
+        for (const nextNode of node.next) {
+            roles = roles.concat(flattenRoles(nextNode, lang));
+        }
+    }
+    return [...new Set(roles.filter(Boolean))];
 }
+const getRoles = async (): Promise<string[]> => {
+    const rolesData = await getActivityClassIds(props.graph, KnowledgeGraphActivityClass.subject);
+    sessionStore.availableRoles = buildTreeStructByLang(
+        rolesData,
+        sessionStore.activeLanguage
+    );
+    return flattenRoles(sessionStore.availableRoles as RoleNode, sessionStore.activeLanguage);
+};
+onMounted(async () => {
+    await getRoles();
+});
+
+onUnmounted(() => {
+    if (pollingInterval.value) {
+        clearInterval(pollingInterval.value);
+    }
+});
+
+// // polling function
+// const pollJobStatus = async () => {
+//     if (!jobId.value) return;
+
+//     // console.log(`Polling status for job: ${jobId.value}...`);
+//     try {
+//         const result: JobStatus = await checkJobStatus(jobId.value);
+
+//         if (result.status === 'processing') {
+//             pollingMessage.value = `Processing... ${result.message} (${result.progress}%)`;
+//         }
+//         else if (result.status === 'complete') {
+//             console.log("Job completed!", result.data);
+//             if (pollingInterval.value) clearInterval(pollingInterval.value);
+//             isPolling.value = false;
+//             diarizationResult.value = result.data; // final result
+
+//             emit('processingComplete', true);
+//         }
+//         else if (result.status === 'error') {
+//             console.error("Job failed:", result.message);
+//             if (pollingInterval.value) clearInterval(pollingInterval.value);
+//             isPolling.value = false;
+//             diarizationError.value = { success: false, message: result.message };
+//             emit('processingComplete', false); // Error
+//         }
+
+//     } catch (error) {
+//         console.error("Error while polling:", error);
+//         isPolling.value = false;
+//         if (pollingInterval.value) clearInterval(pollingInterval.value);
+//         diarizationError.value = { success: false, message: "Error while fetching job status." };
+//         emit('processingComplete', false); // Error
+//     }
+// };
+
+const emit = defineEmits(['processingComplete', 'mapping-complete']);
+
+defineExpose({
+    hasFile,
+
+    submitOnlyDiarization: async (): Promise<boolean> => {
+        if (!selectedFile.value && !wavBlobForUpload.value) {
+            alert('Bitte wählen Sie zuerst eine Datei aus oder nehmen Sie Audio auf.');
+            return false;
+        }
+
+        clearResults();
+
+        let fileToUpload: File;
+        if (selectedFile.value) {
+            fileToUpload = selectedFile.value;
+        } else if (wavBlobForUpload.value) {
+            fileToUpload = new File([wavBlobForUpload.value], "recording.wav", { type: 'audio/wav' });
+        } else {
+            return false;
+        }
+
+        try {
+            isPolling.value = true;
+            pollingMessage.value = "Transcribing & Diarizing (No Role mapping)...";
+            const result = await startDirectDiarization(
+                fileToUpload,
+                sessionStore.activeLanguage
+            );
+
+            // success
+            diarizationResult.value = result;
+            isPolling.value = false;
+            emit('processingComplete', true);
+            console.log("Transcript:", result);
+            return true;
+
+        } catch (error) {
+            diarizationError.value = {
+                success: false,
+                message: error instanceof Error ? error.message : 'An unknown error occurred during direct transcription.'
+            };
+            isPolling.value = false;
+            emit('processingComplete', false);
+            console.error('Error while DIRECT processing:', error);
+            return false;
+        }
+    },
+    submitRoleMapping: async (): Promise<boolean> => {
+        // CALLS LLM TO CREATE A MAP FOR THE SPEAKERS TO ROLES
+        if (!diarizationResult.value) {
+            alert('No diarization data available.');
+            return false;
+        } else {
+            isPolling.value = true;
+            pollingMessage.value = "Role mapping...";
+            try {
+                const result = await mapRolesToTranscript(
+                    diarizationResult.value
+                );
+
+                // success
+                mappedSpeakers.value = result.data;
+                console.log("Role-mapped Transcript:", mappedSpeakers.value);
+
+                isPolling.value = false;
+                emit('processingComplete', true);
+                return true;
+            } catch (error) {
+                console.error("Error in role mapping:", error);
+                isPolling.value = false;
+                emit('processingComplete', false);
+                return false;
+            }
+        }
+    },
+    // }
+    mapSpeakerToTranscript: async (): Promise<boolean> => {
+        // FUNCTION TO ACTUALLY MAP THE ROLES TO THE SPEAKER IDS IN THE TRANSCRIP
+        // is there something to process?
+        if (!diarizationResult.value || !mappedSpeakers.value) {
+            alert('No diarization data or role mappings available to create the mapped transcript.');
+            return false;
+        }
+
+        try {
+            console.log("mapSpeakerToTranscript called...");
+
+            // todo: temporary
+            // DEEP COPY OF TRANSCRIPT
+            const transcriptCopy = JSON.parse(JSON.stringify(diarizationResult.value));
+
+            // PREPARE MAPPING DATA
+            // before ("{\"speaker_00\": ...}")
+            // We need to parse this string first.
+            let rawMapping: Record<string, string> = {};
+
+            try {
+                // Check access to .res (in case the API structure varies)
+                const mappingSource = mappedSpeakers.value.res || mappedSpeakers.value;
+
+                if (typeof mappingSource === 'string') {
+                    rawMapping = JSON.parse(mappingSource);
+                } else if (typeof mappingSource === 'object') {
+                    rawMapping = mappingSource as Record<string, string>;
+                }
+            } catch (parseError) {
+                console.error("Error parsing speaker mapping:", parseError);
+                // We do not abort, but continue without mapping (just copy transcript)
+            }
+
+            // normalize mapping (prepare case-insensitive lookup)
+            const normalizedMapping: Record<string, string> = {};
+            if (rawMapping) {
+                Object.keys(rawMapping).forEach(key => {
+                    normalizedMapping[key.toUpperCase()] = rawMapping[key];
+                });
+            }
+
+            // MAIN FUNCTIONALITY: replace speakers in transcript
+            if (transcriptCopy.diarized_transcription) {
+                transcriptCopy.diarized_transcription = transcriptCopy.diarized_transcription.map((segment: any) => {
+                    const originalSpeaker = segment.speaker;
+
+                    // search for the speaker in uppercase
+                    const searchKey = originalSpeaker ? originalSpeaker.toUpperCase() : "";
+
+                    // Find role or keep original
+                    const newRole = normalizedMapping[searchKey] || originalSpeaker;
+
+                    return {
+                        ...segment,
+                        speaker: newRole // replace speaker id with role
+                    };
+                });
+            }
+
+            // save result in "mappedTranscript"
+            mappedTranscript.value = transcriptCopy;
+
+            console.log("After replaceSpeakerRoles:", mappedTranscript);
+            isMapped.value = true;
+            return true;
+
+        } catch (error) {
+            console.error("Critical error in mapSpeakerToTranscript:", error);
+            return false;
+        }
+    },
+    transformMappedTranscriptToTtl: async (): Promise<boolean> => {
+        // LLM CALL TO TRANSFORM AND ADD THE MAPPED TRANSCRIPT TO THE EXISTING TTL-FILE
+        if (!isMapped.value) {
+            alert('No mapped transcript available to transform to TTL.');
+            return false;
+        } else {
+            isPolling.value = true;
+            pollingMessage.value = "Transforming to ttl...";
+            try {
+                const result = await transformMappedTrascriptToTtl(
+                    props.graph,
+                    mappedTranscript.value
+                );
+
+                // success
+                console.log("Generated ttl:", result);
+
+                isPolling.value = false;
+                // emit('processingComplete', true);
+                return true;
+            } catch (error) {
+                console.error("Error in ttl generation:", error);
+                isPolling.value = false;
+                // emit('processingComplete', false);
+                return false;
+            }
+        }
+    }
+});
+
+
 
 </script>
 
 <template>
-    <!-- file upload -->
+    <!-- FILE UPLOAD -->
+    <!-- TODO englisch mit festem text in verschiedenen sprachen ersetzen -->
     <div class="p-6 border rounded-lg bg-white shadow-sm space-y-4 text-center">
 
         <h2 class="text-xl font-semibold text-gray-900">
             Upload audio file
         </h2>
+        <!-- todo: other formats !! -->
         <p class="text-lg text-gray-600">
             Upload a <code class="bg-gray-200 px-1 rounded">.wav</code>, <code
                 class="bg-gray-200 px-1 rounded">.flac</code>, or <code class="bg-gray-200 px-1 rounded">.ogg</code>
@@ -466,7 +508,7 @@ const mergeTranscriptWithActivity = async () => {
                 class="mt-4 p-3 bg-blue-100 border border-blue-400 text-blue-700 rounded-lg text-left">
                 <p><strong>Please wait...</strong> Recording is being converted to WAV.</p>
             </div>
-            <!-- *** NEU: Polling-Statusanzeige *** -->
+            <!-- polling status bar -->
             <div v-if="isPolling"
                 class="mt-4 p-3 bg-yellow-100 border border-yellow-400 text-yellow-800 rounded-lg text-left">
                 <p><strong>Processing...</strong> {{ pollingMessage }}</p>
@@ -502,39 +544,44 @@ const mergeTranscriptWithActivity = async () => {
                     </div>
 
                 </div>
-                <button @click="mergeTranscriptWithActivity()">
-                    Merge with activity session.
-                </button>
+            </div>
+        </div>
+        <!-- todo: temporary show mapped speaker array -->
+        <div v-if="mappedSpeakers" class="mt-6 text-left border-t pt-4">
+            <div v-if="mappedSpeakers !== null"
+                class="p-4 bg-blue-100 border border-blue-400 text-blue-800 rounded-lg space-y-3">
+                <h3 class="text-lg font-semibold text-gray-900">Role-Speaker map:
+                </h3>
+                <div>
+                    {{ mappedSpeakers.res }}
+                </div>
+            </div>
 
+            <!-- temporary show diarized speaker-mapped transcript -->
+            <div v-if="mappedTranscript && mappedSpeakers !== null" class="mt-6 text-left border-t pt-4">
 
-                <!-- (Translation UI) -->
-                <!-- <div class="border-t border-green-300 pt-3 space-y-2">
-                    <h4 class="text-md font-semibold text-gray-800">Übersetzungen (via Gemini):</h4>
-                    <div class="flex gap-2">
-                        <button @click="translateFullTranscription('de')" :disabled="isTranslating"
-                            class="px-3 py-1 text-sm font-medium bg-white border border-gray-300 rounded-md shadow-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50">
-                            {{ isTranslating && !translatedTextDE ? 'Übersetze...' : 'Nach Deutsch' }}
-                        </button>
-                        <button @click="translateFullTranscription('sv')" :disabled="isTranslating"
-                            class="px-3 py-1 text-sm font-medium bg-white border border-gray-300 rounded-md shadow-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50">
-                            {{ isTranslating && !translatedTextSV ? 'Übersetze...' : 'Nach Schwedisch' }}
-                        </button>
+                <div class="p-4 bg-green-100 border border-green-400 text-green-800 rounded-lg space-y-3">
+                    <h3 class="text-lg font-semibold text-gray-900">Result of mapped Diarization & Transcription:
+                    </h3>
+                    <p class="text-sm text-gray-700">Detected Language: {{ mappedTranscript.detected_language }}
+                    </p>
+                    <div
+                        class="mt-2 max-h-96 overflow-y-auto bg-white p-3 rounded border border-gray-300 text-sm text-gray-800 shadow-inner">
+                        <p v-if="!mappedTranscript.diarized_transcription || mappedTranscript.diarized_transcription.length === 0"
+                            class="text-gray-500 italic">
+                            No speaker segments found.
+                        </p>
+                        <div v-else v-for="(segment, index) in mappedTranscript.diarized_transcription" :key="index">
+                            <div class="mb-2 pb-2 border-b last:border-b-0">
+                                <span class="font-semibold">[{{ segment.start.toFixed(2) }}s - {{
+                                    segment.end.toFixed(2) }}s] {{ segment.speaker }}:</span>
+                                <span class="ml-2">{{ segment.text }}</span>
+                            </div>
+                        </div>
+
                     </div>
-                    <div v-if="translationError"
-                        class="mt-2 p-2 bg-red-100 border border-red-300 text-red-700 text-sm rounded-lg">
-                        <strong>Übersetzungsfehler:</strong> {{ translationError }}
-                    </div>
-                    <div v-if="translatedTextDE"
-                        class="mt-2 bg-white p-3 rounded border border-gray-300 text-sm text-gray-800 shadow-inner">
-                        <h5 class="font-semibold mb-1 text-gray-600">Übersetzung (Deutsch):</h5>
-                        <p class="whitespace-pre-wrap">{{ translatedTextDE }}</p>
-                    </div>
-                    <div v-if="translatedTextSV"
-                        class="mt-2 bg-white p-3 rounded border border-gray-300 text-sm text-gray-800 shadow-inner">
-                        <h5 class="font-semibold mb-1 text-gray-600">Übersetzung (Schwedisch):</h5>
-                        <p class="whitespace-pre-wrap">{{ translatedTextSV }}</p>
-                    </div>
-                </div> -->
+
+                </div>
             </div>
         </div>
     </div>

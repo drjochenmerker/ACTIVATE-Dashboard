@@ -20,6 +20,8 @@ const sessionStore = useSessionStore()
 
 const activeLang = computed(() => sessionStore.activeLanguage)
 const loading = ref(false);
+const transcribed = ref(false);
+const transcriptMapped = ref(false);
 
 // mode 
 type ViewMode = 'form' | 'upload'
@@ -30,24 +32,25 @@ const formComponent = ref<InstanceType<typeof FeedbackForm> | null>(null);
 const audioComponent = ref<InstanceType<typeof FeedbackAudio> | null>(null);
 const audioHasFile = computed(() => audioComponent.value?.hasFile ?? false);
 
+
+// transcription and speaker diarization
 const submitOnlyTranscription = async () => {
     loading.value = true;
     let success = false;
 
     try {
         if (audioComponent.value) {
-            // Ruft die NEUE Methode im Child auf
             success = await audioComponent.value.submitOnlyDiarization();
+            transcribed.value = true;
         }
     } catch (error) {
         console.error("Error in submitOnlyTranscription:", error);
         success = false;
     }
-
-    // Loading wird über den emit 'processing-complete' (via onAudioProcessingComplete) im Template ausgeschaltet,
-    // oder wir machen es hier sicherheitshalber auch, falls kein Emit kommt:
     if (!success) loading.value = false;
 }
+
+
 const submitFeedback = async () => {
     loading.value = true;
     let success = false;
@@ -56,11 +59,6 @@ const submitFeedback = async () => {
         if (viewMode.value === 'form') { // form mode
             if (formComponent.value) {
                 success = await formComponent.value.submit();
-            }
-        } else { // 'upload' mode
-            if (audioComponent.value) {
-                // calls submit in FeedbackAudio.vue
-                success = await audioComponent.value.submit();
             }
         }
     } catch (error) {
@@ -80,11 +78,58 @@ const submitFeedback = async () => {
         }
     }
 }
+const submitRoleMapping = async () => {
+    loading.value = true;
+    let success = false;
+    try {
+        if (audioComponent.value) {
+            success = await audioComponent.value.submitRoleMapping();
+        }
+    } catch (error) {
+        console.error("Error in submitRoleMapping:", error);
+        success = false;
+    }
+    if (!success) loading.value = false;
+}
 
+const mapSpeakerToTranscript = async () => {
+    loading.value = true;
+    let success = false;
 
-const onAudioProcessingComplete = (success: boolean) => {
-    console.log(`FeedbackPage: audio processing success: ${success}).`);
+    try {
+        if (audioComponent.value && transcribed.value) {
+            success = await audioComponent.value.mapSpeakerToTranscript();
+            transcriptMapped.value = true;
+            loading.value = false;
+        }
+    } catch (error) {
+        console.error("Error in mapSpeakerToTranscript:", error);
+        success = false;
+        transcriptMapped.value = false; // just for safety
+    }
+    if (!success) loading.value = false;
+}
+
+const submitMappedTranscript = async () => {
+    loading.value = true;
+    let success = false;
+    try {
+        if (audioComponent.value) {
+            success = await audioComponent.value.transformMappedTranscriptToTtl();
+            loading.value = false; // finished processing
+        }
+    } catch (error) {
+        console.error("Error in submitRoleMapping:", error);
+        success = false;
+    }
+    if (!success) loading.value = false;
+}
+
+const onAudioProcessingComplete = () => {
     loading.value = false;
+}
+const handleMappingUpdate = () => {
+    transcriptMapped.value = true;
 }
 
 </script>
@@ -106,43 +151,43 @@ const onAudioProcessingComplete = (success: boolean) => {
                     </Button>
                 </div>
 
-                <!-- Feedback form component -->
+                <!-- FORM COMPONENT -->
                 <FeedbackForm v-if="viewMode === 'form'" ref="formComponent" :graph="props.graph"
                     :active-lang="activeLang" :session-role="sessionStore.sessionRole ?? null"
                     @update:role="sessionStore.sessionRole = $event" />
 
-                <!-- Audio upload component -->
+                <!-- AUDIO UPLOAD COMPONENT -->
                 <FeedbackAudio v-if="viewMode === 'upload'" ref="audioComponent" :graph="props.graph"
-                    :active-lang="activeLang" @processing-complete="onAudioProcessingComplete" />
+                    :active-lang="activeLang" :is-mapped="transcriptMapped"
+                    @processing-complete="onAudioProcessingComplete" @mapping-complete="handleMappingUpdate" />
 
             </div>
         </div>
 
-        <!-- global Submit-Button -->
-        <!-- <div class="mt-8">
-            <Button class="w-full" @click="submitFeedback"
-                :disabled="loading || (viewMode === 'upload' && !audioHasFile)">
-                <span v-if="viewMode === 'form'">{{ staticContent.noteCards.save[activeLang] }}</span>
-                <span v-else>
-                    {{ loading ? 'Audio is being processed...' : 'Upload & process audio' }}
-                </span>
-            </Button>
-        </div> -->
-        <div class="mt-8 flex flex-col gap-3"> <Button class="w-full" @click="submitFeedback"
-                :disabled="loading || (viewMode === 'upload' && !audioHasFile)">
-                <span v-if="viewMode === 'form'">{{ staticContent.noteCards.save[activeLang] }}</span>
-                <span v-else>
-                    {{ loading ? 'Audio is being processed...' : 'Upload & process audio (Full)' }}
-                </span>
+        <div class="mt-8 flex flex-col gap-3">
+            <Button v-if="viewMode === 'form'" class="w-full" @click="submitFeedback" :disabled="loading">
+                <!-- BUTTON FOR SUBMITTING TEXTUAL FEEDBACK -->
+                <span>{{ staticContent.noteCards.save[activeLang] }}</span>
             </Button>
 
+            <!-- BUTTON FOR TRANSCRIPTION AND DIARIZATION WITHOUT ROLE MAPPING -->
             <Button v-if="viewMode === 'upload'" variant="secondary" class="w-full" @click="submitOnlyTranscription"
                 :disabled="loading || !audioHasFile">
-                {{ loading ? 'Processing...' : 'Transcribe only (Raw)' }}
+                {{ loading ? 'Processing...' : 'Transcribe Audio' }}
             </Button>
+            <Button v-if="transcribed" @click="submitRoleMapping">
+                Submit Role Mapping
+            </Button>
+            <Button v-if="transcribed" @click="mapSpeakerToTranscript">
+                Speaker to Role mapping on transcript
+            </Button>
+            <Button v-if="transcriptMapped" @click="submitMappedTranscript">
+                Submit Mapped Transcript as TTL
+            </Button>
+
         </div>
 
-        <!-- Global loading overlay -->
+        <!-- GLOBAL LOADING OVERLAY -->
         <LoadingOverlay :visible="loading"
             :message="loading ? (viewMode === 'upload' ? 'Audio is being processed...' : staticContent.placeholders.loading[activeLang]) : ''" />
     </div>

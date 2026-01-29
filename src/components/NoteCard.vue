@@ -8,7 +8,7 @@ import { useConflictsStore } from '@/stores/conflictsStore';
 import { useSessionStore } from '@/stores/sessionStore';
 import { activateTerms, staticContent } from '@/data/contentData';
 import { buildLanguageString } from '@/lib/utils';
-// import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog'
 
 const props = defineProps({
   conflict: {
@@ -49,7 +49,7 @@ const props = defineProps({
  */
 const conflictDetail = ref<any>(null);
 // todo
-// const isShowOriginOpen = ref(false);
+const isShowOriginOpen = ref(false);
 const replyInputVisible = ref<Record<string, boolean>>({});
 const newReplyText = ref<Record<string, string>>({});
 
@@ -150,9 +150,9 @@ const handleEnterKey = (event: KeyboardEvent) => {
   }
 };
 // TODO
-// const showOrigin = async () => {
-//   isShowOriginOpen.value = false;
-// }
+const showOrigin = async () => {
+  isShowOriginOpen.value = false;
+}
 /**
  * Deletes a specific conflict from the conflict store and updates the conflict list.
  * 
@@ -259,7 +259,7 @@ const removeReply = (id: string) => {
       <!-- Note title -->
       <div class="note-title" v-html="props.title"></div>
       <!-- Note origin -->
-      <!-- <div class="note-origin">
+      <div class="note-origin">
         <Dialog v-model:open="isShowOriginOpen">
           <DialogTrigger as-child>
             <Button>
@@ -281,7 +281,7 @@ const removeReply = (id: string) => {
             </DialogFooter>
           </DialogContent>
         </Dialog>
-      </div> -->
+      </div>
 
       <!-- Participants grouped by type -->
       <div class="note-participants">

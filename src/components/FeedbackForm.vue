@@ -86,9 +86,7 @@ const getRoles = async () => {
     );
 }
 
-/**
- * Definiert die 'submit'-Methode, die von der Eltern-Komponente aufgerufen wird.
- */
+// defines submit function to be called from parent component
 defineExpose({
     submit: async (): Promise<boolean> => {
         if (!props.sessionRole) {

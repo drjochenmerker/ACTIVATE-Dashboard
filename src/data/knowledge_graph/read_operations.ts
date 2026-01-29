@@ -255,9 +255,8 @@ export async function getConflictDetail(graph: string, conflictId: string): Prom
           break;
         case "Origin":
           // tmp only showing origins answer
-          // parsedConflict.origin = item.conflict_o.value.split("#").pop();
-          // console.log("Conflict Origin:", parsedConflict.origin);
-          // break;
+          parsedConflict.origin = item.conflict_o.value.split("#").pop();
+          break;
           // const valueStr = item.conflict_o.value.split("#").pop();
           // try {
           //   const obj = JSON.parse(valueStr);
@@ -362,6 +361,9 @@ export async function getConflictDetail(graph: string, conflictId: string): Prom
               replies: [item.o.value.split("#").pop()]
             } as Comment)
           }
+          break;
+        case "Origin":
+          // TODO handle origin
           break;
         case "IsAI":
           // TODO handle is ai bool
