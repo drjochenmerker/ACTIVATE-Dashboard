@@ -2,7 +2,7 @@
 <script setup lang="ts">
 import { activateTerms, contentData } from '@/data/contentData';
 import ThemeSwitchButton from './ThemeSwitchButton.vue';
-import { User, Users } from 'lucide-vue-next';
+import { User, Users, Key } from 'lucide-vue-next';
 import { useSessionStore } from '@/stores/sessionStore';
 import {
     Select,
@@ -32,6 +32,12 @@ const sessionStore = useSessionStore();
                 <router-link v-for="item in contentData" :key="item.id" :to="`/${item.id}`"
                     :class="$route.path === `/${item.id}` ? 'font-semibold' : 'text-muted-foreground hover:text-foreground'">
                     {{ activateTerms[sessionStore.activeLanguage][item.id] }}
+                </router-link>
+                <router-link to="/options"
+                    :class="$route.path === '/options' ? 'font-semibold' : 'text-muted-foreground hover:text-foreground'"
+                    class="flex items-center gap-1">
+                    <Key class="w-4 h-4" />
+                    <span>{{ sessionStore.activeLanguage === 'de' ? 'Optionen' : sessionStore.activeLanguage === 'en' ? 'Options' : 'Alternativ' }}</span>
                 </router-link>
             </div>
 

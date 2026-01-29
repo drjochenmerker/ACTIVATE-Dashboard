@@ -6,6 +6,7 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 import MainLayout from '@/components/MainLayout.vue';
 import { useSessionStore } from '@/stores/sessionStore';
 import FeedbackThankyouPage from '@/views/FeedbackThankyouPage.vue';
+import OptionsPage from '@/views/OptionsPage.vue';
 
 const routes: Array<RouteRecordRaw> = [
     {
@@ -30,6 +31,7 @@ const routes: Array<RouteRecordRaw> = [
         children: [
             { path: '', name: 'HomePage', component: HomePage, props: true }, // Standard-Dashboard
             { path: ':id', name: 'Content', component: ContentPage, props: true }, // Dynamische Inhalte
+            { path: 'options', name: 'Options', component: OptionsPage }, // Optionen-Seite für API Keys
         ],
     },
 ];
