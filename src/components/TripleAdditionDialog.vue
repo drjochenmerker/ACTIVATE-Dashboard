@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue';
 import CustomButton from '@/components/ui/button/CustomButton.vue';
-import RDFAdditionDropdown from './RDFAdditionDropdown.vue';
 import { useColorMode } from '@vueuse/core';
 import { addPredicate, updateTriple } from '@/data/knowledge_graph/write_operations';
 import {
