@@ -46,6 +46,7 @@ const login = async () => {
     }
   } catch (error) {
     console.error("Error during login:", error);
+    loading.value = false;
   }
 };
 
@@ -72,8 +73,8 @@ const login = async () => {
       </CardHeader>
 
       <div class="flex justify-center my-6">
-        <form>
-          <input v-model="passwordInput" type="password" class="dark:bg-gray-900"
+        <form @submit.prevent="login">
+          <input v-model="passwordInput" :disabled="loading" type="password" class="dark:bg-gray-900 border border-gray-600 rounded-md p-2"
             :placeholder="staticContent.placeholders.password[sessionStore.activeLanguage]">
         </form>
       </div>
@@ -81,8 +82,8 @@ const login = async () => {
         <p class="mt-4 text-red-500">{{ staticContent.errors.incorrectPassword[sessionStore.activeLanguage] }}</p>
       </div>
       <div class="flex justify-center my-6">
-        <button @click="login"
-          class="text-l px-6 py-3 rounded-full text-black bg-white border border-black hover:bg-black hover:text-white transition-colors duration-300">
+        <button @click="login" :disabled="loading"
+          class="text-l px-6 py-3 rounded-full text-black bg-white border border-black hover:bg-black hover:text-white transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-black">
           {{ staticContent.login.loginButton[sessionStore.activeLanguage] }}
         </button>
       </div>
