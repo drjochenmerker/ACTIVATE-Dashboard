@@ -6,8 +6,14 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 import MainLayout from '@/components/MainLayout.vue';
 import { useSessionStore } from '@/stores/sessionStore';
 import FeedbackThankyouPage from '@/views/FeedbackThankyouPage.vue';
+import LoginPage from '@/views/LoginPage.vue';
 
 const routes: Array<RouteRecordRaw> = [
+    {
+        path: '/login',
+        name: 'Login',
+        component: LoginPage
+    },
     {
         path: '/start',
         name: 'Start',
@@ -44,8 +50,8 @@ router.beforeEach((to) => {
 
     const isPublic = to.name === 'FeedbackPage' || to.name === 'FeedbackThankYouPage';
 
-    if (!sessionStore.isSessionActive && !isPublic && to.path !== '/start') {
-        return '/start';
+    if (!sessionStore.isSessionActive && !isPublic && to.path !== '/login') {
+        return '/login';
     }
 });
 export default router;
