@@ -4,11 +4,12 @@ import { conflictPredicate, conflictStatus, Participant } from '@/data/knowledge
 import ReplyCard from './ReplyCard.vue';
 import { addComment, deleteConflict, updateConflict } from "@/data/knowledge_graph/write_operations";
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog'
 import { useConflictsStore } from '@/stores/conflictsStore';
 import { useSessionStore } from '@/stores/sessionStore';
 import { activateTerms, staticContent } from '@/data/contentData';
 import { buildLanguageString } from '@/lib/utils';
-// import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog'
+import { LanguageCode } from '@/data/knowledge_graph/structures'
 
 const props = defineProps({
   conflict: {
@@ -50,6 +51,7 @@ const props = defineProps({
 const conflictDetail = ref<any>(null);
 // todo
 // const isShowOriginOpen = ref(false);
+const isDeleteDialogOpen = ref(false);
 const replyInputVisible = ref<Record<string, boolean>>({});
 const newReplyText = ref<Record<string, string>>({});
 
@@ -58,7 +60,7 @@ const selectedStatus = ref<any>(props.status);
 
 // Stores for the conflicts and the session
 const conflictStore = useConflictsStore();
-const sessionStore = useSessionStore();
+const sessionStore = useSessionStore() as { activeLanguage: 'en' | 'de' | 'sv'; sessionActivity?: any };
 
 
 const textareaRef = ref<HTMLTextAreaElement | null>(null);
@@ -167,6 +169,7 @@ const handleDelete = async (id: string) => {
     if (response.status === "OK") {
       conflictStore.removeConflict(id); // delete conflict from store
     }
+    isDeleteDialogOpen.value = false;
   } catch (error) {
     console.error("Error deleting conflict: ", error);
   }
@@ -247,10 +250,27 @@ const removeReply = (id: string) => {
         </select>
       </div>
       <!-- Delete button -->
-      <!-- TODO implement "are you sure?" -->
-      <button class="icon-button" @click="handleDelete(props.conflict.id)">
-        <span class="material-symbols-outlined">delete</span>
-      </button>
+      <Dialog v-model:open="isDeleteDialogOpen">
+        <DialogTrigger as-child>
+          <button class="icon-button">
+            <span class="material-symbols-outlined">delete</span>
+          </button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{{ staticContent.startPage.deleteComment[sessionStore.activeLanguage] }}</DialogTitle>
+            <DialogDescription>
+              {{ staticContent.startPage.deleteConfirm[sessionStore.activeLanguage] }}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter class="flex justify-between">
+            <Button variant="secondary" @click="isDeleteDialogOpen = false">{{
+              staticContent.terms.cancel[sessionStore.activeLanguage] }}</Button>
+            <Button variant="destructive" @click="() => handleDelete(props.conflict.id)">{{
+              staticContent.terms.delete[sessionStore.activeLanguage] }}</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
 
     <hr class="note-divider" />
@@ -290,7 +310,7 @@ const removeReply = (id: string) => {
             <strong class="participant-group-title">{{ activateTerms[sessionStore.activeLanguage][type] }}:</strong>
             <div class="participant-tag-container">
               <span v-for="participant in group" :key="participant.id" class="participant-tag">
-                {{ buildLanguageString(participant, sessionStore.activeLanguage, true) }}
+                {{ buildLanguageString(participant, sessionStore.activeLanguage as LanguageCode, true) }}
               </span>
             </div>
           </div>
