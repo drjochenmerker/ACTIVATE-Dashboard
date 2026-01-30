@@ -182,6 +182,11 @@ export const staticContent = {
             de: "Sitzung beenden",
             sv: "Avsluta session",
         },
+        home: {
+            en: "Home",
+            de: "Startseite",
+            sv: "Hem",
+        },
         delete: {
             en: "Delete",
             de: "Löschen",
