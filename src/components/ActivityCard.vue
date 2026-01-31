@@ -361,10 +361,12 @@ const showUrl = ref(false)
 
                         <!-- Feedback QR Code Button -->
                         <div>
-                            <Button variant="secondary" size="icon" @click="showQrDialog = true">
-                                <span class="material-symbols-outlined">qr_code</span>
-                            </Button>
                             <Dialog v-model:open="showQrDialog">
+                                <DialogTrigger as-child>
+                                    <Button variant="secondary" size="icon">
+                                        <span class="material-symbols-outlined">qr_code</span>
+                                    </Button>
+                                </DialogTrigger>
                                 <DialogContent>
                                     <DialogHeader>
                                         <DialogTitle>Feedback QR Code</DialogTitle>
@@ -412,10 +414,12 @@ const showUrl = ref(false)
                         </div>
                         <!-- Start Session Button -->
                         <div>
-                            <Button variant="default" size="icon" @click="isStartSessionDialogOpen = true">
-                                <Play class="w-4 h-4" />
-                            </Button>
                             <Dialog v-model:open="isStartSessionDialogOpen">
+                                <DialogTrigger as-child>
+                                    <Button variant="default" size="icon">
+                                        <Play class="w-4 h-4" />
+                                    </Button>
+                                </DialogTrigger>
                                 <DialogContent>
                                     <DialogHeader>
                                         <DialogTitle>
@@ -450,11 +454,14 @@ const showUrl = ref(false)
 
                                     <!-- Pooling Button Dialog -->
                                     <DialogFooter class="flex justify-between">
-                                        <Button class="mr-auto" type="button" @click="showPoolingDialog = true">
-                                            {{
-                                                staticContent.startPage.poolingButton[sessionStore.activeLanguage]
-                                            }}
-                                        </Button>
+                                        <DialogTrigger as-child>
+                                            <Button class="mr-auto" type="button">
+                                                {{
+                                                    staticContent.startPage.poolingButton[sessionStore.activeLanguage]
+                                                }}
+                                            </Button>
+                                        </DialogTrigger>
+
                                         <Dialog v-model:open="showPoolingDialog">
                                             <DialogContent>
                                                 <DialogHeader>
