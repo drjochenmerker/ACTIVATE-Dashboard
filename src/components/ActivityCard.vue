@@ -57,7 +57,6 @@ const isDeleteDialogOpen = ref(false);
 // const cloneTitleError = ref(false);
 // const editTitleError = ref(false);
 const showPoolingDialog = ref(false)
-const isStartSessionDialogOpen = ref(false);
 const nothingToPool = ref(false);
 const loading = ref(false);
 const copied = ref(false);
@@ -414,7 +413,7 @@ const showUrl = ref(false)
                         </div>
                         <!-- Start Session Button -->
                         <div>
-                            <Dialog v-model:open="isStartSessionDialogOpen">
+                            <Dialog>
                                 <DialogTrigger as-child>
                                     <Button variant="default" size="icon">
                                         <Play class="w-4 h-4" />
