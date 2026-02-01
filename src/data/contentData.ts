@@ -119,7 +119,7 @@ export const staticContent = {
             sv: "Scen",
         }
     },
-    instructorView: {
+    navbarInstructorView: {
         standard: {
             en: "Standard view",
             de: "Standardansicht",

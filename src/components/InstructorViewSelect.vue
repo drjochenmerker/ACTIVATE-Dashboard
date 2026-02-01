@@ -8,8 +8,8 @@ import { staticContent } from '@/data/contentData';
 const sessionStore = useSessionStore();
 
 const viewOptions = computed(() => [
-  { value: 'false', label: staticContent.instructorView.standard[sessionStore.activeLanguage] },
-  { value: 'true', label: staticContent.instructorView.instructor[sessionStore.activeLanguage] }
+  { value: 'false', label: staticContent.navbarInstructorView.standard[sessionStore.activeLanguage] },
+  { value: 'true', label: staticContent.navbarInstructorView.instructor[sessionStore.activeLanguage] }
 ]);
 
 const selectedView = computed({
