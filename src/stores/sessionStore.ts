@@ -45,10 +45,8 @@ export const useSessionStore = defineStore('session', () => {
      * Saves session state to localStorage
      */
     const saveSessionToStorage = () => {
-        if (!sessionActivity.value) {
-          console.log("Session activity is undefined, not saving session state");
-          return;
-        }
+        if (!sessionActivity.value) return;
+        
 
         const sessionState = {
             sessionActivity: sessionActivity.value,
@@ -78,12 +76,10 @@ export const useSessionStore = defineStore('session', () => {
             const saved = localStorage.getItem(STORAGE_KEY);
             if (saved) {
                 const sessionState = JSON.parse(saved);
-                console.log("Restoring session state:", sessionState);
                 sessionActivity.value = sessionState.sessionActivity;
                 sessionRole.value = sessionState.sessionRole;
                 activeLanguage.value = sessionState.activeLanguage;
                 activeScene.value = sessionState.activeScene;
-                console.log("After restore, activeScene.value:", activeScene.value);
                 instructorMode.value = sessionState.instructorMode;
                 availableRoles.value = sessionState.availableRoles;
                 isSessionActive.value = true;
