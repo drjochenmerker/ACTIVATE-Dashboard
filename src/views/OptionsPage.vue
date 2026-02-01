@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
-import { useApiKeysStore, type LLMApiKeyEntry } from '@/stores/apiKeysStore';
+import { ref, onMounted, computed, watch } from 'vue';
+import { useApiKeysStore, type LLMApiKeyEntry, type LLMProvider, type LLMRequestConfig } from '@/stores/apiKeysStore';
 import { useSessionStore } from '@/stores/sessionStore';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -14,6 +14,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Key, Plus, Edit, Trash2, Eye, EyeOff, Save, X } from 'lucide-vue-next';
 
 const apiKeysStore = useApiKeysStore();
@@ -25,8 +32,16 @@ const editingEntry = ref<LLMApiKeyEntry | null>(null);
 
 // Formular-Felder
 const formName = ref('');
-const formModelName = ref('');
+const formProvider = ref<LLMProvider>('chatgpt');
 const formApiKey = ref('');
+const formModelName = ref('');
+const formEndpoint = ref('');
+const formTemperature = ref<number>(0.7);
+const formMaxTokens = ref<number>(2000);
+const formOrganizationId = ref(''); // ChatGPT
+const formTopK = ref<number>(40); // Gemini
+const formTopP = ref<number>(0.95); // Gemini
+const formAnthropicVersion = ref('2023-06-01'); // Claude
 const showApiKey = ref(false);
 
 // Sichtbarkeit der API Keys in der Liste
@@ -37,13 +52,34 @@ onMounted(() => {
   apiKeysStore.loadApiKeys();
 });
 
+// Setze Standardwerte basierend auf Provider
+const resetFormForProvider = (provider: LLMProvider) => {
+  const defaults = apiKeysStore.getDefaultConfig(provider);
+  formTemperature.value = defaults.temperature ?? 0.7;
+  formMaxTokens.value = defaults.maxTokens ?? 2000;
+  formTopK.value = defaults.topK ?? 40;
+  formTopP.value = defaults.topP ?? 0.95;
+  formAnthropicVersion.value = defaults.anthropicVersion ?? '2023-06-01';
+  formOrganizationId.value = '';
+  formEndpoint.value = '';
+};
+
+// Watch Provider-Änderung
+watch(formProvider, (newProvider) => {
+  if (!editingEntry.value) {
+    resetFormForProvider(newProvider);
+  }
+});
+
 // Öffne Dialog zum Hinzufügen
 const openAddDialog = () => {
   editingEntry.value = null;
   formName.value = '';
+  formProvider.value = 'chatgpt';
   formModelName.value = '';
   formApiKey.value = '';
   showApiKey.value = false;
+  resetFormForProvider('chatgpt');
   isDialogOpen.value = true;
 };
 
@@ -51,8 +87,16 @@ const openAddDialog = () => {
 const openEditDialog = (entry: LLMApiKeyEntry) => {
   editingEntry.value = entry;
   formName.value = entry.name;
-  formModelName.value = entry.modelName;
-  formApiKey.value = entry.apiKey;
+  formProvider.value = entry.provider;
+  formModelName.value = entry.config.modelName;
+  formApiKey.value = entry.config.apiKey;
+  formEndpoint.value = entry.config.endpoint || '';
+  formTemperature.value = entry.config.temperature ?? 0.7;
+  formMaxTokens.value = entry.config.maxTokens ?? 2000;
+  formOrganizationId.value = entry.config.organizationId || '';
+  formTopK.value = entry.config.topK ?? 40;
+  formTopP.value = entry.config.topP ?? 0.95;
+  formAnthropicVersion.value = entry.config.anthropicVersion || '2023-06-01';
   showApiKey.value = false;
   isDialogOpen.value = true;
 };
@@ -63,17 +107,42 @@ const saveEntry = () => {
     return;
   }
 
+  const config: LLMRequestConfig = {
+    apiKey: formApiKey.value,
+    modelName: formModelName.value,
+    temperature: formTemperature.value,
+    maxTokens: formMaxTokens.value,
+  };
+
+  // Provider-spezifische Felder
+  if (formEndpoint.value.trim()) {
+    config.endpoint = formEndpoint.value.trim();
+  }
+
+  if (formProvider.value === 'chatgpt' && formOrganizationId.value.trim()) {
+    config.organizationId = formOrganizationId.value.trim();
+  }
+
+  if (formProvider.value === 'gemini') {
+    config.topK = formTopK.value;
+    config.topP = formTopP.value;
+  }
+
+  if (formProvider.value === 'claude') {
+    config.anthropicVersion = formAnthropicVersion.value;
+  }
+
   if (editingEntry.value) {
     // Bearbeiten
     apiKeysStore.updateEntry(
       editingEntry.value.id,
       formName.value,
-      formModelName.value,
-      formApiKey.value
+      formProvider.value,
+      config
     );
   } else {
     // Neu hinzufügen
-    apiKeysStore.addEntry(formName.value, formModelName.value, formApiKey.value);
+    apiKeysStore.addEntry(formName.value, formProvider.value, config);
   }
 
   isDialogOpen.value = false;
@@ -91,22 +160,50 @@ const deleteEntry = (id: string) => {
 const resetForm = () => {
   editingEntry.value = null;
   formName.value = '';
+  formProvider.value = 'chatgpt';
   formModelName.value = '';
   formApiKey.value = '';
   showApiKey.value = false;
+  resetFormForProvider('chatgpt');
 };
 
 // Toggle für die Anzeige des API Keys in der Liste
 const toggleKeyVisibility = (entryId: string) => {
-  showKeys.value[entryId] = !showKeys.value[entryId];
+  showKeys.value[entryId] = !(showKeys.value[entryId] ?? false);
+};
+
+// Prüfe ob Key sichtbar ist (mit Standard false)
+const isKeyVisible = (entryId: string): boolean => {
+  return showKeys.value[entryId] ?? false;
 };
 
 // Maskiere API Key für Anzeige
-const maskApiKey = (apiKey: string): string => {
+const maskApiKey = (apiKey: string | undefined): string => {
+  if (!apiKey || apiKey.length === 0) {
+    return '';
+  }
   if (apiKey.length <= 8) {
     return '•'.repeat(apiKey.length);
   }
   return apiKey.substring(0, 4) + '•'.repeat(apiKey.length - 8) + apiKey.substring(apiKey.length - 4);
+};
+
+// Hole Anzeige-Endpunkt
+const getDisplayEndpoint = (entry: LLMApiKeyEntry): string => {
+  if (entry.config.endpoint) {
+    return entry.config.endpoint;
+  }
+  return apiKeysStore.getDefaultEndpoint(entry.provider, entry.config.modelName);
+};
+
+// Provider-Namen für Anzeige
+const getProviderDisplayName = (provider: LLMProvider): string => {
+  const names = {
+    chatgpt: 'ChatGPT (OpenAI)',
+    gemini: 'Gemini (Google)',
+    claude: 'Claude (Anthropic)',
+  };
+  return names[provider];
 };
 
 // Übersetzungen
@@ -136,15 +233,60 @@ const translations = {
     de: 'z.B. Gemini, GPT-4, Claude',
     sv: 't.ex. Gemini, GPT-4, Claude',
   },
+  provider: {
+    en: 'LLM Provider',
+    de: 'LLM-Anbieter',
+    sv: 'LLM-leverantör',
+  },
   modelName: {
     en: 'Model Name',
     de: 'Modellname',
     sv: 'Modellnamn',
   },
   modelNamePlaceholder: {
-    en: 'e.g., gpt-4.1-mini, gemini-pro',
-    de: 'z.B. gpt-4.1-mini, gemini-pro',
-    sv: 't.ex. gpt-4.1-mini, gemini-pro',
+    en: 'e.g., gpt-4, gemini-pro, claude-3-opus',
+    de: 'z.B. gpt-4, gemini-pro, claude-3-opus',
+    sv: 't.ex. gpt-4, gemini-pro, claude-3-opus',
+  },
+  endpoint: {
+    en: 'API Endpoint (optional)',
+    de: 'API-Endpunkt (optional)',
+    sv: 'API-slutpunkt (valfritt)',
+  },
+  endpointPlaceholder: {
+    en: 'Leave empty for default endpoint',
+    de: 'Leer lassen für Standard-Endpunkt',
+    sv: 'Lämna tomt för standardslutpunkt',
+  },
+  temperature: {
+    en: 'Temperature',
+    de: 'Temperatur',
+    sv: 'Temperatur',
+  },
+  maxTokens: {
+    en: 'Max Tokens',
+    de: 'Max. Tokens',
+    sv: 'Max tokens',
+  },
+  organizationId: {
+    en: 'Organization ID (optional)',
+    de: 'Organisations-ID (optional)',
+    sv: 'Organisations-ID (valfritt)',
+  },
+  topK: {
+    en: 'Top K',
+    de: 'Top K',
+    sv: 'Top K',
+  },
+  topP: {
+    en: 'Top P',
+    de: 'Top P',
+    sv: 'Top P',
+  },
+  anthropicVersion: {
+    en: 'API Version',
+    de: 'API-Version',
+    sv: 'API-version',
   },
   apiKey: {
     en: 'API Key',
@@ -205,6 +347,23 @@ const t = (key: keyof typeof translations) => {
 // Berechnete Eigenschaften
 const entries = computed(() => apiKeysStore.getAllEntries());
 const dialogTitle = computed(() => editingEntry.value ? t('editEntry') : t('addNewEntry'));
+
+// Computed property für die Anzeige der API-Keys - muss reaktiv sein
+const displayApiKey = computed(() => {
+  const result: Record<string, string> = {};
+  entries.value.forEach(entry => {
+    const apiKey = entry.config?.apiKey;
+    if (apiKey && apiKey.trim().length > 0) {
+      const visible = showKeys.value[entry.id] ?? false;
+      result[entry.id] = visible ? apiKey : maskApiKey(apiKey);
+    } else {
+      result[entry.id] = '';
+    }
+  });
+  return result;
+});
+
+
 </script>
 
 <template>
@@ -239,7 +398,7 @@ const dialogTitle = computed(() => editingEntry.value ? t('editEntry') : t('addN
                 <div>
                   <CardTitle>{{ entry.name }}</CardTitle>
                   <CardDescription>
-                    {{ t('modelName') }}: {{ entry.modelName }}
+                    {{ getProviderDisplayName(entry.provider) }} • {{ t('modelName') }}: {{ entry.config.modelName }}
                   </CardDescription>
                 </div>
                 <div class="flex gap-2">
@@ -263,25 +422,45 @@ const dialogTitle = computed(() => editingEntry.value ? t('editEntry') : t('addN
               </div>
             </CardHeader>
             <CardContent>
-              <div class="space-y-2">
-                <Label>{{ t('apiKey') }}</Label>
-                <div class="relative flex items-center gap-2">
-                  <div class="relative flex-1">
-                    <Input
-                      :value="showKeys[entry.id] ? entry.apiKey : maskApiKey(entry.apiKey)"
-                      readonly
-                      class="pr-10 font-mono text-sm"
-                    />
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      class="absolute right-0 top-0 h-full px-3"
-                      @click="toggleKeyVisibility(entry.id)"
-                    >
-                      <Eye v-if="!showKeys[entry.id]" class="h-4 w-4" />
-                      <EyeOff v-else class="h-4 w-4" />
-                    </Button>
+              <div class="space-y-4">
+                <div class="space-y-2">
+                  <Label>{{ t('apiKey') }}</Label>
+                  <div class="relative flex items-center gap-2">
+                    <div class="relative flex-1">
+                      <Input
+                        :value="displayApiKey[entry.id] || ''"
+                        readonly
+                        class="pr-10 font-mono text-sm"
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        class="absolute right-0 top-0 h-full px-3"
+                        @click="toggleKeyVisibility(entry.id)"
+                      >
+                        <Eye v-if="!isKeyVisible(entry.id)" class="h-4 w-4" />
+                        <EyeOff v-else class="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+                <div class="space-y-2">
+                  <Label>{{ t('endpoint') }}</Label>
+                  <Input
+                    :value="getDisplayEndpoint(entry)"
+                    readonly
+                    class="font-mono text-sm"
+                  />
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                  <div class="space-y-1">
+                    <Label class="text-xs text-muted-foreground">{{ t('temperature') }}</Label>
+                    <div class="text-sm">{{ entry.config.temperature ?? '-' }}</div>
+                  </div>
+                  <div class="space-y-1">
+                    <Label class="text-xs text-muted-foreground">{{ t('maxTokens') }}</Label>
+                    <div class="text-sm">{{ entry.config.maxTokens ?? '-' }}</div>
                   </div>
                 </div>
               </div>
@@ -320,6 +499,21 @@ const dialogTitle = computed(() => editingEntry.value ? t('editEntry') : t('addN
             />
           </div>
 
+          <!-- Provider -->
+          <div class="space-y-2">
+            <Label :for="'form-provider'">{{ t('provider') }}</Label>
+            <Select v-model="formProvider" :disabled="!!editingEntry">
+              <SelectTrigger id="form-provider">
+                <SelectValue :placeholder="t('provider')" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="chatgpt">ChatGPT (OpenAI)</SelectItem>
+                <SelectItem value="gemini">Gemini (Google)</SelectItem>
+                <SelectItem value="claude">Claude (Anthropic)</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
           <!-- Modellname -->
           <div class="space-y-2">
             <Label :for="'form-model'">{{ t('modelName') }}</Label>
@@ -353,6 +547,85 @@ const dialogTitle = computed(() => editingEntry.value ? t('editEntry') : t('addN
               </Button>
             </div>
           </div>
+
+          <!-- Endpoint (optional) -->
+          <div class="space-y-2">
+            <Label :for="'form-endpoint'">{{ t('endpoint') }}</Label>
+            <Input
+              id="form-endpoint"
+              v-model="formEndpoint"
+              :placeholder="t('endpointPlaceholder')"
+              class="font-mono text-sm"
+            />
+          </div>
+
+          <!-- Gemeinsame Parameter -->
+          <div class="grid grid-cols-2 gap-4">
+            <div class="space-y-2">
+              <Label :for="'form-temperature'">{{ t('temperature') }}</Label>
+              <Input
+                id="form-temperature"
+                v-model.number="formTemperature"
+                type="number"
+                step="0.1"
+                min="0"
+                max="2"
+              />
+            </div>
+            <div class="space-y-2">
+              <Label :for="'form-max-tokens'">{{ t('maxTokens') }}</Label>
+              <Input
+                id="form-max-tokens"
+                v-model.number="formMaxTokens"
+                type="number"
+                min="1"
+              />
+            </div>
+          </div>
+
+          <!-- ChatGPT-spezifische Felder -->
+          <div v-if="formProvider === 'chatgpt'" class="space-y-2">
+            <Label :for="'form-org-id'">{{ t('organizationId') }}</Label>
+            <Input
+              id="form-org-id"
+              v-model="formOrganizationId"
+              :placeholder="t('organizationId')"
+            />
+          </div>
+
+          <!-- Gemini-spezifische Felder -->
+          <div v-if="formProvider === 'gemini'" class="grid grid-cols-2 gap-4">
+            <div class="space-y-2">
+              <Label :for="'form-top-k'">{{ t('topK') }}</Label>
+              <Input
+                id="form-top-k"
+                v-model.number="formTopK"
+                type="number"
+                min="1"
+              />
+            </div>
+            <div class="space-y-2">
+              <Label :for="'form-top-p'">{{ t('topP') }}</Label>
+              <Input
+                id="form-top-p"
+                v-model.number="formTopP"
+                type="number"
+                step="0.01"
+                min="0"
+                max="1"
+              />
+            </div>
+          </div>
+
+          <!-- Claude-spezifische Felder -->
+          <div v-if="formProvider === 'claude'" class="space-y-2">
+            <Label :for="'form-version'">{{ t('anthropicVersion') }}</Label>
+            <Input
+              id="form-version"
+              v-model="formAnthropicVersion"
+              placeholder="2023-06-01"
+            />
+          </div>
         </div>
 
         <DialogFooter>
@@ -362,7 +635,7 @@ const dialogTitle = computed(() => editingEntry.value ? t('editEntry') : t('addN
           </Button>
           <Button
             @click="saveEntry"
-            :disabled="!formName.trim() || !formModelName.trim() || !formApiKey.trim()"
+            :disabled="!formName.trim() || !formModelName.trim() || !formApiKey.trim() || formTemperature < 0 || formMaxTokens < 1"
           >
             <Save class="w-4 h-4 mr-2" />
             {{ t('save') }}
