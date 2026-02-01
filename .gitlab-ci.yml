@@ -26,7 +26,8 @@ test-docker:
         - docker:dind
     dependencies: []
     before_script:
-        - apk add --no-cache docker-compose
+        - apk add --no-cache docker-compose git
+        - git submodule update --init --recursive
         - docker network create activate-network || true
     script:
         - docker compose build
