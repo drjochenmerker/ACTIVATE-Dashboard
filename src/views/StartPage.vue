@@ -95,8 +95,8 @@ const addNewActivity = async () => {
 </script>
 
 <template>
-  <div class="flex flex-col items-center justify-center py-10 px-4">
-    <div class="flex items-center gap-2 justify-end w-full">
+  <div class="flex flex-col items-center justify-center py-4 px-4">
+    <div class="flex items-center gap-2 justify-end w-full mb-4">
       <InstructorViewSelect v-if="sessionStore.instructorMode" />
       <LanguageSelect />
       <LogoutButton />
