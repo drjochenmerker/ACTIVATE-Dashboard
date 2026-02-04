@@ -3,9 +3,9 @@
  */
 export interface DiarizedSegment {
     speaker: string; // e.g., "SPEAKER_00", "SPEAKER_01", or "Instructor"
-    start: number;   // Start time in seconds
-    end: number;     // End time in seconds
-    text: string;    // Transcribed text for this segment
+    start: number; // Start time in seconds
+    end: number; // End time in seconds
+    text: string; // Transcribed text for this segment
 }
 
 /**
@@ -16,7 +16,7 @@ export interface DiarizationSuccessResult {
     detected_language: string; // e.g., "de", "en", "sv"
     diarized_transcription: DiarizedSegment[]; // The final, assigned transcript
     total_duration_s: number;
-    role_mapping?: { speaker_id: string; role: string; confidence: string; reason: string; }[];
+    role_mapping?: { speaker_id: string; role: string; confidence: string; reason: string }[];
 }
 
 /**
@@ -33,10 +33,9 @@ export interface DiarizationErrorResult {
  * (Exportiert, damit FeedbackAudio.vue es verwenden kann)
  */
 export type JobStatus =
-    | { status: 'processing'; progress: number; message: string }
-    | { status: 'complete'; data: DiarizationSuccessResult }
-    | { status: 'error'; message: string };
-
+    | { status: "processing"; progress: number; message: string }
+    | { status: "complete"; data: DiarizationSuccessResult }
+    | { status: "error"; message: string };
 
 /**
  * *** FUNKTION 1 (STARTET DEN JOB) ***
@@ -53,40 +52,38 @@ export type JobStatus =
 export async function startAudioProcessingJob(
     audioFile: File,
     languageCode: string | null,
-    roles: string[]
+    roles: string[],
 ): Promise<{ job_id: string }> {
-
     console.log("startAudioProcessingJob: Start upload with:", {
         fileName: audioFile.name,
         languageCode: languageCode,
-        roles: roles
+        roles: roles,
     });
 
     // (URL-Konstruktion bleibt gleich)
-    const baseUrl = `${import.meta.env.VITE_LLM_URL}${!import.meta.env.VITE_LLM_PORT ? '' : ':' + import.meta.env.VITE_LLM_PORT}`;
+    const baseUrl = `${import.meta.env.VITE_LLM_URL}${!import.meta.env.VITE_LLM_PORT ? "" : ":" + import.meta.env.VITE_LLM_PORT}`;
     const apiUrl = `${baseUrl}/api/process-audio-session`;
 
     const formData = new FormData();
-    formData.append('audio_file', audioFile);
-    formData.append('language_code', languageCode || '');
-    formData.append('roles', JSON.stringify(roles));
+    formData.append("audio_file", audioFile);
+    formData.append("language_code", languageCode || "");
+    formData.append("roles", JSON.stringify(roles));
 
     try {
         const response = await fetch(apiUrl, {
-            method: 'POST',
+            method: "POST",
             body: formData,
         });
 
         const data = await response.json();
 
         if (!response.ok || !data.job_id) {
-            // error starting the job 
+            // error starting the job
             throw new Error(data.message || "Error starting the job.");
         }
 
         // Returns the job ID
         return { job_id: data.job_id };
-
     } catch (error) {
         console.error("Fetch Error (startAudioProcessingJob):", error);
         if (error instanceof Error) {
@@ -95,7 +92,6 @@ export async function startAudioProcessingJob(
         throw new Error("Unknown network error while starting the job.");
     }
 }
-
 
 /**
  * *** FUNKTION 2 (FRAGT STATUS AB) ***
@@ -106,16 +102,13 @@ export async function startAudioProcessingJob(
  * @param jobId Die ID des Jobs, der überprüft werden soll.
  * @returns Promise, das zum JobStatus-Objekt auflöst.
  */
-export async function checkJobStatus(
-    jobId: string
-): Promise<JobStatus> {
-    
-    const baseUrl = `${import.meta.env.VITE_LLM_URL}${!import.meta.env.VITE_LLM_PORT ? '' : ':' + import.meta.env.VITE_LLM_PORT}`;
+export async function checkJobStatus(jobId: string): Promise<JobStatus> {
+    const baseUrl = `${import.meta.env.VITE_LLM_URL}${!import.meta.env.VITE_LLM_PORT ? "" : ":" + import.meta.env.VITE_LLM_PORT}`;
     const apiUrl = `${baseUrl}/api/job-status/${jobId}`;
 
     try {
         const response = await fetch(apiUrl, {
-            method: 'GET',
+            method: "GET",
         });
 
         const data = await response.json();
@@ -125,17 +118,15 @@ export async function checkJobStatus(
         }
 
         return data as JobStatus;
-
     } catch (error) {
-         console.error("Fetch Error (checkJobStatus):", error);
-         // Im Falle eines Abruffehlers geben wir einen 'error'-Status zurück
-         return {
-            status: 'error',
-            message: error instanceof Error ? error.message : "Fehler beim Abrufen des Job-Status."
-         };
+        console.error("Fetch Error (checkJobStatus):", error);
+        // Im Falle eines Abruffehlers geben wir einen 'error'-Status zurück
+        return {
+            status: "error",
+            message: error instanceof Error ? error.message : "Fehler beim Abrufen des Job-Status.",
+        };
     }
 }
-
 
 /**
  * TODO: is this important?
@@ -144,46 +135,46 @@ export async function checkJobStatus(
  * Sends text to the translation endpoint.
 
  */
-export async function fetchTranslation(
-    text: string,
-    targetLanguage: string
-): Promise<any> { // Typisierung vereinfacht
-    
-    const baseUrl = `${import.meta.env.VITE_LLM_URL}${!import.meta.env.VITE_LLM_PORT ? '' : ':' + import.meta.env.VITE_LLM_PORT}`;
-    const apiUrl = `${baseUrl}/api/translate-text`;
+// export async function fetchTranslation(
+//     text: string,
+//     targetLanguage: string
+// ): Promise<any> { // Typisierung vereinfacht
 
-    try {
-        const response = await fetch(apiUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text, targetLanguage })
-        });
-        const data = await response.json();
-        if (!response.ok) {
-            throw new Error(data.message || "Error during translation.");
-        }
-        return data; // Expected { status: 'success', translatedText: '...' }
-    } catch (error) {
-         console.error("Fetch Error (fetchTranslation):", error);
-         return { status: 'error', message: error instanceof Error ? error.message : "Error." };
-    }
-}
+//     const baseUrl = `${import.meta.env.VITE_LLM_URL}${!import.meta.env.VITE_LLM_PORT ? '' : ':' + import.meta.env.VITE_LLM_PORT}`;
+//     const apiUrl = `${baseUrl}/api/translate-text`;
+
+//     try {
+//         const response = await fetch(apiUrl, {
+//             method: 'POST',
+//             headers: { 'Content-Type': 'application/json' },
+//             body: JSON.stringify({ text, targetLanguage })
+//         });
+//         const data = await response.json();
+//         if (!response.ok) {
+//             throw new Error(data.message || "Error during translation.");
+//         }
+//         return data; // Expected { status: 'success', translatedText: '...' }
+//     } catch (error) {
+//          console.error("Fetch Error (fetchTranslation):", error);
+//          return { status: 'error', message: error instanceof Error ? error.message : "Error." };
+//     }
+// }
 // transcribe_utils.ts
 
 export async function startDirectDiarization(
     audioFile: File,
-    languageCode: string | null
+    languageCode: string | null,
 ): Promise<DiarizationSuccessResult> {
+    const host = import.meta.env.VITE_LLM_URL;
+    const port = import.meta.env.VITE_LLM_PORT;
 
-    // 1. Basis-URL vom Node-Backend
-    const baseUrl = `${import.meta.env.VITE_LLM_URL}${!import.meta.env.VITE_LLM_PORT ? '' : ':' + import.meta.env.VITE_LLM_PORT}`;
-    
-    // 2. NEU: Wir rufen den neuen Endpunkt in audio.ts auf
-    // Beachte: In audio.ts ist der router wahrscheinlich unter '/api' gemountet? 
-    // Falls in deiner server.ts steht: app.use('/api', audioRouter); -> dann ist der Pfad '/api/direct-diarization'
+    if (!host) {
+        throw new Error("Frontend Configuration Error: VITE_LLM_URL is not defined in .env");
+    }
+
+    const baseUrl = port ? `${host}:${port}` : host;
     let apiUrl = `${baseUrl}/api/direct-diarization`;
 
-    // Query Params anhängen
     if (languageCode) {
         apiUrl += `?language_code=${encodeURIComponent(languageCode)}`;
     }
@@ -191,15 +182,13 @@ export async function startDirectDiarization(
     console.log("startDirectDiarization: Sende an Node-Backend:", apiUrl);
 
     const formData = new FormData();
-    formData.append('audio_file', audioFile);
-    // language_code ist im Query-String, muss oft nicht nochmal in den Body, 
-    // aber deine audio.ts liest es aus req.body.language_code ODER du passt audio.ts an req.query an.
-    // Sicherer ist es, es auch in den Body zu packen:
-    if (languageCode) formData.append('language_code', languageCode);
+    formData.append("audio_file", audioFile);
+
+    if (languageCode) formData.append("language_code", languageCode);
 
     try {
         const response = await fetch(apiUrl, {
-            method: 'POST',
+            method: "POST",
             body: formData,
         });
 
@@ -210,7 +199,6 @@ export async function startDirectDiarization(
         }
 
         return data as DiarizationSuccessResult;
-
     } catch (error) {
         console.error("Fetch Error:", error);
         throw error;
