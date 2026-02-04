@@ -8,7 +8,7 @@ DELETE {
 }
 INSERT {
     GRAPH graph:{{graph}} {
-        :{{commentId}} :CommentDescription """{{comment}}""" .
+        :{{commentId}} :CommentDescription """{{comment}}"""@{{langTag}} .
     }
 }
 WHERE {
