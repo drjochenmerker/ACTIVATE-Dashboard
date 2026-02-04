@@ -407,6 +407,11 @@ export const staticContent = {
             de: "Kommentar hinzufügen",
             sv: "Lägg till kommentar",
         },
+        editComment: {
+            en: "Edit comment",
+            de: "Kommentar bearbeiten",
+            sv: "Redigera kommentar",
+        },
         save: {
             en: "Save",
             de: "Speichern",
@@ -416,6 +421,16 @@ export const staticContent = {
             en: "Cancel",
             de: "Abbrechen",
             sv: "Avbryt",
+        },
+        discardChangesQuestion: {
+            en: "Do you want to discard your changes?",
+            de: "Möchten Sie Ihre Änderungen verwerfen?",
+            sv: "Vill du förkasta dina ändringar?",
+        },
+        discardChangesYes: {
+            en: "Yes",
+            de: "Ja",
+            sv: "Ja",
         },
         answer: {
             en: "Answer",

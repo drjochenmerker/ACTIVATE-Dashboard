@@ -178,6 +178,10 @@ const removeReply = (id: string) => {
   }
 };
 
+const refreshReplies = async () => {
+  await conflictStore.refreshConflictList();
+};
+
 // const cleanContent = computed(() => {
 //   if (!props.content) return '';
 
@@ -319,7 +323,7 @@ const removeReply = (id: string) => {
 
     <div v-if="conflictDetail && conflictDetail.replies && conflictDetail.replies.length > 0" class="reply-container">
       <ReplyCard v-for="(reply) in conflictDetail.replies" :key="reply.id" :parentComment="reply"
-        :conflictId="conflict.id" @deleteComment="removeReply" />
+        :conflictId="conflict.id" :showEdit="sessionStore.instructorView" @deleteComment="removeReply" @refresh="refreshReplies" />
     </div>
   </div>
 
