@@ -2,13 +2,13 @@
 import { staticContent } from '@/data/contentData';
 import { useSessionStore } from '@/stores/sessionStore';
 import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter
+    Dialog,
+    DialogTrigger,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogDescription,
+    DialogFooter
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { ref } from 'vue';
@@ -20,13 +20,13 @@ import { ref } from 'vue';
  * @property deleteFunction - Function that is called when the deletion is confirmed
  */
 const { title, description, deleteFunction } = defineProps<{
-  title: string;
-  description: string;
-  deleteFunction: () => Promise<void>;
+    title: string;
+    description: string;
+    deleteFunction: () => Promise<void>;
 }>();
 const sessionStore = useSessionStore();
 
-const isDeleteDialogOpen  = ref(false);
+const isDeleteDialogOpen = ref(false);
 
 </script>
 
@@ -40,9 +40,9 @@ const isDeleteDialogOpen  = ref(false);
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>{{title}}</DialogTitle>
+                    <DialogTitle>{{ title }}</DialogTitle>
                     <DialogDescription>
-                        {{description}}
+                        {{ description }}
                     </DialogDescription>
                 </DialogHeader>
                 <DialogFooter class="flex justify-between">
