@@ -1,25 +1,33 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue';
-import Button from '@/components/ui/button/Button.vue';
-import RDFAdditionDropdown from './RDFAdditionDropdown.vue';
-import { useColorMode } from '@vueuse/core';
-import { addPredicate, updateTriple } from '@/data/knowledge_graph/write_operations';
-import { Activity, KnowledgeGraphActivityClass, LanguageCode, LanguageLabel, Objective, Predicate, PredicateDict, RDFOperation } from '@/data/knowledge_graph/structures';
-import { getActivityDetail, getPredicateObject } from '@/data/knowledge_graph/read_operations';
-import { useSessionStore } from '@/stores/sessionStore';
-import { staticContent } from '@/data/contentData';
-
+import { computed, onMounted, ref, watch } from "vue";
+import Button from "@/components/ui/button/Button.vue";
+import RDFAdditionDropdown from "./RDFAdditionDropdown.vue";
+import { useColorMode } from "@vueuse/core";
+import { addPredicate, updateTriple } from "@/data/knowledge_graph/write_operations";
+import {
+    Activity,
+    KnowledgeGraphActivityClass,
+    LanguageCode,
+    LanguageLabel,
+    Objective,
+    Predicate,
+    PredicateDict,
+    RDFOperation,
+} from "@/data/knowledge_graph/structures";
+import { getActivityDetail, getPredicateObject } from "@/data/knowledge_graph/read_operations";
+import { useSessionStore } from "@/stores/sessionStore";
+import { staticContent } from "@/data/contentData";
 
 /**
  * Props of the RDFTripleAdder component
  * @property isOpen - Determines if the modal is open (controlled from parent)
  */
 defineProps<{
-    isOpen: Boolean,
+    isOpen: Boolean;
 }>();
 
 // Global state
-const sessionStore = useSessionStore()
+const sessionStore = useSessionStore();
 const mode = useColorMode();
 
 // State variables
@@ -27,9 +35,9 @@ const isOpen = ref(false);
 const subject = ref({} as Objective);
 const predicate = ref({} as Predicate);
 const object = ref({} as Objective);
-const selectedDuplicateClass = ref(false)
-const noExistingPredicates = ref(false)
-const noValidParticipants = ref(false)
+const selectedDuplicateClass = ref(false);
+const noExistingPredicates = ref(false);
+const noValidParticipants = ref(false);
 
 // Participants and predicates
 // participants are objectives here - should probably be renamed
@@ -42,17 +50,17 @@ const predicates = ref([] as Array<Predicate>);
  * Validation Computeds
  */
 const isSubjectValid = computed(() => {
-    return activityParticipants.value.some(item => item.id === subject.value.id);
+    return activityParticipants.value.some((item) => item.id === subject.value.id);
 });
 
 const isObjectValid = computed(() => {
-    return activityParticipants.value.some(item => item.id === object.value.id);
+    return activityParticipants.value.some((item) => item.id === object.value.id);
 });
 
 const isPredicateValid = computed(() => {
     const regex = /^[A-Za-z]+$/;
     return regex.test(predicate.value.id);
-})
+});
 
 const isApplyEnabled = computed(() => {
     return (
@@ -71,11 +79,11 @@ const isApplyEnabled = computed(() => {
 const openDialog = async () => {
     isOpen.value = true;
     activityParticipants.value = [];
-    const activityData = await getActivityDetail(sessionStore.sessionActivity as Activity)
-    Object.keys(activityData).forEach(key => {
+    const activityData = await getActivityDetail(sessionStore.sessionActivity as Activity);
+    Object.keys(activityData).forEach((key) => {
         const items = activityData[key];
         if (Array.isArray(items)) {
-            items.forEach(item => {
+            items.forEach((item) => {
                 if (item && item.labels) {
                     activityParticipants.value.push(item);
                 }
@@ -98,7 +106,7 @@ onMounted(async () => {
  * Watch subject/object input to determine valid predicates
  */
 watch([subject, object], () => {
-    predicate.value = { id: '', labels: { en: '' } };
+    predicate.value = { id: "", labels: { en: "" } };
     selectedDuplicateClass.value = false;
     noExistingPredicates.value = false;
     noValidParticipants.value = false;
@@ -108,7 +116,9 @@ watch([subject, object], () => {
             //let predicates: Array<{ predicate: string }> = [];
             if (subject.value.type && object.value.type && activityPredicates.value) {
                 try {
-                    predicates.value = (activityPredicates.value.get([subject.value.type, object.value.type]) as Array<Predicate>) || [];
+                    predicates.value =
+                        (activityPredicates.value.get([subject.value.type, object.value.type]) as Array<Predicate>) ||
+                        [];
                 } catch (error) {
                     predicates.value = [];
                 }
@@ -149,18 +159,28 @@ const applyTriple = async () => {
     const languageLabelDummy: LanguageLabel[] = [
         { label: predicate.value.id, language: LanguageCode.Deutsch },
         { label: predicate.value.id, language: LanguageCode.English },
-        { label: predicate.value.id, language: LanguageCode.Svenska }
+        { label: predicate.value.id, language: LanguageCode.Svenska },
     ];
 
-    if (predicates.value.length === 0 || !predicates.value.some(item => item.id === predicate.value.id)) {
+    if (predicates.value.length === 0 || !predicates.value.some((item) => item.id === predicate.value.id)) {
         if (subject.value.type && object.value.type) {
-            await addPredicate(sessionStore.sessionActivity!.graph, predicate.value.id, [subject.value.type as KnowledgeGraphActivityClass], [object.value.type as KnowledgeGraphActivityClass], languageLabelDummy);
+            await addPredicate(
+                sessionStore.sessionActivity!.graph,
+                predicate.value.id,
+                [subject.value.type as KnowledgeGraphActivityClass],
+                [object.value.type as KnowledgeGraphActivityClass],
+                languageLabelDummy,
+            );
         }
     }
-    updateTriple(sessionStore.sessionActivity!.graph, { subject: subject.value.id, predicate: predicate.value.id, object: object.value.id }, 'insert' as RDFOperation)
+    updateTriple(
+        sessionStore.sessionActivity!.graph,
+        { subject: subject.value.id, predicate: predicate.value.id, object: object.value.id },
+        "insert" as RDFOperation,
+    );
 
     closeDialog();
-}
+};
 </script>
 
 <template>
@@ -168,14 +188,22 @@ const applyTriple = async () => {
         {{ staticContent.tripleAdd.addTripleText[sessionStore.activeLanguage] }}
     </Button>
 
-    <div v-if="isOpen" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
-        @click.self="closeDialog">
+    <div
+        v-if="isOpen"
+        class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+        @click.self="closeDialog"
+    >
         <div
-            :class="mode === 'dark' ? 'rounded shadow p-6 w-full max-w-5xl bg-gray-800 relative' : 'rounded shadow p-6 w-full max-w-5xl bg-white relative'">
-
+            :class="
+                mode === 'dark'
+                    ? 'rounded shadow p-6 w-full max-w-5xl bg-gray-800 relative'
+                    : 'rounded shadow p-6 w-full max-w-5xl bg-white relative'
+            "
+        >
             <button class="close-btn" @click="closeDialog">×</button>
             <div class="header-container flex items-center mb-4">
-                <h2 class="text-xl font-bold">{{ staticContent.tripleAdd.addTripleText[sessionStore.activeLanguage] }}
+                <h2 class="text-xl font-bold">
+                    {{ staticContent.tripleAdd.addTripleText[sessionStore.activeLanguage] }}
                 </h2>
                 <div class="alert-container">
                     <p v-if="selectedDuplicateClass" class="alert-message">
@@ -190,35 +218,46 @@ const applyTriple = async () => {
                     <p v-else-if="isObjectValid && isSubjectValid && !isPredicateValid" class="alert-message">
                         {{ staticContent.tripleAdd.invalidPredicate[sessionStore.activeLanguage] }}
                     </p>
-
                 </div>
             </div>
             <p class="mb-4">{{ staticContent.tripleAdd.mainText[sessionStore.activeLanguage] }}</p>
 
             <div class="flex space-x-4 mb-6">
-
                 <!-- Subject Field -->
                 <div class="flex-1">
-                    <RDFAdditionDropdown label="Agent" :options="activityParticipants" v-model="subject"
-                        :disabled="false" />
+                    <RDFAdditionDropdown
+                        label="Agent"
+                        :options="activityParticipants"
+                        v-model="subject"
+                        :disabled="false"
+                    />
                 </div>
 
                 <!-- Predicate Field -->
                 <div class="flex-1">
-                    <RDFAdditionDropdown label="Predicate" :options="predicateOptions" v-model="predicate"
-                        :disabled="!isSubjectValid || !isObjectValid" />
+                    <RDFAdditionDropdown
+                        label="Predicate"
+                        :options="predicateOptions"
+                        v-model="predicate"
+                        :disabled="!isSubjectValid || !isObjectValid"
+                    />
                 </div>
 
                 <!-- Object Field -->
                 <div class="flex-1">
-                    <RDFAdditionDropdown label="Target" :options="activityParticipants" v-model="object"
-                        :disabled="!isSubjectValid" />
+                    <RDFAdditionDropdown
+                        label="Target"
+                        :options="activityParticipants"
+                        v-model="object"
+                        :disabled="!isSubjectValid"
+                    />
                 </div>
             </div>
 
             <div class="flex gap-4">
-                <Button class="w-full" :disabled="!isApplyEnabled"
-                    @click="applyTriple">{{ staticContent.tripleAdd.addTripleText[sessionStore.activeLanguage] }}</Button>
+                <Button class="w-full" :disabled="!isApplyEnabled" @click="applyTriple">{{
+                    staticContent.tripleAdd.addTripleText[sessionStore.activeLanguage]
+                }}</Button>
             </div>
         </div>
     </div>
@@ -228,7 +267,7 @@ const applyTriple = async () => {
 .close-btn {
     position: absolute;
     top: 0.5rem;
-    right: 1.0rem;
+    right: 1rem;
     background: transparent;
     border: none;
     font-size: 1.5rem;

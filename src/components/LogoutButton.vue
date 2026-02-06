@@ -1,22 +1,17 @@
 <script setup lang="ts">
-import { Button } from '@/components/ui/button';
-import { useSessionStore } from '@/stores/sessionStore';
-import { LogOut } from 'lucide-vue-next';
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from '@/components/ui/tooltip'
-import { staticContent } from '@/data/contentData';
-import { useRouter } from 'vue-router';
+import { Button } from "@/components/ui/button";
+import { useSessionStore } from "@/stores/sessionStore";
+import { LogOut } from "lucide-vue-next";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { staticContent } from "@/data/contentData";
+import { useRouter } from "vue-router";
 
 const sessionStore = useSessionStore();
 const router = useRouter();
 
 const logout = () => {
     sessionStore.endSession();
-    router.replace('/login');
+    router.replace("/login");
 };
 </script>
 

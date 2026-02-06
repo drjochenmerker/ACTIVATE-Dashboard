@@ -5,65 +5,65 @@ import { LanguageCode } from "./knowledge_graph/structures";
  */
 export const activateTerms: Record<LanguageCode, Record<string, string>> = {
     de: {
-        subject: 'Subjekt',
-        object: 'Ziel',
-        instruments: 'Werkzeuge',
-        community: 'Gemeinschaft',
-        rules: 'Regeln',
-        division_of_labour: 'Arbeitsteilung',
-        misc: 'Sonstiges',
+        subject: "Subjekt",
+        object: "Ziel",
+        instruments: "Werkzeuge",
+        community: "Gemeinschaft",
+        rules: "Regeln",
+        division_of_labour: "Arbeitsteilung",
+        misc: "Sonstiges",
     },
     en: {
-        subject: 'Subject',
-        object: 'Object(ive)',
-        instruments: 'Tools',
-        community: 'Community',
-        rules: 'Rules',
-        division_of_labour: 'Division of Labour',
-        misc: 'Miscellaneous',
+        subject: "Subject",
+        object: "Object(ive)",
+        instruments: "Tools",
+        community: "Community",
+        rules: "Rules",
+        division_of_labour: "Division of Labour",
+        misc: "Miscellaneous",
     },
     sv: {
-        subject: 'Ämne',
-        object: 'Mål',
-        instruments: 'Verktyg',
-        community: 'Gemenskap',
-        rules: 'Regler',
-        division_of_labour: 'Arbetsdelning',
-        misc: 'Övrigt',
+        subject: "Ämne",
+        object: "Mål",
+        instruments: "Verktyg",
+        community: "Gemenskap",
+        rules: "Regler",
+        division_of_labour: "Arbetsdelning",
+        misc: "Övrigt",
     },
-}
+};
 
-/** 
+/**
  * contentData is an array of objects that contain id, title and number
  * of the activity diagram participants
  */
 export const contentData = [
     {
-        id: 'subject',
+        id: "subject",
         number: 3,
     },
     {
-        id: 'object',
+        id: "object",
         number: 4,
     },
     {
-        id: 'instruments',
+        id: "instruments",
         number: 0,
     },
     {
-        id: 'community',
+        id: "community",
         number: 5,
     },
     {
-        id: 'rules',
+        id: "rules",
         number: 1,
     },
     {
-        id: 'division_of_labour',
+        id: "division_of_labour",
         number: 2,
     },
     {
-        id: 'misc',
+        id: "misc",
         number: 6,
     },
 ];
@@ -103,7 +103,7 @@ export const staticContent = {
             en: "The provided password is incorrect. Please try again.",
             de: "Das eingegebene Passwort ist falsch. Bitte versuch es nochmal.",
             sv: "Det angivna lösenordet är felaktigt. Försök igen.",
-        }
+        },
     },
     login: {
         loginButton: {
@@ -112,12 +112,12 @@ export const staticContent = {
             sv: "Login",
         },
     },
-    homepage:{
+    homepage: {
         navbarScene: {
             en: "Scene",
             de: "Szene",
             sv: "Scen",
-        }
+        },
     },
     terms: {
         setting: {
@@ -200,7 +200,7 @@ export const staticContent = {
                 en: "Resolved",
                 de: "Gelöst",
                 sv: "Löst",
-            }
+            },
         },
     },
     placeholders: {
@@ -247,14 +247,14 @@ export const staticContent = {
         noItems: {
             en: "No items to select from.",
             de: "Kein Element zur Auswahl.",
-            sv: "Inga artiklar att välja mellan."
+            sv: "Inga artiklar att välja mellan.",
         },
         feedbackAnswer: {
             en: "Write your answer ...",
             de: "Schreiben Sie Ihre Antwort ...",
             sv: "Skriv ditt svar ...",
         },
-        loading:{
+        loading: {
             en: "Loading... This may take a while.",
             de: "Laden... Dies kann einen Moment dauern.",
             sv: "Laddar... Detta kan ta en stund.",
@@ -263,7 +263,7 @@ export const staticContent = {
             en: "Password",
             de: "Passwort",
             sv: "Lösenord",
-        }
+        },
     },
     editor: {
         header: {
@@ -285,7 +285,7 @@ export const staticContent = {
             en: "Send anonymously",
             de: "Anonym senden",
             sv: "Skicka anonymt",
-        }
+        },
     },
     alerts: {
         entityEnter: {
@@ -297,19 +297,19 @@ export const staticContent = {
             en: "Please select an activity class.",
             de: "Bitte wählen Sie eine Aktivitätsklasse aus.",
             sv: "Vänligen välj en aktivitetsklass.",
-        }
+        },
     },
     toastNotification: {
         conflictAdded: {
             en: "Conflict added.",
             de: "Konflikt hinzugefügt",
-            sv: "Konflikt tillagd"
+            sv: "Konflikt tillagd",
         },
         noteAdded: {
             en: "Note added.",
             de: "Notiz hinzugefügt.",
-            sv: "Not tillagd"
-        }
+            sv: "Not tillagd",
+        },
     },
     entitiyAdd: {
         addButton: {
@@ -331,7 +331,7 @@ export const staticContent = {
             en: "Select Activity Class",
             de: "Aktivitätsklasse auswählen",
             sv: "Välj aktivitetsklass",
-        }
+        },
     },
     tripleAdd: {
         addTripleText: {
@@ -387,7 +387,7 @@ export const staticContent = {
                 kombination visas ett varningsmeddelande. Om det inte finns några befintliga predikat mellan den valda
                 valda agenten och målet kan du helt enkelt
                 lägga till ett nytt genom att skriva in det i predikatets textfält`,
-        }
+        },
     },
     noteCards: {
         addComment: {
@@ -420,11 +420,11 @@ export const staticContent = {
             de: "Herkunft",
             sv: "Ursprung",
         },
-        showOrigin:{
+        showOrigin: {
             en: "Show origin",
             de: "Herkunft anzeigen",
             sv: "Visa ursprung",
-        }
+        },
     },
     startPage: {
         createActivity: {
@@ -542,7 +542,7 @@ export const staticContent = {
             de: "Kombinieren",
             sv: "Kombinera",
         },
-        confirmation:{
+        confirmation: {
             en: "Confirm Combining",
             de: "Bestätigen Sie die Zusammenführung",
             sv: "Bekräfta kombination",
@@ -552,7 +552,7 @@ export const staticContent = {
             de: "Dies wird die Zusammenführung starten. Möchten Sie fortfahren? Dies kann eine Weile dauern.",
             sv: "Detta kommer att starta poolningsprocessen. Vill du fortsätta? Detta kan ta en stund.",
         },
-        pool:{
+        pool: {
             en: "Yes start.",
             de: "Ja, starten.",
             sv: "Ja, starta.",
@@ -560,30 +560,30 @@ export const staticContent = {
         noPoolAvailable: {
             en: "There is no feedback to combine.",
             de: "Es gibt kein Feedback zum Kombinieren.",
-            sv: "Det finns ingen feedback att kombinera."
+            sv: "Det finns ingen feedback att kombinera.",
         },
-        showQr:{
+        showQr: {
             en: "Show URL",
             de: "URL anzeigen",
-            sv: "Visa URL"
+            sv: "Visa URL",
         },
         hideQr: {
             en: "Hide URL",
             de: "URL ausblenden",
-            sv: "Dölj URL"
+            sv: "Dölj URL",
         },
-        copyLink:{
+        copyLink: {
             en: "Copy Link",
             de: "Link kopieren",
-            sv: "Kopiera länk"
+            sv: "Kopiera länk",
         },
-        copiedLink:{
+        copiedLink: {
             en: "Link copied!",
             de: "Link kopiert!",
-            sv: "Länk kopierad!"
-        }
+            sv: "Länk kopierad!",
+        },
     },
-    hoverText:{
+    hoverText: {
         object: {
             en: "What is the goal of the action? Cure, Care, adressing psychosocial issues etc. \n \
             On whom or what is this action taken? Patient, Relative, Blood sample etc.\n \
@@ -593,7 +593,7 @@ export const staticContent = {
             Welche Maßnahmen müssen ergriffen werden? Bedarfsanalyse, Berichterstattung, Entscheidungsfindung usw.",
             sv: "Vad är målet med åtgärden? Bota, vårda, ta itu med psykosociala frågor etc. \n\
             På vem eller vad vidtas denna åtgärd? Patient, anhörig, blodprov etc. \n\
-            Vilken åtgärd måste vidtas? Behovsbedömning, rapportering, beslutsfattande etc."
+            Vilken åtgärd måste vidtas? Behovsbedömning, rapportering, beslutsfattande etc.",
         },
         subject: {
             en: "Who are the actors in the action? Family physician, Medical specialist, Nurse, Social worker, Carers etc.\n \
@@ -601,7 +601,7 @@ export const staticContent = {
             de: "Wer sind die Akteure der Aktion? Hausarzt, Facharzt, Krankenschwester, Sozialarbeiter, Pflegepersonal usw.\n \
             Welche Wahrnehmungen, Vorstellungen und Gefühle sind bei den Akteuren vorhanden? Ungewissheit, Unbehagen, Inkompetenz usw.",
             sv: "Vilka är aktörerna i handlingen? Familjeläkare, specialistläkare, sjuksköterska, socialarbetare, anhörigvårdare etc. \n\
-            Vilka uppfattningar, idéer och känslor finns hos aktörerna? Osäkerhet, obehag, inkompetens etc."
+            Vilka uppfattningar, idéer och känslor finns hos aktörerna? Osäkerhet, obehag, inkompetens etc.",
         },
         community: {
             en: "Where does the activity take place? Home, Nursing home, Hospital etc. \n\
@@ -612,15 +612,15 @@ export const staticContent = {
             Welche Bedingungen kennzeichnen dieses Umfeld? Unmittelbarer Bedarf, Entfernung, Mangel usw.",
             sv: "Var äger aktiviteten rum? Hem, vårdhem, sjukhus etc.\n\
             Vilken organisation tillhör aktörerna? Allmän Universitetssjukhus, Oberoende Kommunal vårdcentral etc.\n\
-            Vilka förhållanden kännetecknar denna miljö? Omedelbara behov, Avstånd, Brist etc."
+            Vilka förhållanden kännetecknar denna miljö? Omedelbara behov, Avstånd, Brist etc.",
         },
         instruments: {
             en: "What physical means are used in the action? Patient record, Chart, Medical device, Telephone etc. \n\
-            Which abstract resources are deployed in the action? Conviction, Proactivity, Instruction etc.",      
+            Which abstract resources are deployed in the action? Conviction, Proactivity, Instruction etc.",
             de: "Welche materiellen Mittel werden bei der Aktion eingesetzt? Patientenakte, Krankenblatt, medizinisches Gerät, Telefon usw. \n\
             Welche abstrakten Mittel werden in der Aktion eingesetzt? Überzeugung, Proaktivität, Anweisung usw.",
             sv: "Vilka fysiska medel används i åtgärden? Patientjournal, diagram, medicinsk utrustning, telefon etc. \n\
-            Vilka abstrakta resurser används i handlingen? Övertygelse, proaktivitet, instruktioner etc."
+            Vilka abstrakta resurser används i handlingen? Övertygelse, proaktivitet, instruktioner etc.",
         },
         rules: {
             en: "Which specific policies and rules are linked to the activity? Guidelines, Authorisation, Reimbursements, Co-location etc. \n\
@@ -628,29 +628,29 @@ export const staticContent = {
             de: "Welche spezifischen Strategien und Regeln sind mit der Aktivität verbunden? Leitlinien, Genehmigungen, Erstattungen, gemeinsame Unterbringung usw. \n\
             Welche impliziten Sitten und Gebräuche sind mit der Tätigkeit verbunden? Vorrang, Laufbahn, Fachjargon usw.",
             sv: "Vilka specifika policyer och regler är kopplade till aktiviteten? Riktlinjer, auktorisation, ersättningar, samlokalisering etc. \n\
-            Vilka underförstådda sedvänjor och konventioner är kopplade till aktiviteten? Prioritet, karriärväg, professionell jargong etc."
+            Vilka underförstådda sedvänjor och konventioner är kopplade till aktiviteten? Prioritet, karriärväg, professionell jargong etc.",
         },
         division_of_labour: {
-            en:"How can different people contribute to the activity? Hierarchy, Role, Leadership, Territorial attitude etc.",
+            en: "How can different people contribute to the activity? Hierarchy, Role, Leadership, Territorial attitude etc.",
             de: "Wie können verschiedene Personen zu der Aktivität beitragen? Hierarchie, Rolle, Führung, territoriales Verhalten usw.",
             sv: "Hur kan olika personer bidra till aktiviteten? Hierarki, roll, ledarskap, territoriell attityd etc.",
-        }
+        },
     },
     feedbackpage: {
         description: {
             en: "Scan to give feedback for this activity.",
             de: "Scannen, um Feedback zu dieser Aktivität zu geben.",
-            sv: "Skanna för att ge feedback på denna aktivitet."
+            sv: "Skanna för att ge feedback på denna aktivitet.",
         },
         thankYou: {
             en: "Thanks for your feedback!",
             de: "Danke für Ihr Feedback!",
-            sv: "Tack för din feedback!"
+            sv: "Tack för din feedback!",
         },
         thankYouSubtext: {
             en: "You may now close the page or return to the main site.",
             de: "Sie können die Seite jetzt schließen oder zur Startseite zurückkehren.",
-            sv: "Du kan nu stänga sidan eller återvända till huvudsidan."
-        }
-    }
-}
+            sv: "Du kan nu stänga sidan eller återvända till huvudsidan.",
+        },
+    },
+};

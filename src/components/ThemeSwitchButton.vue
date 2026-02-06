@@ -1,15 +1,10 @@
 <script setup lang="ts">
-import { Button } from '@/components/ui/button';
-import { Sun, Moon } from 'lucide-vue-next';
-import { useColorMode } from '@vueuse/core';
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from '@/components/ui/tooltip'
-import { useSessionStore } from '@/stores/sessionStore';
-import { staticContent } from '@/data/contentData';
+import { Button } from "@/components/ui/button";
+import { Sun, Moon } from "lucide-vue-next";
+import { useColorMode } from "@vueuse/core";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useSessionStore } from "@/stores/sessionStore";
+import { staticContent } from "@/data/contentData";
 
 // Component representing a button that toggles the dark/light mode
 
@@ -17,7 +12,7 @@ const mode = useColorMode();
 
 const sessionStore = useSessionStore();
 const toggleMode = () => {
-    mode.value = mode.value === 'dark' ? 'light' : 'dark';
+    mode.value = mode.value === "dark" ? "light" : "dark";
 };
 </script>
 
@@ -31,7 +26,7 @@ const toggleMode = () => {
                 </Button>
             </TooltipTrigger>
             <TooltipContent>
-                <p>{{staticContent.terms.changeTheme[sessionStore.activeLanguage]}}</p>
+                <p>{{ staticContent.terms.changeTheme[sessionStore.activeLanguage] }}</p>
             </TooltipContent>
         </Tooltip>
     </TooltipProvider>

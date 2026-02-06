@@ -1,33 +1,34 @@
 <script setup lang="ts">
-import { computed, ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { computed, ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
 
 // UI components
-import { Button } from '@/components/ui/button'
-import { Select, SelectContent, SelectTrigger, SelectValue } from '@/components/ui/select';
-import RecursiveSelect from '@/components/RecursiveSelect.vue';
-import LoadingOverlay from '@/components/LoadingOverlay.vue'
-import LanguageSelect from '@/components/LanguageSelect.vue'
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectTrigger, SelectValue } from "@/components/ui/select";
+import RecursiveSelect from "@/components/RecursiveSelect.vue";
+import LoadingOverlay from "@/components/LoadingOverlay.vue";
+import LanguageSelect from "@/components/LanguageSelect.vue";
 
-import { useSessionStore } from '@/stores/sessionStore'
-import { staticContent } from '@/data/contentData'
-import { buildTreeStructByLang } from '@/data/knowledge_graph/utils';
-import { getActivityClassIds } from '@/data/knowledge_graph/read_operations';
-import { KnowledgeGraphActivityClass } from '@/data/knowledge_graph/structures';
-import { llmSubmit } from '@/data/knowledge_graph/llm_utils';
-import { staticContentFeedback } from '@/data/feedbackQuestions';
+import { useSessionStore } from "@/stores/sessionStore";
+import { staticContent } from "@/data/contentData";
+import { buildTreeStructByLang } from "@/data/knowledge_graph/utils";
+import { getActivityClassIds } from "@/data/knowledge_graph/read_operations";
+import { KnowledgeGraphActivityClass } from "@/data/knowledge_graph/structures";
+import { llmSubmit } from "@/data/knowledge_graph/llm_utils";
+import { staticContentFeedback } from "@/data/feedbackQuestions";
 
-const props = defineProps<{ graph: string }>()
+const props = defineProps<{ graph: string }>();
 
-const router = useRouter()
-const sessionStore = useSessionStore()
+const router = useRouter();
+const sessionStore = useSessionStore();
 
-const activeLang = computed(() => sessionStore.activeLanguage)
+const activeLang = computed(() => sessionStore.activeLanguage);
 const loading = ref(false);
 
 // 1. Define groups
-const questionGroups = Object.keys(staticContentFeedback)
-    .filter(key => key !== 'feedbackpage') as (keyof typeof staticContentFeedback)[];
+const questionGroups = Object.keys(staticContentFeedback).filter(
+    (key) => key !== "feedbackpage",
+) as (keyof typeof staticContentFeedback)[];
 
 // 2. Helper function to initialize the 'answers' state
 const initializeAnswers = (): Record<string, Record<string, string>> => {
@@ -37,11 +38,10 @@ const initializeAnswers = (): Record<string, Record<string, string>> => {
         const groupData = staticContentFeedback[groupKey];
 
         // Find all 'questionX' keys in the group
-        const questionKeys = Object.keys(groupData)
-            .filter(key => key.startsWith('question'));
+        const questionKeys = Object.keys(groupData).filter((key) => key.startsWith("question"));
 
         for (const questionKey of questionKeys) {
-            initialState[groupKey][questionKey] = '';
+            initialState[groupKey][questionKey] = "";
         }
     }
     return initialState;
@@ -53,38 +53,41 @@ const answers = ref<Record<string, Record<string, string>>>(initializeAnswers())
 const groupedQuestionData = computed(() => {
     const lang = activeLang.value;
 
-    return questionGroups.map(groupKey => {
-        const groupData = staticContentFeedback[groupKey];
+    return (
+        questionGroups
+            .map((groupKey) => {
+                const groupData = staticContentFeedback[groupKey];
 
-        // 1. Get title of group
-        let title: string = String(groupKey);
-        if ('title' in groupData && groupData.title) {
-            title = groupData.title[lang] || groupData.title['de'] || String(groupKey);
-        }
+                // 1. Get title of group
+                let title: string = String(groupKey);
+                if ("title" in groupData && groupData.title) {
+                    title = groupData.title[lang] || groupData.title["de"] || String(groupKey);
+                }
 
-        // 2. Get all questions of the group
-        const questions = Object.keys(groupData)
-            .filter(key => key.startsWith('question'))
-            .map(questionKey => {
-                const gd = groupData as Record<string, Record<string, string>>;
-                const texts = gd[questionKey] || {};
-                const text = texts[lang] || texts['de'] || '';
+                // 2. Get all questions of the group
+                const questions = Object.keys(groupData)
+                    .filter((key) => key.startsWith("question"))
+                    .map((questionKey) => {
+                        const gd = groupData as Record<string, Record<string, string>>;
+                        const texts = gd[questionKey] || {};
+                        const text = texts[lang] || texts["de"] || "";
+                        return {
+                            key: questionKey,
+                            text: text,
+                        };
+                    })
+                    // Filter out empty questions
+                    .filter((q) => q.text && q.text.trim() !== "");
+
                 return {
-                    key: questionKey,
-                    text: text
+                    key: groupKey,
+                    title: title,
+                    questions: questions,
                 };
             })
-            // Filter out empty questions
-            .filter(q => q.text && q.text.trim() !== '');
-
-        return {
-            key: groupKey,
-            title: title,
-            questions: questions
-        };
-    })
-        // Filter out entire groups if they have no questions for the language
-        .filter(g => g.questions.length > 0);
+            // Filter out entire groups if they have no questions for the language
+            .filter((g) => g.questions.length > 0)
+    );
 });
 
 onMounted(async () => {
@@ -96,32 +99,30 @@ onMounted(async () => {
  */
 const getRoles = async () => {
     const roles = await getActivityClassIds(props.graph, KnowledgeGraphActivityClass.subject);
-    sessionStore.availableRoles = buildTreeStructByLang(
-        roles,
-        activeLang.value
-    );
-}
+    sessionStore.availableRoles = buildTreeStructByLang(roles, activeLang.value);
+};
 
 const submitFeedback = async () => {
     if (!sessionStore.sessionRole) {
-        alert('Please select your role before submitting.')
-        return
-    }
-
-    const roles = await getActivityClassIds(props.graph, KnowledgeGraphActivityClass.subject);
-    const selectedRole = roles.find(role => role.id === sessionStore.sessionRole);
-
-    if (!selectedRole) {
-        alert('Selected role not found!');
+        alert("Please select your role before submitting.");
         return;
     }
 
-    const roleLabel = selectedRole.labels[activeLang.value] || selectedRole.labels['default'] || selectedRole.labels['en'];
+    const roles = await getActivityClassIds(props.graph, KnowledgeGraphActivityClass.subject);
+    const selectedRole = roles.find((role) => role.id === sessionStore.sessionRole);
+
+    if (!selectedRole) {
+        alert("Selected role not found!");
+        return;
+    }
+
+    const roleLabel =
+        selectedRole.labels[activeLang.value] || selectedRole.labels["default"] || selectedRole.labels["en"];
 
     // Build correct role object
     const roleForSubmit = {
         id: selectedRole.id,
-        label: roleLabel
+        label: roleLabel,
     };
 
     // --- Build full feedback object (NEUE LOGIK aus Version 2) ---
@@ -137,13 +138,13 @@ const submitFeedback = async () => {
 
             // Find the question text in the original data (with fallback)
             const groupStatic = (staticContentFeedback as any)[groupKey];
-            const questionText = groupStatic?.[questionKey]?.[lang] || groupStatic?.[questionKey]?.['de'];
+            const questionText = groupStatic?.[questionKey]?.[lang] || groupStatic?.[questionKey]?.["de"];
 
             // Add only if question text exists
-            if (questionText && questionText.trim() !== '') {
+            if (questionText && questionText.trim() !== "") {
                 fullData.push({
                     question: questionText,
-                    answer: answer || ''
+                    answer: answer || "",
                 });
             }
         }
@@ -154,7 +155,7 @@ const submitFeedback = async () => {
     const feedbackData = {
         graph: props.graph,
         role: roleForSubmit,
-        data: fullData
+        data: fullData,
     };
 
     try {
@@ -164,16 +165,16 @@ const submitFeedback = async () => {
     } catch (error) {
         loading.value = false;
         console.error("Error submitting feedback:", error);
-        alert('Failed to submit feedback. Please try again.');
+        alert("Failed to submit feedback. Please try again.");
         return;
     }
     try {
-        await router.push('/feedback-thank-you')
+        await router.push("/feedback-thank-you");
         // TODO maybe show feedback success message earlier because right now it takes too long
     } catch (err) {
-        console.error('Navigation failed:', err)
+        console.error("Navigation failed:", err);
     }
-}
+};
 </script>
 
 <template>
@@ -183,13 +184,20 @@ const submitFeedback = async () => {
                 <LanguageSelect class="absolute top-0 right-0 mt-4 mr-4" />
             </div>
             <div>
-
                 <div class="mb-6">
-                    <Select :model-value="sessionStore.sessionRole"
-                        @update:model-value="sessionStore.sessionRole = $event" id="roleSelect" class="my-4">
+                    <Select
+                        :model-value="sessionStore.sessionRole"
+                        @update:model-value="sessionStore.sessionRole = $event"
+                        id="roleSelect"
+                        class="my-4"
+                    >
                         <SelectTrigger>
                             <SelectValue
-                                :placeholder="staticContent.placeholders.roleSelect[sessionStore.activeLanguage] || sessionStore.sessionRole" />
+                                :placeholder="
+                                    staticContent.placeholders.roleSelect[sessionStore.activeLanguage] ||
+                                    sessionStore.sessionRole
+                                "
+                            />
                         </SelectTrigger>
                         <SelectContent>
                             <RecursiveSelect :node="sessionStore.availableRoles" />
@@ -197,9 +205,11 @@ const submitFeedback = async () => {
                     </Select>
                 </div>
 
-                <div v-for="group in groupedQuestionData" :key="group.key"
-                    class="mb-6 p-4 border rounded-lg bg-white shadow-sm space-y-4">
-
+                <div
+                    v-for="group in groupedQuestionData"
+                    :key="group.key"
+                    class="mb-6 p-4 border rounded-lg bg-white shadow-sm space-y-4"
+                >
                     <h2 class="text-xl font-semibold text-gray-900 border-b pb-2">
                         {{ group.title }}
                     </h2>
@@ -208,12 +218,15 @@ const submitFeedback = async () => {
                         <label :for="group.key + question.key" class="block text-lg font-medium">
                             {{ question.text }}
                         </label>
-                        <textarea :id="group.key + question.key" v-model="answers[group.key][question.key]"
+                        <textarea
+                            :id="group.key + question.key"
+                            v-model="answers[group.key][question.key]"
                             class="w-full p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
-                            rows="4" :placeholder="staticContent.placeholders.feedbackAnswer[activeLang]" />
+                            rows="4"
+                            :placeholder="staticContent.placeholders.feedbackAnswer[activeLang]"
+                        />
                     </div>
                 </div>
-
             </div>
         </div>
 

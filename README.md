@@ -88,6 +88,7 @@ SELECT * WHERE {
 ## Deployment using Docker/Podman
 
 It's highly recommended to use the following commands:
+
 ```
 podman network create activate-network
 podman compose up -d --build

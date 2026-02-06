@@ -6,5 +6,5 @@
  * @returns A List built according to the callback function
  */
 export function listComprehension<T>(list: T[], callback: (item: T) => boolean): T[] {
-    return list.filter(callback).map((item) => item)
-};
+    return list.filter(callback).map((item) => item);
+}

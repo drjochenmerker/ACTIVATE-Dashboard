@@ -12,11 +12,11 @@ import { getActivityDetail } from "@/data/knowledge_graph/read_operations";
 import { activateTerms, staticContent } from "@/data/contentData";
 import { Activity, Conflict, conflictStatus, Objective } from "@/data/knowledge_graph/structures";
 
-import { Button } from '@/components/ui/button';
-import PointHoverPopUp from '@/components/PointHoverPopUp.vue';
+import { Button } from "@/components/ui/button";
+import PointHoverPopUp from "@/components/PointHoverPopUp.vue";
 import ConflictHoverPopUp from "./ConflictHoverPopUp.vue";
 
-/** 
+/**
  * Activity-Diagram-Component
  * Visualization of the active and inactive elements of the Activity-Diagram
  */
@@ -25,7 +25,7 @@ export default defineComponent({
     components: {
         ConflictHoverPopUp,
         PointHoverPopUp,
-        Button
+        Button,
     },
 
     /**
@@ -187,15 +187,15 @@ export default defineComponent({
         ]);
 
         /**
-        * Triangles of the activity diagram
-        * @property {Array} pointIds: Array of the corner point IDs
-        */
+         * Triangles of the activity diagram
+         * @property {Array} pointIds: Array of the corner point IDs
+         */
         const triangles = ref([
             { pointIds: ["instruments", "subject", "object"] },
             { pointIds: ["subject", "rules", "community"] },
             { pointIds: ["subject", "community", "object"] },
             { pointIds: ["object", "community", "division_of_labour"] },
-        ])
+        ]);
 
         // Array of all points that are currently selected
         const selectedPoints = ref<string[]>([]);
@@ -224,12 +224,23 @@ export default defineComponent({
             const [point1, point2, point3] = triangle.pointIds.map((id) => points.value.find((p) => p.id === id));
             if (point1 && point2 && point3) {
                 // Calculate the area of the whole triangle
-                const triangleArea = Math.abs((point1.x * (point2.y - point3.y) + point2.x * (point3.y - point1.y) + point3.x * (point1.y - point2.y)) / 2);
+                const triangleArea = Math.abs(
+                    (point1.x * (point2.y - point3.y) +
+                        point2.x * (point3.y - point1.y) +
+                        point3.x * (point1.y - point2.y)) /
+                        2,
+                );
 
                 // Calculate the area of the triangle formed by the clicked point and two vertices of the triangle
-                const area1 = Math.abs((x * (point2.y - point3.y) + point2.x * (point3.y - y) + point3.x * (y - point2.y)) / 2);
-                const area2 = Math.abs((point1.x * (y - point3.y) + x * (point3.y - point1.y) + point3.x * (point1.y - y)) / 2);
-                const area3 = Math.abs((point1.x * (point2.y - y) + point2.x * (y - point1.y) + x * (point1.y - point2.y)) / 2);
+                const area1 = Math.abs(
+                    (x * (point2.y - point3.y) + point2.x * (point3.y - y) + point3.x * (y - point2.y)) / 2,
+                );
+                const area2 = Math.abs(
+                    (point1.x * (y - point3.y) + x * (point3.y - point1.y) + point3.x * (point1.y - y)) / 2,
+                );
+                const area3 = Math.abs(
+                    (point1.x * (point2.y - y) + point2.x * (y - point1.y) + x * (point1.y - point2.y)) / 2,
+                );
 
                 // If the sum of the areas of the three triangles is equal to the area of the whole triangle, the point is inside the triangle
                 if (triangleArea === area1 + area2 + area3) {
@@ -238,13 +249,13 @@ export default defineComponent({
                     return false;
                 }
             }
-        }
+        };
 
         /**
-        * Checks if a defined triangle is clicked by checking rates of the areas
-        * @param {number} mouseX: x-coordinate of the clicked point
-        * @param {number} mouseY: y-coordinate of the clicked point
-        */
+         * Checks if a defined triangle is clicked by checking rates of the areas
+         * @param {number} mouseX: x-coordinate of the clicked point
+         * @param {number} mouseY: y-coordinate of the clicked point
+         */
         const checkIfTriangleIsClicked = (mouseX: number, mouseY: number) => {
             triangles.value.forEach((triangle) => {
                 if (isPointInTriangle(mouseX, mouseY, triangle)) {
@@ -299,7 +310,7 @@ export default defineComponent({
             updatePoints();
         };
 
-        /** 
+        /**
          * Updates the hover state of the canvas, sets the hoveredPoint and hoveredTriangle
          */
         const updateHoverState = (mouseX: number, mouseY: number) => {
@@ -322,7 +333,7 @@ export default defineComponent({
             }
         };
 
-        /** 
+        /**
          * Applies point-colors based on current theme, updates the colors of the points and lines
          */
         const updateColors = () => {
@@ -437,17 +448,25 @@ export default defineComponent({
 
                 // Draw labels for each point
                 ctx.fillStyle = mode.value === "dark" ? "white" : "black";
-                point.active ? ctx.font = `bold ${triangleHeight / 40}px Arial` : ctx.font = `${triangleHeight / 40}px Arial`;
+                point.active
+                    ? (ctx.font = `bold ${triangleHeight / 40}px Arial`)
+                    : (ctx.font = `${triangleHeight / 40}px Arial`);
                 ctx.textAlign = "center";
 
                 // WORKAROUND of dynamic positioninig: only the object label adjusted
-                if (point.id === "rules" || point.id === "community" || point.id === "division_of_labour") ctx.fillText(point.label, point.x, point.y + triangleHeight / 20);
+                if (point.id === "rules" || point.id === "community" || point.id === "division_of_labour")
+                    ctx.fillText(point.label, point.x, point.y + triangleHeight / 20);
 
                 if (point.id === "instruments") ctx.fillText(point.label, point.x, point.y - triangleHeight / 30);
-                if (point.id === "subject") ctx.fillText(point.label, point.x - triangleWidth / 30, point.y - triangleHeight / 30);
+                if (point.id === "subject")
+                    ctx.fillText(point.label, point.x - triangleWidth / 30, point.y - triangleHeight / 30);
                 if (point.id === "object") {
                     ctx.textAlign = "right";
-                    ctx.fillText(point.label, point.x + triangleWidth / 60 + ctx.measureText(point.label).width, point.y - triangleHeight / 30);
+                    ctx.fillText(
+                        point.label,
+                        point.x + triangleWidth / 60 + ctx.measureText(point.label).width,
+                        point.y - triangleHeight / 30,
+                    );
                 }
             });
             // Draw conflict points based on conflict positions and status
@@ -455,22 +474,25 @@ export default defineComponent({
                 conflictPositions.value.forEach((conflict: Conflict) => {
                     if (conflict.x && conflict.y) {
                         // Check if the conflict point is currently hovered
-                        const isHovered = hoveredConflictPointData.value &&
-                            hoveredConflictPointData.value.id === conflict.id;
+                        const isHovered =
+                            hoveredConflictPointData.value && hoveredConflictPointData.value.id === conflict.id;
                         const scalingFactor = isHovered ? 1.2 : 1;
-                        ctx.beginPath()
-                            // Circle (Neutral intent)
-                            ctx.arc(conflict.x, conflict.y, triangleHeight / 70 * scalingFactor, 0, 2 * Math.PI);
+                        ctx.beginPath();
+                        // Circle (Neutral intent)
+                        ctx.arc(conflict.x, conflict.y, (triangleHeight / 70) * scalingFactor, 0, 2 * Math.PI);
 
-                        ctx.fillStyle = conflict.status == conflictStatus.open ? "red" :
-                            conflict.status == conflictStatus.inDiscussion ? "yellow" : "green";
+                        ctx.fillStyle =
+                            conflict.status == conflictStatus.open
+                                ? "red"
+                                : conflict.status == conflictStatus.inDiscussion
+                                  ? "yellow"
+                                  : "green";
                         ctx.fill();
                         ctx.strokeStyle = mode.value === "dark" ? "white" : "black";
                         // Highlight line width when conflict point is hovered
                         ctx.lineWidth = 2.5 * scalingFactor;
                         ctx.stroke();
-                    }
-                    else {
+                    } else {
                         console.log("ERROR: Conflict position is missing x or y coordinates");
                     }
                 });
@@ -488,13 +510,17 @@ export default defineComponent({
 
             hoverPosition.value = { x: event.clientX, y: event.clientY };
 
-            let foundPoint: { label: string, tooltip: String, content: Array<Objective> } | null = null;
+            let foundPoint: { label: string; tooltip: String; content: Array<Objective> } | null = null;
 
             // Check if a point is hovered -> if yes, set foundPoint to the hovered point, set hoveredPosition for hoverPopUp
             points.value.forEach((point) => {
                 const distance = Math.sqrt((mouseX - point.x) ** 2 + (mouseY - point.y) ** 2);
                 if (distance < triangleHeight / 40) {
-                    foundPoint = { label: point.label, tooltip: point.tooltip, content: activityData.value[point.id] || [] };
+                    foundPoint = {
+                        label: point.label,
+                        tooltip: point.tooltip,
+                        content: activityData.value[point.id] || [],
+                    };
                 }
             });
 
@@ -541,13 +567,15 @@ export default defineComponent({
                 if (distance < triangleHeight / 80) {
                     conflictPointWasClicked = true;
 
-                    const conflictParticipantTypes = conflict.participants.map((participant: { type: any; }) => participant.type)
+                    const conflictParticipantTypes = conflict.participants.map(
+                        (participant: { type: any }) => participant.type,
+                    );
                     router.push({
                         path: `/${conflictParticipantTypes[0]}`,
                         query: {
                             conflictId: conflict.id,
-                        }
-                    })
+                        },
+                    });
                 }
             });
 
@@ -620,27 +648,35 @@ export default defineComponent({
 
         // Watcher for the hoveredConflictPointData
         watch(hoveredConflictPointData, (newConflict) => {
-            const conflictTypes = newConflict
-                ? newConflict.participants.map(participant => participant.type)
-                : [];
+            const conflictTypes = newConflict ? newConflict.participants.map((participant) => participant.type) : [];
 
-            points.value.forEach(point => {
+            points.value.forEach((point) => {
                 point.highlighted = conflictTypes.includes(point.id);
             });
             updateColors();
         });
 
         // Watcher for the conflictsStore
-        watch(() => conflictStore.getConflicts, () => {
-            conflictPositions.value = calculateConflictPositions(conflictStore.getConflicts, points.value, 20).value;
-            draw();
-        }, { deep: true });
+        watch(
+            () => conflictStore.getConflicts,
+            () => {
+                conflictPositions.value = calculateConflictPositions(
+                    conflictStore.getConflicts,
+                    points.value,
+                    20,
+                ).value;
+                draw();
+            },
+            { deep: true },
+        );
 
         // Watcher to refresh activityDiagram when language is changed
-        watch(() => sessionStore.activeLanguage, async () => {
-            updateColors();
-        });
-
+        watch(
+            () => sessionStore.activeLanguage,
+            async () => {
+                updateColors();
+            },
+        );
 
         return {
             canvas,
@@ -658,12 +694,20 @@ export default defineComponent({
 
 <template>
     <div @mouseleave="hoveredPointData = null">
-        <canvas ref="canvas" :width="triangleWidth" :height="triangleHeight" @mousemove="handleHover"
-            @click="handleClick" />
+        <canvas
+            ref="canvas"
+            :width="triangleWidth"
+            :height="triangleHeight"
+            @mousemove="handleHover"
+            @click="handleClick"
+        />
 
         <PointHoverPopUp v-if="hoveredPointData" :hoveredPoint="hoveredPointData" :position="hoverPosition" />
-        <ConflictHoverPopUp v-if="hoveredConflictPointData" :hoveredConflictPoint="hoveredConflictPointData"
-            :position="hoverPosition" />
+        <ConflictHoverPopUp
+            v-if="hoveredConflictPointData"
+            :hoveredConflictPoint="hoveredConflictPointData"
+            :position="hoverPosition"
+        />
     </div>
 </template>
 

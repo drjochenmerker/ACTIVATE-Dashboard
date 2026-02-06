@@ -1,15 +1,14 @@
-import { getAllConflictsWithDetail, getConflictDetail } from '@/data/knowledge_graph/read_operations';
-import { Conflict } from '@/data/knowledge_graph/structures';
-import { defineStore } from 'pinia';
-import { ref, computed } from 'vue';
-import { useSessionStore } from './sessionStore';
+import { getAllConflictsWithDetail, getConflictDetail } from "@/data/knowledge_graph/read_operations";
+import { Conflict } from "@/data/knowledge_graph/structures";
+import { defineStore } from "pinia";
+import { ref, computed } from "vue";
+import { useSessionStore } from "./sessionStore";
 
 /**
  * Store: ActivityConflicts
  * Manages the list of conflicts associated with the current activity
  */
-export const useConflictsStore = defineStore('ActivityConflicts', () => {
-
+export const useConflictsStore = defineStore("ActivityConflicts", () => {
     /**
      * Reactive list of conflicts with detailed data
      */
@@ -36,7 +35,7 @@ export const useConflictsStore = defineStore('ActivityConflicts', () => {
      */
     const addConflict = (conflict: Conflict) => {
         conflictDetails.value.push(conflict);
-    }
+    };
 
     /**
      * Sets the complete list of conflicts
@@ -50,7 +49,7 @@ export const useConflictsStore = defineStore('ActivityConflicts', () => {
      * Returns the list of all currently stored conflicts
      */
     const getConflicts = computed(() => {
-        return conflictDetails.value
+        return conflictDetails.value;
     });
 
     /**
@@ -60,9 +59,9 @@ export const useConflictsStore = defineStore('ActivityConflicts', () => {
      */
     const updateConflict = async (conflictId: string, graph: string) => {
         const updatedConflict = await getConflictDetail(graph, conflictId);
-        const index = conflictDetails.value.findIndex(conflict => conflict.id === conflictId);
+        const index = conflictDetails.value.findIndex((conflict) => conflict.id === conflictId);
         if (index !== -1) {
-            conflictDetails.value[index] = updatedConflict;  // Reaktive Änderung
+            conflictDetails.value[index] = updatedConflict; // Reaktive Änderung
         }
     };
 
@@ -71,12 +70,11 @@ export const useConflictsStore = defineStore('ActivityConflicts', () => {
      * @param conflictId - ID of the conflict to remove
      */
     const removeConflict = (conflictId: string) => {
-        const index = conflictDetails.value.findIndex(conflict => conflict.id === conflictId);
+        const index = conflictDetails.value.findIndex((conflict) => conflict.id === conflictId);
         if (index !== -1) {
-            conflictDetails.value.splice(index, 1);  // Reaktive Änderung
+            conflictDetails.value.splice(index, 1); // Reaktive Änderung
         }
     };
-
 
     return {
         addConflict,
@@ -84,6 +82,6 @@ export const useConflictsStore = defineStore('ActivityConflicts', () => {
         getConflicts,
         updateConflict,
         removeConflict,
-        refreshConflictList
+        refreshConflictList,
     };
 });

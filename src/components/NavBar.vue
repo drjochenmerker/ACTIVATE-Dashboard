@@ -1,20 +1,15 @@
 <!-- NavBar Component -->
 <script setup lang="ts">
-import { activateTerms, contentData } from '@/data/contentData';
-import ThemeSwitchButton from './ThemeSwitchButton.vue';
-import { User, Users } from 'lucide-vue-next';
-import { useSessionStore } from '@/stores/sessionStore';
-import {
-    Select,
-    SelectContent,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
-import LogoutButton from './LogoutButton.vue';
-import RecursiveSelect from './RecursiveSelect.vue';
-import SceneChangeButton from './SceneChangeButton.vue';
-import LanguageSelect from './LanguageSelect.vue';
-import HomeButton from './HomeButton.vue';
+import { activateTerms, contentData } from "@/data/contentData";
+import ThemeSwitchButton from "./ThemeSwitchButton.vue";
+import { User, Users } from "lucide-vue-next";
+import { useSessionStore } from "@/stores/sessionStore";
+import { Select, SelectContent, SelectTrigger, SelectValue } from "@/components/ui/select";
+import LogoutButton from "./LogoutButton.vue";
+import RecursiveSelect from "./RecursiveSelect.vue";
+import SceneChangeButton from "./SceneChangeButton.vue";
+import LanguageSelect from "./LanguageSelect.vue";
+import HomeButton from "./HomeButton.vue";
 
 const sessionStore = useSessionStore();
 </script>
@@ -30,8 +25,14 @@ const sessionStore = useSessionStore();
 
             <!-- Navigation links -->
             <div class="flex items-center gap-6 whitespace-nowrap">
-                <router-link v-for="item in contentData" :key="item.id" :to="`/${item.id}`"
-                    :class="$route.path === `/${item.id}` ? 'font-semibold' : 'text-muted-foreground hover:text-foreground'">
+                <router-link
+                    v-for="item in contentData"
+                    :key="item.id"
+                    :to="`/${item.id}`"
+                    :class="
+                        $route.path === `/${item.id}` ? 'font-semibold' : 'text-muted-foreground hover:text-foreground'
+                    "
+                >
                     {{ activateTerms[sessionStore.activeLanguage][item.id] }}
                 </router-link>
             </div>

@@ -1,17 +1,15 @@
-import { defineStore } from 'pinia';
-import { ref, computed } from 'vue';
+import { defineStore } from "pinia";
+import { ref, computed } from "vue";
 
 /**
  * Store: activityPoints
  * Manages the currently active points in the activity diagram
  */
-export const useActivityPointsStore = defineStore('activityPoints', () => {
-
+export const useActivityPointsStore = defineStore("activityPoints", () => {
     /**
      * Reactive list of currently active point IDs
      */
     let activePoints = ref<string[]>([]);
-
 
     /**
      * Sets the active points
