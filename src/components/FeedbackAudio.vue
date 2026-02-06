@@ -210,6 +210,27 @@ const getRoles = async (): Promise<string[]> => {
     );
     return flattenRoles(sessionStore.availableRoles as RoleNode, sessionStore.activeLanguage);
 };
+
+const firstUtterance = (transcript: DiarizationSuccessResult): DiarizationSuccessResult => {
+    // FUNCTION TO EXTRACT FIRST UTTERANCE OF EACH SPEAKER FROM THE TRANSCRIPT
+    const firstUttTranscript: DiarizationSuccessResult = {
+        ...transcript,
+        diarized_transcription: []
+    };
+
+    const seenSpeakers = new Set<string>();
+
+    for (const segment of transcript.diarized_transcription) {
+        if (!seenSpeakers.has(segment.speaker)) {
+            firstUttTranscript.diarized_transcription.push(segment);
+            seenSpeakers.add(segment.speaker);
+        }
+    }
+
+    console.log("First utterance transcript:", firstUttTranscript);
+    return firstUttTranscript;
+};
+
 onMounted(async () => {
     await getRoles();
 });
@@ -220,41 +241,6 @@ onUnmounted(() => {
     }
 });
 
-// // polling function
-// const pollJobStatus = async () => {
-//     if (!jobId.value) return;
-
-//     // console.log(`Polling status for job: ${jobId.value}...`);
-//     try {
-//         const result: JobStatus = await checkJobStatus(jobId.value);
-
-//         if (result.status === 'processing') {
-//             pollingMessage.value = `Processing... ${result.message} (${result.progress}%)`;
-//         }
-//         else if (result.status === 'complete') {
-//             console.log("Job completed!", result.data);
-//             if (pollingInterval.value) clearInterval(pollingInterval.value);
-//             isPolling.value = false;
-//             diarizationResult.value = result.data; // final result
-
-//             emit('processingComplete', true);
-//         }
-//         else if (result.status === 'error') {
-//             console.error("Job failed:", result.message);
-//             if (pollingInterval.value) clearInterval(pollingInterval.value);
-//             isPolling.value = false;
-//             diarizationError.value = { success: false, message: result.message };
-//             emit('processingComplete', false); // Error
-//         }
-
-//     } catch (error) {
-//         console.error("Error while polling:", error);
-//         isPolling.value = false;
-//         if (pollingInterval.value) clearInterval(pollingInterval.value);
-//         diarizationError.value = { success: false, message: "Error while fetching job status." };
-//         emit('processingComplete', false); // Error
-//     }
-// };
 
 const emit = defineEmits(['processingComplete', 'mapping-complete']);
 
@@ -290,7 +276,7 @@ defineExpose({
             diarizationResult.value = result;
             isPolling.value = false;
             emit('processingComplete', true);
-            console.log("Transcript:", result);
+            console.log("Transcript:", result.diarized_transcription);
             return true;
 
         } catch (error) {
@@ -304,6 +290,7 @@ defineExpose({
             return false;
         }
     },
+
     submitRoleMapping: async (): Promise<boolean> => {
         // CALLS LLM TO CREATE A MAP FOR THE SPEAKERS TO ROLES
         if (!diarizationResult.value) {
@@ -312,9 +299,13 @@ defineExpose({
         } else {
             isPolling.value = true;
             pollingMessage.value = "Role mapping...";
+
+            const firstUttTranscript = firstUtterance(diarizationResult.value);
+            console.log("Submitting first utterance for role mapping:", firstUttTranscript);
+
             try {
                 const result = await mapRolesToTranscript(
-                    diarizationResult.value
+                    firstUttTranscript,
                 );
 
                 // success
