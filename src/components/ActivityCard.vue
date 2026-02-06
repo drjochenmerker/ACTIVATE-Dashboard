@@ -27,6 +27,7 @@ import { llmPool } from '@/data/knowledge_graph/llm_utils';
 import LoadingOverlay from '@/components/LoadingOverlay.vue';
 import RecursiveSelect from './RecursiveSelect.vue';
 import { Select, SelectTrigger, SelectContent, SelectValue } from '@/components/ui/select';
+import DeletionPopUp from './DeletionPopUp.vue';
 
 // consts and props defintion
 const sessionStore = useSessionStore();
@@ -48,9 +49,6 @@ sessionStore.availableRoles = {} as NestedMultiLangObject;
 
 // const editTitle = ref('');
 // const editDescription = ref('');
-
-// Refs for dialog interaction
-const isDeleteDialogOpen = ref(false);
 // todo
 // const isCloneDialogOpen = ref(false);
 // const isEditDialogOpen = ref(false);
@@ -166,8 +164,6 @@ const copyUrlToClipboard = async () => {
 const deleteThisActivity = async () => {
     activityStore.removeActivity(graph);
     activityStore.refreshActivityList();
-
-    isDeleteDialogOpen.value = false;
 }
 
 // first step
@@ -255,29 +251,11 @@ const showUrl = ref(false)
                     <div class="flex justify-between items-center gap-4 flex-wrap">
                         <!-- Delete Button -->
                         <div>
-                            <Dialog v-model:open="isDeleteDialogOpen">
-                                <DialogTrigger as-child>
-                                    <button class="icon-button">
-                                        <span class="material-symbols-outlined">delete</span>
-                                    </button>
-                                </DialogTrigger>
-                                <DialogContent>
-                                    <DialogHeader>
-                                        <DialogTitle>{{
-                                            staticContent.startPage.deleteActivity[sessionStore.activeLanguage] }}
-                                        </DialogTitle>
-                                        <DialogDescription>
-                                            {{ staticContent.startPage.deleteConfirm[sessionStore.activeLanguage] }}
-                                        </DialogDescription>
-                                    </DialogHeader>
-                                    <DialogFooter class="flex justify-between">
-                                        <Button variant="secondary" @click="isDeleteDialogOpen = false">{{
-                                            staticContent.terms.cancel[sessionStore.activeLanguage] }}</Button>
-                                        <Button variant="destructive" @click="() => deleteThisActivity()">{{
-                                            staticContent.terms.delete[sessionStore.activeLanguage] }}</Button>
-                                    </DialogFooter>
-                                </DialogContent>
-                            </Dialog>
+                            <DeletionPopUp
+                                :title="staticContent.startPage.deleteActivity[sessionStore.activeLanguage]"
+                                :description="staticContent.startPage.deleteActivityConfirm[sessionStore.activeLanguage]"
+                                :delete-function="() => deleteThisActivity()"
+                            />
                         </div>
 
                         <!-- Edit Button -->

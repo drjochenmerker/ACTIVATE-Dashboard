@@ -4,12 +4,12 @@ import { conflictPredicate, conflictStatus, Participant } from '@/data/knowledge
 import ReplyCard from './ReplyCard.vue';
 import { addComment, deleteConflict, updateConflict } from "@/data/knowledge_graph/write_operations";
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog'
 import { useConflictsStore } from '@/stores/conflictsStore';
 import { useSessionStore } from '@/stores/sessionStore';
 import { activateTerms, staticContent } from '@/data/contentData';
 import { buildLanguageString } from '@/lib/utils';
 import { LanguageCode } from '@/data/knowledge_graph/structures'
+import DeletionPopUp from './DeletionPopUp.vue';
 
 const props = defineProps({
   conflict: {
@@ -51,7 +51,6 @@ const props = defineProps({
 const conflictDetail = ref<any>(null);
 // todo
 // const isShowOriginOpen = ref(false);
-const isDeleteDialogOpen = ref(false);
 const replyInputVisible = ref<Record<string, boolean>>({});
 const newReplyText = ref<Record<string, string>>({});
 
@@ -60,7 +59,7 @@ const selectedStatus = ref<any>(props.status);
 
 // Stores for the conflicts and the session
 const conflictStore = useConflictsStore();
-const sessionStore = useSessionStore() as { activeLanguage: 'en' | 'de' | 'sv'; sessionActivity?: any };
+const sessionStore = useSessionStore();
 
 
 const textareaRef = ref<HTMLTextAreaElement | null>(null);
@@ -169,7 +168,6 @@ const handleDelete = async (id: string) => {
     if (response.status === "OK") {
       conflictStore.removeConflict(id); // delete conflict from store
     }
-    isDeleteDialogOpen.value = false;
   } catch (error) {
     console.error("Error deleting conflict: ", error);
   }
@@ -250,27 +248,12 @@ const removeReply = (id: string) => {
         </select>
       </div>
       <!-- Delete button -->
-      <Dialog v-model:open="isDeleteDialogOpen">
-        <DialogTrigger as-child>
-          <button class="icon-button">
-            <span class="material-symbols-outlined">delete</span>
-          </button>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{{ staticContent.startPage.deleteComment[sessionStore.activeLanguage] }}</DialogTitle>
-            <DialogDescription>
-              {{ staticContent.startPage.deleteConfirm[sessionStore.activeLanguage] }}
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter class="flex justify-between">
-            <Button variant="secondary" @click="isDeleteDialogOpen = false">{{
-              staticContent.terms.cancel[sessionStore.activeLanguage] }}</Button>
-            <Button variant="destructive" @click="() => handleDelete(props.conflict.id)">{{
-              staticContent.terms.delete[sessionStore.activeLanguage] }}</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <DeletionPopUp
+        :title="staticContent.startPage.deleteComment[sessionStore.activeLanguage]"
+        :description="staticContent.startPage.deleteCommentConfirm[sessionStore.activeLanguage]"
+        :delete-function="() => handleDelete(props.conflict.id)"
+      >
+      </DeletionPopUp>
     </div>
 
     <hr class="note-divider" />

@@ -2,10 +2,10 @@
 import { addComment, deleteComment } from '@/data/knowledge_graph/write_operations';
 import { nextTick, ref, watch } from 'vue';
 import Button from './ui/button/Button.vue';
+import DeletionPopUp from './DeletionPopUp.vue';
 import ReplyCard from './ReplyCard.vue';
 import { useSessionStore } from '@/stores/sessionStore';
 import { useConflictsStore } from '@/stores/conflictsStore';
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog'
 import { staticContent } from '@/data/contentData';
 
 import { useColorMode } from '@vueuse/core';
@@ -41,7 +41,6 @@ const conflictDetail = ref(props.comment);
 const replyInputVisible = ref<Record<string, boolean>>({});
 const newReplyText = ref<Record<string, string>>({});
 const textareaRef = ref<HTMLTextAreaElement | null>(null);
-const isDeleteDialogOpen = ref(false);
 
 const emit = defineEmits(['deleteComment', 'refresh']);
 
@@ -68,7 +67,6 @@ const handleDelete = async (id: string) => {
         await deleteComment(graph, id, false);
         useConflictsStore().refreshConflictList();
         emit('deleteComment', id); // Event an Parent-Komponente senden
-        isDeleteDialogOpen.value = false;
     } catch (error) {
         console.error("Error deleting conflict: ", error);
     }
@@ -154,27 +152,13 @@ const removeReply = (id: string) => {
         <div class="misc-note-header">
             <span class="misc-note-author">Author: {{ props.comment.author || 'Unknown' }}</span>
             <div>
-                <Dialog v-model:open="isDeleteDialogOpen">
-                    <DialogTrigger as-child>
-                        <button class="icon-button">
-                            <span class="material-symbols-outlined">delete</span>
-                        </button>
-                    </DialogTrigger>
-                    <DialogContent>
-                        <DialogHeader>
-                            <DialogTitle>{{ staticContent.startPage.deleteComment[sessionStore.activeLanguage] }}</DialogTitle>
-                            <DialogDescription>
-                                {{ staticContent.startPage.deleteConfirm[sessionStore.activeLanguage] }}
-                            </DialogDescription>
-                        </DialogHeader>
-                        <DialogFooter class="flex justify-between">
-                            <Button variant="secondary" @click="isDeleteDialogOpen = false">{{
-                                staticContent.terms.cancel[sessionStore.activeLanguage] }}</Button>
-                            <Button variant="destructive" @click="() => handleDelete(props.comment.id)">{{
-                                staticContent.terms.delete[sessionStore.activeLanguage] }}</Button>
-                        </DialogFooter>
-                    </DialogContent>
-                </Dialog>
+                <!-- Delete button -->
+      <DeletionPopUp
+        :title="staticContent.startPage.deleteComment[sessionStore.activeLanguage]"
+        :description="staticContent.startPage.deleteCommentConfirm[sessionStore.activeLanguage]"
+        :delete-function="() => handleDelete(props.comment.id)"
+      >
+      </DeletionPopUp>
             </div>
         </div>
 

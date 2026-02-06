@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { nextTick, ref } from 'vue';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog'
+import DeletionPopUp from '@/components/DeletionPopUp.vue';
 import { addComment, deleteComment } from '@/data/knowledge_graph/write_operations';
 import { useConflictsStore } from '@/stores/conflictsStore';
 import { useSessionStore } from '@/stores/sessionStore';
@@ -71,8 +71,6 @@ const handleEnterKey = (event: KeyboardEvent) => {
 // help function
 const hasReplies = (comment: any) => Array.isArray(comment.replies) && comment.replies.length > 0;
 
-const isDeleteDialogOpen = ref(false);
-
 const emit = defineEmits(['deleteComment']);
 // Delete comment
 const handleDelete = async (id: string, parentComment: any) => {
@@ -105,7 +103,6 @@ const handleDelete = async (id: string, parentComment: any) => {
     } catch (error) {
         console.error("Error while deleting the reply: ", error);
     }
-    isDeleteDialogOpen.value = false;
 };
 
 const removeReply = (id: string) => {
@@ -123,27 +120,13 @@ const removeReply = (id: string) => {
             <div class="reply-head">
                 <p class="reply-author">{{ props.parentComment.author.labels[sessionStore.activeLanguage]
                     || props.parentComment.author.labels['default'] }}</p>
-                <Dialog v-model:open="isDeleteDialogOpen">
-                    <DialogTrigger as-child>
-                        <button class="icon-button">
-                            <span class="material-symbols-outlined">delete</span>
-                        </button>
-                    </DialogTrigger>
-                    <DialogContent>
-                        <DialogHeader>
-                            <DialogTitle>{{ staticContent.startPage.deleteReply[sessionStore.activeLanguage] }}</DialogTitle>
-                            <DialogDescription>
-                                {{ staticContent.startPage.deleteConfirm[sessionStore.activeLanguage] }}
-                            </DialogDescription>
-                        </DialogHeader>
-                        <DialogFooter class="flex justify-between">
-                            <Button variant="secondary" @click="isDeleteDialogOpen = false">{{
-                                staticContent.terms.cancel[sessionStore.activeLanguage] }}</Button>
-                            <Button variant="destructive" @click="() => handleDelete(props.parentComment.id, props.parentComment)">{{
-                                staticContent.terms.delete[sessionStore.activeLanguage] }}</Button>
-                        </DialogFooter>
-                    </DialogContent>
-                </Dialog>
+                <!-- Delete button -->
+                <DeletionPopUp
+                    :title="staticContent.startPage.deleteReply[sessionStore.activeLanguage]"
+                    :description="staticContent.startPage.deleteReplyConfirm[sessionStore.activeLanguage]"
+                    :delete-function="() => handleDelete(props.parentComment.id, props.parentComment)"
+                >
+                </DeletionPopUp>
 
             </div>
             <!-- TODO maybe handle multi-language comments -->
