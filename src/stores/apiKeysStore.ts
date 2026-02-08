@@ -11,8 +11,8 @@ export type LLMProvider = 'chatgpt' | 'gemini' | 'claude';
  */
 export interface LLMRequestConfig {
   // Gemeinsame Felder
-  apiKey: string;
   modelName: string;
+  selectedProvider: LLMProvider;
   
   // Provider-spezifische Konfiguration
   endpoint?: string; // Optional, falls Standard-Endpoint überschrieben werden soll
@@ -41,13 +41,46 @@ export interface LLMApiKeyEntry {
 }
 
 /**
+ * Interface für die Konfiguration eines einzelnen Modells
+ */
+export interface LLMModelConfig {
+  provider: LLMProvider;
+  config: LLMRequestConfig;
+}
+
+/**
+ * Interface für die LLM-Einstellungen
+ */
+export interface LLMSettings {
+  selectedProvider: LLMProvider;
+  models: {
+    chatgpt: LLMModelConfig | null;
+    gemini: LLMModelConfig | null;
+    claude: LLMModelConfig | null;
+  };
+  prompt: string;
+}
+
+/**
  * Store für die Verwaltung von API Keys für verschiedene LLMs
  */
 export const useApiKeysStore = defineStore('apiKeys', () => {
   const STORAGE_KEY = 'activate_llm_api_keys';
+  const SETTINGS_STORAGE_KEY = 'activate_llm_settings';
 
-  // Sammlung von API Key Einträgen
+  // Sammlung von API Key Einträgen (für Migration/Kompatibilität)
   const entries = ref<LLMApiKeyEntry[]>([]);
+
+  // Neue Einstellungen für die drei Modelle
+  const settings = ref<LLMSettings>({
+    selectedProvider: 'gemini',
+    models: {
+      chatgpt: null,
+      gemini: null,
+      claude: null,
+    },
+    prompt: '',
+  });
 
   // Hole Standard-Konfiguration für einen Provider
   const getDefaultConfig = (provider: LLMProvider): Partial<LLMRequestConfig> => {
@@ -105,6 +138,7 @@ export const useApiKeysStore = defineStore('apiKeys', () => {
           apiKey: oldEntry.apiKey || '',
           modelName: oldEntry.modelName || '',
           temperature: defaults.temperature,
+          selectedProvider: provider,
           maxTokens: defaults.maxTokens,
           ...(provider === 'gemini' && {
             topK: defaults.topK,
@@ -160,7 +194,6 @@ export const useApiKeysStore = defineStore('apiKeys', () => {
       provider,
       config: {
         ...config,
-        apiKey: config.apiKey.trim(),
         modelName: config.modelName.trim(),
       },
     };
@@ -179,7 +212,6 @@ export const useApiKeysStore = defineStore('apiKeys', () => {
         provider,
         config: {
           ...config,
-          apiKey: config.apiKey.trim(),
           modelName: config.modelName.trim(),
         },
       };
@@ -224,11 +256,79 @@ export const useApiKeysStore = defineStore('apiKeys', () => {
     }
   };
 
+  // Lade Einstellungen aus localStorage
+  const loadSettings = () => {
+    try {
+      const stored = localStorage.getItem(SETTINGS_STORAGE_KEY);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        settings.value = { ...settings.value, ...parsed };
+      }
+    } catch (error) {
+      console.error('Fehler beim Laden der Einstellungen:', error);
+    }
+  };
+
+  // Speichere Einstellungen in localStorage
+  const saveSettings = () => {
+    try {
+      localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settings.value));
+    } catch (error) {
+      console.error('Fehler beim Speichern der Einstellungen:', error);
+    }
+  };
+
+  // Setze Konfiguration für ein Modell
+  const setModelConfig = (provider: LLMProvider, config: LLMRequestConfig) => {
+    settings.value.models[provider] = {
+      provider,
+      config: {
+        ...config,
+        modelName: config.modelName.trim(),
+      },
+    };
+    saveSettings();
+  };
+
+  // Hole Konfiguration für ein Modell
+  const getModelConfig = (provider: LLMProvider): LLMModelConfig | null => {
+    return settings.value.models[provider];
+  };
+
+  // Setze ausgewähltes Modell
+  const setSelectedProvider = (provider: LLMProvider) => {
+    settings.value.selectedProvider = provider;
+    saveSettings();
+  };
+
+  // Setze Prompt
+  const setPrompt = (prompt: string) => {
+    settings.value.prompt = prompt;
+    saveSettings();
+  };
+
+  // Hole Prompt
+  const getPrompt = (): string => {
+    return settings.value.prompt;
+  };
+
+  // Hole LLMRequestConfig für das aktuell ausgewählte Modell
+  const getCurrentModelRequestConfig = (): LLMRequestConfig => {
+    const selectedProvider = settings.value.selectedProvider;
+    const modelConfig = settings.value.models[selectedProvider];
+    if (!modelConfig) {
+      throw new Error("No model config found!");
+    }
+    return modelConfig.config;
+  };
+
   // Initialisiere beim Laden des Stores
   loadApiKeys();
+  loadSettings();
 
   return {
     entries,
+    settings,
     addEntry,
     updateEntry,
     deleteEntry,
@@ -238,5 +338,13 @@ export const useApiKeysStore = defineStore('apiKeys', () => {
     saveApiKeys,
     getDefaultEndpoint,
     getDefaultConfig,
+    loadSettings,
+    saveSettings,
+    setModelConfig,
+    getModelConfig,
+    setSelectedProvider,
+    setPrompt,
+    getPrompt,
+    getCurrentModelRequestConfig,
   };
 });

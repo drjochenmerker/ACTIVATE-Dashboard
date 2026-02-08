@@ -29,6 +29,7 @@ import LanguageSelect from '@/components/LanguageSelect.vue';
 import { PlusIcon } from 'lucide-vue-next';
 import { llmSettingGeneration } from '@/data/knowledge_graph/llm_utils';
 import LoadingOverlay from '@/components/LoadingOverlay.vue';
+import { useApiKeysStore } from '@/stores/apiKeysStore';
 
 useColorMode();
 const sessionStore = useSessionStore();
@@ -74,7 +75,7 @@ const addNewActivity = async () => {
   showValidationErrors.value = true;
   try {
     loading.value = true;
-    await llmSettingGeneration(newDescription.value, newTitle.value, defaultRole.value);
+    await llmSettingGeneration(newDescription.value, useApiKeysStore().getCurrentModelRequestConfig(), newTitle.value, defaultRole.value);
     loading.value = false;
   } catch (error) {
     console.error("Error during LLM generation:", error);

@@ -1,3 +1,4 @@
+import { LLMRequestConfig } from "@/stores/apiKeysStore";
 import { sparqlTemplate, StringAccessObject } from "./structures";
 import { fetchSparql, getSparqlTemplate } from "./utils";
 
@@ -20,7 +21,7 @@ export type LLMParsingResult = {
  * @param defaultRole default role for the setting - will be generated if not provided
  * @returns LLMParsingResult
  */
-export async function llmSettingGeneration(description: string, title?: string, defaultRole?: string): Promise<LLMParsingResult> {
+export async function llmSettingGeneration(description: string, llmDetail: LLMRequestConfig, prompt?: string, title?: string, defaultRole?: string): Promise<LLMParsingResult> {
     // Generate TTL using the LLM Backend
     const llmRes = await fetch(`${import.meta.env.VITE_LLM_URL}${!import.meta.env.VITE_LLM_PORT ? '' : ':' + import.meta.env.VITE_LLM_PORT}/api/feedback/settingGen`, {
         method: "POST",
@@ -30,8 +31,10 @@ export async function llmSettingGeneration(description: string, title?: string, 
         },
         body: JSON.stringify({
             description,
+            llmDetail: JSON.stringify(llmDetail),
+            prompt: prompt ?? "",
             title: title ?? "",
-            defaultRole: defaultRole ?? ""
+            defaultRole: defaultRole ?? "",
         })
     });
     const data = await llmRes.json();
