@@ -103,6 +103,11 @@ export const staticContent = {
             en: "The provided password is incorrect. Please try again.",
             de: "Das eingegebene Passwort ist falsch. Bitte versuch es nochmal.",
             sv: "Det angivna lösenordet är felaktigt. Försök igen.",
+        },
+        participantRequired: {
+            en: "Please select at least one participant.",
+            de: "Bitte wählen Sie mindestens einen Teilnehmer aus.",
+            sv: "Vänligen välj minst en deltagare.",
         }
     },
     login: {
@@ -436,6 +441,11 @@ export const staticContent = {
             en: "Yes",
             de: "Ja",
             sv: "Ja",
+        },
+        ok: {
+            en: "OK",
+            de: "OK",
+            sv: "OK",
         },
         answer: {
             en: "Answer",
