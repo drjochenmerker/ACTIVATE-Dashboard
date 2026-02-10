@@ -7,6 +7,7 @@ import { useSessionStore } from '@/stores/sessionStore';
 import { staticContent } from '@/data/contentData';
 import { useColorMode } from '@vueuse/core';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import ConfirmDiscardDialog from './ConfirmDiscardDialog.vue';
 
 /** 
  * ReplyCard-Component
@@ -208,23 +209,11 @@ const refreshReplies = async () => {
             </DialogContent>
         </Dialog>
 
-        <Dialog v-model:open="isDiscardDialogOpen">
-            <DialogContent>
-                <DialogHeader>
-                    <DialogTitle>
-                        {{ staticContent.noteCards.discardChangesQuestion[sessionStore.activeLanguage] }}
-                    </DialogTitle>
-                </DialogHeader>
-                <DialogFooter class="flex justify-between">
-                    <Button variant="secondary" @click="cancelDiscardChanges">
-                        {{ staticContent.noteCards.cancel[sessionStore.activeLanguage] }}
-                    </Button>
-                    <Button variant="destructive" @click="confirmDiscardChanges">
-                        {{ staticContent.noteCards.discardChangesYes[sessionStore.activeLanguage] }}
-                    </Button>
-                </DialogFooter>
-            </DialogContent>
-        </Dialog>
+        <ConfirmDiscardDialog
+            v-model:open="isDiscardDialogOpen"
+            @confirm="confirmDiscardChanges"
+            @cancel="cancelDiscardChanges"
+        />
 
         <div class="reply-content">
             <div class="reply-head">
