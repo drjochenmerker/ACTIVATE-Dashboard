@@ -412,6 +412,11 @@ export const staticContent = {
             de: "Kommentar bearbeiten",
             sv: "Redigera kommentar",
         },
+        editConflict: {
+            en: "Edit conflict",
+            de: "Konflikt bearbeiten",
+            sv: "Redigera konflikt",
+        },
         save: {
             en: "Save",
             de: "Speichern",

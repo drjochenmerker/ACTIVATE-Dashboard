@@ -2,13 +2,20 @@
 import { ref, onMounted, nextTick, computed, watch } from 'vue';
 import { conflictPredicate, conflictStatus, Participant } from '@/data/knowledge_graph/structures';
 import ReplyCard from './ReplyCard.vue';
-import { addComment, deleteConflict, updateConflict } from "@/data/knowledge_graph/write_operations";
+import { addComment, deleteConflict, updateConflict, updateConflictText } from "@/data/knowledge_graph/write_operations";
 import { Button } from '@/components/ui/button';
 import { useConflictsStore } from '@/stores/conflictsStore';
 import { useSessionStore } from '@/stores/sessionStore';
 import { activateTerms, staticContent } from '@/data/contentData';
 import { buildLanguageString } from '@/lib/utils';
-// import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog'
+import ConfirmDiscardDialog from './ConfirmDiscardDialog.vue';
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 
 const props = defineProps({
   conflict: {
@@ -52,6 +59,16 @@ const conflictDetail = ref<any>(null);
 // const isShowOriginOpen = ref(false);
 const replyInputVisible = ref<Record<string, boolean>>({});
 const newReplyText = ref<Record<string, string>>({});
+
+const isEditDialogOpen = ref(false);
+const isDiscardDialogOpen = ref(false);
+const editedTitle = ref('');
+const editedDescription = ref('');
+const originalTitle = ref('');
+const originalDescription = ref('');
+const hasTextChanges = computed(() =>
+  editedTitle.value !== originalTitle.value || editedDescription.value !== originalDescription.value
+);
 
 // Set status from props
 const selectedStatus = ref<any>(props.status);
@@ -149,6 +166,65 @@ const handleEnterKey = (event: KeyboardEvent) => {
     saveReply(props.conflict.id);
   }
 };
+
+const getLocalizedText = (record: Record<string, string> | undefined) => {
+  if (!record) return '';
+  return record[sessionStore.activeLanguage]
+    || record.default
+    || Object.values(record)[0]
+    || '';
+};
+
+const stripHtml = (input: string) => input.replace(/<[^>]*>/g, '').trim();
+
+const openEditDialog = () => {
+  originalTitle.value = stripHtml(getLocalizedText(props.conflict.title));
+  originalDescription.value = stripHtml(getLocalizedText(props.conflict.description));
+  editedTitle.value = originalTitle.value;
+  editedDescription.value = originalDescription.value;
+  isEditDialogOpen.value = true;
+};
+
+const closeEditDialog = () => {
+  isEditDialogOpen.value = false;
+};
+
+const saveEditedConflict = async () => {
+  if (!hasTextChanges.value) {
+    closeEditDialog();
+    return;
+  }
+  try {
+    await updateConflictText(
+      sessionStore.sessionActivity!.graph,
+      props.conflict.id,
+      editedTitle.value,
+      editedDescription.value,
+      sessionStore.activeLanguage
+    );
+    await conflictStore.refreshConflictList();
+    closeEditDialog();
+  } catch (error) {
+    console.error('Error updating conflict text: ', error);
+  }
+};
+
+const cancelEdit = () => {
+  if (!hasTextChanges.value) {
+    closeEditDialog();
+    return;
+  }
+  isDiscardDialogOpen.value = true;
+};
+
+const confirmDiscardChanges = () => {
+  isDiscardDialogOpen.value = false;
+  closeEditDialog();
+};
+
+const cancelDiscardChanges = () => {
+  isDiscardDialogOpen.value = false;
+};
 // TODO
 // const showOrigin = async () => {
 //   isShowOriginOpen.value = false;
@@ -234,6 +310,34 @@ const refreshReplies = async () => {
 
 <template>
   <div class="note-card" :class="[selectedStatus, { 'grayed-out': isGrayedOut }]">
+    <Dialog v-model:open="isEditDialogOpen">
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>
+            {{ staticContent.noteCards.editConflict[sessionStore.activeLanguage] }}
+          </DialogTitle>
+        </DialogHeader>
+        <input v-model="editedTitle" class="w-full border rounded p-2 my-2 dark:bg-gray-900"
+          :placeholder="staticContent.placeholders.title[sessionStore.activeLanguage]" />
+        <textarea v-model="editedDescription" class="w-full border rounded p-2 my-2 dark:bg-gray-900"
+          :placeholder="staticContent.placeholders.description[sessionStore.activeLanguage]" />
+        <DialogFooter class="flex justify-between">
+          <Button variant="secondary" @click="cancelEdit">
+            {{ staticContent.noteCards.cancel[sessionStore.activeLanguage] }}
+          </Button>
+          <Button @click="saveEditedConflict">
+            {{ staticContent.noteCards.save[sessionStore.activeLanguage] }}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+
+    <ConfirmDiscardDialog
+      v-model:open="isDiscardDialogOpen"
+      @confirm="confirmDiscardChanges"
+      @cancel="cancelDiscardChanges"
+    />
+
     <div class="note-card-header">
       <!-- Author-->
       <span class="note-card-author">
@@ -252,9 +356,14 @@ const refreshReplies = async () => {
       </div>
       <!-- Delete button -->
       <!-- TODO implement "are you sure?" -->
-      <button class="icon-button" @click="handleDelete(props.conflict.id)">
-        <span class="material-symbols-outlined">delete</span>
-      </button>
+      <div class="flex items-center gap-2">
+        <button v-if="sessionStore.instructorView" class="icon-button" @click="openEditDialog">
+          <span class="material-symbols-outlined">edit</span>
+        </button>
+        <button class="icon-button" @click="handleDelete(props.conflict.id)">
+          <span class="material-symbols-outlined">delete</span>
+        </button>
+      </div>
     </div>
 
     <hr class="note-divider" />
