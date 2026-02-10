@@ -13,6 +13,9 @@ INSERT {
 }
 WHERE {
     GRAPH graph:{{graph}} {
-        :{{commentId}} :CommentDescription ?oldComment .
+        OPTIONAL {
+            :{{commentId}} :CommentDescription ?oldComment .
+            FILTER (lang(?oldComment) = "{{langTag}}")
+        }
     }
 }
