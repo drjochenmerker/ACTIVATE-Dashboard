@@ -107,11 +107,11 @@ const flattenSelectedIds = (source: Record<KnowledgeGraphActivityClass, string[]
   classOrder.flatMap((activityClass) => source[activityClass]);
 
 const hasAnyParticipantSelected = computed(() => {
-  // Prüft, ob mindestens zwei unterschiedliche Klassen Participants haben
+  // Prüft, ob mindestens zwei und maximal drei unterschiedliche Klassen Participants haben
   const classesWithParticipants = classOrder.filter(
     (activityClass) => selectedParticipantIdsByClass.value[activityClass].length > 0
   );
-  return classesWithParticipants.length >= 2;
+  return classesWithParticipants.length >= 2 && classesWithParticipants.length <= 3;
 });
 
 const participantsChanged = computed(() => {
@@ -308,14 +308,14 @@ defineExpose({
           <div class="space-y-4">
             <div>
               <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                {{ staticContent.placeholders.title[sessionStore.activeLanguage] }}
+                {{ staticContent.noteCards.title[sessionStore.activeLanguage] }}
               </label>
               <input v-model="editedTitle" class="w-full border rounded p-2 dark:bg-gray-900"
                 :placeholder="staticContent.placeholders.title[sessionStore.activeLanguage]" />
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                {{ staticContent.placeholders.description[sessionStore.activeLanguage] }}
+                {{ staticContent.noteCards.description[sessionStore.activeLanguage] }}
               </label>
               <textarea v-model="editedDescription" class="w-full border rounded p-2 dark:bg-gray-900 min-h-[100px]"
                 :placeholder="staticContent.placeholders.description[sessionStore.activeLanguage]" />
@@ -328,9 +328,9 @@ defineExpose({
               </label>
               <DropdownMenu>
                 <DropdownMenuTrigger as-child>
-                  <Button variant="outline" class="w-full justify-between mt-2">
-                    <span class="truncate">{{ getSelectedParticipantsText(activityClass) }}</span>
-                    <span class="text-xs">▼</span>
+                  <Button variant="outline" class="w-full justify-between mt-2 h-auto min-h-[40px] py-2">
+                    <span class="text-left flex-1 whitespace-normal break-words">{{ getSelectedParticipantsText(activityClass) }}</span>
+                    <span class="text-xs ml-2 flex-shrink-0">▼</span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent class="max-h-64 w-[--radix-dropdown-menu-trigger-width] overflow-y-auto">
@@ -377,7 +377,7 @@ defineExpose({
         </DialogHeader>
         <DialogFooter class="flex justify-end">
           <Button variant="destructive" @click="isParticipantRequiredOpen = false">
-            OK
+            {{ staticContent.noteCards.ok[sessionStore.activeLanguage] }}
           </Button>
         </DialogFooter>
       </DialogContent>

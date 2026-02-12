@@ -105,9 +105,9 @@ export const staticContent = {
             sv: "Det angivna lösenordet är felaktigt. Försök igen.",
         },
         participantRequired: {
-            en: "Please select participants from at least two different classes.",
-            de: "Bitte wählen Sie Teilnehmer aus mindestens zwei verschiedenen Klassen aus.",
-            sv: "Vänligen välj deltagare från minst två olika klasser.",
+            en: "Please select participants from at least two and at most three different classes.",
+            de: "Bitte wählen Sie Teilnehmer aus mindestens zwei und maximal drei verschiedenen Klassen aus.",
+            sv: "Vänligen välj deltagare från minst två och högst tre olika klasser.",
         }
     },
     login: {
@@ -275,6 +275,11 @@ export const staticContent = {
             en: "Loading... This may take a while.",
             de: "Laden... Dies kann einen Moment dauern.",
             sv: "Laddar... Detta kan ta en stund.",
+        },
+        noSelection: {
+            en: "<No selection>",
+            de: "<Keine Auswahl>",
+            sv: "<Inget urval>",
         },
         password: {
             en: "Password",
@@ -446,6 +451,16 @@ export const staticContent = {
             en: "OK",
             de: "OK",
             sv: "OK",
+        },
+        title: {
+            en: "Title",
+            de: "Titel",
+            sv: "Titel",
+        },
+        description: {
+            en: "Description",
+            de: "Beschreibung",
+            sv: "Beskrivning",
         },
         answer: {
             en: "Answer",
