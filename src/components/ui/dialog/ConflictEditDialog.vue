@@ -174,8 +174,8 @@ const getSelectedParticipantsText = (activityClass: KnowledgeGraphActivityClass)
   const selectedIds = selectedParticipantIdsByClass.value[activityClass];
   const available = availableParticipantsByClass.value[activityClass] || [];
   const selected = available.filter((participant: Participant) => selectedIds.includes(participant.id));
-  if (selected.length === 0) {
-    return activateTerms[sessionStore.activeLanguage][classKeyMap[activityClass]];
+  if (selectedIds.length === 0) {
+    return staticContent.placeholders.noSelection[sessionStore.activeLanguage];
   }
   if (selected.length <= 3) {
     return selected
