@@ -179,7 +179,7 @@ const getSelectedParticipantsText = (activityClass: KnowledgeGraphActivityClass)
   }
   if (selected.length <= 3) {
     return selected
-      .map((participant: Participant) => buildLanguageString(participant, sessionStore.activeLanguage, true))
+      .map((participant: Participant) => buildLanguageString(participant, sessionStore.activeLanguage, true, false))
       .join(', ');
   }
   return `${selected.length} ${activateTerms[sessionStore.activeLanguage][classKeyMap[activityClass]]}`;
@@ -344,7 +344,7 @@ defineExpose({
                     :checked="selectedParticipantIdsByClass[activityClass].includes(participant.id)"
                     @update:checked="(checked: boolean) => toggleParticipant(activityClass, participant.id, checked)"
                   >
-                    {{ buildLanguageString(participant, sessionStore.activeLanguage, true) }}
+                    {{ buildLanguageString(participant, sessionStore.activeLanguage, true, false) }}
                   </DropdownMenuCheckboxItem>
                 </DropdownMenuContent>
               </DropdownMenu>
