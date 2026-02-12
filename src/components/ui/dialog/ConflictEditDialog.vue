@@ -298,46 +298,60 @@ defineExpose({
 <template>
   <div>
     <Dialog v-model:open="isEditDialogOpen">
-      <DialogContent>
+      <DialogContent class="max-w-2xl max-h-[90vh] flex flex-col">
         <DialogHeader>
           <DialogTitle>
             {{ staticContent.noteCards.editConflict[sessionStore.activeLanguage] }}
           </DialogTitle>
         </DialogHeader>
-        <input v-model="editedTitle" class="w-full border rounded p-2 my-2 dark:bg-gray-900"
-          :placeholder="staticContent.placeholders.title[sessionStore.activeLanguage]" />
-        <textarea v-model="editedDescription" class="w-full border rounded p-2 my-2 dark:bg-gray-900"
-          :placeholder="staticContent.placeholders.description[sessionStore.activeLanguage]" />
-        <div class="my-2 space-y-3">
-          <div v-for="activityClass in classOrder" :key="activityClass">
-            <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
-              {{ activateTerms[sessionStore.activeLanguage][classKeyMap[activityClass]] }}
-            </label>
-            <DropdownMenu>
-              <DropdownMenuTrigger as-child>
-                <Button variant="outline" class="w-full justify-between mt-2">
-                  <span class="truncate">{{ getSelectedParticipantsText(activityClass) }}</span>
-                  <span class="text-xs">▼</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent class="max-h-64 w-[--radix-dropdown-menu-trigger-width] overflow-y-auto">
-                <DropdownMenuLabel>
-                  {{ activateTerms[sessionStore.activeLanguage][classKeyMap[activityClass]] }}
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuCheckboxItem
-                  v-for="participant in availableParticipantsByClass[activityClass]"
-                  :key="participant.id"
-                  :checked="selectedParticipantIdsByClass[activityClass].includes(participant.id)"
-                  @update:checked="(checked: boolean) => toggleParticipant(activityClass, participant.id, checked)"
-                >
-                  {{ buildLanguageString(participant, sessionStore.activeLanguage, true) }}
-                </DropdownMenuCheckboxItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+        <div class="overflow-y-auto flex-1 pr-2">
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                {{ staticContent.placeholders.title[sessionStore.activeLanguage] }}
+              </label>
+              <input v-model="editedTitle" class="w-full border rounded p-2 dark:bg-gray-900"
+                :placeholder="staticContent.placeholders.title[sessionStore.activeLanguage]" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                {{ staticContent.placeholders.description[sessionStore.activeLanguage] }}
+              </label>
+              <textarea v-model="editedDescription" class="w-full border rounded p-2 dark:bg-gray-900 min-h-[100px]"
+                :placeholder="staticContent.placeholders.description[sessionStore.activeLanguage]" />
+            </div>
+          </div>
+          <div class="mt-4 space-y-3">
+            <div v-for="activityClass in classOrder" :key="activityClass">
+              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                {{ activateTerms[sessionStore.activeLanguage][classKeyMap[activityClass]] }}
+              </label>
+              <DropdownMenu>
+                <DropdownMenuTrigger as-child>
+                  <Button variant="outline" class="w-full justify-between mt-2">
+                    <span class="truncate">{{ getSelectedParticipantsText(activityClass) }}</span>
+                    <span class="text-xs">▼</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent class="max-h-64 w-[--radix-dropdown-menu-trigger-width] overflow-y-auto">
+                  <DropdownMenuLabel>
+                    {{ activateTerms[sessionStore.activeLanguage][classKeyMap[activityClass]] }}
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuCheckboxItem
+                    v-for="participant in availableParticipantsByClass[activityClass]"
+                    :key="participant.id"
+                    :checked="selectedParticipantIdsByClass[activityClass].includes(participant.id)"
+                    @update:checked="(checked: boolean) => toggleParticipant(activityClass, participant.id, checked)"
+                  >
+                    {{ buildLanguageString(participant, sessionStore.activeLanguage, true) }}
+                  </DropdownMenuCheckboxItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </div>
         </div>
-        <DialogFooter class="flex justify-between">
+        <DialogFooter class="flex justify-between mt-4">
           <Button variant="secondary" @click="cancelEdit">
             {{ staticContent.noteCards.cancel[sessionStore.activeLanguage] }}
           </Button>
