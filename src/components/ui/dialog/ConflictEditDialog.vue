@@ -106,9 +106,13 @@ const textChanged = computed(() =>
 const flattenSelectedIds = (source: Record<KnowledgeGraphActivityClass, string[]>) =>
   classOrder.flatMap((activityClass) => source[activityClass]);
 
-const hasAnyParticipantSelected = computed(() =>
-  flattenSelectedIds(selectedParticipantIdsByClass.value).length > 0
-);
+const hasAnyParticipantSelected = computed(() => {
+  // Prüft, ob mindestens zwei unterschiedliche Klassen Participants haben
+  const classesWithParticipants = classOrder.filter(
+    (activityClass) => selectedParticipantIdsByClass.value[activityClass].length > 0
+  );
+  return classesWithParticipants.length >= 2;
+});
 
 const participantsChanged = computed(() => {
   const current = new Set(flattenSelectedIds(selectedParticipantIdsByClass.value));
