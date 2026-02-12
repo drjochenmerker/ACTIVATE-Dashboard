@@ -177,12 +177,9 @@ const getSelectedParticipantsText = (activityClass: KnowledgeGraphActivityClass)
   if (selectedIds.length === 0) {
     return staticContent.placeholders.noSelection[sessionStore.activeLanguage];
   }
-  if (selected.length <= 3) {
-    return selected
-      .map((participant: Participant) => buildLanguageString(participant, sessionStore.activeLanguage, true, false))
-      .join(', ');
-  }
-  return `${selected.length} ${activateTerms[sessionStore.activeLanguage][classKeyMap[activityClass]]}`;
+  return selected
+    .map((participant: Participant) => buildLanguageString(participant, sessionStore.activeLanguage, true, false))
+    .join(', ');
 };
 
 const toggleParticipant = (activityClass: KnowledgeGraphActivityClass, participantId: string, checked: boolean) => {
