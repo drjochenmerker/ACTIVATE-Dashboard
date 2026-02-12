@@ -7,7 +7,7 @@ import { useSessionStore } from '@/stores/sessionStore';
 import { staticContent } from '@/data/contentData';
 import { useColorMode } from '@vueuse/core';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import ConfirmDiscardDialog from './ConfirmDiscardDialog.vue';
+import ConfirmDiscardDialog from './ui/dialog/ConfirmDiscardDialog.vue';
 
 /** 
  * ReplyCard-Component
