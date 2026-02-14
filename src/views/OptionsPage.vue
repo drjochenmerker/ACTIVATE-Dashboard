@@ -31,7 +31,7 @@ const formOrganizationId = ref(''); // ChatGPT specific
 const knowledgeGraphPrompt = ref('');
 const entityExtractionPrompt = ref('');
 const turtleFileMergePrompt = ref('');
-// const syntaxFixPrompt = ref('');
+// const syntaxFixPrompt = ref(''); // TODO: Discuss if adjusting this prompt is necessary
 const entityAssignmentPrompt = ref('');
 const tensionExtractionPrompt = ref('');
 const isEditingPrompt = ref(false);
@@ -43,7 +43,7 @@ onMounted(() => {
   knowledgeGraphPrompt.value = prompts.knowledgeGraphGeneration;
   entityExtractionPrompt.value = prompts.entityExtraction;
   turtleFileMergePrompt.value = prompts.turtleFileMerge;
-  // syntaxFixPrompt.value = prompts.syntaxFixing; // TODO: Discuss if this is necessary
+  // syntaxFixPrompt.value = prompts.syntaxFixing;
   tensionExtractionPrompt.value = prompts.tensionExtraction;
   entityAssignmentPrompt.value = prompts.entityAssignment;
   loadModelConfig(selectedProvider.value);

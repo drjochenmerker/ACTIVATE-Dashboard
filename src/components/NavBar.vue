@@ -2,7 +2,7 @@
 <script setup lang="ts">
 import { activateTerms, contentData } from '@/data/contentData';
 import ThemeSwitchButton from './ThemeSwitchButton.vue';
-import { User, Users, Key } from 'lucide-vue-next';
+import { User, Users } from 'lucide-vue-next';
 import { useSessionStore } from '@/stores/sessionStore';
 import {
     Select,
