@@ -17,16 +17,25 @@ import { ref } from 'vue';
  * Props of the DeletionPopUp component
  * @property title - Title of the Pop Up
  * @property description - Text of the Pop Up
+ * @property creator - (optional) Creator of the item to be deleted, used for permission checks
  * @property deleteFunction - Function that is called when the deletion is confirmed
  */
-const { title, description, deleteFunction } = defineProps<{
+const { title, description, author, deleteFunction } = defineProps<{
     title: string;
     description: string;
+    author?: string;
     deleteFunction: () => Promise<void>;
 }>();
 const sessionStore = useSessionStore();
 
 const isDeleteDialogOpen = ref(false);
+const role = () => useSessionStore().sessionRole;
+const isInstructor = useSessionStore().instructorMode;
+const allowDelete = ref(isInstructor || !author || author == role());
+
+console.log("isInstructor:", isInstructor);
+console.log("Author:", author);
+console.log("Allow Delete:", allowDelete);
 
 </script>
 
@@ -34,7 +43,7 @@ const isDeleteDialogOpen = ref(false);
     <div class="deletion-pop-up">
         <Dialog v-model:open="isDeleteDialogOpen">
             <DialogTrigger as-child>
-                <button class="icon-button">
+                <button :disabled="!allowDelete" class="icon-button" :class="{ 'text-gray-500': !allowDelete }">
                     <span class="material-symbols-outlined">delete</span>
                 </button>
             </DialogTrigger>

@@ -32,6 +32,10 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  authorId: {
+    type: String,
+    required: true,
+  },
   status: {
     type: String,
     required: true,
@@ -251,6 +255,7 @@ const removeReply = (id: string) => {
       <DeletionPopUp
         :title="staticContent.startPage.deleteComment[sessionStore.activeLanguage]"
         :description="staticContent.startPage.deleteCommentConfirm[sessionStore.activeLanguage]"
+        :author="props.authorId"
         :delete-function="() => handleDelete(props.conflict.id)"
       >
       </DeletionPopUp>

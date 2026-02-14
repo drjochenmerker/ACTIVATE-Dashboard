@@ -69,6 +69,7 @@ const filteredConflicts = computed(() => {
             :content="conflict.description[sessionStore.activeLanguage] || conflict.description['default']"
             :origin="conflict.origin"
             :author="conflict.author.labels[sessionStore.activeLanguage] || conflict.author.labels['default']"
+            :authorId="conflict.author.id"
             :status="conflict.status" :isGrayedOut="!!highlightedConflictId && conflict.id !== highlightedConflictId" />
         </div>
 

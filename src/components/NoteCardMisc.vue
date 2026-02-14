@@ -156,6 +156,7 @@ const removeReply = (id: string) => {
       <DeletionPopUp
         :title="staticContent.startPage.deleteComment[sessionStore.activeLanguage]"
         :description="staticContent.startPage.deleteCommentConfirm[sessionStore.activeLanguage]"
+        :author="props.comment.author.id"
         :delete-function="() => handleDelete(props.comment.id)"
       >
       </DeletionPopUp>
