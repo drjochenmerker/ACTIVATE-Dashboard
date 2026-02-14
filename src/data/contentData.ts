@@ -153,6 +153,11 @@ export const staticContent = {
             de: "Thema ändern",
             sv: "Ändra tema",
         },
+        settings: {
+            en: "Settings",
+            de: "Einstellungen",
+            sv: "Inställningar",
+        },
         endSession: {
             en: "End Session",
             de: "Sitzung beenden",
@@ -736,6 +741,38 @@ export const staticContent = {
             en: "No configuration set. Click \"Edit\" to configure this model.",
             de: "Keine Konfiguration vorhanden. Klicken Sie auf \"Bearbeiten\", um dieses Modell zu konfigurieren.",
             sv: "Ingen konfiguration inställd. Klicka på \"Redigera\" för att konfigurera denna modell.",
+        },
+        prompts: {
+            knowledgeGraphGeneration: {
+                en: "Knowledge Graph Generation",
+                de: "Knowledge-Graph-Generierung",
+                sv: "Kunskapsgraf-generering",
+            },
+            entityExtraction: {
+                en: "Entity Extraction",
+                de: "Entitätsextraktion",
+                sv: "Entitetsutvinning",
+            },
+            turtleFileMerge: {
+                en: "Turtle File Merge",
+                de: "Turtle-Datei-Zusammenführung",
+                sv: "Sammanfogning av Turtle-filer",
+            },
+            syntaxFixing: {
+                en: "Syntax Fixing",
+                de: "Syntax-Korrektur",
+                sv: "Syntaxkorrigering",
+            },
+            entityAssignment: {
+                en: "Entity Assignment",
+                de: "Entitätenzuweisung",
+                sv: "Enhetsuppdrag",
+            },
+            tensionExtraction: {
+                en: "Tension Extraction",
+                de: "Spannungsextraktion",
+                sv: "Spänningsextraktion",
+            }
         },
     }
 }

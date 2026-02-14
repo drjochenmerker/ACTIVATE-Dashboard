@@ -14,6 +14,7 @@ import LogoutButton from './LogoutButton.vue';
 import RecursiveSelect from './RecursiveSelect.vue';
 import SceneChangeButton from './SceneChangeButton.vue';
 import LanguageSelect from './LanguageSelect.vue';
+import OptionsButton from './OptionsButton.vue';
 
 const sessionStore = useSessionStore();
 </script>
@@ -32,12 +33,6 @@ const sessionStore = useSessionStore();
                 <router-link v-for="item in contentData" :key="item.id" :to="`/${item.id}`"
                     :class="$route.path === `/${item.id}` ? 'font-semibold' : 'text-muted-foreground hover:text-foreground'">
                     {{ activateTerms[sessionStore.activeLanguage][item.id] }}
-                </router-link>
-                <router-link to="/options"
-                    :class="$route.path === '/options' ? 'font-semibold' : 'text-muted-foreground hover:text-foreground'"
-                    class="flex items-center gap-1">
-                    <Key class="w-4 h-4" />
-                    <span>{{ sessionStore.activeLanguage === 'de' ? 'Optionen' : sessionStore.activeLanguage === 'en' ? 'Options' : 'Alternativ' }}</span>
                 </router-link>
             </div>
 
@@ -69,6 +64,7 @@ const sessionStore = useSessionStore();
                 </div>
                 <SceneChangeButton />
                 <LanguageSelect />
+                <OptionsButton />
                 <LogoutButton />
                 <ThemeSwitchButton />
             </div>

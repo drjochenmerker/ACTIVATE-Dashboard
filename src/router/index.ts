@@ -45,8 +45,14 @@ router.beforeEach((to) => {
     const sessionStore = useSessionStore();
 
     const isPublic = to.name === 'FeedbackPage' || to.name === 'FeedbackThankYouPage';
+    const isOptionsPage = to.path === '/options';
 
-    if (!sessionStore.isSessionActive && !isPublic && to.path !== '/start') {
+    // Allow access to options and public pages without active session
+    if (isOptionsPage || isPublic) {
+        return;
+    }
+
+    if (!sessionStore.isSessionActive && to.path !== '/start') {
         return '/start';
     }
 });

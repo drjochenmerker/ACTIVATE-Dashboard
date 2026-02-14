@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue';
-import { useApiKeysStore, type LLMProvider, type LLMRequestConfig } from '@/stores/apiKeysStore';
+import { useLLMSettingsStore, type LLMProvider, type LLMRequestConfig } from '@/stores/llmSettingsStore';
 import { useSessionStore } from '@/stores/sessionStore';
 import { staticContent } from '@/data/contentData';
 import { Input } from '@/components/ui/input';
@@ -15,44 +15,47 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { Key, Save, Edit, X } from 'lucide-vue-next';
+import { Save, Edit, X } from 'lucide-vue-next';
 
-const apiKeysStore = useApiKeysStore();
+const llmSettingsStore = useLLMSettingsStore();
 const sessionStore = useSessionStore();
 
-// Ausgewähltes Modell
 const selectedProvider = ref<LLMProvider>('chatgpt');
 
-// Bearbeiten-Modus
 const isEditing = ref(false);
 
-// Formular-Felder für die Konfiguration
-const formApiKey = ref('');
 const formModelName = ref('');
 const formTemperature = ref<number>(0.7);
-const formOrganizationId = ref(''); // ChatGPT
+const formOrganizationId = ref(''); // ChatGPT specific
 
-// Prompt
-const prompt = ref('');
+const knowledgeGraphPrompt = ref('');
+const entityExtractionPrompt = ref('');
+const turtleFileMergePrompt = ref('');
+// const syntaxFixPrompt = ref('');
+const entityAssignmentPrompt = ref('');
+const tensionExtractionPrompt = ref('');
 const isEditingPrompt = ref(false);
 
-// Lade Einstellungen beim Mounten
 onMounted(() => {
-  apiKeysStore.loadSettings();
-  selectedProvider.value = apiKeysStore.settings.selectedProvider;
-  prompt.value = apiKeysStore.getPrompt();
+  llmSettingsStore.loadSettings();
+  selectedProvider.value = llmSettingsStore.settings.selectedProvider;
+  const prompts = llmSettingsStore.getPrompts();
+  knowledgeGraphPrompt.value = prompts.knowledgeGraphGeneration;
+  entityExtractionPrompt.value = prompts.entityExtraction;
+  turtleFileMergePrompt.value = prompts.turtleFileMerge;
+  // syntaxFixPrompt.value = prompts.syntaxFixing; // TODO: Discuss if this is necessary
+  tensionExtractionPrompt.value = prompts.tensionExtraction;
+  entityAssignmentPrompt.value = prompts.entityAssignment;
   loadModelConfig(selectedProvider.value);
 });
 
-// Lade Konfiguration für ein Modell
 const loadModelConfig = (provider: LLMProvider, resetEditing: boolean = true) => {
-  const modelConfig = apiKeysStore.getModelConfig(provider);
+  const modelConfig = llmSettingsStore.getModelConfig(provider);
   if (modelConfig) {
     formModelName.value = modelConfig.config.modelName;
     formTemperature.value = modelConfig.config.temperature ?? 0.7;
     formOrganizationId.value = modelConfig.config.organizationId || '';
   } else {
-    // Setze Standardwerte
     resetFormForProvider(provider);
   }
   if (resetEditing) {
@@ -60,42 +63,33 @@ const loadModelConfig = (provider: LLMProvider, resetEditing: boolean = true) =>
   }
 };
 
-// Setze Standardwerte basierend auf Provider
 const resetFormForProvider = (provider: LLMProvider) => {
-  const defaults = apiKeysStore.getDefaultConfig(provider);
-  formApiKey.value = '';
+  const defaults = llmSettingsStore.getDefaultConfig(provider);
   formModelName.value = '';
   formTemperature.value = defaults.temperature ?? 0.7;
   formOrganizationId.value = '';
 };
 
-// Watch Provider-Änderung
 watch(selectedProvider, (newProvider) => {
-  apiKeysStore.setSelectedProvider(newProvider);
+  llmSettingsStore.setSelectedProvider(newProvider);
   loadModelConfig(newProvider);
   isEditing.value = false;
 });
 
-// Öffne Bearbeitungsmodus
 const startEditing = () => {
   loadModelConfig(selectedProvider.value, false);
   isEditing.value = true;
 };
 
-// Abbrechen Bearbeitung
 const cancelEditing = () => {
   isEditing.value = false;
   loadModelConfig(selectedProvider.value);
 };
 
-// Speichere Konfiguration für das aktuelle Modell
 const saveModelConfig = () => {
   if (!formModelName.value.trim()) {
     return;
   }
-
-  // Verwende gespeicherten API-Key, falls vorhanden, sonst den eingegebenen
-  const existingConfig = apiKeysStore.getModelConfig(selectedProvider.value);
 
   const config: LLMRequestConfig = {
     modelName: formModelName.value,
@@ -107,29 +101,44 @@ const saveModelConfig = () => {
     config.organizationId = formOrganizationId.value.trim();
   }
 
-  apiKeysStore.setModelConfig(selectedProvider.value, config);
+  llmSettingsStore.setModelConfig(selectedProvider.value, config);
   isEditing.value = false;
 };
 
-// Öffne Prompt-Bearbeitung
 const startEditingPrompt = () => {
   isEditingPrompt.value = true;
-  prompt.value = apiKeysStore.getPrompt();
+  const prompts = llmSettingsStore.getPrompts();
+  knowledgeGraphPrompt.value = prompts.knowledgeGraphGeneration;
+  entityExtractionPrompt.value = prompts.entityExtraction;
+  turtleFileMergePrompt.value = prompts.turtleFileMerge;
+  // syntaxFixPrompt.value = prompts.syntaxFixing;
+  entityAssignmentPrompt.value = prompts.entityAssignment;
+  tensionExtractionPrompt.value = prompts.tensionExtraction;
 };
 
-// Abbrechen Prompt-Bearbeitung
 const cancelEditingPrompt = () => {
   isEditingPrompt.value = false;
-  prompt.value = apiKeysStore.getPrompt();
+  const prompts = llmSettingsStore.getPrompts();
+  knowledgeGraphPrompt.value = prompts.knowledgeGraphGeneration;
+  entityExtractionPrompt.value = prompts.entityExtraction;
+  turtleFileMergePrompt.value = prompts.turtleFileMerge;
+  // syntaxFixPrompt.value = prompts.syntaxFixing;
+  entityAssignmentPrompt.value = prompts.entityAssignment;
+  tensionExtractionPrompt.value = prompts.tensionExtraction
 };
 
-// Speichere Prompt
 const savePrompt = () => {
-  apiKeysStore.setPrompt(prompt.value);
+  llmSettingsStore.setPrompts({
+    knowledgeGraphGeneration: knowledgeGraphPrompt.value,
+    entityExtraction: entityExtractionPrompt.value,
+    turtleFileMerge: turtleFileMergePrompt.value,
+    // syntaxFixing: syntaxFixPrompt.value,
+    entityAssignment: entityAssignmentPrompt.value,
+    tensionExtraction: tensionExtractionPrompt.value
+  });
   isEditingPrompt.value = false;
 };
 
-// Provider-Namen für Anzeige
 const getProviderDisplayName = (provider: LLMProvider): string => {
   const names = {
     chatgpt: 'ChatGPT (OpenAI)',
@@ -139,9 +148,8 @@ const getProviderDisplayName = (provider: LLMProvider): string => {
   return names[provider];
 };
 
-// Hole aktuelle Modell-Konfiguration für Anzeige
 const getCurrentModelConfig = () => {
-  return apiKeysStore.getModelConfig(selectedProvider.value);
+  return llmSettingsStore.getModelConfig(selectedProvider.value);
 };
 </script>
 
@@ -149,7 +157,6 @@ const getCurrentModelConfig = () => {
   <div class="flex flex-col h-full">
     <div class="mb-6">
       <h1 class="text-2xl font-semibold mb-1 text-center flex items-center justify-center gap-2">
-        <Key class="w-6 h-6" />
         {{ staticContent.optionsPage.title[sessionStore.activeLanguage] }}
       </h1>
       <p class="text-center text-muted-foreground mt-2">
@@ -161,7 +168,7 @@ const getCurrentModelConfig = () => {
 
     <div class="flex-1 overflow-y-auto">
       <div class="max-w-4xl mx-auto space-y-6">
-        <!-- Modell-Auswahl -->
+        <!-- Model Selection -->
         <Card>
           <CardHeader>
             <CardTitle>{{ staticContent.optionsPage.selectModel[sessionStore.activeLanguage] }}</CardTitle>
@@ -183,7 +190,7 @@ const getCurrentModelConfig = () => {
           </CardContent>
         </Card>
 
-        <!-- Modell-Konfiguration -->
+        <!-- Model config -->
         <Card>
           <CardHeader>
             <div class="flex items-center justify-between">
@@ -205,7 +212,7 @@ const getCurrentModelConfig = () => {
             </div>
           </CardHeader>
           <CardContent>
-            <!-- Anzeige-Modus -->
+            <!-- Visual Mode -->
             <div v-if="!isEditing">
               <div v-if="getCurrentModelConfig()" class="space-y-4">
                 <div class="space-y-3">
@@ -230,7 +237,7 @@ const getCurrentModelConfig = () => {
               </div>
             </div>
 
-            <!-- Bearbeitungs-Modus -->
+            <!-- Edit Mode -->
             <div v-else class="space-y-4">
               <!-- Modellname -->
               <div class="space-y-2">
@@ -242,7 +249,7 @@ const getCurrentModelConfig = () => {
                 />
               </div>
 
-              <!-- Gemeinsame Parameter -->
+              <!-- LLM Parameters -->
               <div class="">
                 <div class="space-y-2">
                   <Label :for="'form-temperature'">{{ staticContent.optionsPage.temperature[sessionStore.activeLanguage] }}</Label>
@@ -257,7 +264,7 @@ const getCurrentModelConfig = () => {
                 </div>
               </div>
 
-              <!-- ChatGPT-spezifische Felder -->
+              <!-- ChatGPT specific -->
               <div v-if="selectedProvider === 'chatgpt'" class="space-y-2">
                 <Label :for="'form-org-id'">{{ staticContent.optionsPage.organizationId[sessionStore.activeLanguage] }}</Label>
                 <Input
@@ -267,7 +274,6 @@ const getCurrentModelConfig = () => {
                 />
               </div>
 
-              <!-- Buttons -->
               <div class="flex justify-end gap-2 pt-2">
                 <Button variant="outline" @click="cancelEditing">
                   <X class="w-4 h-4 mr-2" />
@@ -285,7 +291,7 @@ const getCurrentModelConfig = () => {
           </CardContent>
         </Card>
 
-        <!-- Prompt-Konfiguration -->
+        <!-- Prompt Configuration -->
         <Card>
           <CardHeader>
             <div class="flex items-center justify-between">
@@ -307,27 +313,117 @@ const getCurrentModelConfig = () => {
             </div>
           </CardHeader>
           <CardContent>
-            <!-- Anzeige-Modus -->
+            <!-- Visual Mode -->
             <div v-if="!isEditingPrompt">
-              <div v-if="apiKeysStore.getPrompt()" class="space-y-2">
-                <div class="rounded-md border bg-muted p-4">
-                  <pre class="whitespace-pre-wrap text-sm font-mono">{{ apiKeysStore.getPrompt() }}</pre>
+              <div class="space-y-4">
+                <div class="space-y-2">
+                  <Label class="text-xs text-muted-foreground">
+                    {{ staticContent.optionsPage.prompts.knowledgeGraphGeneration[sessionStore.activeLanguage] }}
+                  </Label>
+                  <div class="rounded-md border bg-muted p-4 min-h-[60px]">
+                    <pre class="whitespace-pre-wrap text-sm font-mono">
+{{ llmSettingsStore.getPrompts().knowledgeGraphGeneration || staticContent.optionsPage.noConfiguration[sessionStore.activeLanguage] }}
+                    </pre>
+                  </div>
                 </div>
-              </div>
-              <div v-else class="text-center py-8 text-muted-foreground">
-                <p>{{ staticContent.optionsPage.noConfiguration[sessionStore.activeLanguage] }}</p>
+                <div class="space-y-2">
+                  <Label class="text-xs text-muted-foreground">
+                    {{ staticContent.optionsPage.prompts.entityExtraction[sessionStore.activeLanguage] }}
+                  </Label>
+                  <div class="rounded-md border bg-muted p-4 min-h-[60px]">
+                    <pre class="whitespace-pre-wrap text-sm font-mono">
+{{ llmSettingsStore.getPrompts().entityExtraction || staticContent.optionsPage.noConfiguration[sessionStore.activeLanguage] }}
+                    </pre>
+                  </div>
+                </div>
+                <div class="space-y-2">
+                  <Label class="text-xs text-muted-foreground">
+                    {{ staticContent.optionsPage.prompts.tensionExtraction[sessionStore.activeLanguage] }}
+                  </Label>
+                  <div class="rounded-md border bg-muted p-4 min-h-[60px]">
+                    <pre class="whitespace-pre-wrap text-sm font-mono">
+{{ llmSettingsStore.getPrompts().tensionExtraction || staticContent.optionsPage.noConfiguration[sessionStore.activeLanguage] }}
+                    </pre>
+                  </div>
+                </div>
+                <div class="space-y-2">
+                  <Label class="text-xs text-muted-foreground">
+                    {{ staticContent.optionsPage.prompts.entityAssignment[sessionStore.activeLanguage] }}
+                  </Label>
+                  <div class="rounded-md border bg-muted p-4 min-h-[60px]">
+                    <pre class="whitespace-pre-wrap text-sm font-mono">
+{{ llmSettingsStore.getPrompts().entityAssignment || staticContent.optionsPage.noConfiguration[sessionStore.activeLanguage] }}
+                    </pre>
+                  </div>
+                </div>
+                <div class="space-y-2">
+                  <Label class="text-xs text-muted-foreground">
+                    {{ staticContent.optionsPage.prompts.turtleFileMerge[sessionStore.activeLanguage] }}
+                  </Label>
+                  <div class="rounded-md border bg-muted p-4 min-h-[60px]">
+                    <pre class="whitespace-pre-wrap text-sm font-mono">
+{{ llmSettingsStore.getPrompts().turtleFileMerge || staticContent.optionsPage.noConfiguration[sessionStore.activeLanguage] }}
+                    </pre>
+                  </div>
+                </div>
               </div>
             </div>
 
-            <!-- Bearbeitungs-Modus -->
+            <!--Edit-Mode -->
             <div v-else class="space-y-4">
               <div class="space-y-2">
-                <Label :for="'form-prompt'">{{ staticContent.optionsPage.prompt[sessionStore.activeLanguage] }}</Label>
+                <Label :for="'form-prompt-kg'">
+                  {{ staticContent.optionsPage.prompts.knowledgeGraphGeneration[sessionStore.activeLanguage] }}
+                </Label>
                 <Textarea
-                  id="form-prompt"
-                  v-model="prompt"
+                  id="form-prompt-kg"
+                  v-model="knowledgeGraphPrompt"
                   :placeholder="staticContent.optionsPage.promptPlaceholder[sessionStore.activeLanguage]"
-                  class="min-h-[200px] font-mono text-sm"
+                  class="min-h-[120px] font-mono text-sm"
+                />
+              </div>
+              <div class="space-y-2">
+                <Label :for="'form-prompt-entity'">
+                  {{ staticContent.optionsPage.prompts.entityExtraction[sessionStore.activeLanguage] }}
+                </Label>
+                <Textarea
+                  id="form-prompt-entity"
+                  v-model="entityExtractionPrompt"
+                  :placeholder="staticContent.optionsPage.promptPlaceholder[sessionStore.activeLanguage]"
+                  class="min-h-[120px] font-mono text-sm"
+                />
+              </div>
+              <div class="space-y-2">
+                <Label :for="'form-prompt-entity'">
+                  {{ staticContent.optionsPage.prompts.tensionExtraction[sessionStore.activeLanguage] }}
+                </Label>
+                <Textarea
+                  id="form-prompt-entity"
+                  v-model="tensionExtractionPrompt"
+                  :placeholder="staticContent.optionsPage.promptPlaceholder[sessionStore.activeLanguage]"
+                  class="min-h-[120px] font-mono text-sm"
+                />
+              </div>
+              <div class="space-y-2">
+                <Label :for="'form-prompt-entity'">
+                  {{ staticContent.optionsPage.prompts.entityAssignment[sessionStore.activeLanguage] }}
+                </Label>
+                <Textarea
+                  id="form-prompt-entity"
+                  v-model="entityAssignmentPrompt"
+                  :placeholder="staticContent.optionsPage.promptPlaceholder[sessionStore.activeLanguage]"
+                  class="min-h-[120px] font-mono text-sm"
+                />
+              </div>
+              <div class="space-y-2">
+                <Label :for="'form-prompt-merge'">
+                  {{ staticContent.optionsPage.prompts.turtleFileMerge[sessionStore.activeLanguage] }}
+                </Label>
+                <Textarea
+                  id="form-prompt-merge"
+                  v-model="turtleFileMergePrompt"
+                  :placeholder="staticContent.optionsPage.promptPlaceholder[sessionStore.activeLanguage]"
+                  class="min-h-[120px] font-mono text-sm"
                 />
               </div>
               <div class="flex justify-end gap-2">
