@@ -45,18 +45,17 @@ export const useSessionStore = defineStore('session', () => {
      * Saves session state to localStorage
      */
     const saveSessionToStorage = () => {
-        if (!sessionActivity.value) return;
-        
-
-        const sessionState = {
-            sessionActivity: sessionActivity.value,
-            sessionRole: sessionRole.value,
-            activeLanguage: activeLanguage.value,
-            activeScene: activeScene.value,
-            instructorMode: instructorMode.value,
-            availableRoles: availableRoles.value,
-        };
-
+            const sessionState = {
+                sessionActivity: {},
+                sessionRole: sessionRole.value,
+                activeLanguage: activeLanguage.value,
+                activeScene: activeScene.value,
+                instructorMode: instructorMode.value,
+                availableRoles: availableRoles.value,
+            };
+        if (sessionActivity.value) {
+            sessionState['sessionActivity'] = sessionActivity.value;
+        }
         localStorage.setItem(STORAGE_KEY, JSON.stringify(sessionState));
     };
 
