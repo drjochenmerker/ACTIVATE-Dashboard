@@ -7,8 +7,14 @@ import MainLayout from '@/components/MainLayout.vue';
 import { useSessionStore } from '@/stores/sessionStore';
 import FeedbackThankyouPage from '@/views/FeedbackThankyouPage.vue';
 import OptionsPage from '@/views/OptionsPage.vue';
+import LoginPage from '@/views/LoginPage.vue';
 
 const routes: Array<RouteRecordRaw> = [
+    {
+        path: '/login',
+        name: 'Login',
+        component: LoginPage
+    },
     {
         path: '/start',
         name: 'Start',
@@ -52,8 +58,8 @@ router.beforeEach((to) => {
         return;
     }
 
-    if (!sessionStore.isSessionActive && to.path !== '/start') {
-        return '/start';
+    if (!sessionStore.isSessionActive && to.path !== '/login') {
+        return '/login';
     }
 });
 export default router;
