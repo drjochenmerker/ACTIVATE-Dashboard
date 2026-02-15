@@ -80,7 +80,7 @@ export async function llmSettingGeneration(description: string, llmDetail: LLMRe
  * @param data The question and answer pairs to submit
  * @returns LLMParsingResult
  */
-export async function llmSubmit(graphID: string, role: { id: string, label: string }, data: { question: string, answer: string }[]): Promise<LLMParsingResult> {
+export async function llmSubmit(graphID: string, role: { id: string, label: string }, data: { question: string, answer: string }[], llmDetail: LLMRequestConfig): Promise<LLMParsingResult> {
     const llmSettingsStore = useLLMSettingsStore();
     // Fetch description and entities from the graph
     let description: StringAccessObject = {};
@@ -117,6 +117,7 @@ export async function llmSubmit(graphID: string, role: { id: string, label: stri
                 role,
                 data: data
             },
+            llmDetail: JSON.stringify(llmDetail),
             entityExtractionPrompt: llmSettingsStore.getPrompts().entityExtraction,
             tensionExtractionPrompt: llmSettingsStore.getPrompts().tensionExtraction
         })
@@ -245,7 +246,7 @@ export async function llmSubmit(graphID: string, role: { id: string, label: stri
  * @param graphID The ID of the graph to parse
  * @returns LLMParsingResult
  */
-export async function llmPool(graphID: string): Promise<LLMParsingResult> {
+export async function llmPool(graphID: string, llmDetail: LLMRequestConfig): Promise<LLMParsingResult> {
     const debugOn = true; // DEBUG: SET TO TRUE IF DEBUGGING IS NEEDED
     const logger = {
         log: (...args: any[]) => {
@@ -304,6 +305,7 @@ export async function llmPool(graphID: string): Promise<LLMParsingResult> {
         body: JSON.stringify({
             entities: entitySubmissions,
             tensions: tensionSubmissions,
+            llmDetail: JSON.stringify(llmDetail),
             turtleFileMergePrompt: llmSettingsStore.getPrompts().turtleFileMerge,
             tensionExtractionPrompt: llmSettingsStore.getPrompts().tensionExtraction
         })
