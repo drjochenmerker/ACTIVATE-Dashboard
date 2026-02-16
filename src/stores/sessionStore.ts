@@ -52,6 +52,7 @@ export const useSessionStore = defineStore('session', () => {
             activeLanguage: activeLanguage.value,
             activeScene: activeScene.value,
             instructorMode: instructorMode.value,
+            instructorView: instructorView.value,
             availableRoles: availableRoles.value,
         };
         if (sessionActivity.value) {
@@ -81,6 +82,7 @@ export const useSessionStore = defineStore('session', () => {
                 activeLanguage.value = sessionState.activeLanguage;
                 activeScene.value = sessionState.activeScene;
                 instructorMode.value = sessionState.instructorMode;
+                instructorView.value = sessionState.instructorView;
                 availableRoles.value = sessionState.availableRoles;
                 isSessionActive.value = true;
 
@@ -111,6 +113,8 @@ export const useSessionStore = defineStore('session', () => {
         sessionRole.value = undefined;
         sessionActivity.value = undefined;
         isSessionActive.value = false;
+        instructorMode.value = false;
+        instructorView.value = false;
         localStorage.removeItem(STORAGE_KEY);
         localStorage.removeItem(LAST_ROUTE_KEY);
     };
@@ -131,6 +135,10 @@ export const useSessionStore = defineStore('session', () => {
     );
     watch(
         () => instructorMode.value,
+        () => saveSessionToStorage(),
+    );
+    watch(
+        () => instructorView.value,
         () => saveSessionToStorage(),
     );
 
