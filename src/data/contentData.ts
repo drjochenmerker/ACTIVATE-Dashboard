@@ -442,10 +442,10 @@ export const staticContent = {
             de: "Möchten Sie Ihre Änderungen verwerfen?",
             sv: "Vill du förkasta dina ändringar?",
         },
-        discardChangesYes: {
-            en: "Yes",
-            de: "Ja",
-            sv: "Ja",
+        discardChanges: {
+            en: "Discard",
+            de: "Verwerfen",
+            sv: "Förkasta",
         },
         ok: {
             en: "OK",

@@ -35,7 +35,7 @@ const handleConfirm = () => {
           {{ staticContent.noteCards.cancel[sessionStore.activeLanguage] }}
         </Button>
         <Button variant="destructive" @click="handleConfirm">
-          {{ staticContent.noteCards.discardChangesYes[sessionStore.activeLanguage] }}
+          {{ staticContent.noteCards.discardChanges[sessionStore.activeLanguage] }}
         </Button>
       </DialogFooter>
     </DialogContent>
