@@ -340,6 +340,7 @@ defineExpose({
                     :key="participant.id"
                     :checked="selectedParticipantIdsByClass[activityClass].includes(participant.id)"
                     @update:checked="(checked: boolean) => toggleParticipant(activityClass, participant.id, checked)"
+                    @select.prevent
                   >
                     {{ buildLanguageString(participant, sessionStore.activeLanguage, true, false) }}
                   </DropdownMenuCheckboxItem>
