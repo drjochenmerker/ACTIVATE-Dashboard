@@ -11,7 +11,7 @@ import {
     DialogFooter
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
 /**
  * Props of the DeletionPopUp component
@@ -29,14 +29,15 @@ const { title, description, author, deleteFunction } = defineProps<{
 const sessionStore = useSessionStore();
 
 const isDeleteDialogOpen = ref(false);
-const role = () => useSessionStore().sessionRole;
 const isInstructor = useSessionStore().instructorMode;
-const allowDelete = ref(isInstructor || !author || author == role());
-
-console.log("isInstructor:", isInstructor);
-console.log("Author:", author);
-console.log("Allow Delete:", allowDelete);
-
+const authorId = author?.replace(' ', '_');
+const allowDelete = computed(() => {
+    return (
+        isInstructor ||
+        !authorId ||
+        authorId === useSessionStore().sessionRole
+    );
+});
 </script>
 
 <template>
