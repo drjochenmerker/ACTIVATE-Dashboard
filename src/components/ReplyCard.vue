@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed, nextTick, ref } from 'vue';
 import { Button } from '@/components/ui/button';
+import DeletionPopUp from '@/components/DeletionPopUp.vue';
 import { addComment, deleteComment, updateComment } from '@/data/knowledge_graph/write_operations';
 import { useConflictsStore } from '@/stores/conflictsStore';
 import { useSessionStore } from '@/stores/sessionStore';
@@ -81,7 +82,6 @@ const handleEnterKey = (event: KeyboardEvent) => {
 
 // help function
 const hasReplies = (comment: any) => Array.isArray(comment.replies) && comment.replies.length > 0;
-
 
 const emit = defineEmits(['deleteComment', 'refresh']);
 
@@ -220,14 +220,19 @@ const refreshReplies = async () => {
                 <p class="reply-author">{{ props.parentComment.author.labels[sessionStore.activeLanguage]
                     || props.parentComment.author.labels['default'] }}</p>
                 <div class="flex items-center gap-2">
+                    <!-- Edit button -->
                     <button v-if="props.showEdit && sessionStore.instructorView" class="icon-button" @click="openEditDialog">
                         <span class="material-symbols-outlined">edit</span>
                     </button>
-                    <button class="icon-button" @click="handleDelete(props.parentComment.id, props.parentComment)">
-                        <span class="material-symbols-outlined">delete</span>
-                    </button>
-                </div>
-
+                    <!-- Delete button -->
+                    <DeletionPopUp
+                        :title="staticContent.startPage.deleteReply[sessionStore.activeLanguage]"
+                        :description="staticContent.startPage.deleteReplyConfirm[sessionStore.activeLanguage]"
+                        :author="props.parentComment.author.id"
+                        :delete-function="() => handleDelete(props.parentComment.id, props.parentComment)"
+                    >
+                    </DeletionPopUp>
+                </div>    
             </div>
             <!-- TODO maybe handle multi-language comments -->
             <p class="reply-text">

@@ -8,8 +8,9 @@ import { useConflictsStore } from '@/stores/conflictsStore';
 import { useSessionStore } from '@/stores/sessionStore';
 import { activateTerms, staticContent } from '@/data/contentData';
 import { buildLanguageString } from '@/lib/utils';
+import { LanguageCode } from '@/data/knowledge_graph/structures'
+import DeletionPopUp from './DeletionPopUp.vue';
 import ConflictEditDialog from './ui/dialog/ConflictEditDialog.vue';
-
 
 const props = defineProps({
   conflict: {
@@ -29,6 +30,10 @@ const props = defineProps({
     required: true,
   },
   author: {
+    type: String,
+    required: true,
+  },
+  authorId: {
     type: String,
     required: true,
   },
@@ -262,15 +267,19 @@ const refreshReplies = async () => {
             staticContent.terms.conflictStatus.resolved[sessionStore.activeLanguage] }}</option>
         </select>
       </div>
-      <!-- Delete button -->
-      <!-- TODO implement "are you sure?" -->
       <div class="flex items-center gap-2">
+        <!-- Edit button -->
         <button v-if="sessionStore.instructorView" class="icon-button" @click="openEditDialog">
           <span class="material-symbols-outlined">edit</span>
         </button>
-        <button class="icon-button" @click="handleDelete(props.conflict.id)">
-          <span class="material-symbols-outlined">delete</span>
-        </button>
+        <!-- Delete button -->
+        <DeletionPopUp
+          :title="staticContent.startPage.deleteComment[sessionStore.activeLanguage]"
+          :description="staticContent.startPage.deleteCommentConfirm[sessionStore.activeLanguage]"
+          :author="props.authorId"
+          :delete-function="() => handleDelete(props.conflict.id)"
+        >
+        </DeletionPopUp>
       </div>
     </div>
 
@@ -311,7 +320,7 @@ const refreshReplies = async () => {
             <strong class="participant-group-title">{{ activateTerms[sessionStore.activeLanguage][type] }}:</strong>
             <div class="participant-tag-container">
               <span v-for="participant in group" :key="participant.id" class="participant-tag">
-                {{ buildLanguageString(participant, sessionStore.activeLanguage, true) }}
+                {{ buildLanguageString(participant, sessionStore.activeLanguage as LanguageCode, true) }}
               </span>
             </div>
           </div>
