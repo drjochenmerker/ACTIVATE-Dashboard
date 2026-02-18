@@ -8,7 +8,8 @@ import { useConflictsStore } from '@/stores/conflictsStore';
 import { useSessionStore } from '@/stores/sessionStore';
 import { activateTerms, staticContent } from '@/data/contentData';
 import { buildLanguageString } from '@/lib/utils';
-// import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog'
+import { LanguageCode } from '@/data/knowledge_graph/structures'
+import DeletionPopUp from './DeletionPopUp.vue';
 
 const props = defineProps({
   conflict: {
@@ -28,6 +29,10 @@ const props = defineProps({
     required: true,
   },
   author: {
+    type: String,
+    required: true,
+  },
+  authorId: {
     type: String,
     required: true,
   },
@@ -247,10 +252,13 @@ const removeReply = (id: string) => {
         </select>
       </div>
       <!-- Delete button -->
-      <!-- TODO implement "are you sure?" -->
-      <button class="icon-button" @click="handleDelete(props.conflict.id)">
-        <span class="material-symbols-outlined">delete</span>
-      </button>
+      <DeletionPopUp
+        :title="staticContent.startPage.deleteComment[sessionStore.activeLanguage]"
+        :description="staticContent.startPage.deleteCommentConfirm[sessionStore.activeLanguage]"
+        :author="props.authorId"
+        :delete-function="() => handleDelete(props.conflict.id)"
+      >
+      </DeletionPopUp>
     </div>
 
     <hr class="note-divider" />
@@ -290,7 +298,7 @@ const removeReply = (id: string) => {
             <strong class="participant-group-title">{{ activateTerms[sessionStore.activeLanguage][type] }}:</strong>
             <div class="participant-tag-container">
               <span v-for="participant in group" :key="participant.id" class="participant-tag">
-                {{ buildLanguageString(participant, sessionStore.activeLanguage, true) }}
+                {{ buildLanguageString(participant, sessionStore.activeLanguage as LanguageCode, true) }}
               </span>
             </div>
           </div>

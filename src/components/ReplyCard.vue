@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { nextTick, ref } from 'vue';
 import { Button } from '@/components/ui/button';
+import DeletionPopUp from '@/components/DeletionPopUp.vue';
 import { addComment, deleteComment } from '@/data/knowledge_graph/write_operations';
 import { useConflictsStore } from '@/stores/conflictsStore';
 import { useSessionStore } from '@/stores/sessionStore';
@@ -70,7 +71,6 @@ const handleEnterKey = (event: KeyboardEvent) => {
 // help function
 const hasReplies = (comment: any) => Array.isArray(comment.replies) && comment.replies.length > 0;
 
-
 const emit = defineEmits(['deleteComment']);
 // Delete comment
 const handleDelete = async (id: string, parentComment: any) => {
@@ -120,9 +120,14 @@ const removeReply = (id: string) => {
             <div class="reply-head">
                 <p class="reply-author">{{ props.parentComment.author.labels[sessionStore.activeLanguage]
                     || props.parentComment.author.labels['default'] }}</p>
-                <button class="icon-button" @click="handleDelete(props.parentComment.id, props.parentComment)">
-                    <span class="material-symbols-outlined">delete</span>
-                </button>
+                <!-- Delete button -->
+                <DeletionPopUp
+                    :title="staticContent.startPage.deleteReply[sessionStore.activeLanguage]"
+                    :description="staticContent.startPage.deleteReplyConfirm[sessionStore.activeLanguage]"
+                    :author="props.parentComment.author.id"
+                    :delete-function="() => handleDelete(props.parentComment.id, props.parentComment)"
+                >
+                </DeletionPopUp>
 
             </div>
             <!-- TODO maybe handle multi-language comments -->
