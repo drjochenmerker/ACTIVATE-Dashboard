@@ -2,9 +2,11 @@
 import { addComment, deleteComment } from '@/data/knowledge_graph/write_operations';
 import { nextTick, ref, watch } from 'vue';
 import Button from './ui/button/Button.vue';
+import DeletionPopUp from './DeletionPopUp.vue';
 import ReplyCard from './ReplyCard.vue';
 import { useSessionStore } from '@/stores/sessionStore';
 import { useConflictsStore } from '@/stores/conflictsStore';
+import { staticContent } from '@/data/contentData';
 
 import { useColorMode } from '@vueuse/core';
 
@@ -150,9 +152,14 @@ const removeReply = (id: string) => {
         <div class="misc-note-header">
             <span class="misc-note-author">Author: {{ props.comment.author || 'Unknown' }}</span>
             <div>
-                <button class="icon-button" @click="handleDelete(props.comment.id)">
-                    <span class="material-symbols-outlined">delete</span>
-                </button>
+                <!-- Delete button -->
+      <DeletionPopUp
+        :title="staticContent.startPage.deleteComment[sessionStore.activeLanguage]"
+        :description="staticContent.startPage.deleteCommentConfirm[sessionStore.activeLanguage]"
+        :author="props.comment.author.id"
+        :delete-function="() => handleDelete(props.comment.id)"
+      >
+      </DeletionPopUp>
             </div>
         </div>
 

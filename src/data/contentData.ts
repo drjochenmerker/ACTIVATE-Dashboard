@@ -197,6 +197,11 @@ export const staticContent = {
             de: "Klonen",
             sv: "Klon",
         },
+        cancel: {
+            en: "Cancel",
+            de: "Abbrechen",
+            sv: "Avbryt",
+        },
         conflictStatus: {
             open: {
                 en: "Open",
@@ -469,10 +474,30 @@ export const staticContent = {
             de: "Aktivität löschen",
             sv: "Ta bort aktivitet",
         },
-        deleteConfirm: {
+        deleteActivityConfirm: {
             en: "Are you sure you want to delete this activity?",
             de: "Sind Sie sicher, dass Sie diese Aktivität löschen möchten?",
             sv: "Är du säker på att du vill ta bort denna aktivitet?",
+        },
+        deleteReply: {
+            en: "Delete reply",
+            de: "Antwort löschen",
+            sv: "Ta bort svar",
+        },
+        deleteComment: {
+            en: "Delete comment",
+            de: "Kommentar löschen",
+            sv: "Ta bort kommentar",
+        },
+        deleteCommentConfirm: {
+            en: "Are you sure you want to delete this comment?",
+            de: "Sind Sie sicher, dass Sie diesen Kommentar löschen möchten?",
+            sv: "Är du säker på att du vill ta bort denna kommentar?",
+        },
+        deleteReplyConfirm: {
+            en: "Are you sure you want to delete this reply?",
+            de: "Sind Sie sicher, dass Sie diese Antwort löschen möchten?",
+            sv: "Är du säker på att du vill ta bort detta svar?",
         },
         cloneActivity: {
             en: "Clone activity",
