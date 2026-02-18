@@ -35,9 +35,9 @@ const routes: Array<RouteRecordRaw> = [
         path: '/',
         component: MainLayout,
         children: [
-            { path: '', name: 'HomePage', component: HomePage, props: true }, // Standard-Dashboard
-            { path: ':id', name: 'Content', component: ContentPage, props: true }, // Dynamische Inhalte
-            { path: 'options', name: 'Options', component: OptionsPage }, // Optionen-Seite für API Keys
+            { path: '', name: 'HomePage', component: HomePage, props: true }, // Standard dashboard
+            { path: ':id', name: 'Content', component: ContentPage, props: true }, // Dynamic content pages
+            { path: 'options', name: 'Options', component: OptionsPage }, // Option page for LLM option
         ],
     },
 ];
@@ -47,8 +47,24 @@ const router = createRouter({
     routes,
 });
 
+let isInitialLoad = true;
+
 router.beforeEach((to) => {
     const sessionStore = useSessionStore();
+    
+    // On initial page load, attempt to restore session
+    if (isInitialLoad) {
+        isInitialLoad = false;
+
+        // Try to restore session from localStorage
+        const sessionRestored = sessionStore.restoreSession();
+
+        // If session was restored and we're trying to go to login, redirect to last route instead
+        if (sessionRestored && to.path === '/login') {
+            const lastRoute = sessionStore.lastRoute;
+            return lastRoute && lastRoute !== '/' ? lastRoute : '/';
+        }
+    }
 
     const isPublic = to.name === 'FeedbackPage' || to.name === 'FeedbackThankYouPage';
     const isOptionsPage = to.path === '/options';
@@ -61,5 +77,11 @@ router.beforeEach((to) => {
     if (!sessionStore.isSessionActive && to.path !== '/login') {
         return '/login';
     }
+
+    // Save the current route as the last visited route (for session persistence), except for the start page
+    if (sessionStore.isSessionActive && !isPublic && to.path !== '/start') {
+        sessionStore.saveLastRoute(to.path);
+    }
+
 });
 export default router;
