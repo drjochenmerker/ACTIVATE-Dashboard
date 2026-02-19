@@ -34,7 +34,6 @@ activate_env
 __pycache__
 rdflib/data/*
 !rdflib/data/backup/
-!rdflib/data/backup/**
 
 # package-lock.json
 package-lock.json

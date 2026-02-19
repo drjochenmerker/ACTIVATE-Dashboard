@@ -26,10 +26,8 @@ test-docker:
         - docker:dind
     dependencies: []
     before_script:
-        - apk add --no-cache docker-compose git git-lfs openssh-client
+        - apk add --no-cache docker-compose git openssh-client
         - git config --global url."https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.dit.htwk-leipzig.de/".insteadOf "git@gitlab.dit.htwk-leipzig.de:"
-        - git lfs install --skip-repo
-        - git lfs pull
         - git submodule sync
         - git submodule update --init --recursive
         - docker network create activate-network || true
