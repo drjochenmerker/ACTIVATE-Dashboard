@@ -15,48 +15,42 @@ print("=" * 60)
 print("DEBUG: Startup Diagnostics")
 print("=" * 60)
 print(f"Working Directory: {os.getcwd()}")
-print(f"Python Path: {os.path.abspath('.')}")
 
+# Determine DATA_DIR - try volume mount first, fallback to bundled
 DATA_DIR = "./data/backup"
-print(f"\nLooking for DATA_DIR: {DATA_DIR}")
-print(f"Absolute path: {os.path.abspath(DATA_DIR)}")
-print(f"Exists: {os.path.exists(DATA_DIR)}")
-print(f"Is Directory: {os.path.isdir(DATA_DIR)}")
+FALLBACK_DIR = "/app/data_backup"
 
-# Show structure of ./data
-print("\n--- Full ./data structure ---")
-if os.path.exists("./data"):
-    for root, dirs, files in os.walk("./data"):
-        level = root.replace("./data", "").count(os.sep)
-        indent = " " * 2 * level
-        print(f"{indent}{os.path.basename(root)}/")
-        sub_indent = " " * 2 * (level + 1)
-        for file in files:
-            print(f"{sub_indent}{file}")
-else:
-    print("./data directory does not exist!")
-
-# List contents of DATA_DIR
-print(f"\n--- Contents of DATA_DIR ({DATA_DIR}) ---")
+print(f"Checking volume mount: {DATA_DIR}")
+print(f"  Exists: {os.path.exists(DATA_DIR)}")
 if os.path.exists(DATA_DIR):
-    try:
-        contents = os.listdir(DATA_DIR)
-        print(f"Total items: {len(contents)}")
-        for item in sorted(contents):
-            item_path = os.path.join(DATA_DIR, item)
-            if os.path.isfile(item_path):
-                size = os.path.getsize(item_path)
-                print(f"  FILE: {item} ({size} bytes)")
-            elif os.path.isdir(item_path):
-                print(f"  DIR:  {item}/")
-    except Exception as e:
-        print(f"Error listing directory: {e}")
-else:
-    print(f"DATA_DIR does not exist: {DATA_DIR}")
+    print(f"  Is directory: {os.path.isdir(DATA_DIR)}")
+    items = os.listdir(DATA_DIR) if os.path.isdir(DATA_DIR) else []
+    ttl_count = len([f for f in items if f.endswith('.ttl')])
+    print(f"  TTL files in mount: {ttl_count}")
 
-FILES = [file for file in os.listdir(DATA_DIR) if file.endswith(".ttl")]
-print(f"\n--- TTL Files Found ---")
-print(f"Total TTL files: {len(FILES)}")
+print(f"\nChecking fallback: {FALLBACK_DIR}")
+print(f"  Exists: {os.path.exists(FALLBACK_DIR)}")
+if os.path.exists(FALLBACK_DIR):
+    items = os.listdir(FALLBACK_DIR) if os.path.isdir(FALLBACK_DIR) else []
+    ttl_count = len([f for f in items if f.endswith('.ttl')])
+    print(f"  TTL files in fallback: {ttl_count}")
+
+# Use volume mount if it has files, otherwise use fallback
+if os.path.exists(DATA_DIR) and os.path.isdir(DATA_DIR) and os.listdir(DATA_DIR):
+    print(f"\n✓ Using volume mount: {DATA_DIR}")
+elif os.path.exists(FALLBACK_DIR) and os.listdir(FALLBACK_DIR):
+    DATA_DIR = FALLBACK_DIR
+    print(f"\n✓ Volume mount empty, using fallback: {DATA_DIR}")
+else:
+    print(f"\n✗ No data found in either location - creating empty {DATA_DIR}")
+    os.makedirs(DATA_DIR, exist_ok=True)
+
+# Safely list files
+FILES = []
+if os.path.exists(DATA_DIR) and os.path.isdir(DATA_DIR):
+    FILES = [file for file in os.listdir(DATA_DIR) if file.endswith(".ttl")]
+
+print(f"\nLoaded TTL files: {len(FILES)}")
 for file in sorted(FILES):
     print(f"  - {file}")
 print("=" * 60 + "\n")
