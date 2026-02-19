@@ -3,6 +3,11 @@ FROM python:3.13
 WORKDIR /app
 COPY . .
 
+# Debug: Check what was actually COPY-ed
+RUN echo "=== Checking COPY-ed files ===" && \
+    ls -la ./data/ 2>&1 || echo "data/ not found" && \
+    ls -la ./data/backup/ 2>&1 || echo "data/backup not found" && \
+    find ./data/backup -name "*.ttl" -type f 2>/dev/null | wc -l || echo "Cannot count TTL files"
 RUN mkdir -p ./data/backup && \
     if [ -d ./data/backup ] && [ "$(ls -A ./data/backup/)" ]; then \
       echo "Found TTL files in backup directory"; \

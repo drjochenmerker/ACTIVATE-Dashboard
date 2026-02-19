@@ -32,10 +32,12 @@ test-docker:
         - git submodule update --init --recursive
         - docker network create activate-network || true
         - ls -la rdflib/data/backup/ 2>&1 || echo "Directory missing"
+        - echo "=== Build Context Check ===" && find rdflib/data/backup -name "*.ttl" | wc -l
     script:
-        - docker compose build
+        - docker compose build 2>&1 | tail -50
         - docker compose up -d
         - sleep 10
+        - echo "=== Inside Container Check ===" && docker exec activate-dashboard-backend-1 ls -la /app/data/backup/ 2>&1 || echo "Cannot access container data"
         - docker compose ps
         - |
             FAILED_CONTAINERS=$(docker compose ps --format json | grep -v '"State":"running"' || true)
