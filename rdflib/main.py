@@ -10,7 +10,7 @@ import uvicorn
 
 from lti import router as lti_router
 
-DATA_DIR = "./backup"
+DATA_DIR = "./data/backup"
 FILES = [file for file in os.listdir(DATA_DIR) if file.endswith(".ttl")]
 
 # Create dataset with Namespaces and dynamically define graphs
