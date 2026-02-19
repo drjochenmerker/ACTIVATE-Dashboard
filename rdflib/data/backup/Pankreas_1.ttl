@@ -1,3 +1,1947 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:66c1e2ec8a3f248a1f91edf3f8cefd6eb648d59085b1126e0dc713177de9d0a9
-size 110122
+@prefix : <http://activate.htwk-leipzig.de/model#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@base <http://activate.htwk-leipzig.de/model> .
+
+:AerztinUsesPapierVorbefund rdf:type owl:ObjectProperty ;
+    rdfs:domain :Aerztin ;
+    rdfs:range :PapierVorbefund ;
+    rdfs:label "Uses paper/previous report"@en,
+        "Använder papper/tidigare rapport"@sv,
+        "Benutzt Papier/Vorbefund"@de .
+
+:PapierVorbefundIsUsedOnDiagnose rdf:type owl:ObjectProperty ;
+    rdfs:domain :PapierVorbefund ;
+    rdfs:range :Diagnose ;
+    rdfs:label "Is used on diagnosis"@en,
+        "Används på diagnos"@sv,
+        "Wird angewandt auf Diagnose"@de .
+
+:AerztinOperatesOnRaumGeben rdf:type owl:ObjectProperty ;
+    rdfs:domain :Aerztin ;
+    rdfs:range :RaumGeben ;
+    rdfs:label "Operates on giving space"@en,
+        "Fungerar på att ge utrymme"@sv,
+        "Operiert auf Raum geben"@de .
+
+:AerztinUsesVorschlaege rdf:type owl:ObjectProperty ;
+    rdfs:domain :Aerztin ;
+    rdfs:range :Vorschlaege ;
+    rdfs:label "Uses suggestions"@en,
+        "Använder förslag"@sv,
+        "Benutzt Vorschläge"@de .
+
+:VorschlaegeIsUsedOnZweifelUnsicherheitPatientin rdf:type owl:ObjectProperty ;
+    rdfs:domain :Vorschlaege ;
+    rdfs:range :ZweifelUnsicherheitPatientin ;
+    rdfs:label "Is used on patient's doubts/uncertainty"@en,
+        "Används på patientens tvivel/osäkerhet"@sv,
+        "Wird angewandt auf Zweifel/Unsicherheit der Patientin"@de .
+
+:AerztinOperatesOnGespraechsausstieg rdf:type owl:ObjectProperty ;
+    rdfs:domain :Aerztin ;
+    rdfs:range :Gespraechsausstieg ;
+    rdfs:label "Operates on conversation conclusion"@en,
+        "Fungerar på samtalsavslutning"@sv,
+        "Operiert auf Gesprächsausstieg"@de .
+
+:AerztinInteractsInSituationHibbelig rdf:type owl:ObjectProperty ;
+    rdfs:domain :Aerztin ;
+    rdfs:range :SituationHibbelig ;
+    rdfs:label "Interacts in nervous situation"@en,
+        "Interagerar i nervös situation"@sv,
+        "Interagiert in hibbeliger Situation"@de .
+
+:AerztinOperatesOnInformationsbeduerfnis rdf:type owl:ObjectProperty ;
+    rdfs:domain :Aerztin ;
+    rdfs:range :Informationsbeduerfnis ;
+    rdfs:label "Operates on information need"@en,
+        "Fungerar på informationsbehov"@sv,
+        "Operiert auf Informationsbedürfnis"@de .
+
+:AerztinOperatesOnGespraechsverlauf rdf:type owl:ObjectProperty ;
+    rdfs:domain :Aerztin ;
+    rdfs:range :Gespraechsverlauf ;
+    rdfs:label "Operates on course of conversation"@en,
+        "Fungerar på samtalsförlopp"@sv,
+        "Operiert auf Gesprächsverlauf"@de .
+
+:AerztinOperatesOnErgebnisseSicher rdf:type owl:ObjectProperty ;
+    rdfs:domain :Aerztin ;
+    rdfs:range :ErgebnisseSicher ;
+    rdfs:label "Operates on secure results"@en,
+        "Fungerar på säkra resultat"@sv,
+        "Operiert auf sichere Ergebnisse"@de .
+
+:AerztinUsesMoeglichkeitGenannt rdf:type owl:ObjectProperty ;
+    rdfs:domain :Aerztin ;
+    rdfs:range :MoeglichkeitGenannt ;
+    rdfs:label "Uses mentioned possibility"@en,
+        "Använder nämnd möjlighet"@sv,
+        "Benutzt genannte Möglichkeit"@de .
+
+:MoeglichkeitGenanntOperatesOnEmotionaleLagePatientin rdf:type owl:ObjectProperty ;
+    rdfs:domain :MoeglichkeitGenannt ;
+    rdfs:range :EmotionaleLagePatientin ;
+    rdfs:label "Operates on patient's emotional state"@en,
+        "Fungerar på patientens känslomässiga tillstånd"@sv,
+        "Operiert auf emotionale Lage der Patientin"@de .
+
+:AerztinOperatesOnBehandlungspfadChemo rdf:type owl:ObjectProperty ;
+    rdfs:domain :Aerztin ;
+    rdfs:range :BehandlungspfadChemo ;
+    rdfs:label "Operates on treatment path (chemo)"@en,
+        "Fungerar på behandlingsväg (kemo)"@sv,
+        "Operiert auf Behandlungspfad (Chemo)"@de .
+
+:OperationIsUsedOnMetastasierteSachen rdf:type owl:ObjectProperty ;
+    rdfs:domain :Operation ;
+    rdfs:range :MetastasierteSachen ;
+    rdfs:label "Is used on metastasized conditions"@en,
+        "Används på metastaserade tillstånd"@sv,
+        "Wird angewandt auf metastasierte Sachen"@de .
+
+:AerztinHasToFollowFachbegriffeErklaeren rdf:type owl:ObjectProperty ;
+    rdfs:domain :Aerztin ;
+    rdfs:range :FachbegriffeErklaeren ;
+    rdfs:label "Has to follow explaining technical terms"@en,
+        "Måste följa förklaring av facktermer"@sv,
+        "Muss Fachbegriffe erklären folgen"@de .
+
+:FachbegriffeErklaerenRegulatesAerztin rdf:type owl:ObjectProperty ;
+    rdfs:domain :FachbegriffeErklaeren ;
+    rdfs:range :Aerztin ;
+    rdfs:label "Regulates action of doctor"@en,
+        "Reglerar handlingen av läkare"@sv,
+        "Reguliert die Handlung der Ärztin"@de .
+
+:AerztinOperatesOnSichereDiagnose rdf:type owl:ObjectProperty ;
+    rdfs:domain :Aerztin ;
+    rdfs:range :SichereDiagnose ;
+    rdfs:label "Operates on secure diagnosis"@en,
+        "Fungerar på säker diagnos"@sv,
+        "Operiert auf sichere Diagnose"@de .
+
+:AerztinOperatesOnReisePrognose rdf:type owl:ObjectProperty ;
+    rdfs:domain :Aerztin ;
+    rdfs:range :ReisePrognose ;
+    rdfs:label "Operates on journey/prognosis"@en,
+        "Fungerar på resa/prognos"@sv,
+        "Operiert auf Reise/Prognose"@de .
+
+:AerztinOperatesOnAktuelleSituationFokus rdf:type owl:ObjectProperty ;
+    rdfs:domain :Aerztin ;
+    rdfs:range :AktuelleSituationFokus ;
+    rdfs:label "Operates on focus on current situation"@en,
+        "Fungerar på fokus på aktuell situation"@sv,
+        "Operiert auf Fokus auf aktuelle Situation"@de .
+
+:AerztinOperatesOnZukunftsproblemePatientin rdf:type owl:ObjectProperty ;
+    rdfs:domain :Aerztin ;
+    rdfs:range :ZukunftsproblemePatientin ;
+    rdfs:label "Operates on patient's future problems"@en,
+        "Fungerar på patientens framtida problem"@sv,
+        "Operiert auf Zukunftsprobleme der Patientin"@de .
+
+:AerztinOperatesOnNaechsterStep rdf:type owl:ObjectProperty ;
+    rdfs:domain :Aerztin ;
+    rdfs:range :NaechsterStep ;
+    rdfs:label "Operates on next step"@en,
+        "Fungerar på nästa steg"@sv,
+        "Operiert auf nächster Schritt"@de .
+
+:AerztinOperatesOnPsychischeAspekte rdf:type owl:ObjectProperty ;
+    rdfs:domain :Aerztin ;
+    rdfs:range :PsychischeAspekte ;
+    rdfs:label "Operates on psychological aspects"@en,
+        "Fungerar på psykologiska aspekter"@sv,
+        "Operiert auf psychische Aspekte"@de .
+
+:AerztinOperatesOnRuheSchoenesUnternehmen rdf:type owl:ObjectProperty ;
+    rdfs:domain :Aerztin ;
+    rdfs:range :RuheSchoenesUnternehmen ;
+    rdfs:label "Operates on rest/doing something nice"@en,
+        "Fungerar på vila/göra något trevligt"@sv,
+        "Operiert auf Ruhe/Schönes unternehmen"@de .
+
+:AerztinOperatesOnGemeinsamesGespraechAngebot rdf:type owl:ObjectProperty ;
+    rdfs:domain :Aerztin ;
+    rdfs:range :GemeinsamesGespraechAngebot ;
+    rdfs:label "Operates on offer of a joint conversation"@en,
+        "Fungerar på erbjudande om gemensamt samtal"@sv,
+        "Operiert auf Angebot eines gemeinsamen Gesprächs"@de .
+
+:AerztinOperatesOnGeschuetzterRaum rdf:type owl:ObjectProperty ;
+    rdfs:domain :Aerztin ;
+    rdfs:range :GeschuetzterRaum ;
+    rdfs:label "Operates on protected space"@en,
+        "Fungerar på skyddat utrymme"@sv,
+        "Operiert auf geschützter Raum"@de .
+
+:PatientinInteractsInGeschuetzterRaum rdf:type owl:ObjectProperty ;
+    rdfs:domain :Patientin ;
+    rdfs:range :GeschuetzterRaum ;
+    rdfs:label "Interacts in protected space"@en,
+        "Interagerar i skyddat utrymme"@sv,
+        "Interagiert in geschütztem Raum"@de .
+
+:AerztinUsesKlarheit rdf:type owl:ObjectProperty ;
+    rdfs:domain :Aerztin ;
+    rdfs:range :Klarheit ;
+    rdfs:label "Uses clarity"@en,
+        "Använder klarhet"@sv,
+        "Benutzt Klarheit"@de .
+
+:KlarheitDefinesApproachOfSicherheitPatientin rdf:type owl:ObjectProperty ;
+    rdfs:domain :Klarheit ;
+    rdfs:range :SicherheitPatientin ;
+    rdfs:label "Clarity defines the approach of patient's certainty"@en,
+        "Klarhet definierar tillvägagångssättet för patientens säkerhet"@sv,
+        "Klarheit definiert den Ansatz von Sicherheit der Patientin"@de .
+
+:AerztinHasToFollowVersprechungenVermeiden rdf:type owl:ObjectProperty ;
+    rdfs:domain :Aerztin ;
+    rdfs:range :VersprechungenVermeiden ;
+    rdfs:label "Has to follow avoiding promises"@en,
+        "Måste följa undvikande av löften"@sv,
+        "Muss Versprechungen vermeiden folgen"@de .
+
+:VersprechungenVermeidenRegulatesAerztin rdf:type owl:ObjectProperty ;
+    rdfs:domain :VersprechungenVermeiden ;
+    rdfs:range :Aerztin ;
+    rdfs:label "Avoiding promises regulates action of doctor"@en,
+        "Undvikande av löften reglerar handlingen av läkare"@sv,
+        "Vermeidung von Versprechungen reguliert die Handlung der Ärztin"@de .
+
+:AerztinOperatesOnHilfeAngebot rdf:type owl:ObjectProperty ;
+    rdfs:domain :Aerztin ;
+    rdfs:range :HilfeAngebot ;
+    rdfs:label "Operates on offer of help"@en,
+        "Fungerar på erbjudande om hjälp"@sv,
+        "Operiert auf Hilfeangebot"@de .
+
+:AerztinOperatesOnEhemannEinbeziehen rdf:type owl:ObjectProperty ;
+    rdfs:domain :Aerztin ;
+    rdfs:range :EhemannEinbeziehen ;
+    rdfs:label "Operates on involving husband"@en,
+        "Fungerar på att involvera make"@sv,
+        "Operiert auf Ehemann einbeziehen"@de .
+
+:AerztinOperatesOnBodenVerlorenPatientin rdf:type owl:ObjectProperty ;
+    rdfs:domain :Aerztin ;
+    rdfs:range :BodenVerlorenPatientin ;
+    rdfs:label "Operates on patient feeling lost"@en,
+        "Fungerar på patient känner sig vilsen"@sv,
+        "Operiert auf Boden verloren (Patientin)"@de .
+
+:AerztinIsDefinedByRolleHausaerztin rdf:type owl:ObjectProperty ;
+    rdfs:domain :Aerztin ;
+    rdfs:range :RolleHausaerztin ;
+    rdfs:label "Is defined by role of the general practitioner"@en,
+        "Är definierad av allmänläkarens roll"@sv,
+        "Ist definiert durch Rolle der Hausärztin"@de .
+
+:AerztinOperatesOnTagesprogrammZeitdruck rdf:type owl:ObjectProperty ;
+    rdfs:domain :Aerztin ;
+    rdfs:range :TagesprogrammZeitdruck ;
+    rdfs:label "Operates on daily schedule/time pressure"@en,
+        "Fungerar på dagsprogram/tidspress"@sv,
+        "Operiert auf Tagesprogramm/Zeitdruck"@de .
+
+:AerztinOperatesOnZeitNehmen rdf:type owl:ObjectProperty ;
+    rdfs:domain :Aerztin ;
+    rdfs:range :ZeitNehmen ;
+    rdfs:label "Operates on taking time"@en,
+        "Fungerar på att ta sig tid"@sv,
+        "Operiert auf Zeit nehmen"@de .
+
+:AerztinOperatesOnAlleinHierZeitMitgebracht rdf:type owl:ObjectProperty ;
+    rdfs:domain :Aerztin ;
+    rdfs:range :AlleinHierZeitMitgebracht ;
+    rdfs:label "Operates on alone here/brought time"@en,
+        "Fungerar på ensam här/hade med sig tid"@sv,
+        "Operiert auf Allein hier/Zeit mitgebracht"@de .
+
+:PatientinOperatesOnInformationspaketAblehnen rdf:type owl:ObjectProperty ;
+    rdfs:domain :Patientin ;
+    rdfs:range :InformationspaketAblehnen ;
+    rdfs:label "Operates on rejecting information package"@en,
+        "Fungerar på att avvisa informationspaket"@sv,
+        "Operiert auf Informationspaket ablehnen"@de .
+
+:DozentDefinesApproachOfBeschwerdenEigeneErklaerung rdf:type owl:ObjectProperty ;
+    rdfs:domain :Dozent ;
+    rdfs:range :BeschwerdenEigeneErklaerung ;
+    rdfs:label "Lecturer defines the approach of own explanation for complaints"@en,
+        "Föreläsare definierar tillvägagångssättet för egen förklaring till besvär"@sv,
+        "Dozent definiert den Ansatz von eigene Erklärung für Beschwerden"@de .
+
+:HarmloseErklaerungDefinesApproachOfMagengeschwuer rdf:type owl:ObjectProperty ;
+    rdfs:domain :HarmloseErklaerung ;
+    rdfs:range :Magengeschwuer ;
+    rdfs:label "Harmless explanation defines the approach of stomach ulcer"@en,
+        "Harmlös förklaring definierar tillvägagångssättet för magsår"@sv,
+        "Harmlose Erklärung definiert den Ansatz von Magengeschwür"@de .
+
+:FamiliaereRisikokonstellationInfluencesKrebserkrankung rdf:type owl:ObjectProperty ;
+    rdfs:domain :FamiliaereRisikokonstellation ;
+    rdfs:range :Krebserkrankung ;
+    rdfs:label "Family risk constellation influences cancer disease"@en,
+        "Familjär riskkonstellation påverkar cancersjukdom"@sv,
+        "Familiäre Risikokonstellation beeinflusst Krebserkrankung"@de .
+
+:FamiliaereRisikokonstellationInfluencesTumor rdf:type owl:ObjectProperty ;
+    rdfs:domain :FamiliaereRisikokonstellation ;
+    rdfs:range :Tumor ;
+    rdfs:label "Family risk constellation influences tumor"@en,
+        "Familjär riskkonstellation påverkar tumör"@sv,
+        "Familiäre Risikokonstellation beeinflusst Tumor"@de .
+
+:AerztinOperatesOnLebensqualitaet rdf:type owl:ObjectProperty ;
+    rdfs:domain :Aerztin ;
+    rdfs:range :Lebensqualitaet ;
+    rdfs:label "Operates on quality of life"@en,
+        "Fungerar på livskvalitet"@sv,
+        "Operiert auf Lebensqualität"@de .
+
+:AerztinOperatesOnLebenszeitnutzen rdf:type owl:ObjectProperty ;
+    rdfs:domain :Aerztin ;
+    rdfs:range :Lebenszeitnutzen ;
+    rdfs:label "Operates on benefit of life time"@en,
+        "Fungerar på livstidsnytta"@sv,
+        "Operiert auf Lebenszeitnutzen"@de .
+
+:ErstdiagnoseHasToFollowAblaufStandardisiert rdf:type owl:ObjectProperty ;
+    rdfs:domain :Erstdiagnose ;
+    rdfs:range :AblaufStandardisiert ;
+    rdfs:label "First diagnosis has to follow standardized procedure"@en,
+        "Förstadiagnos måste följa standardiserat förfarande"@sv,
+        "Erstdiagnose muss standardisiertem Ablauf folgen"@de .
+
+:TumorkonferenzInfluencesSicherheitArzt rdf:type owl:ObjectProperty ;
+    rdfs:domain :Tumorkonferenz ;
+    rdfs:range :SicherheitArzt ;
+    rdfs:label "Tumor board influences doctor's certainty"@en,
+        "Tumörkonferens påverkar läkarens säkerhet"@sv,
+        "Tumorkonferenz beeinflusst Sicherheit des Arztes"@de .
+
+:AerztinOperatesOnSpezialisiertesZentrum rdf:type owl:ObjectProperty ;
+    rdfs:domain :Aerztin ;
+    rdfs:range :SpezialisiertesZentrum ;
+    rdfs:label "Operates on specialized center"@en,
+        "Fungerar på specialiserat centrum"@sv,
+        "Operiert auf spezialisiertes Zentrum"@de .
+
+:SpezialisiertesZentrumOperatesOnBauchspeicheldruesenkrebs rdf:type owl:ObjectProperty ;
+    rdfs:domain :SpezialisiertesZentrum ;
+    rdfs:range :Bauchspeicheldruesenkrebs ;
+    rdfs:label "Specialized center operates on pancreatic cancer"@en,
+        "Specialiserat centrum fungerar på bukspottkörtelcancer"@sv,
+        "Spezialisiertes Zentrum operiert auf Bauchspeicheldrüsenkrebs"@de .
+
+:ExpertenOperatesOnBestmoeglicheTherapie rdf:type owl:ObjectProperty ;
+    rdfs:domain :Experten ;
+    rdfs:range :BestmoeglicheTherapie ;
+    rdfs:label "Experts operate on best possible therapy"@en,
+        "Experter fungerar på bästa möjliga terapi"@sv,
+        "Experten operieren auf bestmögliche Therapie"@de .
+
+:TumorkonferenzInteractsWithExperten rdf:type owl:ObjectProperty ;
+    rdfs:domain :Tumorkonferenz ;
+    rdfs:range :Experten ;
+    rdfs:label "Tumor board interacts with experts"@en,
+        "Tumörkonferens interagerar med experter"@sv,
+        "Tumorkonferenz interagiert mit Experten"@de .
+
+:KIUnterstuetzungIsUsedOnEmpfehlungIndikationsstellung rdf:type owl:ObjectProperty ;
+    rdfs:domain :KIUnterstuetzung ;
+    rdfs:range :EmpfehlungIndikationsstellung ;
+    rdfs:label "AI support is used on recommendation/indication setting"@en,
+        "AI-stöd används på rekommendation/indikationsställning"@sv,
+        "KI-Unterstützung wird angewandt auf Empfehlung/Indikationsstellung"@de .
+
+:ProzessEntscheidungsfindungDeterminesTherapievorschlaege rdf:type owl:ObjectProperty ;
+    rdfs:domain :ProzessEntscheidungsfindung ;
+    rdfs:range :Therapievorschlaege ;
+    rdfs:label "Decision-making process determines therapy suggestions"@en,
+        "Beslutsfattandeprocess bestämmer terapiförslag"@sv,
+        "Prozess der Entscheidungsfindung bestimmt Therapievorschläge"@de .
+
+:ProzessEntscheidungsfindungDeterminesRuecksprachePatient rdf:type owl:ObjectProperty ;
+    rdfs:domain :ProzessEntscheidungsfindung ;
+    rdfs:range :RuecksprachePatient ;
+    rdfs:label "Decision-making process determines consultation with patient"@en,
+        "Beslutsfattandeprocess bestämmer samråd med patient"@sv,
+        "Prozess der Entscheidungsfindung bestimmt Rücksprache mit Patient"@de .
+
+:PatientenwunschInfluencesEinbeziehungPatientenwunsch rdf:type owl:ObjectProperty ;
+    rdfs:domain :Patientenwunsch ;
+    rdfs:range :EinbeziehungPatientenwunsch ;
+    rdfs:label "Patient's wish influences inclusion of patient's wish"@en,
+        "Patientens önskan påverkar inkludering av patientens önskan"@sv,
+        "Patientenwunsch beeinflusst Einbeziehung des Patientenwunsches"@de .
+
+:ProzessEntscheidungsfindungSharesEinbeziehungPatientenwunsch rdf:type owl:ObjectProperty ;
+    rdfs:domain :ProzessEntscheidungsfindung ;
+    rdfs:range :EinbeziehungPatientenwunsch ;
+    rdfs:label "Decision-making process shares inclusion of patient's wish"@en,
+        "Beslutsfattandeprocess delar inkludering av patientens önskan"@sv,
+        "Prozess der Entscheidungsfindung teilt Einbeziehung des Patientenwunsches"@de .
+
+:PatientenwunschInfluencesBestSupportiveCare rdf:type owl:ObjectProperty ;
+    rdfs:domain :Patientenwunsch ;
+    rdfs:range :BestSupportiveCare ;
+    rdfs:label "Patient's wish influences Best Supportive Care"@en,
+        "Patientens önskan påverkar Bästa stödjande vård"@sv,
+        "Patientenwunsch beeinflusst Best Supportive Care"@de .
+
+:ZweitmeinungIsUsedOnSchwerwiegendeDiagnose rdf:type owl:ObjectProperty ;
+    rdfs:domain :Zweitmeinung ;
+    rdfs:range :SchwerwiegendeDiagnose ;
+    rdfs:label "Second opinion is used on serious diagnosis"@en,
+        "Andra åsikt används på allvarlig diagnos"@sv,
+        "Zweitmeinung wird angewandt auf schwerwiegende Diagnose"@de .
+
+:DiagnoseZweiBeineIsAppliedToAchieveSchwerwiegendeDiagnose rdf:type owl:ObjectProperty ;
+    rdfs:domain :DiagnoseZweiBeine ;
+    rdfs:range :SchwerwiegendeDiagnose ;
+    rdfs:label "Solidifying diagnosis is applied to achieve serious diagnosis"@en,
+        "Stärka diagnosen används för att uppnå allvarlig diagnos"@sv,
+        "Diagnose auf zwei Beine stellen wird angewandt zum Erreichen von schwerwiegende Diagnose"@de .
+
+:AerztinOperatesOnTaschentuch rdf:type owl:ObjectProperty ;
+    rdfs:domain :Aerztin ;
+    rdfs:range :Taschentuch ;
+    rdfs:label "Operates on tissue"@en,
+        "Fungerar på näsduk"@sv,
+        "Operiert auf Taschentuch"@de .
+
+:SubjectUsesGespraechsstrategie rdf:type owl:ObjectProperty ;
+    rdfs:domain :Subject ;
+    rdfs:range :Gespraechsstrategie ;
+    rdfs:label "Subject uses conversation strategy"@en,
+        "Subjekt använder samtalsstrategi"@sv,
+        "Subjekt benutzt Gesprächsstrategie"@de .
+
+:GespraechsstrategieIsUsedOnSchwierigeGespraechssituationen rdf:type owl:ObjectProperty ;
+    rdfs:domain :Gespraechsstrategie ;
+    rdfs:range :SchwierigeGespraechssituationen ;
+    rdfs:label "Conversation strategy is used on difficult conversation situations"@en,
+        "Samtalsstrategi används på svåra samtalssituationer"@sv,
+        "Gesprächsstrategie wird angewandt auf schwierige Gesprächssituationen"@de .
+
+:AerztinUsesGestaffelteKommunikation rdf:type owl:ObjectProperty ;
+    rdfs:domain :Aerztin ;
+    rdfs:range :GestaffelteKommunikation ;
+    rdfs:label "Uses staggered communication"@en,
+        "Använder stegvis kommunikation"@sv,
+        "Benutzt gestaffelte Kommunikation"@de .
+
+:GestaffelteKommunikationIsUsedOnSchwerwiegendeDiagnose rdf:type owl:ObjectProperty ;
+    rdfs:domain :GestaffelteKommunikation ;
+    rdfs:range :SchwerwiegendeDiagnose ;
+    rdfs:label "Staggered communication is used on serious diagnosis"@en,
+        "Stegvis kommunikation används på allvarlig diagnos"@sv,
+        "Gestaffelte Kommunikation wird angewandt auf schwerwiegende Diagnose"@de .
+
+:GestaffelteKommunikationUsesTumor rdf:type owl:ObjectProperty ;
+    rdfs:domain :GestaffelteKommunikation ;
+    rdfs:range :Tumor ;
+    rdfs:label "Staggered communication uses tumor"@en,
+        "Stegvis kommunikation använder tumör"@sv,
+        "Gestaffelte Kommunikation benutzt Tumor"@de .
+
+:GestaffelteKommunikationUsesRaumforderung rdf:type owl:ObjectProperty ;
+    rdfs:domain :GestaffelteKommunikation ;
+    rdfs:range :Raumforderung ;
+    rdfs:label "Staggered communication uses space-occupying lesion"@en,
+        "Stegvis kommunikation använder utrymmeskrävande lesion"@sv,
+        "Gestaffelte Kommunikation benutzt Raumforderung"@de .
+
+:CTScanIsUsedOnRaumforderung rdf:type owl:ObjectProperty ;
+    rdfs:domain :CTScan ;
+    rdfs:range :Raumforderung ;
+    rdfs:label "CT scan is used on space-occupying lesion"@en,
+        "CT-skanning används på utrymmeskrävande lesion"@sv,
+        "CT-Scan wird angewandt auf Raumforderung"@de .
+
+:GestaffelteKommunikationUsesNichtHingehorendes rdf:type owl:ObjectProperty ;
+    rdfs:domain :GestaffelteKommunikation ;
+    rdfs:range :NichtHingehorendes ;
+    rdfs:label "Staggered communication uses something that doesn't belong"@en,
+        "Stegvis kommunikation använder något som inte hör hemma"@sv,
+        "Gestaffelte Kommunikation benutzt Nicht hingehörendes"@de .
+
+:GestaffelteKommunikationDefinesApproachOfNachfrageKlarheit rdf:type owl:ObjectProperty ;
+    rdfs:domain :GestaffelteKommunikation ;
+    rdfs:range :NachfrageKlarheit ;
+    rdfs:label "Staggered communication defines the approach of inquiry for clarity"@en,
+        "Stegvis kommunikation definierar tillvägagångssättet för fråga om klarhet"@sv,
+        "Gestaffelte Kommunikation definiert den Ansatz von Nachfrage nach Klarheit"@de .
+
+:UmschreibungEuphemismusIsUsedOnDiagnose rdf:type owl:ObjectProperty ;
+    rdfs:domain :UmschreibungEuphemismus ;
+    rdfs:range :Diagnose ;
+    rdfs:label "Circumscription/euphemism is used on diagnosis"@en,
+        "Omskrivning/eufemism används på diagnos"@sv,
+        "Umschreibung/Euphemismus wird angewandt auf Diagnose"@de .
+
+:AerztinUsesYouNeverWalkAloneMetapher rdf:type owl:ObjectProperty ;
+    rdfs:domain :Aerztin ;
+    rdfs:range :YouNeverWalkAloneMetapher ;
+    rdfs:label "Uses You Never Walk Alone (metaphor)"@en,
+        "Använder You Never Walk Alone (metafor)"@sv,
+        "Benutzt You Never Walk Alone (Metapher)"@de .
+
+:YouNeverWalkAloneMetapherOperatesOnUnterstuetzungPatient rdf:type owl:ObjectProperty ;
+    rdfs:domain :YouNeverWalkAloneMetapher ;
+    rdfs:range :UnterstuetzungPatient ;
+    rdfs:label "You Never Walk Alone (metaphor) operates on patient support"@en,
+        "You Never Walk Alone (metafor) fungerar på patientstöd"@sv,
+        "You Never Walk Alone (Metapher) operiert auf Unterstützung des Patienten"@de .
+
+:MedicalCommunicationDebrief a owl:NamedIndividual ;
+    :ActivityDescription "A debriefing and feedback session on doctor-patient communication, specifically concerning the delivery of a serious diagnosis, within a medical training or educational context."@en,
+        "Eine Nachbesprechung und Feedback-Sitzung zu einer Arzt-Patienten-Kommunikation, insbesondere zur Übermittlung einer schwerwiegenden Diagnose, in einem medizinischen Ausbildungs- oder Trainingskontext."@de,
+        "En efterföljande diskussion och feedbacksession om läkar-patientkommunikation, särskilt gällande överlämnandet av en allvarlig diagnos, inom en medicinsk utbildnings- eller träningskontext."@sv ;
+    :ActivityName "Medical Communication Debrief"@en,
+        "Nachbesprechung medizinischer Kommunikation"@de,
+        "Medicinsk Kommunikationsgenomgång"@sv .
+
+:Dozent a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Dozent"@de,
+        "Lecturer"@en,
+        "Föreläsare"@sv ;
+    :DefinesTheApproachOf :BeschwerdenEigeneErklaerung .
+
+:Aerztin a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Ärztin"@de,
+        "Doctor"@en,
+        "Läkare"@sv ;
+    :HasToFollow :FachbegriffeErklaeren,
+        :VersprechungenVermeiden ;
+    :InteractsIn :SituationHibbelig ;
+    :IsDefinedBy :RolleHausaerztin ;
+    :OperatesOn :AktuelleSituationFokus,
+        :AlleinHierZeitMitgebracht,
+        :BehandlungspfadChemo,
+        :BodenVerlorenPatientin,
+        :EhemannEinbeziehen,
+        :ErgebnisseSicher,
+        :GemeinsamesGespraechAngebot,
+        :Gespraechsausstieg,
+        :Gespraechsverlauf,
+        :GeschuetzterRaum,
+        :HilfeAngebot,
+        :Informationsbeduerfnis,
+        :Lebensqualitaet,
+        :Lebenszeitnutzen,
+        :NaechsterStep,
+        :PsychischeAspekte,
+        :RaumGeben,
+        :ReisePrognose,
+        :RuheSchoenesUnternehmen,
+        :SichereDiagnose,
+        :SpezialisiertesZentrum,
+        :Taschentuch,
+        :TagesprogrammZeitdruck,
+        :ZeitNehmen,
+        :ZukunftsproblemePatientin ;
+    :Uses :GestaffelteKommunikation,
+        :Klarheit,
+        :MoeglichkeitGenannt,
+        :PapierVorbefund,
+        :Vorschlaege,
+        :YouNeverWalkAloneMetapher .
+
+:PapierVorbefund a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:comment "Ein gewünschtes Dokument, das der Ärztin als Stütze für Diagnose und Vorbefund dienen sollte."@de,
+        "A desired document that should serve as a reference for the doctor regarding diagnosis and previous findings."@en,
+        "Ett önskat dokument som skulle tjäna som referens för läkaren angående diagnos och tidigare fynd."@sv ;
+    rdfs:label "Papier/Vorbefund"@de,
+        "Paper/Previous report"@en,
+        "Papper/Tidigare rapport"@sv ;
+    :InstrumentDescription "Papier oder Vorbefund, an dem sich die Ärztin festhalten kann, was die Diagnose oder den Vorbefund angeht."@de,
+        "Paper or previous report that the doctor can hold onto, regarding diagnosis or previous findings."@en,
+        "Papper eller tidigare rapport som läkaren kan hålla fast vid, angående diagnos eller tidigare fynd."@sv ;
+    :InstrumentName "Papier/Vorbefund"@de,
+        "Paper/Previous report"@en,
+        "Papper/Tidigare rapport"@sv ;
+    :InstrumentType "Dokument"@de,
+        "Document"@en,
+        "Dokument"@sv ;
+    :IsUsedOn :Diagnose .
+
+:Diagnose a :Object,
+        owl:NamedIndividual ;
+    rdfs:comment "Die Diagnose, die der Patientin mitgeteilt wird und die sicher ist."@de,
+        "The diagnosis communicated to the patient, which is certain."@en,
+        "Diagnosen som kommuniceras till patienten, vilken är säker."@sv ;
+    rdfs:label "Diagnose"@de,
+        "Diagnosis"@en,
+        "Diagnos"@sv .
+
+:Patientin a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Patientin"@de,
+        "Patient"@en,
+        "Patient"@sv ;
+    :InteractsIn :GeschuetzterRaum ;
+    :OperatesOn :InformationspaketAblehnen ;
+    :SubjectSex "weiblich"@de,
+        "female"@en,
+        "kvinnlig"@sv .
+
+:NachfragenPatientin a :Object,
+        owl:NamedIndividual ;
+    rdfs:comment "Spezifische Nachfragen der Patientin bezüglich der Befunde."@de,
+        "Specific inquiries from the patient regarding the findings."@en,
+        "Specifika frågor från patienten angående fynden."@sv ;
+    rdfs:label "Nachfragen der Patientin"@de,
+        "Patient's inquiries"@en,
+        "Patientens frågor"@sv .
+
+:GefuehlAerztin a :Subject,
+        owl:NamedIndividual ;
+    rdfs:comment "Das Gefühl der Ärztin bezüglich des Gesprächsverlaufs und des Ergebnisses."@de,
+        "The doctor's feeling regarding the course and outcome of the conversation."@en,
+        "Läkarens känsla angående samtalets förlopp och resultat."@sv ;
+    rdfs:label "Gefühl der Ärztin"@de,
+        "Doctor's feeling"@en,
+        "Läkarens känsla"@sv .
+
+:RaumGeben a :Object,
+        owl:NamedIndividual ;
+    rdfs:comment "Das Gewähren von Raum für die Patientin, insbesondere für ihre Emotionen."@de,
+        "Granting space to the patient, especially for her emotions."@en,
+        "Att ge utrymme åt patienten, särskilt för hennes känslor."@sv ;
+    rdfs:label "Raum geben"@de,
+        "Giving space"@en,
+        "Ge utrymme"@sv .
+
+:ZweifelUnsicherheitPatientin a :Subject,
+        owl:NamedIndividual ;
+    rdfs:comment "Die Zweifel und Unsicherheit der Patientin, die die Ärztin mit Vorschlägen füllen wollte."@de,
+        "The patient's doubts and uncertainty that the doctor wanted to address with suggestions."@en,
+        "Patientens tvivel och osäkerhet som läkaren ville fylla med förslag."@sv ;
+    rdfs:label "Zweifel/Unsicherheit der Patientin"@de,
+        "Patient's doubts/uncertainty"@en,
+        "Patientens tvivel/osäkerhet"@sv .
+
+:Vorschlaege a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Vorschläge"@de,
+        "Suggestions"@en,
+        "Förslag"@sv ;
+    :InstrumentDescription "Vorschläge, die dazu dienten, die Zweifel und Unsicherheit der Patientin zu adressieren."@de,
+        "Suggestions that served to address the patient's doubts and uncertainty."@en,
+        "Förslag som syftade till att hantera patientens tvivel och osäkerhet."@sv ;
+    :InstrumentName "Vorschläge"@de,
+        "Suggestions"@en,
+        "Förslag"@sv ;
+    :InstrumentType "Kommunikationsmittel"@de,
+        "Communication tool"@en,
+        "Kommunikationsverktyg"@sv .
+
+:Gespraechsausstieg a :Object,
+        owl:NamedIndividual ;
+    rdfs:comment "Der Abschluss des Gesprächs, der als gut gelungen empfunden wurde."@de,
+        "The conclusion of the conversation, which was perceived as well-managed."@en,
+        "Samtalets avslutning, som upplevdes som väl genomförd."@sv ;
+    rdfs:label "Gesprächsausstieg"@de,
+        "Conversation conclusion"@en,
+        "Samtalsavslutning"@sv .
+
+:SituationHibbelig a :Community,
+        owl:NamedIndividual ;
+    rdfs:comment "Die Situation, die die Ärztin nervös machte."@de,
+        "The situation that made the doctor nervous."@en,
+        "Situationen som gjorde läkaren nervös."@sv ;
+    rdfs:label "Situation (hibbelig)"@de,
+        "Situation (nervous)"@en,
+        "Situation (nervös)"@sv .
+
+:Kommilitonin1 a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Kommilitonin 1"@de,
+        "Fellow student 1"@en,
+        "Studiekamrat 1"@sv .
+
+:Kommilitonin2 a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Kommilitonin 2"@de,
+        "Fellow student 2"@en,
+        "Studiekamrat 2"@sv .
+
+:Informationsbeduerfnis a :Object,
+        owl:NamedIndividual ;
+    rdfs:comment "Das Bedürfnis der Patientin nach Informationen, das im Gespräch erfragt und berücksichtigt wurde."@de,
+        "The patient's need for information, which was inquired about and considered in the conversation."@en,
+        "Patientens informationsbehov, som efterfrågades och beaktades i samtalet."@sv ;
+    rdfs:label "Informationsbedürfnis"@de,
+        "Information need"@en,
+        "Informationsbehov"@sv .
+
+:Gespraechsverlauf a :Object,
+        owl:NamedIndividual ;
+    rdfs:comment "Der Verlauf des Gesprächs, in dem auf das sich ändernde Informationsbedürfnis der Patientin eingegangen wurde."@de,
+        "The course of the conversation, in which the patient's changing information needs were addressed."@en,
+        "Samtalets förlopp, där patientens förändrade informationsbehov beaktades."@sv ;
+    rdfs:label "Gesprächsverlauf"@de,
+        "Course of conversation"@en,
+        "Samtalsförlopp"@sv .
+
+:ErgebnisseSicher a :Object,
+        owl:NamedIndividual ;
+    rdfs:comment "Die Sicherheit der mitgeteilten Ergebnisse, die der Patientin klar kommuniziert wurde."@de,
+        "The certainty of the communicated results, which was clearly communicated to the patient."@en,
+        "Säkerheten i de kommunicerade resultaten, som tydligt kommunicerades till patienten."@sv ;
+    rdfs:label "Sichere Ergebnisse"@de,
+        "Secure results"@en,
+        "Säkra resultat"@sv .
+
+:WiderstandPatientin a :Subject,
+        owl:NamedIndividual ;
+    rdfs:comment "Potenzieller Widerstand der Patientin, der durch die Kommunikationsweise vermieden wurde."@de,
+        "Potential resistance from the patient, which was avoided by the communication style."@en,
+        "Potentiellt motstånd från patienten, vilket undveks genom kommunikationsstilen."@sv ;
+    rdfs:label "Widerstand der Patientin"@de,
+        "Patient's resistance"@en,
+        "Patientens motstånd"@sv .
+
+:MoeglichkeitGenannt a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:comment "Eine Möglichkeit, die der Patientin genannt wurde, um ihre Situation zu spiegeln und ihr Verständnis zu fördern."@de,
+        "A possibility mentioned to the patient to reflect her situation and promote her understanding."@en,
+        "En möjlighet som nämndes för patienten för att spegla hennes situation och främja hennes förståelse."@sv ;
+    rdfs:label "Genannte Möglichkeit"@de,
+        "Mentioned possibility"@en,
+        "Nämns möjlighet"@sv ;
+    :InstrumentDescription "Die Möglichkeit, die der Patientin genannt wurde, um ihre Gefühle zu spiegeln und die Diskrepanz zwischen Gefühl und Realität aufzuzeigen."@de,
+        "The possibility mentioned to the patient to reflect her feelings and show the discrepancy between feeling and reality."@en,
+        "Möjligheten som nämndes för patienten att spegla hennes känslor och visa diskrepansen mellan känsla och verklighet."@sv ;
+    :InstrumentName "Genannte Möglichkeit"@de,
+        "Mentioned possibility"@en,
+        "Nämns möjlighet"@sv ;
+    :InstrumentType "Kommunikationsstrategie"@de,
+        "Communication strategy"@en,
+        "Kommunikationsstrategi"@sv .
+
+:EmotionaleLagePatientin a :Subject,
+        owl:NamedIndividual ;
+    rdfs:comment "Die emotionale Lage der Patientin, auf die die Ärztin in ihrer Kommunikation einging."@de,
+        "The patient's emotional state, which the doctor addressed in her communication."@en,
+        "Patientens känslomässiga tillstånd, som läkaren tog hänsyn till i sin kommunikation."@sv ;
+    rdfs:label "Emotionale Lage der Patientin"@de,
+        "Patient's emotional state"@en,
+        "Patientens känslomässiga tillstånd"@sv .
+
+:BehandlungspfadChemo a :Object,
+        owl:NamedIndividual ;
+    rdfs:comment "Ein vorgeschlagener Behandlungspfad, der das Absehen von Chemotherapie und das Genießen des restlichen Lebens beinhaltet."@de,
+        "A suggested treatment path that involves foregoing chemotherapy and enjoying the rest of life."@en,
+        "En föreslagen behandlingsväg som innebär att avstå från kemoterapi och njuta av resten av livet."@sv ;
+    rdfs:label "Behandlungspfad (Chemo)"@de,
+        "Treatment path (Chemo)"@en,
+        "Behandlingsväg (Kemo)"@sv .
+
+:MetastasierteSachen a :Object,
+        owl:NamedIndividual ;
+    rdfs:comment "Metastasierte Erkrankungen, die auch nach Chemotherapie noch operiert werden können."@de,
+        "Metastasized diseases that can still be operated on after chemotherapy."@en,
+        "Metastaserade sjukdomar som fortfarande kan opereras efter kemoterapi."@sv ;
+    rdfs:label "Metastasierte Sachen"@de,
+        "Metastasized conditions"@en,
+        "Metastaserade tillstånd"@sv .
+
+:Operation a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:comment "Ein medizinischer Eingriff zur Entfernung von metastasierten Erkrankungen."@de,
+        "A medical procedure for the removal of metastasized diseases."@en,
+        "Ett medicinskt ingrepp för att avlägsna metastaserade sjukdomar."@sv ;
+    rdfs:label "Operation"@de,
+        "Operation"@en,
+        "Operation"@sv .
+
+:FachbegriffeErklaeren a :Rule,
+        owl:NamedIndividual ;
+    rdfs:comment "Die Regel, Fachbegriffe im Gespräch zu erklären, um sicherzustellen, dass die Patientin dem Gespräch folgen kann."@de,
+        "The rule of explaining technical terms in the conversation to ensure the patient can follow the discussion."@en,
+        "Regeln att förklara facktermer i samtalet för att säkerställa att patienten kan följa diskussionen."@sv ;
+    rdfs:label "Fachbegriffe erklären"@de,
+        "Explaining technical terms"@en,
+        "Förklara facktermer"@sv ;
+    :RegulatesActionOf :Aerztin ;
+    :RuleDescription "Alle Fachbegriffe immer schön erklären, damit die Patientin weiß, wo der Arzt gerade ist."@de,
+        "Always explain all technical terms nicely so that the patient knows where the doctor is."@en,
+        "Förklara alltid alla facktermer noggrant så att patienten vet var läkaren befinner sig."@sv ;
+    :RuleName "Erklärung von Fachbegriffen"@de,
+        "Explanation of technical terms"@en,
+        "Förklaring av facktermer"@sv .
+
+:SichereDiagnose a :Object,
+        owl:NamedIndividual ;
+    rdfs:comment "Die Kommunikation einer sicheren Diagnose an die Patientin."@de,
+        "The communication of a secure diagnosis to the patient."@en,
+        "Kommunikationen av en säker diagnos till patienten."@sv ;
+    rdfs:label "Sichere Diagnose"@de,
+        "Secure diagnosis"@en,
+        "Säker diagnos"@sv .
+
+:ReisePrognose a :Object,
+        owl:NamedIndividual ;
+    rdfs:comment "Die ehrliche Kommunikation bezüglich des Verlaufs der Krankheit und der Prognose."@de,
+        "The honest communication regarding the course of the illness and the prognosis."@en,
+        "Den ärliga kommunikationen angående sjukdomsförloppet och prognosen."@de ;
+    rdfs:label "Reise/Prognose"@de,
+        "Journey/Prognosis"@en,
+        "Resa/Prognos"@sv .
+
+:AktuelleSituationFokus a :Object,
+        owl:NamedIndividual ;
+    rdfs:comment "Das Zurückholen der Patientin in die aktuelle Situation, um den Fokus von Zukunftsproblemen auf den nächsten Schritt zu lende."@de,
+        "Bringing the patient back to the current situation to shift focus from future problems to the next step."@en,
+        "Att föra patienten tillbaka till den aktuella situationen för att flytta fokus från framtida problem till nästa steg."@sv ;
+    rdfs:label "Fokus auf aktuelle Situation"@de,
+        "Focus on current situation"@en,
+        "Fokus på aktuell situation"@sv .
+
+:ZukunftsproblemePatientin a :Object,
+        owl:NamedIndividual ;
+    rdfs:comment "Die Sorgen der Patientin bezüglich zukünftiger Probleme."@de,
+        "The patient's worries regarding future problems."@en,
+        "Patientens oro angående framtida problem."@sv ;
+    rdfs:label "Zukunftsprobleme der Patientin"@de,
+        "Patient's future problems"@en,
+        "Patientens framtida problem"@sv .
+
+:NaechsterStep a :Object,
+        owl:NamedIndividual ;
+    rdfs:comment "Der nächste kleine Schritt im Behandlungsverlauf oder im Umgang mit der Krankheit."@de,
+        "The next small step in the treatment process or in dealing with the illness."@en,
+        "Nästa lilla steg i behandlingsprocessen eller i hanteringen av sjukdomen."@sv ;
+    rdfs:label "Nächster Schritt"@de,
+        "Next step"@en,
+        "Nästa steg"@sv .
+
+:PsychischeAspekte a :Object,
+        owl:NamedIndividual ;
+    rdfs:comment "Die Berücksichtigung psychischer Aspekte in der Antwort auf die Frage, was die Patientin tun kann."@de,
+        "The consideration of psychological aspects in the answer to the question of what the patient can do."@en,
+        "Hänsyn till psykologiska aspekter i svaret på frågan om vad patienten kan göra."@sv ;
+    rdfs:label "Psychische Aspekte"@de,
+        "Psychological aspects"@en,
+        "Psykologiska aspekter"@sv .
+
+:RuheSchoenesUnternehmen a :Object,
+        owl:NamedIndividual ;
+    rdfs:comment "Der Ratschlag an die Patientin, sich Ruhe zu nehmen oder schöne Dinge zu unternehmen."@de,
+        "The advice to the patient to take rest or do pleasant things."@en,
+        "Rådet till patienten att vila eller göra trevliga saker."@sv ;
+    rdfs:label "Ruhe/Schönes unternehmen"@de,
+        "Rest/Doing something nice"@en,
+        "Vila/Göra något trevligt"@sv .
+
+:ErnaehrungFallstrick a :Object,
+        owl:NamedIndividual ;
+    rdfs:comment "Der Fallstrick, Ratschläge zur Ernährung zu geben, die implizieren könnten, dass die Patientin selbst schuld ist."@de,
+        "The pitfall of giving dietary advice that might imply the patient is at fault."@en,
+        "Fällan med att ge kostråd som kan antyda att patienten själv är skyldig."@sv ;
+    rdfs:label "Ernährung (Fallstrick)"@de,
+        "Nutrition (pitfall)"@en,
+        "Näring (fallgrop)"@sv .
+
+:GemeinsamesGespraechAngebot a :Object,
+        owl:NamedIndividual ;
+    rdfs:comment "Das Angebot eines gemeinsamen Gesprächs am Ende, das als positiv empfunden wurde."@de,
+        "The offer of a joint conversation at the end, which was perceived positively."@en,
+        "Erbjudandet om ett gemensamt samtal i slutet, vilket upplevdes positivt."@sv ;
+    rdfs:label "Angebot eines gemeinsamen Gesprächs"@de,
+        "Offer of a joint conversation"@en,
+        "Erbjudande om gemensamt samtal"@sv .
+
+:GeschuetzterRaum a :Community,
+        owl:NamedIndividual ;
+    rdfs:comment "Das Angebot an die Patientin, in einem geschützten Raum zu bleiben, anstatt ins Wartezimmer zurückzukehren."@de,
+        "The offer to the patient to remain in a protected space instead of returning to the waiting room."@en,
+        "Erbjudandet till patienten att stanna i ett skyddat utrymme istället för att återvända till väntrummet."@sv ;
+    rdfs:label "Geschützter Raum"@de,
+        "Protected space"@en,
+        "Skyddat utrymme"@sv .
+
+:Wartezimmer a :Community,
+        owl:NamedIndividual ;
+    rdfs:comment "Der Ort, an den die Patientin normalerweise zurückkehren würde, aber stattdessen in einem geschützten Raum bleiben durfte."@de,
+        "The place where the patient would normally return, but was allowed to stay in a protected space instead."@en,
+        "Platsen där patienten normalt skulle återvända, men istället fick stanna i ett skyddat utrymme."@sv ;
+    rdfs:label "Wartezimmer"@de,
+        "Waiting room"@en,
+        "Väntrum"@sv .
+
+:PraesentEmpathisch a :Subject,
+        owl:NamedIndividual ;
+    rdfs:comment "Die Eigenschaften der Ärztin, als präsent und empathisch wahrgenommen zu werden."@de,
+        "The doctor's qualities of being perceived as present and empathetic."@en,
+        "Läkarens egenskaper att uppfattas som närvarande och empatisk."@sv ;
+    rdfs:label "Präsent/Empathisch"@de,
+        "Present/Empathic"@en,
+        "Närvarande/Empatisk"@sv .
+
+:Klarheit a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Klarheit"@de,
+        "Clarity"@en,
+        "Klarhet"@sv ;
+    :InstrumentDescription "Klarheit in der Kommunikation, die der Patientin Sicherheit gab und ihr half, zu wissen, worum es geht."@de,
+        "Clarity in communication that gave the patient certainty and helped her know what it was about."@en,
+        "Klarhet i kommunikationen som gav patienten trygghet och hjälpte henne att förstå vad det handlade om."@sv ;
+    :InstrumentName "Klarheit"@de,
+        "Clarity"@en,
+        "Klarhet"@sv ;
+    :InstrumentType "Kommunikationsstil"@de,
+        "Communication style"@en,
+        "Kommunikationsstil"@sv .
+
+:SicherheitPatientin a :Subject,
+        owl:NamedIndividual ;
+    rdfs:comment "Das Gefühl der Sicherheit, das die Patientin durch die Klarheit und Ruhe der Ärztin erhielt."@de,
+        "The feeling of certainty the patient received through the doctor's clarity and calmness."@en,
+        "Känslan av trygghet som patienten fick genom läkarens klarhet och lugn."@sv ;
+    rdfs:label "Sicherheit der Patientin"@de,
+        "Patient's certainty"@en,
+        "Patientens säkerhet"@sv .
+
+:VersprechungenVermeiden a :Rule,
+        owl:NamedIndividual ;
+    rdfs:comment "Die Regel, der Patientin keine falschen Versprechungen zu machen, um Ehrlichkeit und Vertrauen zu wahren."@de,
+        "The rule of not making false promises to the patient to maintain honesty and trust."@en,
+        "Regeln att inte ge patienten falska löften för att upprätthålla ärlighet och förtroende."@de ;
+    rdfs:label "Versprechungen vermeiden"@de,
+        "Avoiding promises"@en,
+        "Undvika löften"@sv ;
+    :RegulatesActionOf :Aerztin ;
+    :RuleDescription "Keine Versprechungen machen, um der Patientin Klarheit und Sicherheit zu geben."@de,
+        "Do not make promises to give the patient clarity and certainty."@en,
+        "Ge inga löften för att ge patienten klarhet och trygghet."@sv ;
+    :RuleName "Vermeidung von Versprechungen"@de,
+        "Avoidance of promises"@en,
+        "Undvikande av löften"@sv .
+
+:HilfeAngebot a :Object,
+        owl:NamedIndividual ;
+    rdfs:comment "Das Angebot der Ärztin, der Patientin Hilfe zukommen zu lassen."@de,
+        "The doctor's offer to provide help to the patient."@en,
+        "Läkarens erbjudande att ge patienten hjälp."@sv ;
+    rdfs:label "Hilfeangebot"@de,
+        "Offer of help"@en,
+        "Erbjudande om hjälp"@sv .
+
+:EhemannEinbeziehen a :Object,
+        owl:NamedIndividual ;
+    rdfs:comment "Das Angebot, den Ehemann der Patientin in den Prozess einzubeziehen."@de,
+        "The offer to involve the patient's husband in the process."@en,
+        "Erbjudandet att involvera patientens make i processen."@sv ;
+    rdfs:label "Ehemann einbeziehen"@de,
+        "Involving husband"@en,
+        "Involvera make"@sv .
+
+:BodenVerlorenPatientin a :Subject,
+        owl:NamedIndividual ;
+    rdfs:comment "Das Gefühl der Patientin, zwischendurch die Kontrolle oder den Halt verloren zu haben."@de,
+        "The patient's feeling of having lost control or footing at times."@en,
+        "Patientens känsla av att ha tappat kontrollen eller fotfästet ibland."@sv ;
+    rdfs:label "Boden unter den Füßen verloren (Patientin)"@de,
+        "Patient feeling lost"@en,
+        "Patient känner sig vilsen"@sv .
+
+:RolleHausaerztin a :DivisionOfLabour,
+        owl:NamedIndividual ;
+    rdfs:comment "Die Rolle der Ärztin als Hausärztin, die sowohl effizient als auch empathisch agiert."@de,
+        "The doctor's role as a general practitioner, acting both efficiently and empathetically."@en,
+        "Läkarens roll som allmänläkare, som agerar både effektivt och empatiskt."@en ;
+    rdfs:label "Rolle der Hausärztin"@de,
+        "Role of the general practitioner"@en,
+        "Allmänläkarens roll"@sv .
+
+:TagesprogrammZeitdruck a :Community,
+        owl:NamedIndividual ;
+    rdfs:comment "Der wahrgenommene Zeitdruck und das Tagesprogramm der Ärztin, das sie dennoch managte, um sich Zeit für die Patientin zu nehmen."@de,
+        "The perceived time pressure and daily schedule of the doctor, which she nevertheless managed to take time for the patient."@en,
+        "Läkarens upplevda tidspress och dagliga schema, som hon ändå hanterade för att ta sig tid för patienten."@sv ;
+    rdfs:label "Tagesprogramm/Zeitdruck"@de,
+        "Daily schedule/Time pressure"@en,
+        "Dagsprogram/Tidspress"@sv .
+
+:ZeitNehmen a :Object,
+        owl:NamedIndividual ;
+    rdfs:comment "Die bewusste Entscheidung der Ärztin, sich trotz Zeitdruck Zeit für die Patientin zu nehmen."@de,
+        "The doctor's conscious decision to take time for the patient despite time pressure."@en,
+        "Läkarens medvetna beslut att ta sig tid för patienten trots tidspress."@sv ;
+    rdfs:label "Zeit nehmen"@de,
+        "Taking time"@en,
+        "Ta sig tid"@sv .
+
+:KlugEffizient a :Subject,
+        owl:NamedIndividual ;
+    rdfs:comment "Die Eigenschaft der Ärztin, klug und effizient zu sein, auch in einer anspruchsvollen Situation."@de,
+        "The doctor's quality of being clever and efficient, even in a demanding situation."@en,
+        "Läkarens egenskap att vara smart och effektiv, även i en krävande situation."@sv ;
+    rdfs:label "Klug effizient"@de,
+        "Cleverly efficient"@en,
+        "Smart effektiv"@sv .
+
+:AlleinHierZeitMitgebracht a :Object,
+        owl:NamedIndividual ;
+    rdfs:comment "Die Fragen der Ärztin an die Patientin, ob sie allein ist und Zeit mitgebracht hat, um das Gespräch zu entschleunigen."@de,
+        "The doctor's questions to the patient about being alone and having brought time, to slow down the conversation."@en,
+        "Läkarens frågor till patienten om hon är ensam och har med sig tid, för att sakta ner samtalet."@sv ;
+    rdfs:label "Allein hier/Zeit mitgebracht"@de,
+        "Alone here/Brought time"@en,
+        "Ensam här/Hade med sig tid"@sv .
+
+:InformationspaketAblehnen a :Object,
+        owl:NamedIndividual ;
+    rdfs:comment "Die Situation, in der ein Informationspaket angeboten wird, das der Patient nicht aufnehmen möchte."@de,
+        "The situation where an information package is offered that the patient does not want to receive."@en,
+        "Situationen där ett informationspaket erbjuds som patienten inte vill ta emot."@sv ;
+    rdfs:label "Informationspaket ablehnen"@de,
+        "Rejecting information package"@en,
+        "Avvisa informationspaket"@sv .
+
+:BeschwerdenEigeneErklaerung a :Object,
+        owl:NamedIndividual ;
+    rdfs:comment "Die Strategie, Patienten nach ihren eigenen Erklärungen für Beschwerden zu fragen."@de,
+        "The strategy of asking patients for their own explanations for complaints."@en,
+        "Strategin att fråga patienter om deras egna förklaringar till besvär."@sv ;
+    rdfs:label "Eigene Erklärung für Beschwerden"@de,
+        "Own explanation for complaints"@en,
+        "Egen förklaring till besvär"@sv .
+
+:Bauchschmerzen a :Object,
+        owl:NamedIndividual ;
+    rdfs:comment "Ein Symptom, das als Beispiel für Beschwerden genannt wird."@de,
+        "A symptom mentioned as an example of complaints."@en,
+        "Ett symptom som nämns som exempel på besvär."@sv ;
+    rdfs:label "Bauchschmerzen"@de,
+        "Abdominal pain"@en,
+        "Buksmärta"@sv .
+
+:Magengeschwuer a :Object,
+        owl:NamedIndividual ;
+    rdfs:comment "Eine mögliche, harmlose Erklärung für Bauchschmerzen, die Patienten selbst vermuten könnten."@de,
+        "A possible, harmless explanation for abdominal pain that patients themselves might suspect."@en,
+        "En möjlig, harmlös förklaring till buksmärta som patienter själva kan misstänka."@sv ;
+    rdfs:label "Magengeschwür"@de,
+        "Stomach ulcer"@en,
+        "Magsår"@sv .
+
+:SorgeErnsthaftes a :Subject,
+        owl:NamedIndividual ;
+    rdfs:comment "Die Sorge der Patientin, dass ihre Beschwerden etwas Ernsthaftes sein könnten, oft im Zusammenhang mit Krebs in der Familie oder im Bekanntenkreis."@de,
+        "The patient's concern that their complaints might be something serious, often in connection with cancer in the family or among acquaintances."@en,
+        "Patientens oro för att deras besvär kan vara något allvarligt, ofta i samband med cancer i familjen eller bland bekanta."@sv ;
+    rdfs:label "Sorge vor Ernsthaftem"@de,
+        "Worry about something serious"@en,
+        "Oro för något allvarligt"@sv .
+
+:Krebs a :Object,
+        owl:NamedIndividual ;
+    rdfs:comment "Eine ernsthafte Erkrankung, die Patienten befürchten könnten."@de,
+        "A serious illness that patients might fear."@en,
+        "En allvarlig sjukdom som patienter kan frukta."@sv ;
+    rdfs:label "Krebs"@de,
+        "Cancer"@en,
+        "Cancer"@sv .
+
+:HarmloseErklaerung a :Object,
+        owl:NamedIndividual ;
+    rdfs:comment "Eine Erklärung für Beschwerden, die nicht auf eine schwerwiegende Krankheit hindeutet."@de,
+        "An explanation for complaints that does not indicate a serious illness."@en,
+        "En förklaring till besvär som inte tyder på en allvarlig sjukdom."@en ;
+    rdfs:label "Harmlose Erklärung"@de,
+        "Harmless explanation"@en,
+        "Harmlös förklaring"@sv ;
+    :DefinesTheApproachOf :Magengeschwuer .
+
+:GravierendeErkrankung a :Object,
+        owl:NamedIndividual ;
+    rdfs:comment "Eine schwerwiegende Erkrankung, die bei der Diagnose festgestellt wurde."@de,
+        "A serious illness found during diagnosis."@en,
+        "En serious illness found during diagnosis."@sv ;
+    rdfs:label "Gravierende Erkrankung"@de,
+        "Serious illness"@en,
+        "Allvarlig sjukdom"@sv .
+
+:FamiliaereRisikokonstellation a :Object,
+        owl:NamedIndividual ;
+    rdfs:comment "Eine familiäre Vorbelastung, die das Risiko für bestimmte Erkrankungen erhöht."@de,
+        "A family predisposition that increases the risk for certain diseases."@en,
+        "En familjär predisposition som ökar risken för vissa sjukdomar."@sv ;
+    rdfs:label "Familiäre Risikokonstellation"@de,
+        "Family risk constellation"@en,
+        "Familjär riskkonstellation"@sv ;
+    :Influences :Krebserkrankung,
+        :Tumor .
+
+:Tumor a :Object,
+        owl:NamedIndividual ;
+    rdfs:comment "Eine Raumforderung, die als ernsthafte Erkrankung identifiziert wurde und oft mit Krebs assoziiert wird."@de,
+        "A space-occupying lesion identified as a serious illness and often associated with cancer."@en,
+        "En utrymmeskrävande lesion identifierad som en allvarlig sjukdom och ofta associerad med cancer."@sv ;
+    rdfs:label "Tumor"@de,
+        "Tumor"@en,
+        "Tumör"@sv .
+
+:Krebserkrankung a :Object,
+        owl:NamedIndividual ;
+    rdfs:comment "Eine bösartige Erkrankung, die diagnostiziert wurde."@de,
+        "A malignant disease that has been diagnosed."@en,
+        "En malign sjukdom som har diagnostiserats."@sv ;
+    rdfs:label "Krebserkrankung"@de,
+        "Cancer disease"@en,
+        "Cancersjukdom"@sv .
+
+:Lebensqualitaet a :Object,
+        owl:NamedIndividual ;
+    rdfs:comment "Ein Aspekt, der im Gespräch zu früh angesprochen wurde, bezogen auf das Wohlbefinden des Patienten."@de,
+        "An aspect that was addressed too early in the conversation, related to the patient's well-being."@en,
+        "En aspekt som togs upp för tidigt i samtalet, relaterad till patientens välbefinnande."@sv ;
+    rdfs:label "Lebensqualität"@de,
+        "Quality of life"@en,
+        "Livskvalitet"@sv .
+
+:Lebenszeitnutzen a :Object,
+        owl:NamedIndividual ;
+    rdfs:comment "Der Nutzen der verbleibenden Lebenszeit, ein Aspekt, der im Gespräch zu früh angesprochen wurde."@de,
+        "The benefit of the remaining life time, an aspect that was addressed too early in the conversation."@en,
+        "Nyttan av den återstående livstiden, en aspekt som togs upp för tidigt i samtalet."@sv ;
+    rdfs:label "Lebenszeitnutzen"@de,
+        "Benefit of life time"@en,
+        "Livstidsnytta"@sv .
+
+:AlltagPraxis a :Community,
+        owl:NamedIndividual ;
+    rdfs:comment "Die reale Situation in der medizinischen Praxis im Gegensatz zur simulierten Gesprächssituation."@de,
+        "The real situation in medical practice as opposed to the simulated conversation situation."@en,
+        "Den verkliga situationen i medicinsk praktik i motsats till den simulerade samtalssituationen."@sv ;
+    rdfs:label "Alltag/Praxis"@de,
+        "Everyday life/Practice"@en,
+        "Vardag/Praktik"@sv .
+
+:AblaufStandardisiert a :Rule,
+        owl:NamedIndividual ;
+    rdfs:comment "Die Regel, dass bei einer Erstdiagnose immer ein standardisierter Ablauf eingehalten werden sollte, um Sicherheit zu gewährleisten."@de,
+        "The rule that a standardized procedure should always be followed for an initial diagnosis to ensure certainty."@en,
+        "Regeln att ett standardiserat förfarande alltid bör följas vid en första diagnos för att säkerställa trygghet."@sv ;
+    rdfs:label "Standardisierter Ablauf"@de,
+        "Standardized procedure"@en,
+        "Standardiserat förfarande"@sv ;
+    :RuleDescription "Es muss immer der gleiche Ablauf sein, insbesondere bei einer Erstdiagnose, die in eine Tumorkonferenz gehört."@de,
+        "It must always be the same procedure, especially for an initial diagnosis that belongs in a tumor board."@en,
+        "Det måste alltid vara samma procedur, särskilt vid en första diagnos som hör hemma i en tumörkonferens."@sv ;
+    :RuleName "Standardisierter Diagnoseablauf"@de,
+        "Standardized diagnosis procedure"@en,
+        "Standardized diagnosis procedure"@sv .
+
+:Erstdiagnose a :Object,
+        owl:NamedIndividual ;
+    rdfs:comment "Die erste Feststellung einer Krankheit bei einem Patienten."@de,
+        "The first determination of an illness in a patient."@en,
+        "Den första fastställandet av en sjukdom hos en patient."@sv ;
+    rdfs:label "Erstdiagnose"@de,
+        "First diagnosis"@en,
+        "Förstadiagnos"@sv ;
+    :HasToFollow :AblaufStandardisiert .
+
+:Tumorkonferenz a :Rule,
+        owl:NamedIndividual ;
+    rdfs:comment "Ein Gremium von Experten, das sich trifft, um die bestmögliche Therapie für Patienten mit einer Erstdiagnose zu empfehlen und dem Arzt Sicherheit gibt."@de,
+        "A panel of experts that meets to recommend the best possible therapy for patients with an initial diagnosis and provides certainty to the doctor."@en,
+        "En expertpanel som möts för att rekommendera bästa möjliga terapi för patienter med en första diagnos och ger läkaren trygghet."@sv ;
+    rdfs:label "Tumorkonferenz"@de,
+        "Tumor board"@en,
+        "Tumörkonferens"@sv ;
+    :Influences :SicherheitArzt ;
+    :InteractsWith :Experten ;
+    :RuleDescription "Ein Patient mit Erstdiagnose gehört in eine Tumorkonferenz, wo Experten die bestmögliche Therapie empfehlen."@de,
+        "A patient with an initial diagnosis belongs in a tumor board, where experts recommend the best possible therapy."@en,
+        "En patient med en första diagnos hör hemma i en tumörkonferens, där experter rekommenderar bästa möjliga terapi."@sv ;
+    :RuleName "Tumorkonferenz"@de,
+        "Tumor board"@en,
+        "Tumörkonferens"@sv .
+
+:SicherheitArzt a :Subject,
+        owl:NamedIndividual ;
+    rdfs:comment "Das Gefühl der Sicherheit, das der Arzt durch die Einhaltung standardisierter Abläufe und die Konsultation einer Tumorkonferenz erhält."@de,
+        "The feeling of certainty the doctor gains by adhering to standardized procedures and consulting a tumor board."@en,
+        "Känslan av trygghet som läkaren får genom att följa standardiserade procedurer och konsultera en tumörkonferens."@sv ;
+    rdfs:label "Sicherheit des Arztes"@de,
+        "Doctor's certainty"@en,
+        "Läkarens säkerhet"@sv .
+
+:SpezialisiertesZentrum a :Community,
+        owl:NamedIndividual ;
+    rdfs:comment "Ein medizinisches Zentrum, das auf bestimmte Krankheiten spezialisiert ist, z.B. Bauchspeicheldrüsenkrebs."@de,
+        "A medical center specialized in certain diseases, e.g., pancreatic cancer."@en,
+        "Ett medicinskt centrum specialiserat på vissa sjukdomar, t.ex. bukspottkörtelcancer."@sv ;
+    rdfs:label "Spezialisiertes Zentrum"@de,
+        "Specialized center"@en,
+        "Specialiserat centrum"@sv .
+
+:Bauchspeicheldruesenkrebs a :Object,
+        owl:NamedIndividual ;
+    rdfs:comment "Eine spezifische Krebsart, die als Beispiel für eine schwerwiegende Diagnose genannt wird."@de,
+        "A specific type of cancer mentioned as an example of a serious diagnosis."@en,
+        "En specifik typ av cancer som nämns som exempel på en allvarlig diagnos."@sv ;
+    rdfs:label "Bauchspeicheldrüsenkrebs"@de,
+        "Pancreatic cancer"@en,
+        "Bukspottkörtelcancer"@sv .
+
+:Experten a :Subject,
+        owl:NamedIndividual ;
+    rdfs:comment "Medizinische Fachleute, die in einer Tumorkonferenz zusammenkommen, um Therapievorschläge zu erarbeiten."@de,
+        "Medical professionals who convene in a tumor board to develop therapy suggestions."@en,
+        "Medicinska experter som samlas i en tumörkonferens för att utveckla terapiförslag."@sv ;
+    rdfs:label "Experten"@de,
+        "Experts"@en,
+        "Experter"@sv ;
+    :OperatesOn :BestmoeglicheTherapie .
+
+:BestmoeglicheTherapie a :Object,
+        owl:NamedIndividual ;
+    rdfs:comment "Die Therapieoption, die von Experten als optimal für den Patienten angesehen wird."@de,
+        "The therapy option considered optimal for the patient by experts."@en,
+        "Det behandlingsalternativ som experter anser vara optimalt för patienten."@sv ;
+    rdfs:label "Bestmögliche Therapie"@de,
+        "Best possible therapy"@en,
+        "Bästa möjliga terapi"@sv .
+
+:KIUnterstuetzung a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:comment "Die hypothetische Unterstützung durch Künstliche Intelligenz bei der Erstellung von Therapieempfehlungen."@de,
+        "The hypothetical support by Artificial Intelligence in generating therapy recommendations."@en,
+        "Det hypotetiska stödet från artificiell intelligens vid framtagning av terapirekommendationer."@sv ;
+    rdfs:label "KI-Unterstützung"@de,
+        "AI support"@en,
+        "AI-stöd"@sv ;
+    :InstrumentDescription "Eine KI könnte Empfehlungen und Indikationsstellungen machen."@de,
+        "An AI could make recommendations and indications."@en,
+        "En AI skulle kunna ge rekommendationer och indikationer."@sv ;
+    :InstrumentName "KI-Unterstützung"@de,
+        "AI support"@en,
+        "AI-stöd"@sv ;
+    :InstrumentType "Technologie"@de,
+        "Technology"@en,
+        "Teknologi"@sv .
+
+:EmpfehlungIndikationsstellung a :Object,
+        owl:NamedIndividual ;
+    rdfs:comment "Der Prozess der Erstellung einer Therapieempfehlung und der Festlegung der Indikation in Absprache mit dem Patienten."@de,
+        "The process of creating a therapy recommendation and determining the indication in consultation with the patient."@en,
+        "Processen att skapa en terapirekommendation och fastställa indikationen i samråd med patienten."@sv ;
+    rdfs:label "Empfehlung/Indikationsstellung"@de,
+        "Recommendation/Indication setting"@en,
+        "Rekommendation/Indikationsställning"@sv .
+
+:ProzessEntscheidungsfindung a :Object,
+        owl:NamedIndividual ;
+    rdfs:comment "Der wichtige Prozess der Entscheidungsfindung bezüglich Therapie und Indikation, der die Einbeziehung des Patienten umfasst."@de,
+        "The important decision-making process regarding therapy and indication, which includes patient involvement."@en,
+        "Den viktiga beslutsprocessen gällande terapi och indikation, som inkluderar patientmedverkan."@sv ;
+    rdfs:label "Prozess der Entscheidungsfindung"@de,
+        "Decision-making process"@en,
+        "Beslutsfattandeprocess"@sv ;
+    :Determines :RuecksprachePatient,
+        :Therapievorschlaege ;
+    :Shares :EinbeziehungPatientenwunsch .
+
+:Therapievorschlaege a :Object,
+        owl:NamedIndividual ;
+    rdfs:comment "Vorschläge für Behandlungsoptionen, die von Experten erarbeitet werden."@de,
+        "Suggestions for treatment options developed by experts."@en,
+        "Förslag på behandlingsalternativ som utarbetas av experter."@sv ;
+    rdfs:label "Therapievorschläge"@de,
+        "Therapy suggestions"@en,
+        "Terapiförslag"@sv .
+
+:RuecksprachePatient a :Object,
+        owl:NamedIndividual ;
+    rdfs:comment "Die Notwendigkeit, Therapieentscheidungen in Absprache mit dem Patienten zu treffen."@de,
+        "The necessity of making therapy decisions in consultation with the patient."@en,
+        "Nödvändigheten av att fatta terapibeslut i samråd med patienten."@sv ;
+    rdfs:label "Rücksprache mit Patient"@de,
+        "Consultation with patient"@en,
+        "Samråd med patient"@sv .
+
+:Patientenwunsch a :Subject,
+        owl:NamedIndividual ;
+    rdfs:comment "Der Wunsch des Patienten bezüglich seiner Behandlung, der berücksichtigt werden muss."@de,
+        "The patient's wish regarding their treatment, which must be taken into account."@en,
+        "Patientens önskan angående sin behandling, som måste beaktas."@sv ;
+    rdfs:label "Patientenwunsch"@de,
+        "Patient's wish"@en,
+        "Patientens önskan"@sv ;
+    :Influences :BestSupportiveCare,
+        :EinbeziehungPatientenwunsch .
+
+:EinbeziehungPatientenwunsch a :Object,
+        owl:NamedIndividual ;
+    rdfs:comment "Die Einbeziehung der Vorstellungen und Wünsche des Patienten in den Therapieentscheidungsprozess."@de,
+        "The inclusion of the patient's ideas and wishes in the therapy decision-making process."@en,
+        "Inkluderingen av patientens idéer och önskemål i terapibeslutsprocessen."@sv ;
+    rdfs:label "Einbeziehung des Patientenwunsches"@de,
+        "Inclusion of patient's wish"@en,
+        "Inkludering av patientens önskan"@sv .
+
+:BestSupportiveCare a :Object,
+        owl:NamedIndividual ;
+    rdfs:comment "Eine Behandlungsstrategie, die auf die Linderung von Symptomen und die Verbesserung der Lebensqualität abzielt, wenn der Patient keine kurative Therapie wünscht."@de,
+        "A treatment strategy aimed at alleviating symptoms and improving quality of life when the patient does not desire curative therapy."@en,
+        "En behandlingsstrategi som syftar till att lindra symtom och förbättra livskvaliteten när patienten inte önskar kurativ terapi."@sv ;
+    rdfs:label "Best Supportive Care"@de,
+        "Best Supportive Care"@en,
+        "Bästa stödjande vård"@sv .
+
+:SchwerwiegendeDiagnose a :Object,
+        owl:NamedIndividual ;
+    rdfs:comment "Eine Diagnose, die eine ernste und oft lebensbedrohliche Krankheit betrifft."@de,
+        "A diagnosis concerning a serious and often life-threatening illness."@en,
+        "En diagnos som rör en allvarlig och ofta livshotande sjukdom."@sv ;
+    rdfs:label "Schwerwiegende Diagnose"@de,
+        "Serious diagnosis"@en,
+        "Allvarlig diagnos"@sv .
+
+:Zweitmeinung a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:comment "Die Möglichkeit, eine zweite medizinische Meinung zu einer Diagnose oder Therapie einzuholen."@de,
+        "The possibility of obtaining a second medical opinion on a diagnosis or therapy."@en,
+        "Möjligheten att få en andra medicinsk åsikt om en diagnos eller terapi."@sv ;
+    rdfs:label "Zweitmeinung"@de,
+        "Second opinion"@en,
+        "Andra åsikt"@sv ;
+    :IsUsedOn :SchwerwiegendeDiagnose .
+
+:DiagnoseZweiBeine a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:comment "Die Strategie, eine schwerwiegende Diagnose durch eine Zweitmeinung zu untermauern und zu festigen, um mehr Sicherheit zu schaffen."@de,
+        "The strategy of substantiating and solidifying a serious diagnosis through a second opinion to create more certainty."@en,
+        "Strategin att underbygga och befästa en allvarlig diagnos genom en andra åsikt för att skapa mer trygghet."@sv ;
+    rdfs:label "Diagnose auf zwei Beine stellen"@de,
+        "Solidifying diagnosis"@en,
+        "Stärka diagnosen"@sv ;
+    :IsAppliedToAchieve :SchwerwiegendeDiagnose ;
+    :InstrumentDescription "Die Empfehlung bei einer schwerwiegenden Diagnose auf zwei Beine stellen, z.B. durch eine Zweitmeinung."@de,
+        "To put the recommendation for a serious diagnosis on two legs, e.g., through a second opinion."@en,
+        "Att ställa rekommendationen för en allvarlig diagnos på två ben, t.ex. genom en andra åsikt."@sv ;
+    :InstrumentName "Diagnose auf zwei Beine stellen"@de,
+        "Solidifying diagnosis"@en,
+        "Stärka diagnosen"@sv ;
+    :InstrumentType "Strategie"@de,
+        "Strategy"@en,
+        "Strategi"@sv .
+
+:Taschentuch a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:comment "Ein Taschentuch, das der Patientin angeboten wurde, als sie weinte, um Unterstützung zu signalisieren."@de,
+        "A tissue offered to the patient when she cried, to signal support."@en,
+        "En näsduk som erbjöds patienten när hon grät, för att signalera stöd."@sv ;
+    rdfs:label "Taschentuch"@de,
+        "Tissue"@en,
+        "Näsduk"@sv ;
+    :InstrumentDescription "Ein Taschentuch, das der Patientin angeboten wurde, aber erst im Verlauf wahrgenommen wurde."@de,
+        "A tissue offered to the patient, but only noticed later in the conversation."@en,
+        "En näsduk som erbjöds patienten, men som först uppmärksammades senare i samtalet."@de ;
+    :InstrumentName "Taschentuch"@de,
+        "Tissue"@en,
+        "Näsduk"@sv ;
+    :InstrumentType "Hilfsmittel"@de,
+        "Aid"@en,
+        "Hjälpmedel"@sv .
+
+:SchwierigeGespraechssituationen a :Community,
+        owl:NamedIndividual ;
+    rdfs:comment "Situationen, in denen Gespräche besonders herausfordernd sind, sowohl im beruflichen als auch im privaten Kontext."@de,
+        "Situations where conversations are particularly challenging, both in professional and private contexts."@en,
+        "Situationer där samtal är särskilt utmanande, både i professionella och privata sammanhang."@sv ;
+    rdfs:label "Schwierige Gesprächssituationen"@de,
+        "Difficult conversation situations"@en,
+        "Svåra samtalssituationer"@sv .
+
+:Gespraechsstrategie a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:comment "Eine geplante Vorgehensweise für ein Gespräch, insbesondere in schwierigen Situationen, um den Gesprächsverlauf zu steuern."@de,
+        "A planned approach for a conversation, especially in difficult situations, to guide the course of the discussion."@en,
+        "En planerad strategi för ett samtal, särskilt i svåra situationer, för att styra samtalets förlopp."@sv ;
+    rdfs:label "Gesprächsstrategie"@de,
+        "Conversation strategy"@en,
+        "Samtalsstrategi"@sv ;
+    :IsUsedOn :SchwierigeGespraechssituationen ;
+    :InstrumentDescription "Sich selber eine Gesprächsstrategie überlegen, besonders in schwierigen Gesprächssituationen."@de,
+        "To consider a conversation strategy for oneself, especially in difficult conversation situations."@en,
+        "Att överväga en samtalsstrategi för sig själv, särskilt i svåra samtalssituationer."@sv ;
+    :InstrumentName "Gesprächsstrategie"@de,
+        "Conversation strategy"@en,
+        "Samtalsstrategi"@sv ;
+    :InstrumentType "Strategie"@de,
+        "Strategy"@en,
+        "Strategi"@sv .
+
+:GestaffelteKommunikation a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:comment "Eine Kommunikationsstrategie, bei der Informationen schrittweise und nicht abrupt vermittelt werden, beginnend mit einer milderen Formulierung, um den Patienten nicht zu überfordern."@de,
+        "A communication strategy where information is conveyed gradually and not abruptly, starting with a milder phrasing, to avoid overwhelming the patient."@en,
+        "En kommunikationsstrategi där information förmedlas gradvis och inte abrupt, med början i en mildare formulering, för att undvika att överväldiga patienten."@sv ;
+    rdfs:label "Gestaffelte Kommunikation"@de,
+        "Staggered communication"@en,
+        "Stegvis kommunikation"@sv ;
+    :DefinesTheApproachOf :NachfrageKlarheit ;
+    :IsUsedOn :SchwerwiegendeDiagnose ;
+    :Uses :NichtHingehorendes,
+        :Raumforderung,
+        :Tumor ;
+    :InstrumentDescription "Information gestaffelt kommunizieren, z.B. mit 'Tumor gefunden' statt 'Krebs'."@de,
+        "Communicate information in stages, e.g., with 'tumor found' instead of 'cancer'."@en,
+        "Kommunicera information i steg, t.ex. med 'tumör hittad' istället för 'cancer'."@sv ;
+    :InstrumentName "Gestaffelte Kommunikation"@de,
+        "Staggered communication"@en,
+        "Stegvis kommunikation"@sv ;
+    :InstrumentType "Kommunikationsstrategie"@de,
+        "Communication strategy"@en,
+        "Kommunikationsstrategi"@sv .
+
+:Raumforderung a :Object,
+        owl:NamedIndividual ;
+    rdfs:comment "Eine medizinische Umschreibung für einen Tumor oder eine Masse, die Platz einnimmt."@de,
+        "A medical circumscription for a tumor or mass that occupies space."@en,
+        "En medicinsk omskrivning för en tumör eller massa som tar plats."@sv ;
+    rdfs:label "Raumforderung"@de,
+        "Space-occupying lesion"@en,
+        "Utrymmeskrävande lesion"@sv .
+
+:CTScan a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:comment "Ein bildgebendes Verfahren (Computertomographie), das zur Diagnose von Raumforderungen eingesetzt wird."@de,
+        "An imaging procedure (computed tomography) used for diagnosing space-occupying lesions."@en,
+        "En bildgivande procedur (datortomografi) som används för att diagnostisera utrymmeskrävande lesioner."@sv ;
+    rdfs:label "CT-Scan"@de,
+        "CT scan"@en,
+        "CT-skanning"@sv ;
+    :IsUsedOn :Raumforderung ;
+    :InstrumentDescription "Im CT wurde etwas gefunden, was dort nicht hingehört."@de,
+        "Something was found in the CT that doesn't belong there."@en,
+        "Något hittades i CT:n som inte hör hemma där."@sv ;
+    :InstrumentName "CT-Scan"@de,
+        "CT scan"@en,
+        "CT-skanning"@sv ;
+    :InstrumentType "Diagnosegerät"@de,
+        "Diagnostic device"@en,
+        "Diagnostisk utrustning"@sv .
+
+:NichtHingehorendes a :Object,
+        owl:NamedIndividual ;
+    rdfs:comment "Eine Formulierung, die verwendet wird, um eine abnormale Entdeckung, wie einen Tumor, zu beschreiben, ohne direkt die Diagnose zu nennen."@de,
+        "A phrasing used to describe an abnormal discovery, such as a tumor, without directly stating the diagnosis."@en,
+        "En formulering som används för att beskriva en onormal upptäckt, som en tumör, utan att direkt nämna diagnosen."@sv ;
+    rdfs:label "Nicht hingehörendes"@de,
+        "Something that doesn't belong"@en,
+        "Något som inte hör hemma"@sv .
+
+:UmschreibungEuphemismus a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:comment "Die Verwendung von Umschreibungen oder Euphemismen, um eine Diagnose schrittweise zu kommunizieren und den Patienten auf die Information vorzubereiten."@de,
+        "The use of circumscriptions or euphemisms to communicate a diagnosis gradually and prepare the patient for the information."@en,
+        "Användningen av omskrivningar eller eufemismer för att gradvis kommunicera en diagnos och förbereda patienten på informationen."@sv ;
+    rdfs:label "Umschreibung/Euphemismus"@de,
+        "Circumscription/Euphemism"@en,
+        "Omskrivning/Eufemism"@sv ;
+    :IsUsedOn :Diagnose ;
+    :InstrumentDescription "Umschreibungen verwenden, um eine Diagnose zunächst einfach zu formulieren und auf Nachfrage klarer zu werden."@de,
+        "Use circumscriptions to initially formulate a diagnosis simply and become clearer upon request."@en,
+        "Använd omskrivningar för att initialt formulera en diagnos enkelt och bli tydligare på begäran."@sv ;
+    :InstrumentName "Umschreibung/Euphemismus"@de,
+        "Circumscription/Euphemism"@en,
+        "Omskrivning/Eufemism"@sv ;
+    :InstrumentType "Kommunikationsmittel"@de,
+        "Communication tool"@en,
+        "Kommunikationsverktyg"@sv .
+
+:NachfrageKlarheit a :Object,
+        owl:NamedIndividual ;
+    rdfs:comment "Die Strategie, auf Nachfragen der Patientin hin klarere Informationen zu geben."@de,
+        "The strategy of providing clearer information upon the patient's inquiries."@en,
+        "Strategin att ge tydligare information på patientens frågor."@sv ;
+    rdfs:label "Nachfrage nach Klarheit"@de,
+        "Inquiry for clarity"@en,
+        "Fråga om klarhet"@sv .
+
+:YouNeverWalkAloneMetapher a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:comment "Die Metapher 'You Never Walk Alone', die verwendet wird, um Unterstützung und Begleitung zu signalisieren und dem Patienten das Gefühl zu geben, nicht allein zu sein."@de,
+        "The metaphor 'You Never Walk Alone', used to signal support and companionship and make the patient feel not alone."@en,
+        "Metaforen 'You Never Walk Alone', som används för att signalera stöd och sällskap och få patienten att känna sig inte ensam."@sv ;
+    rdfs:label "You Never Walk Alone (Metapher)"@de,
+        "You Never Walk Alone (Metaphor)"@en,
+        "You Never Walk Alone (Metafor)"@sv ;
+    :OperatesOn :UnterstuetzungPatient ;
+    :InstrumentDescription "Die Metapher 'You Never Walk Alone', die auf charmante Weise vermittelt, dass der Patient nicht allein ist."@de,
+        "The metaphor 'You Never Walk Alone', which charmingly conveys that the patient is not alone."@en,
+        "Metaforen 'You Never Walk Alone', som på ett charmigt sätt förmedlar att patienten inte är ensam."@sv ;
+    :InstrumentName "You Never Walk Alone (Metapher)"@de,
+        "You Never Walk Alone (Metaphor)"@en,
+        "You Never Walk Alone (Metafor)"@sv ;
+    :InstrumentType "Kommunikationsmittel"@de,
+        "Communication tool"@en,
+        "Kommunikationsverktyg"@sv .
+
+:UnterstuetzungPatient a :Object,
+        owl:NamedIndividual ;
+    rdfs:comment "Die Zusicherung der Unterstützung für den Patienten während des gesamten Prozesses."@de,
+        "The assurance of support for the patient throughout the entire process."@en,
+        "Försäkran om stöd till patienten under hela processen."@sv ;
+    rdfs:label "Unterstützung des Patienten"@de,
+        "Patient support"@en,
+        "Patientstöd"@sv .
+
+:Conflict_1 a :Conflict ;
+    :CreationDate "2024-06-01T12:00:00Z" ;
+    :ConflictDescription "Die Ärztin äußerte den Wunsch, ein Papier oder einen Vorbefund zur Hand zu haben, um sich bei der Diagnosekommunikation festhalten zu können, da keine spezifischen Nachfragen von der Patientin kamen."@de,
+        "The doctor expressed a wish to have a paper or previous report at hand to rely on during diagnosis communication, as there were no specific inquiries from the patient."@en,
+        "Läkaren uttryckte en önskan om att ha ett papper eller en tidigare rapport till hands för att kunna förlita sig på under diagnoskommunikationen, då det inte kom några specifika frågor från patienten."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Wunsch nach unterstützendem Material für Diagnosekommunikation"@de,
+        "Desire for supporting material for diagnosis communication"@en,
+        "Önskan om stödmaterial för diagnoskommunikation"@sv ;
+    :HasParticipant :Aerztin,
+        :Diagnose,
+        :PapierVorbefund ;
+    :WrittenBy :Aerztin .
+
+:Conflict_2 a :Conflict ;
+    :CreationDate "2024-06-01T12:01:00Z" ;
+    :ConflictDescription "Die Ärztin reflektiert, ob sie manchmal zu viel geredet und zu wenig Raum für die Patientin gelassen hat, insbesondere bevor die Patientin weinen musste."@de,
+        "The doctor reflects on whether she sometimes talked too much and gave too little space to the patient, especially before the patient needed to cry."@en,
+        "Läkaren reflekterar över om hon ibland pratade för mycket och gav för lite utrymme åt patienten, särskilt innan patienten behövde gråta."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Selbstzweifel bezüglich Gesprächsführung und Raumgabe"@de,
+        "Self-doubt regarding conversation management and giving space"@en,
+        "Självtvivel angående samtalshantering och utrymme"@sv ;
+    :HasParticipant :Aerztin,
+        :RaumGeben ;
+    :WrittenBy :Aerztin .
+
+:Conflict_3 a :Conflict ;
+    :CreationDate "2024-06-01T12:02:00Z" ;
+    :ConflictDescription "Die Ärztin erklärt, dass sie vor dem Moment des Weinens der Patientin mehr geredet hat, um deren Zweifel und Unsicherheit mit Vorschlägen zu füllen."@de,
+        "The doctor explains that she talked more before the patient cried, in order to fill the patient's doubts and uncertainty with suggestions."@en,
+        "Läkaren förklarar att hon pratade mer innan patienten grät, för att fylla patientens tvivel och osäkerhet med förslag."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Motivation für ausführliches Reden zur Füllung von Unsicherheiten"@de,
+        "Motivation for extensive talking to address uncertainties"@en,
+        "Motivation för omfattande prat för att hantera osäkerheter"@sv ;
+    :HasParticipant :Aerztin,
+        :Vorschlaege,
+        :ZweifelUnsicherheitPatientin ;
+    :WrittenBy :Aerztin .
+
+:Conflict_4 a :Conflict ;
+    :CreationDate "2024-06-01T12:03:00Z" ;
+    :ConflictDescription "Die Ärztin bewertet den Gesprächsausstieg als gut gelungen, da die Patientin das Gefühl hatte, zu wissen, was als Nächstes kommt."@de,
+        "The doctor assesses the conversation conclusion as well-managed, as the patient felt she knew what was coming next."@en,
+        "Läkaren bedömer samtalets avslutning som väl genomförd, då patienten kände att hon visste vad som skulle hända härnäst."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Positive Einschätzung des Gesprächsausstiegs"@de,
+        "Positive assessment of the conversation conclusion"@en,
+        "Positiv bedömning av samtalets avslutning"@sv ;
+    :HasParticipant :Aerztin,
+        :Gespraechsausstieg,
+        :Patientin ;
+    :WrittenBy :Aerztin .
+
+:Conflict_5 a :Conflict ;
+    :CreationDate "2024-06-01T12:04:00Z" ;
+    :ConflictDescription "Die Ärztin beschreibt sich als etwas hibbelig aufgrund der Situation, hatte aber insgesamt ein gutes Gefühl bezüglich des Gesprächs."@de,
+        "The doctor describes herself as a bit nervous due to the situation, but overall had a good feeling about the conversation."@en,
+        "Läkaren beskriver sig som lite nervös på grund av situationen, men hade överlag en bra känsla inför samtalet."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Gesamteindruck der Ärztin trotz Nervosität"@de,
+        "Doctor's overall impression despite nervousness"@en,
+        "Läkarens helhetsintryck trots nervositet"@sv ;
+    :HasParticipant :Aerztin,
+        :GefuehlAerztin,
+        :SituationHibbelig ;
+    :WrittenBy :Aerztin .
+
+:Conflict_6 a :Conflict ;
+    :CreationDate "2024-06-01T12:05:00Z" ;
+    :ConflictDescription "Kommilitonin 1 lobt die Ärztin dafür, dass sie konkret nach dem Informationsbedürfnis der Patientin gefragt und im Gesprächsverlauf darauf eingegangen ist."@de,
+        "Fellow student 1 praises the doctor for specifically asking about the patient's information needs and addressing them throughout the conversation."@en,
+        "Studiekamrat 1 berömmer läkaren för att hon specifikt frågade om patientens informationsbehov och tog hänsyn till det under samtalets gång."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Lob für das Erfragen des Informationsbedürfnisses"@de,
+        "Praise for inquiring about information needs"@en,
+        "Beröm för att fråga om informationsbehov"@sv ;
+    :HasParticipant :Aerztin,
+        :Gespraechsverlauf,
+        :Informationsbeduerfnis ;
+    :WrittenBy :Kommilitonin1 .
+
+:Conflict_7 a :Conflict ;
+    :CreationDate "2024-06-01T12:06:00Z" ;
+    :ConflictDescription "Kommilitonin 1 lobt die Ärztin dafür, dass sie die Sicherheit der Ergebnisse klar kommuniziert und dabei Widerstand der Patientin vermieden hat."@de,
+        "Fellow student 1 praises the doctor for clearly communicating the certainty of the results while avoiding patient resistance."@en,
+        "Studiekamrat 1 berömmer läkaren för att hon tydligt kommunicerade resultaten och samtidigt undvek patientens motstånd."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Lob für klare Kommunikation sicherer Ergebnisse und Vermeidung von Widerstand"@de,
+        "Praise for clear communication of secure results and avoidance of resistance"@en,
+        "Beröm för tydlig kommunikation av säkra resultat och undvikande av motstånd"@sv ;
+    :HasParticipant :Aerztin,
+        :ErgebnisseSicher,
+        :WiderstandPatientin ;
+    :WrittenBy :Kommilitonin1 .
+
+:Conflict_8 a :Conflict ;
+    :CreationDate "2024-06-01T12:07:00Z" ;
+    :ConflictDescription "Kommilitonin 1 lobt die Ärztin dafür, dass sie die emotionale Lage der Patientin sehr gut widergespiegelt und darauf eingegangen ist, auch wenn es energetisch, aber ruhig war."@de,
+        "Fellow student 1 praises the doctor for very well reflecting and addressing the patient's emotional state, even if it was energetic but calm."@en,
+        "Studiekamrat 1 berömmer läkaren för att hon mycket väl speglade och tog hänsyn till patientens känslomässiga tillstånd, även om det var energiskt men lugnt."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Lob für das Spiegeln der emotionalen Lage der Patientin"@de,
+        "Praise for reflecting the patient's emotional state"@en,
+        "Beröm för att spegla patientens känslomässiga tillstånd"@sv ;
+    :HasParticipant :Aerztin,
+        :EmotionaleLagePatientin,
+        :MoeglichkeitGenannt ;
+    :WrittenBy :Kommilitonin1 .
+
+:Conflict_9 a :Conflict ;
+    :CreationDate "2024-06-01T12:08:00Z" ;
+    :ConflictDescription "Kommilitonin 1 kritisiert, dass die Ärztin vielleicht etwas zu viel auf den Behandlungspfad 'keine Chemo mehr machen, einfach den Rest des Lebens genießen' eingegangen ist, da sie unsicher ist, ob metastasierte Sachen nicht doch noch operiert werden könnten."@de,
+        "Fellow student 1 criticizes that the doctor might have focused too much on the treatment path 'no more chemo, just enjoy the rest of life,' as she is unsure if metastasized conditions could still be operated on."@en,
+        "Studiekamrat 1 kritiserar att läkaren kanske fokuserade för mycket på behandlingsvägen 'ingen mer kemo, bara njut av resten av livet', då hon är osäker på om metastaserade tillstånd fortfarande skulle kunna opereras."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Kritik an zu starkem Fokus auf 'keine Chemo mehr'"@de,
+        "Critique on too strong a focus on 'no more chemo'"@en,
+        "Kritik mot för starkt fokus på 'ingen mer kemo'"@sv ;
+    :HasComment :Comment_1 ;
+    :HasParticipant :Aerztin,
+        :BehandlungspfadChemo,
+        :MetastasierteSachen ;
+    :WrittenBy :Kommilitonin1 .
+
+:Comment_1 a :Comment ;
+    :CreationDate "2024-06-01T12:09:00Z" ;
+    :CommentDescription "Die Ärztin erklärt, dass sie den Behandlungspfad nur kurz angeboten hat und selbst unsicher war, da es nicht das Hauptthema des Gesprächs war."@de,
+        "The doctor explains that she only briefly offered the treatment path and was unsure herself, as it was not the main topic of the conversation."@en,
+        "Läkaren förklarar att hon bara kort erbjöd behandlingsvägen och själv var osäker, då det inte var samtalets huvudämne."@sv ;
+    :HasComment :Comment_2 ;
+    :WrittenBy :Aerztin .
+
+:Comment_2 a :Comment ;
+    :CreationDate "2024-06-01T12:10:00Z" ;
+    :CommentDescription "Kommilitonin 1 bestätigt, dass es nicht das Hauptthema des Gesprächs war und lobt die Ärztin erneut für die gute Gesprächsführung."@de,
+        "Fellow student 1 confirms that it was not the main topic of the conversation and praises the doctor again for the good conversation management."@en,
+        "Studiekamrat 1 bekräftar att det inte var samtalets huvudämne och berömmer läkaren igen för den goda samtalshanteringen."@sv ;
+    :WrittenBy :Kommilitonin1 .
+
+:Conflict_10 a :Conflict ;
+    :CreationDate "2024-06-01T12:11:00Z" ;
+    :ConflictDescription "Kommilitonin 2 schließt sich den positiven Punkten an und hebt besonders hervor, wie gut die Ärztin das Informationsbedürfnis erfragt und alle Fachbegriffe verständlich erklärt hat."@de,
+        "Fellow student 2 agrees with the positive points and particularly emphasizes how well the doctor inquired about the information need and explained all technical terms understandably."@en,
+        "Studiekamrat 2 instämmer i de positiva punkterna och betonar särskilt hur väl läkaren frågade om informationsbehovet och förklarade alla facktermer på ett förståeligt sätt."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Allgemeine Zustimmung und Lob für Informationsbedarf und Fachbegriffserklärung"@de,
+        "General agreement and praise for information needs and explanation of technical terms"@en,
+        "Allmänt samtycke och beröm för informationsbehov och förklaring av facktermer"@sv ;
+    :HasParticipant :Aerztin,
+        :FachbegriffeErklaeren,
+        :Informationsbeduerfnis ;
+    :WrittenBy :Kommilitonin2 .
+
+:Conflict_11 a :Conflict ;
+    :CreationDate "2024-06-01T12:12:00Z" ;
+    :ConflictDescription "Kommilitonin 2 lobt die Ärztin dafür, dass sie die sichere Diagnose und die Prognose ehrlich kommuniziert hat, ohne falsche Versprechungen zu machen."@de,
+        "Fellow student 2 praises the doctor for honestly communicating the secure diagnosis and prognosis, without making false promises."@en,
+        "Studiekamrat 2 berömmer läkaren för att hon ärligt kommunicerade den säkra diagnosen och prognosen, utan att ge falska löften."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Lob für ehrliche Kommunikation von Diagnose und Prognose"@de,
+        "Praise for honest communication of diagnosis and prognosis"@en,
+        "Beröm för ärlig kommunikation av diagnos och prognos"@sv ;
+    :HasParticipant :Aerztin,
+        :ReisePrognose,
+        :SichereDiagnose ;
+    :WrittenBy :Kommilitonin2 .
+
+:Conflict_12 a :Conflict ;
+    :CreationDate "2024-06-01T12:13:00Z" ;
+    :ConflictDescription "Kommilitonin 2 lobt die Ärztin dafür, dass sie die Patientin immer wieder in die aktuelle Situation zurückgeholt hat, anstatt sich auf Zukunftsprobleme zu versteifen."@de,
+        "Fellow student 2 praises the doctor for repeatedly bringing the patient back to the current situation, instead of dwelling on future problems."@en,
+        "Studiekamrat 2 berömmer läkaren för att hon upprepade gånger förde patienten tillbaka till den aktuella situationen, istället för att fastna i framtida problem."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Lob für den Fokus auf die aktuelle Situation der Patientin"@de,
+        "Praise for focusing on the patient's current situation"@en,
+        "Beröm för att fokusera på patientens nuvarande situation"@sv ;
+    :HasParticipant :Aerztin,
+        :AktuelleSituationFokus,
+        :ZukunftsproblemePatientin ;
+    :WrittenBy :Kommilitonin2 .
+
+:Conflict_13 a :Conflict ;
+    :CreationDate "2024-06-01T12:14:00Z" ;
+    :ConflictDescription "Kommilitonin 2 fand es sehr gut, dass die Ärztin bei der Frage, was die Patientin tun kann, den Fokus auf psychische Aspekte wie Ruhe und schöne Unternehmungen legte, anstatt in den Fallstrick von Ernährungstipps zu geraten."@de,
+        "Fellow student 2 found it very good that the doctor, when asked what the patient could do, focused on psychological aspects such as rest and pleasant activities, instead of falling into the pitfall of dietary advice."@en,
+        "Studiekamrat 2 tyckte det var mycket bra att läkaren, när hon fick frågan om vad patienten kunde göra, fokuserade på psykologiska aspekter som vila och trevliga aktiviteter, istället för att hamna i fällan med kostråd."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Lob für die Berücksichtigung psychischer Aspekte bei Ratschlägen"@de,
+        "Praise for considering psychological aspects in advice"@en,
+        "Beröm för att beakta psykologiska aspekter i råd"@sv ;
+    :HasParticipant :Aerztin,
+        :PsychischeAspekte,
+        :RuheSchoenesUnternehmen ;
+    :WrittenBy :Kommilitonin2 .
+
+:Conflict_14 a :Conflict ;
+    :CreationDate "2024-06-01T12:15:00Z" ;
+    :ConflictDescription "Kommilitonin 2 lobt das Angebot der Ärztin, am Ende ein gemeinsames Gespräch zu führen und der Patientin die Möglichkeit zu geben, in einem geschützten Raum zu bleiben."@de,
+        "Fellow student 2 praises the doctor's offer to have a joint conversation at the end and to give the patient the option to stay in a protected space."@en,
+        "Studiekamrat 2 berömmer läkarens erbjudande att ha ett gemensamt samtal i slutet och att ge patienten möjlighet att stanna i ett skyddat utrymme."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Lob für das Angebot eines gemeinsamen Gesprächs und geschützten Raums"@de,
+        "Praise for offering a joint conversation and protected space"@en,
+        "Beröm för att erbjuda ett gemensamt samtal och skyddat utrymme"@sv ;
+    :HasParticipant :Aerztin,
+        :GemeinsamesGespraechAngebot,
+        :GeschuetzterRaum,
+        :Patientin ;
+    :WrittenBy :Kommilitonin2 .
+
+:Conflict_15 a :Conflict ;
+    :CreationDate "2024-06-01T12:16:00Z" ;
+    :ConflictDescription "Kommilitonin 2 fasst zusammen, dass sie alles in allem viel Positives gefunden hat und das Gespräch als sehr gelungen für die anspruchsvolle Situation empfand."@de,
+        "Fellow student 2 summarizes that she found many positive aspects overall and considered the conversation very successful for the demanding situation."@en,
+        "Studiekamrat 2 sammanfattar att hon överlag fann många positiva aspekter och ansåg samtalet mycket lyckat för den krävande situationen."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Gesamteindruck eines gelungenen Gesprächs"@de,
+        "Overall impression of a successful conversation"@en,
+        "Helhetsintryck av ett lyckat samtal"@sv ;
+    :HasParticipant :Aerztin,
+        :Kommilitonin2 ;
+    :WrittenBy :Kommilitonin2 .
+
+:Conflict_16 a :Conflict ;
+    :CreationDate "2024-06-01T12:17:00Z" ;
+    :ConflictDescription "Die Patientin schließt sich den positiven Rückmeldungen an und bestätigt, dass sie die Ärztin als sehr präsent, empathisch und raumgebend empfand."@de,
+        "The patient agrees with the positive feedback and confirms that she perceived the doctor as very present, empathetic, and giving space."@en,
+        "Patienten instämmer i den positiva feedbacken och bekräftar att hon upplevde läkaren som mycket närvarande, empatisk och utrymmesgivande."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Patientin stimmt positiven Rückmeldungen zu"@de,
+        "Patient agrees with positive feedback"@en,
+        "Patienten instämmer i positiv feedback"@sv ;
+    :HasParticipant :Aerztin,
+        :Patientin,
+        :PraesentEmpathisch,
+        :RaumGeben ;
+    :WrittenBy :Patientin .
+
+:Conflict_17 a :Conflict ;
+    :CreationDate "2024-06-01T12:18:00Z" ;
+    :ConflictDescription "Die Patientin war am Anfang irritiert von der Frage nach ihrem Informationsbedürfnis, da sie erwartete, einfach zu erfahren, was mit ihr los ist."@de,
+        "The patient was initially irritated by the question about her information need, as she expected to simply be told what was wrong with her."@en,
+        "Patienten var initialt irriterad över frågan om hennes informationsbehov, då hon förväntade sig att helt enkelt få veta vad som var fel med henne."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Anfängliche Irritation über Informationsbedürfnis-Frage"@de,
+        "Initial irritation about information need question"@en,
+        "Initial irritation över frågan om informationsbehov"@sv ;
+    :HasParticipant :Informationsbeduerfnis,
+        :Patientin ;
+    :WrittenBy :Patientin .
+
+:Conflict_18 a :Conflict ;
+    :CreationDate "2024-06-01T12:19:00Z" ;
+    :ConflictDescription "Die Patientin empfand die Klarheit der Ärztin, die ihr genau sagte, worum es geht und keine falschen Versprechungen machte, als sehr wichtig und sicherheitsgebend."@de,
+        "The patient found the doctor's clarity, telling her exactly what was going on and making no false promises, to be very important and reassuring."@en,
+        "Patienten fann läkarens klarhet, som exakt berättade vad som pågick och inte gav några falska löften, vara mycket viktig och trygghetsskapande."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Klarheit und Sicherheit durch die Ärztin"@de,
+        "Clarity and certainty provided by the doctor"@en,
+        "Klarhet och trygghet från läkaren"@sv ;
+    :HasParticipant :Aerztin,
+        :Klarheit,
+        :SicherheitPatientin ;
+    :WrittenBy :Patientin .
+
+:Conflict_19 a :Conflict ;
+    :CreationDate "2024-06-01T12:20:00Z" ;
+    :ConflictDescription "Die Patientin hatte das Gefühl, dass die Ärztin ihr die Hand reichte und ihr Hoffnung gab, indem sie immer wieder betonte, für sie da zu sein und dass es viele Möglichkeiten gibt, den Rest des Lebens schön zu verbringen."@de,
+        "The patient felt that the doctor reached out to her and gave her hope by repeatedly emphasizing that she was there for her and that there were many ways to spend the rest of her life beautifully."@en,
+        "Patienten kände att läkaren räckte ut en hand och gav henne hopp genom att upprepade gånger betona att hon fanns där för henne och att det fanns många sätt att tillbringa resten av livet på ett vackert sätt."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Gefühl der Unterstützung und Hoffnung"@de,
+        "Feeling of support and hope"@en,
+        "Känsla av stöd och hopp"@sv ;
+    :HasParticipant :Aerztin,
+        :UnterstuetzungPatient,
+        :YouNeverWalkAloneMetapher ;
+    :WrittenBy :Patientin .
+
+:Conflict_20 a :Conflict ;
+    :CreationDate "2024-06-01T12:21:00Z" ;
+    :ConflictDescription "Die Patientin lobt, dass die Ärztin ihr Raum für Emotionen gab und ihr die nötige Ruhe verschaffte, was ihr wieder Sicherheit gab, nachdem sie zwischendurch den Boden unter den Füßen verloren hatte."@de,
+        "The patient praises that the doctor gave her space for emotions and provided her with the necessary calm, which gave her back a sense of security after she had temporarily lost her footing."@en,
+        "Patienten berömmer att läkaren gav henne utrymme för känslor och gav henne den nödvändiga lugnet, vilket gav henne tillbaka en känsla av trygghet efter att hon tillfälligt hade tappat fotfästet."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Raum für Emotionen und wiedergewonnene Sicherheit"@de,
+        "Space for emotions and regained certainty"@en,
+        "Utrymme för känslor och återvunnen trygghet"@sv ;
+    :HasParticipant :Aerztin,
+        :RaumGeben,
+        :SicherheitPatientin ;
+    :WrittenBy :Patientin .
+
+:Conflict_21 a :Conflict ;
+    :CreationDate "2024-06-01T12:22:00Z" ;
+    :ConflictDescription "Die Patientin fand das Ende des Gesprächs wunderbar, da die Ärztin ihr Hilfe anbot und vorschlug, ihren Mann anzurufen, was ihr das Gefühl gab, gut aufgefangen zu sein."@de,
+        "The patient found the end of the conversation wonderful, as the doctor offered her help and suggested calling her husband, which made her feel well supported."@en,
+        "Patienten tyckte att slutet av samtalet var underbart, då läkaren erbjöd henne hjälp och föreslog att ringa hennes man, vilket fick henne att känna sig väl omhändertagen."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Lob für Hilfeangebot und Einbeziehung des Ehemanns"@de,
+        "Praise for offer of help and involvement of husband"@en,
+        "Beröm för erbjudande om hjälp och involvering av make"@sv ;
+    :HasParticipant :Aerztin,
+        :BodenVerlorenPatientin,
+        :EhemannEinbeziehen,
+        :HilfeAngebot ;
+    :WrittenBy :Patientin .
+
+:Conflict_22 a :Conflict ;
+    :CreationDate "2024-06-01T12:23:00Z" ;
+    :ConflictDescription "Der Dozent bewertet das Gespräch als sehr gut und beschreibt die Ärztin als 'sehr straight', die ihre Rolle als Hausärztin klug und effizient ausfüllte, indem sie sich trotz Zeitdruck Zeit nahm."@de,
+        "The lecturer assesses the conversation as very good and describes the doctor as 'very straight,' fulfilling her role as a general practitioner cleverly and efficiently by taking time despite time pressure."@en,
+        "Föreläsaren bedömer samtalet som mycket bra och beskriver läkaren som 'mycket rak', som fyllde sin roll som allmänläkare smart och effektivt genom att ta sig tid trots tidspress."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Dozent lobt Gespräch als sehr gut und Ärztin als 'straight'"@de,
+        "Lecturer praises conversation as very good and doctor as 'straight'"@en,
+        "Föreläsare berömmer samtalet som mycket bra och läkaren som 'rak'"@sv ;
+    :HasParticipant :Aerztin,
+        :RolleHausaerztin,
+        :TagesprogrammZeitdruck,
+        :ZeitNehmen ;
+    :WrittenBy :Dozent .
+
+:Conflict_23 a :Conflict ;
+    :CreationDate "2024-06-01T12:24:00Z" ;
+    :ConflictDescription "Der Dozent gibt den Tipp, Patienten nach ihren eigenen Erklärungen für Beschwerden zu fragen, um einen besseren Einstieg ins Gespräch zu finden und auf ihre Sorgen einzugehen."@de,
+        "The lecturer advises asking patients for their own explanations for complaints to better initiate the conversation and address their concerns."@en,
+        "Föreläsaren tipsar om att fråga patienter om deras egna förklaringar till besvär för att bättre inleda samtalet och bemöta deras oro."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Tipp zur Erfragung eigener Patientenerklärungen für Beschwerden"@de,
+        "Tip for inquiring about patients' own explanations for complaints"@en,
+        "Tips för att fråga om patienters egna förklaringar till besvär"@sv ;
+    :HasParticipant :BeschwerdenEigeneErklaerung,
+        :Dozent,
+        :Patientin ;
+    :WrittenBy :Dozent .
+
+:Conflict_24 a :Conflict ;
+    :CreationDate "2024-06-01T12:25:00Z" ;
+    :ConflictDescription "Der Dozent merkt an, dass die Ärztin etwas schnell auf die Themen Lebensqualität und Lebenszeitnutzen gekommen ist, obwohl dies im Alltag anders gehandhabt werden sollte."@de,
+        "The lecturer notes that the doctor addressed the topics of quality of life and life expectancy somewhat quickly, although this should be handled differently in everyday practice."@en,
+        "Föreläsaren noterar att läkaren tog upp ämnena livskvalitet och livslängd något snabbt, även om detta bör hanteras annorlunda i vardagspraktiken."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Kritik an zu frühem Ansprechen von Lebensqualität und Lebenszeitnutzen"@de,
+        "Critique on addressing quality of life and life expectancy too early"@en,
+        "Kritik mot att ta upp livskvalitet och livslängd för tidigt"@sv ;
+    :HasParticipant :Aerztin,
+        :Lebensqualitaet,
+        :Lebenszeitnutzen ;
+    :WrittenBy :Dozent .
+
+:Conflict_25 a :Conflict ;
+    :CreationDate "2024-06-01T12:26:00Z" ;
+    :ConflictDescription "Der Dozent betont, dass bei einer Erstdiagnose immer ein standardisierter Ablauf eingehalten werden sollte, insbesondere die Vorstellung in einer Tumorkonferenz, um dem Arzt Sicherheit zu geben."@de,
+        "The lecturer emphasizes that a standardized procedure should always be followed for an initial diagnosis, especially presentation in a tumor board, to provide certainty to the doctor."@en,
+        "Föreläsaren betonar att ett standardiserat förfarande alltid bör följas vid en första diagnos, särskilt presentation vid en tumörkonferens, för att ge läkaren trygghet."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Empfehlung für standardisierten Ablauf bei Erstdiagnose und Tumorkonferenz"@de,
+        "Recommendation for standardized procedure for initial diagnosis and tumor board"@en,
+        "Rekommendation för standardiserat förfarande vid första diagnos och tumörkonferens"@sv ;
+    :HasParticipant :AblaufStandardisiert,
+        :Dozent,
+        :Erstdiagnose,
+        :Tumorkonferenz ;
+    :WrittenBy :Dozent .
+
+:Conflict_26 a :Conflict ;
+    :CreationDate "2024-06-01T12:27:00Z" ;
+    :ConflictDescription "Der Dozent hebt hervor, dass die Empfehlung und Indikationsstellung ein Prozess ist, der gemeinsam mit dem Patienten besprochen werden muss, um dessen Vorstellungen und Wünsche einzubeziehen, auch wenn dies bedeutet, von Expertenempfehlungen abzuweichen."@de,
+        "The lecturer emphasizes that the recommendation and indication setting is a process that must be discussed jointly with the patient to include their ideas and wishes, even if it means deviating from expert recommendations."@en,
+        "Föreläsaren betonar att rekommendationen och indikationsställningen är en process som måste diskuteras gemensamt med patienten för att inkludera deras idéer och önskemål, även om det innebär att avvika från expertutlåtanden."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Wichtigkeit der Patienteneinbeziehung in die Therapieentscheidung"@de,
+        "Importance of patient involvement in therapy decisions"@en,
+        "Vikten av patientmedverkan i terapibeslut"@sv ;
+    :HasParticipant :Dozent,
+        :EinbeziehungPatientenwunsch,
+        :Patientenwunsch,
+        :ProzessEntscheidungsfindung ;
+    :WrittenBy :Dozent .
+
+:Conflict_27 a :Conflict ;
+    :CreationDate "2024-06-01T12:28:00Z" ;
+    :ConflictDescription "Der Dozent empfiehlt, bei einer schwerwiegenden Diagnose immer eine Zweitmeinung einzuholen, um die Empfehlung auf zwei Beine zu stellen und zusätzliche Sicherheit zu schaffen."@de,
+        "The lecturer recommends always seeking a second opinion for a serious diagnosis to solidify the recommendation and create additional certainty."@en,
+        "Föreläsaren rekommenderar att alltid söka en andra åsikt vid en allvarlig diagnos för att stärka rekommendationen och skapa ytterligare trygghet."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Empfehlung für Zweitmeinung bei schwerwiegender Diagnose"@de,
+        "Recommendation for second opinion in serious diagnosis"@en,
+        "Rekommendation för andra åsikt vid allvarlig diagnos"@sv ;
+    :HasParticipant :Dozent,
+        :SchwerwiegendeDiagnose,
+        :Zweitmeinung ;
+    :WrittenBy :Dozent .
+
+:Conflict_28 a :Conflict ;
+    :CreationDate "2024-06-01T12:29:00Z" ;
+    :ConflictDescription "Der Dozent beobachtet, dass das Angebot eines Taschentuchs von der Patientin erst im Verlauf des Gesprächs wahrgenommen wurde."@de,
+        "The lecturer observes that the offer of a tissue was only noticed by the patient later in the conversation."@en,
+        "Föreläsaren observerar att erbjudandet om en näsduk först uppmärksammades av patienten senare under samtalet."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Beobachtung zum Angebot eines Taschentuchs"@de,
+        "Observation on offering a tissue"@en,
+        "Observation om att erbjuda en näsduk"@sv ;
+    :HasParticipant :Aerztin,
+        :Patientin,
+        :Taschentuch ;
+    :WrittenBy :Dozent .
+
+:Conflict_29 a :Conflict ;
+    :CreationDate "2024-06-01T12:30:00Z" ;
+    :ConflictDescription "Der Dozent rät, bei schwerwiegenden Diagnosen eine gestaffelte Kommunikationsstrategie zu verwenden, indem man zunächst mildere Formulierungen wie 'Tumor gefunden' nutzt und erst auf Nachfrage klarer wird."@de,
+        "The lecturer advises using a staggered communication strategy for serious diagnoses, initially using milder phrasing like 'tumor found' and only becoming clearer upon inquiry."@en,
+        "Föreläsaren råder att använda en stegvis kommunikationsstrategi vid allvarliga diagnoser, genom att initialt använda mildere formuleringar som 'tumör hittad' och först bli tydligare vid förfrågan."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Beratung zur gestaffelten Kommunikation bei schwierigen Diagnosen"@de,
+        "Advice on staggered communication for difficult diagnoses"@en,
+        "Råd om stegvis kommunikation vid svåra diagnoser"@sv ;
+    :HasParticipant :Dozent,
+        :Gespraechsstrategie,
+        :GestaffelteKommunikation,
+        :SchwerwiegendeDiagnose ;
+    :WrittenBy :Dozent .
+
+:Conflict_30 a :Conflict ;
+    :CreationDate "2024-06-01T12:31:00Z" ;
+    :ConflictDescription "Der Dozent lobt die Ärztin für die charmante Verwendung der 'You Never Walk Alone'-Metapher, die dem Patienten das Gefühl gab, nicht allein zu sein, und für das seltene Angebot, in einem geschützten Raum zu bleiben."@de,
+        "The lecturer praises the doctor for the charming use of the 'You Never Walk Alone' metaphor, which made the patient feel not alone, and for the rare offer to stay in a protected space."@en,
+        "Föreläsaren berömmer läkaren för den charmiga användningen av metaforen 'You Never Walk Alone', som fick patienten att känna sig inte ensam, och för det sällsynta erbjudandet att stanna i ett skyddat utrymme."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Lob für die 'You Never Walk Alone'-Metapher und das Angebot eines geschützten Raums"@de,
+        "Praise for the 'You Never Walk Alone' metaphor and the offer of a protected space"@en,
+        "Beröm för metaforen 'You Never Walk Alone' och erbjudandet om ett skyddat utrymme"@sv ;
+    :HasParticipant :Aerztin,
+        :GeschuetzterRaum,
+        :YouNeverWalkAloneMetapher ;
+    :WrittenBy :Dozent .
