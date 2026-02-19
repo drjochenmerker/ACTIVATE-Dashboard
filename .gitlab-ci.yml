@@ -31,7 +31,7 @@ test-docker:
         - git submodule sync
         - git submodule update --init --recursive
         - docker network create activate-network || true
-        - echo "=== DEBUG: Checking rdflib/data/backup contents ===" && find rdflib/data/backup -type f -name "*.ttl" | head -20 || echo "No TTL files found or directory missing"
+        - ls -la rdflib/data/backup/ 2>&1 || echo "Directory missing"
     script:
         - docker compose build
         - docker compose up -d
