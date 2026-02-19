@@ -11,6 +11,9 @@ import uvicorn
 from lti import router as lti_router
 
 DATA_DIR = "./data/backup"
+# Ensure DATA_DIR exists
+if not os.path.exists(DATA_DIR):
+    raise FileNotFoundError(f"ERROR: Required directory '{DATA_DIR}' does not exist. Check volume mount or entrypoint script.")
 FILES = [file for file in os.listdir(DATA_DIR) if file.endswith(".ttl")]
 
 # Log data source
