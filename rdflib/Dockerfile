@@ -8,6 +8,7 @@ RUN mkdir -p /app/data_bundled/backup && \
     if [ -d ./data/backup ]; then \
       cp -r ./data/backup /app/data_bundled/; \
     fi && \
+    sed -i 's/\r$//' /app/entrypoint.sh && \
     chmod +x /app/entrypoint.sh
 
 RUN pip install --upgrade pip \

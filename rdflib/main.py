@@ -13,6 +13,15 @@ from lti import router as lti_router
 DATA_DIR = "./data/backup"
 FILES = [file for file in os.listdir(DATA_DIR) if file.endswith(".ttl")]
 
+# Log data source
+print(f"\n[INFO] Loading TTL files from: {os.path.abspath(DATA_DIR)}")
+print(f"[INFO] Found {len(FILES)} TTL file(s):")
+for file in sorted(FILES):
+    file_path = os.path.join(DATA_DIR, file)
+    size = os.path.getsize(file_path)
+    print(f"  - {file} ({size} bytes)")
+print()
+
 # Create dataset with Namespaces and dynamically define graphs
 ds = Dataset()
 graphs = {file: ds.graph(URIRef(f"http://activate.htwk-leipzig.de/graph/{file[:-4].replace(' ', '_')}")) for file in FILES}
