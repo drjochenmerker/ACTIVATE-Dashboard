@@ -19,7 +19,7 @@ print(f"[INFO] Found {len(FILES)} TTL file(s):")
 for file in sorted(FILES):
     file_path = os.path.join(DATA_DIR, file)
     size = os.path.getsize(file_path)
-    print(f"  - {file} ({size} bytes)")
+    print(f"[INFO]  - {file} ({size} bytes)")
 print()
 
 # Create dataset with Namespaces and dynamically define graphs
