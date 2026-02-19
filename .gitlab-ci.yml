@@ -33,15 +33,11 @@ test-docker:
         - git submodule sync
         - git submodule update --init --recursive
         - docker network create activate-network || true
-        - echo "=== Checking file contents ===" && head -c 100 rdflib/data/backup/Vocabulary.ttl 2>&1
-        - echo "=== Files in rdflib/data/backup ===" && find rdflib/data/backup -name "*.ttl" -type f 2>/dev/null | wc -l
+        - echo "=== TTL files found ===" && find rdflib/data/backup -name "*.ttl" -type f 2>/dev/null | wc -l
     script:
-        - docker compose build 2>&1 | grep -i "data_backup\|copied\|TTL" || echo "No data_backup mentions in build"
+        - docker compose build
         - docker compose up -d
-        - sleep 3
-        - echo "=== Container Logs ===" && docker compose logs backend 2>&1 | head -100
-        - sleep 7
-        - echo "=== Inside Container Check ===" && docker exec activate-dashboard-backend-1 ls -la /app/data/backup/ 2>&1 || echo "Cannot access container data"
+        - sleep 10
         - docker compose ps
         - |
             FAILED_CONTAINERS=$(docker compose ps --format json | grep -v '"State":"running"' || true)

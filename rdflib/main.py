@@ -10,50 +10,17 @@ import uvicorn
 
 from lti import router as lti_router
 
-# ===== DEBUG DIAGNOSTICS =====
-print("=" * 60)
-print("DEBUG: Startup Diagnostics")
-print("=" * 60)
-print(f"Working Directory: {os.getcwd()}")
-
 # Determine DATA_DIR - try volume mount first, fallback to bundled
 DATA_DIR = "./data/backup"
 FALLBACK_DIR = "/app/data_backup"
 
-print(f"Checking volume mount: {DATA_DIR}")
-print(f"  Exists: {os.path.exists(DATA_DIR)}")
-if os.path.exists(DATA_DIR):
-    print(f"  Is directory: {os.path.isdir(DATA_DIR)}")
-    items = os.listdir(DATA_DIR) if os.path.isdir(DATA_DIR) else []
-    ttl_count = len([f for f in items if f.endswith('.ttl')])
-    print(f"  TTL files in mount: {ttl_count}")
-
-print(f"\nChecking fallback: {FALLBACK_DIR}")
-print(f"  Exists: {os.path.exists(FALLBACK_DIR)}")
-if os.path.exists(FALLBACK_DIR):
-    items = os.listdir(FALLBACK_DIR) if os.path.isdir(FALLBACK_DIR) else []
-    ttl_count = len([f for f in items if f.endswith('.ttl')])
-    print(f"  TTL files in fallback: {ttl_count}")
-
-# Use volume mount if it has files, otherwise use fallback
+# Use volume mount if it has files, otherwise use bundled fallback
 if os.path.exists(DATA_DIR) and os.path.isdir(DATA_DIR) and os.listdir(DATA_DIR):
-    print(f"\n✓ Using volume mount: {DATA_DIR}")
+    pass  # Use volume mount
 elif os.path.exists(FALLBACK_DIR) and os.listdir(FALLBACK_DIR):
-    DATA_DIR = FALLBACK_DIR
-    print(f"\n✓ Volume mount empty, using fallback: {DATA_DIR}")
-else:
-    print(f"\n✗ No data found in either location - creating empty {DATA_DIR}")
-    os.makedirs(DATA_DIR, exist_ok=True)
+    DATA_DIR = FALLBACK_DIR  # Volume empty, use bundled data
 
-# Safely list files
-FILES = []
-if os.path.exists(DATA_DIR) and os.path.isdir(DATA_DIR):
-    FILES = [file for file in os.listdir(DATA_DIR) if file.endswith(".ttl")]
-
-print(f"\nLoaded TTL files: {len(FILES)}")
-for file in sorted(FILES):
-    print(f"  - {file}")
-print("=" * 60 + "\n")
+FILES = [file for file in os.listdir(DATA_DIR) if file.endswith(".ttl")] if os.path.exists(DATA_DIR) else []
 
 # Create dataset with Namespaces and dynamically define graphs
 ds = Dataset()
