@@ -26,13 +26,14 @@ test-docker:
         - docker:dind
     dependencies: []
     before_script:
-        - apk add --no-cache docker-compose git openssh-client
+        - apk add --no-cache docker-compose git git-lfs openssh-client
         - git config --global url."https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.dit.htwk-leipzig.de/".insteadOf "git@gitlab.dit.htwk-leipzig.de:"
+        - git lfs install --skip-repo
+        - git lfs pull
         - git submodule sync
         - git submodule update --init --recursive
         - docker network create activate-network || true
-        - ls -la rdflib/data/backup/ 2>&1 || echo "Directory missing"
-        - echo "=== Build Context Check ===" && find rdflib/data/backup -name "*.ttl" | wc -l
+        - echo "=== Files in rdflib/data/backup ===" && find rdflib/data/backup -name "*.ttl" -type f 2>/dev/null | wc -l
     script:
         - docker compose build 2>&1 | tail -50
         - docker compose up -d
