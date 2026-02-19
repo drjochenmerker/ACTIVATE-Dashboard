@@ -10,8 +10,56 @@ import uvicorn
 
 from lti import router as lti_router
 
+# ===== DEBUG DIAGNOSTICS =====
+print("=" * 60)
+print("DEBUG: Startup Diagnostics")
+print("=" * 60)
+print(f"Working Directory: {os.getcwd()}")
+print(f"Python Path: {os.path.abspath('.')}")
+
 DATA_DIR = "./data/backup"
+print(f"\nLooking for DATA_DIR: {DATA_DIR}")
+print(f"Absolute path: {os.path.abspath(DATA_DIR)}")
+print(f"Exists: {os.path.exists(DATA_DIR)}")
+print(f"Is Directory: {os.path.isdir(DATA_DIR)}")
+
+# Show structure of ./data
+print("\n--- Full ./data structure ---")
+if os.path.exists("./data"):
+    for root, dirs, files in os.walk("./data"):
+        level = root.replace("./data", "").count(os.sep)
+        indent = " " * 2 * level
+        print(f"{indent}{os.path.basename(root)}/")
+        sub_indent = " " * 2 * (level + 1)
+        for file in files:
+            print(f"{sub_indent}{file}")
+else:
+    print("./data directory does not exist!")
+
+# List contents of DATA_DIR
+print(f"\n--- Contents of DATA_DIR ({DATA_DIR}) ---")
+if os.path.exists(DATA_DIR):
+    try:
+        contents = os.listdir(DATA_DIR)
+        print(f"Total items: {len(contents)}")
+        for item in sorted(contents):
+            item_path = os.path.join(DATA_DIR, item)
+            if os.path.isfile(item_path):
+                size = os.path.getsize(item_path)
+                print(f"  FILE: {item} ({size} bytes)")
+            elif os.path.isdir(item_path):
+                print(f"  DIR:  {item}/")
+    except Exception as e:
+        print(f"Error listing directory: {e}")
+else:
+    print(f"DATA_DIR does not exist: {DATA_DIR}")
+
 FILES = [file for file in os.listdir(DATA_DIR) if file.endswith(".ttl")]
+print(f"\n--- TTL Files Found ---")
+print(f"Total TTL files: {len(FILES)}")
+for file in sorted(FILES):
+    print(f"  - {file}")
+print("=" * 60 + "\n")
 
 # Create dataset with Namespaces and dynamically define graphs
 ds = Dataset()
