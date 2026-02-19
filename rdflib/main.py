@@ -10,17 +10,8 @@ import uvicorn
 
 from lti import router as lti_router
 
-# Determine DATA_DIR - try volume mount first, fallback to bundled
 DATA_DIR = "./data/backup"
-FALLBACK_DIR = "/app/data_backup"
-
-# Use volume mount if it has files, otherwise use bundled fallback
-if os.path.exists(DATA_DIR) and os.path.isdir(DATA_DIR) and os.listdir(DATA_DIR):
-    pass  # Use volume mount
-elif os.path.exists(FALLBACK_DIR) and os.listdir(FALLBACK_DIR):
-    DATA_DIR = FALLBACK_DIR  # Volume empty, use bundled data
-
-FILES = [file for file in os.listdir(DATA_DIR) if file.endswith(".ttl")] if os.path.exists(DATA_DIR) else []
+FILES = [file for file in os.listdir(DATA_DIR) if file.endswith(".ttl")]
 
 # Create dataset with Namespaces and dynamically define graphs
 ds = Dataset()
