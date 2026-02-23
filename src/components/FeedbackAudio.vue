@@ -35,6 +35,7 @@ const sessionStore = useSessionStore()
 const selectedFile = ref<File | null>(null);
 const diarizationResult = ref<DiarizationSuccessResult | null>(null);
 const diarizationError = ref<DiarizationErrorResult | null>(null);
+const adjustedTranscript = ref<DiarizationSuccessResult | null>(null); // transcript with sorted speaker ids according to first utterance
 
 const mappedTranscript = ref<DiarizationSuccessResult | null>(null);
 const mappedSpeakers = ref<Record<string, string> | null>(null); // speaker to role mapping array
@@ -52,7 +53,7 @@ const audioContext = new (window.AudioContext || (window as any).webkitAudioCont
 // refs for polling job status
 const jobId = ref<string | null>(null);
 const isPolling = ref(false);
-const pollingInterval = ref<NodeJS.Timeout | null>(null);
+const pollingInterval = ref<ReturnType<typeof setInterval> | null>(null);
 const pollingMessage = ref<string>("");
 
 // refs for translation
@@ -211,8 +212,34 @@ const getRoles = async (): Promise<string[]> => {
     return flattenRoles(sessionStore.availableRoles as RoleNode, sessionStore.activeLanguage);
 };
 
+// FUNCTION TO CORRECT THE SPEAKER ID SO IT IS SORTED FOR SPEAKER_00 TO SPEAKER_XX ACCORDING TO ITS FIRST UTTERANCE
+const corectedIdTranscript = (transcript: DiarizationSuccessResult): DiarizationSuccessResult => {
+    const speakerMap = new Map<string, string>();
+    let speakerCount = 0;
+
+    const sortedIdsTranscript: DiarizationSuccessResult = {
+        ...transcript,
+        diarized_transcription: transcript.diarized_transcription
+            .sort((a, b) => a.start - b.start) // sort by start time
+            .map((entry) => {
+                if (!speakerMap.has(entry.speaker)) {
+                    // Assign a new standardized name (e.g., SPEAKER_00)
+                    const newName = `SPEAKER_${speakerCount.toString().padStart(2, "0")}`;
+                    speakerMap.set(entry.speaker, newName);
+                    speakerCount++;
+                }
+                return {
+                    ...entry,
+                    speaker: speakerMap.get(entry.speaker) || entry.speaker
+                };
+            })
+    };
+
+    // console.log("Transcript with corrected speaker IDs:", sortedIdsTranscript);
+    return sortedIdsTranscript;
+};
+// FUNCTION TO EXTRACT FIRST UTTERANCE OF EACH SPEAKER FROM THE TRANSCRIPT
 const firstUtterance = (transcript: DiarizationSuccessResult): DiarizationSuccessResult => {
-    // FUNCTION TO EXTRACT FIRST UTTERANCE OF EACH SPEAKER FROM THE TRANSCRIPT
     const firstUttTranscript: DiarizationSuccessResult = {
         ...transcript,
         diarized_transcription: []
@@ -227,7 +254,7 @@ const firstUtterance = (transcript: DiarizationSuccessResult): DiarizationSucces
         }
     }
 
-    console.log("First utterance transcript:", firstUttTranscript);
+    // console.log("First utterance transcript:", firstUttTranscript);
     return firstUttTranscript;
 };
 
@@ -246,7 +273,8 @@ const emit = defineEmits(['processingComplete', 'mapping-complete']);
 
 defineExpose({
     hasFile,
-
+    // todo
+    // temporary submit functionalities for each step from diairzation to final diarized and role based transcript
     submitOnlyDiarization: async (): Promise<boolean> => {
         if (!selectedFile.value && !wavBlobForUpload.value) {
             alert('Bitte wählen Sie zuerst eine Datei aus oder nehmen Sie Audio auf.');
@@ -300,12 +328,13 @@ defineExpose({
             isPolling.value = true;
             pollingMessage.value = "Role mapping...";
 
-            const firstUttTranscript = firstUtterance(diarizationResult.value);
-            console.log("Submitting first utterance for role mapping:", firstUttTranscript);
+            const tmpIdCorrectionTranscript = corectedIdTranscript(diarizationResult.value);
+            adjustedTranscript.value = tmpIdCorrectionTranscript; // save the transcript with corrected speaker ids in adjustedTranscript for later use
+            const firstUttTranscript = firstUtterance(tmpIdCorrectionTranscript);
 
             try {
                 const result = await mapRolesToTranscript(
-                    firstUttTranscript,
+                    firstUttTranscript, // for better llm performance we only send the first utterance of each speaker with corrected speaker ids
                 );
 
                 // success
@@ -323,9 +352,10 @@ defineExpose({
             }
         }
     },
-    // }
+
     mapSpeakerToTranscript: async (): Promise<boolean> => {
-        // FUNCTION TO ACTUALLY MAP THE ROLES TO THE SPEAKER IDS IN THE TRANSCRIP
+        // FUNCTION TO MAP THE ROLES TO THE SPEAKER IDS IN THE TRANSCRIP
+
         // is there something to process?
         if (!diarizationResult.value || !mappedSpeakers.value) {
             alert('No diarization data or role mappings available to create the mapped transcript.');
@@ -335,13 +365,13 @@ defineExpose({
         try {
             console.log("mapSpeakerToTranscript called...");
 
-            // todo: temporary
+            // todo check if this works every time
             // DEEP COPY OF TRANSCRIPT
-            const transcriptCopy = JSON.parse(JSON.stringify(diarizationResult.value));
+            const transcriptCopy = JSON.parse(JSON.stringify(adjustedTranscript.value)); // uses global adjustedTranscript which has already the speaker id sorted from 00 to XX
 
             // PREPARE MAPPING DATA
             // before ("{\"speaker_00\": ...}")
-            // We need to parse this string first.
+            // parse this string first to get the actual mapping object
             let rawMapping: Record<string, string> = {};
 
             try {
@@ -355,7 +385,6 @@ defineExpose({
                 }
             } catch (parseError) {
                 console.error("Error parsing speaker mapping:", parseError);
-                // We do not abort, but continue without mapping (just copy transcript)
             }
 
             // normalize mapping (prepare case-insensitive lookup)
@@ -366,7 +395,7 @@ defineExpose({
                 });
             }
 
-            // MAIN FUNCTIONALITY: replace speakers in transcript
+            // MAIN FUNCTIONALITY OF FUNCTION: replace speakers and their ids with roles in given transcript
             if (transcriptCopy.diarized_transcription) {
                 transcriptCopy.diarized_transcription = transcriptCopy.diarized_transcription.map((segment: any) => {
                     const originalSpeaker = segment.speaker;
@@ -384,10 +413,10 @@ defineExpose({
                 });
             }
 
-            // save result in "mappedTranscript"
+            // save result in "mappedTranscript" to show in frontend or for later ttl transformation
             mappedTranscript.value = transcriptCopy;
 
-            console.log("After replaceSpeakerRoles:", mappedTranscript);
+            // console.log("After replaceSpeakerRoles:", mappedTranscript);
             isMapped.value = true;
             return true;
 
@@ -397,7 +426,7 @@ defineExpose({
         }
     },
     transformMappedTranscriptToTtl: async (): Promise<boolean> => {
-        // LLM CALL TO TRANSFORM AND ADD THE MAPPED TRANSCRIPT TO THE EXISTING TTL-FILE
+        // LLM FUNCTION CALL TO TRANSFORM AND ADD THE MAPPED TRANSCRIPT TO THE EXISTING TTL-FILE
         if (!isMapped.value) {
             alert('No mapped transcript available to transform to TTL.');
             return false;
@@ -425,9 +454,6 @@ defineExpose({
         }
     }
 });
-
-
-
 </script>
 
 <template>

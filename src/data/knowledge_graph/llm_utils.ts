@@ -370,7 +370,8 @@ export async function llmPool(graphID: string): Promise<LLMParsingResult> {
 // }
 
 export async function mapRolesToTranscript(transcript: { diarized_transcription?: any }): Promise<LLMParsingResult> {
-    console.log("Map Roles for transcript:", transcript.diarized_transcription);
+    // transcript is already cut transcript to first utterance of each speaker and the speaker id starts with 00 according to utterance
+    console.log("Map Roles for already cut transcript:", transcript.diarized_transcription);
     const llmResMapping = await fetch(
         `${import.meta.env.VITE_LLM_URL}${!import.meta.env.VITE_LLM_PORT ? "" : ":" + import.meta.env.VITE_LLM_PORT}/api/audio/speaker-role-mapping`,
         {
