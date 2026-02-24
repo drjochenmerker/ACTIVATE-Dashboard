@@ -118,8 +118,13 @@ const removeReply = (id: string) => {
 
         <div class="reply-content">
             <div class="reply-head">
-                <p class="reply-author">{{ props.parentComment.author.labels[sessionStore.activeLanguage]
-                    || props.parentComment.author.labels['default'] }}</p>
+                <p class="reply-author">{{ 
+                    props.parentComment.author.labels?.[sessionStore.activeLanguage] ||
+                    props.parentComment.author.labels?.['default'] ||
+                    Object.values(props.parentComment.author.labels || {}).find(label => typeof label === 'string' && label.trim() !== '') ||
+                    props.parentComment.author.id ||
+                    ''
+                }}</p>
                 <!-- Delete button -->
                 <DeletionPopUp
                     :title="staticContent.startPage.deleteReply[sessionStore.activeLanguage]"
