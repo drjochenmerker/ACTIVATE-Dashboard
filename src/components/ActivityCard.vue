@@ -210,6 +210,7 @@ const getRoles = async () => {
 
 const sessionStartAllowed = () => true; // TODO tmp for no role selection
 const handlePoolingStart = async () => {
+    console.log("Pooling started for graph:", props.activity.graph);
     try {
         loading.value = true;
         const res = await llmPool(props.activity.graph);
@@ -254,11 +255,9 @@ const showUrl = ref(false)
                     <div class="flex justify-between items-center gap-4 flex-wrap">
                         <!-- Delete Button -->
                         <div>
-                            <DeletionPopUp
-                                :title="staticContent.startPage.deleteActivity[sessionStore.activeLanguage]"
+                            <DeletionPopUp :title="staticContent.startPage.deleteActivity[sessionStore.activeLanguage]"
                                 :description="staticContent.startPage.deleteActivityConfirm[sessionStore.activeLanguage]"
-                                :delete-function="() => deleteThisActivity()"
-                            />
+                                :delete-function="() => deleteThisActivity()" />
                         </div>
 
                         <!-- Edit Button -->
@@ -439,15 +438,15 @@ const showUrl = ref(false)
 
                                     <!-- Pooling Button Dialog -->
                                     <DialogFooter class="flex justify-between">
-                                        <DialogTrigger as-child>
-                                            <Button class="mr-auto" type="button">
-                                                {{
-                                                    staticContent.startPage.poolingButton[sessionStore.activeLanguage]
-                                                }}
-                                            </Button>
-                                        </DialogTrigger>
-
                                         <Dialog v-model:open="showPoolingDialog">
+                                            <DialogTrigger as-child>
+                                                <Button class="mr-auto" type="button">
+                                                    {{
+                                                        staticContent.startPage.poolingButton[sessionStore.activeLanguage]
+                                                    }}
+                                                </Button>
+                                            </DialogTrigger>
+
                                             <DialogContent>
                                                 <DialogHeader>
                                                     <DialogTitle>
