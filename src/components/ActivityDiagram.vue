@@ -459,30 +459,8 @@ export default defineComponent({
                             hoveredConflictPointData.value.id === conflict.id;
                         const scalingFactor = isHovered ? 1.2 : 1;
                         ctx.beginPath()
-                        if (conflict.hasIntent === "Negative") {
-                            // Drawn counter clockwise beginning at the top of the bolt
-                            ctx.moveTo(conflict.x + triangleHeight / 140 * scalingFactor, conflict.y - triangleHeight / 45 * scalingFactor)
-                            ctx.lineTo(conflict.x - triangleHeight / 80 * scalingFactor, conflict.y + triangleHeight / 420 * scalingFactor)
-                            ctx.lineTo(conflict.x - triangleHeight / 280 * scalingFactor, conflict.y + triangleHeight / 260 * scalingFactor)
-                            ctx.lineTo(conflict.x - triangleHeight / 140 * scalingFactor, conflict.y + triangleHeight / 45 * scalingFactor)
-                            ctx.lineTo(conflict.x + triangleHeight / 80 * scalingFactor, conflict.y - triangleHeight / 420 * scalingFactor)
-                            ctx.lineTo(conflict.x + triangleHeight / 280 * scalingFactor, conflict.y - triangleHeight / 260 * scalingFactor)
-                            ctx.lineTo(conflict.x + triangleHeight / 140 * scalingFactor, conflict.y - triangleHeight / 45 * scalingFactor)
-                        } else if (conflict.hasIntent === "Positive") {
-                            // Drawn counter clockwise beginning at the top of the star
-                            ctx.moveTo(conflict.x, conflict.y - triangleHeight / 45 * scalingFactor)
-                            ctx.lineTo(conflict.x - triangleHeight / 180 * scalingFactor, conflict.y - triangleHeight / 180 * scalingFactor)
-                            ctx.lineTo(conflict.x - triangleHeight / 45 * scalingFactor, conflict.y)
-                            ctx.lineTo(conflict.x - triangleHeight / 180 * scalingFactor, conflict.y + triangleHeight / 180 * scalingFactor)
-                            ctx.lineTo(conflict.x, conflict.y + triangleHeight / 45 * scalingFactor)
-                            ctx.lineTo(conflict.x + triangleHeight / 180 * scalingFactor, conflict.y + triangleHeight / 180 * scalingFactor)
-                            ctx.lineTo(conflict.x + triangleHeight / 45 * scalingFactor, conflict.y)
-                            ctx.lineTo(conflict.x + triangleHeight / 180 * scalingFactor, conflict.y - triangleHeight / 180 * scalingFactor)
-                            ctx.lineTo(conflict.x, conflict.y - triangleHeight / 45 * scalingFactor)
-                        } else {
                             // Circle (Neutral intent)
                             ctx.arc(conflict.x, conflict.y, triangleHeight / 70 * scalingFactor, 0, 2 * Math.PI);
-                        }
 
                         ctx.fillStyle = conflict.status == conflictStatus.open ? "red" :
                             conflict.status == conflictStatus.inDiscussion ? "yellow" : "green";

@@ -98,7 +98,19 @@ export const staticContent = {
             en: "No elements to select from",
             de: "Keine Elemente zur Auswahl",
             sv: "Inga element att välja mellan",
+        },
+        incorrectPassword: {
+            en: "The provided password is incorrect. Please try again.",
+            de: "Das eingegebene Passwort ist falsch. Bitte versuch es nochmal.",
+            sv: "Det angivna lösenordet är felaktigt. Försök igen.",
         }
+    },
+    login: {
+        loginButton: {
+            en: "Login",
+            de: "Login",
+            sv: "Login",
+        },
     },
     homepage:{
         navbarScene: {
@@ -158,6 +170,11 @@ export const staticContent = {
             de: "Sitzung beenden",
             sv: "Avsluta session",
         },
+        home: {
+            en: "Home",
+            de: "Startseite",
+            sv: "Hem",
+        },
         delete: {
             en: "Delete",
             de: "Löschen",
@@ -167,6 +184,11 @@ export const staticContent = {
             en: "Clone",
             de: "Klonen",
             sv: "Klon",
+        },
+        cancel: {
+            en: "Cancel",
+            de: "Abbrechen",
+            sv: "Avbryt",
         },
         conflictStatus: {
             open: {
@@ -241,6 +263,11 @@ export const staticContent = {
             en: "Loading... This may take a while.",
             de: "Laden... Dies kann einen Moment dauern.",
             sv: "Laddar... Detta kan ta en stund.",
+        },
+        password: {
+            en: "Password",
+            de: "Passwort",
+            sv: "Lösenord",
         }
     },
     editor: {
@@ -435,10 +462,30 @@ export const staticContent = {
             de: "Aktivität löschen",
             sv: "Ta bort aktivitet",
         },
-        deleteConfirm: {
+        deleteActivityConfirm: {
             en: "Are you sure you want to delete this activity?",
             de: "Sind Sie sicher, dass Sie diese Aktivität löschen möchten?",
             sv: "Är du säker på att du vill ta bort denna aktivitet?",
+        },
+        deleteReply: {
+            en: "Delete reply",
+            de: "Antwort löschen",
+            sv: "Ta bort svar",
+        },
+        deleteComment: {
+            en: "Delete comment",
+            de: "Kommentar löschen",
+            sv: "Ta bort kommentar",
+        },
+        deleteCommentConfirm: {
+            en: "Are you sure you want to delete this comment?",
+            de: "Sind Sie sicher, dass Sie diesen Kommentar löschen möchten?",
+            sv: "Är du säker på att du vill ta bort denna kommentar?",
+        },
+        deleteReplyConfirm: {
+            en: "Are you sure you want to delete this reply?",
+            de: "Sind Sie sicher, dass Sie diese Antwort löschen möchten?",
+            sv: "Är du säker på att du vill ta bort detta svar?",
         },
         cloneActivity: {
             en: "Clone activity",

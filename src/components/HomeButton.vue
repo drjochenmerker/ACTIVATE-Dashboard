@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/button';
 import { useSessionStore } from '@/stores/sessionStore';
-import { LogOut } from 'lucide-vue-next';
+import { Home } from 'lucide-vue-next';
 import {
     Tooltip,
     TooltipContent,
@@ -14,9 +14,8 @@ import { useRouter } from 'vue-router';
 const sessionStore = useSessionStore();
 const router = useRouter();
 
-const logout = () => {
-    sessionStore.endSession();
-    router.replace('/login');
+const goHome = () => {
+    router.push('/start');
 };
 </script>
 
@@ -24,12 +23,12 @@ const logout = () => {
     <TooltipProvider>
         <Tooltip>
             <TooltipTrigger as-child>
-                <Button size="icon" class="rounded-full" variant="secondary" @click="logout">
-                    <LogOut />
+                <Button size="icon" class="rounded-full" variant="secondary" @click="goHome">
+                    <Home />
                 </Button>
             </TooltipTrigger>
             <TooltipContent>
-                <p>{{ staticContent.terms.endSession[sessionStore.activeLanguage] }}</p>
+                <p>{{ staticContent.terms.home[sessionStore.activeLanguage] }}</p>
             </TooltipContent>
         </Tooltip>
     </TooltipProvider>

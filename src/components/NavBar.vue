@@ -14,6 +14,7 @@ import LogoutButton from './LogoutButton.vue';
 import RecursiveSelect from './RecursiveSelect.vue';
 import SceneChangeButton from './SceneChangeButton.vue';
 import LanguageSelect from './LanguageSelect.vue';
+import HomeButton from './HomeButton.vue';
 
 const sessionStore = useSessionStore();
 </script>
@@ -63,8 +64,9 @@ const sessionStore = useSessionStore();
                 </div>
                 <SceneChangeButton />
                 <LanguageSelect />
-                <LogoutButton />
+                <HomeButton />
                 <ThemeSwitchButton />
+                <LogoutButton />
             </div>
         </nav>
     </header>
