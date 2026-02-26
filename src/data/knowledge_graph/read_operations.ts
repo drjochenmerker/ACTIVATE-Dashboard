@@ -411,6 +411,9 @@ export async function getConflictDetail(graph: string, conflictId: string): Prom
                 case "HasParticipant":
                     // TODO handle participant in comment
                     break;
+                case "HasIntent":
+                    // TODO handle intent in comment
+                    break;
                 default:
                     if (item.p !== undefined) {
                         console.error("Unknown Property in Comment Parsing", item.p.value);

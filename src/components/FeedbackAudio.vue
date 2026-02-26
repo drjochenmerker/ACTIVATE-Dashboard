@@ -270,189 +270,203 @@ onUnmounted(() => {
 
 
 const emit = defineEmits(['processingComplete', 'mapping-complete']);
+const submitOnlyDiarization = async (): Promise<boolean> => {
+    if (!selectedFile.value && !wavBlobForUpload.value) {
+        alert('Bitte wählen Sie zuerst eine Datei aus oder nehmen Sie Audio auf.');
+        return false;
+    }
 
-defineExpose({
-    hasFile,
-    // todo
-    // temporary submit functionalities for each step from diairzation to final diarized and role based transcript
-    submitOnlyDiarization: async (): Promise<boolean> => {
-        if (!selectedFile.value && !wavBlobForUpload.value) {
-            alert('Bitte wählen Sie zuerst eine Datei aus oder nehmen Sie Audio auf.');
-            return false;
-        }
+    clearResults();
 
-        clearResults();
+    let fileToUpload: File;
+    if (selectedFile.value) {
+        fileToUpload = selectedFile.value;
+    } else if (wavBlobForUpload.value) {
+        fileToUpload = new File([wavBlobForUpload.value], "recording.wav", { type: 'audio/wav' });
+    } else {
+        return false;
+    }
 
-        let fileToUpload: File;
-        if (selectedFile.value) {
-            fileToUpload = selectedFile.value;
-        } else if (wavBlobForUpload.value) {
-            fileToUpload = new File([wavBlobForUpload.value], "recording.wav", { type: 'audio/wav' });
-        } else {
-            return false;
-        }
+    try {
+        isPolling.value = true;
+        pollingMessage.value = "Transcribing & Diarizing (No Role mapping)...";
+        const result = await startDirectDiarization(
+            fileToUpload,
+            sessionStore.activeLanguage
+        );
+
+        // success
+        diarizationResult.value = result;
+        isPolling.value = false;
+        emit('processingComplete', true);
+        console.log("Transcript:", result.diarized_transcription);
+        return true;
+
+    } catch (error) {
+        diarizationError.value = {
+            success: false,
+            message: error instanceof Error ? error.message : 'An unknown error occurred during direct transcription.'
+        };
+        isPolling.value = false;
+        emit('processingComplete', false);
+        console.error('Error while DIRECT processing:', error);
+        return false;
+    }
+};
+const submitRoleMapping = async (): Promise<boolean> => {
+    // CALLS LLM TO CREATE A MAP FOR THE SPEAKERS TO ROLES
+    if (!diarizationResult.value) {
+        alert('No diarization data available.');
+        return false;
+    } else {
+        isPolling.value = true;
+        pollingMessage.value = "Role mapping...";
+
+        const tmpIdCorrectionTranscript = corectedIdTranscript(diarizationResult.value);
+        adjustedTranscript.value = tmpIdCorrectionTranscript; // save the transcript with corrected speaker ids in adjustedTranscript for later use
+        const firstUttTranscript = firstUtterance(tmpIdCorrectionTranscript);
 
         try {
-            isPolling.value = true;
-            pollingMessage.value = "Transcribing & Diarizing (No Role mapping)...";
-            const result = await startDirectDiarization(
-                fileToUpload,
-                sessionStore.activeLanguage
+            const result = await mapRolesToTranscript(
+                firstUttTranscript, // for better llm performance we only send the first utterance of each speaker with corrected speaker ids
             );
 
             // success
-            diarizationResult.value = result;
+            mappedSpeakers.value = result.data;
+            console.log("Role-mapped Transcript:", mappedSpeakers.value);
+
             isPolling.value = false;
             emit('processingComplete', true);
-            console.log("Transcript:", result.diarized_transcription);
             return true;
-
         } catch (error) {
-            diarizationError.value = {
-                success: false,
-                message: error instanceof Error ? error.message : 'An unknown error occurred during direct transcription.'
-            };
+            console.error("Error in role mapping:", error);
             isPolling.value = false;
             emit('processingComplete', false);
-            console.error('Error while DIRECT processing:', error);
             return false;
-        }
-    },
-
-    submitRoleMapping: async (): Promise<boolean> => {
-        // CALLS LLM TO CREATE A MAP FOR THE SPEAKERS TO ROLES
-        if (!diarizationResult.value) {
-            alert('No diarization data available.');
-            return false;
-        } else {
-            isPolling.value = true;
-            pollingMessage.value = "Role mapping...";
-
-            const tmpIdCorrectionTranscript = corectedIdTranscript(diarizationResult.value);
-            adjustedTranscript.value = tmpIdCorrectionTranscript; // save the transcript with corrected speaker ids in adjustedTranscript for later use
-            const firstUttTranscript = firstUtterance(tmpIdCorrectionTranscript);
-
-            try {
-                const result = await mapRolesToTranscript(
-                    firstUttTranscript, // for better llm performance we only send the first utterance of each speaker with corrected speaker ids
-                );
-
-                // success
-                mappedSpeakers.value = result.data;
-                console.log("Role-mapped Transcript:", mappedSpeakers.value);
-
-                isPolling.value = false;
-                emit('processingComplete', true);
-                return true;
-            } catch (error) {
-                console.error("Error in role mapping:", error);
-                isPolling.value = false;
-                emit('processingComplete', false);
-                return false;
-            }
-        }
-    },
-
-    mapSpeakerToTranscript: async (): Promise<boolean> => {
-        // FUNCTION TO MAP THE ROLES TO THE SPEAKER IDS IN THE TRANSCRIP
-
-        // is there something to process?
-        if (!diarizationResult.value || !mappedSpeakers.value) {
-            alert('No diarization data or role mappings available to create the mapped transcript.');
-            return false;
-        }
-
-        try {
-            console.log("mapSpeakerToTranscript called...");
-
-            // todo check if this works every time
-            // DEEP COPY OF TRANSCRIPT
-            const transcriptCopy = JSON.parse(JSON.stringify(adjustedTranscript.value)); // uses global adjustedTranscript which has already the speaker id sorted from 00 to XX
-
-            // PREPARE MAPPING DATA
-            // before ("{\"speaker_00\": ...}")
-            // parse this string first to get the actual mapping object
-            let rawMapping: Record<string, string> = {};
-
-            try {
-                // Check access to .res (in case the API structure varies)
-                const mappingSource = mappedSpeakers.value.res || mappedSpeakers.value;
-
-                if (typeof mappingSource === 'string') {
-                    rawMapping = JSON.parse(mappingSource);
-                } else if (typeof mappingSource === 'object') {
-                    rawMapping = mappingSource as Record<string, string>;
-                }
-            } catch (parseError) {
-                console.error("Error parsing speaker mapping:", parseError);
-            }
-
-            // normalize mapping (prepare case-insensitive lookup)
-            const normalizedMapping: Record<string, string> = {};
-            if (rawMapping) {
-                Object.keys(rawMapping).forEach(key => {
-                    normalizedMapping[key.toUpperCase()] = rawMapping[key];
-                });
-            }
-
-            // MAIN FUNCTIONALITY OF FUNCTION: replace speakers and their ids with roles in given transcript
-            if (transcriptCopy.diarized_transcription) {
-                transcriptCopy.diarized_transcription = transcriptCopy.diarized_transcription.map((segment: any) => {
-                    const originalSpeaker = segment.speaker;
-
-                    // search for the speaker in uppercase
-                    const searchKey = originalSpeaker ? originalSpeaker.toUpperCase() : "";
-
-                    // Find role or keep original
-                    const newRole = normalizedMapping[searchKey] || originalSpeaker;
-
-                    return {
-                        ...segment,
-                        speaker: newRole // replace speaker id with role
-                    };
-                });
-            }
-
-            // save result in "mappedTranscript" to show in frontend or for later ttl transformation
-            mappedTranscript.value = transcriptCopy;
-
-            // console.log("After replaceSpeakerRoles:", mappedTranscript);
-            isMapped.value = true;
-            return true;
-
-        } catch (error) {
-            console.error("Critical error in mapSpeakerToTranscript:", error);
-            return false;
-        }
-    },
-    transformMappedTranscriptToTtl: async (): Promise<boolean> => {
-        // LLM FUNCTION CALL TO TRANSFORM AND ADD THE MAPPED TRANSCRIPT TO THE EXISTING TTL-FILE
-        if (!isMapped.value) {
-            alert('No mapped transcript available to transform to TTL.');
-            return false;
-        } else {
-            isPolling.value = true;
-            pollingMessage.value = "Transforming to ttl...";
-            try {
-                const result = await transformMappedTrascriptToTtl(
-                    props.graph,
-                    mappedTranscript.value
-                );
-
-                // success
-                console.log("Generated ttl:", result);
-
-                isPolling.value = false;
-                // emit('processingComplete', true);
-                return true;
-            } catch (error) {
-                console.error("Error in ttl generation:", error);
-                isPolling.value = false;
-                // emit('processingComplete', false);
-                return false;
-            }
         }
     }
+};
+const mapSpeakerToTranscript = async (): Promise<boolean> => {
+    // FUNCTION TO MAP THE ROLES TO THE SPEAKER IDS IN THE TRANSCRIP
+
+    // is there something to process?
+    if (!diarizationResult.value || !mappedSpeakers.value) {
+        alert('No diarization data or role mappings available to create the mapped transcript.');
+        return false;
+    }
+
+    try {
+        console.log("mapSpeakerToTranscript called...");
+
+        // todo check if this works every time
+        // DEEP COPY OF TRANSCRIPT
+        const transcriptCopy = JSON.parse(JSON.stringify(adjustedTranscript.value)); // uses global adjustedTranscript which has already the speaker id sorted from 00 to XX
+
+        // PREPARE MAPPING DATA
+        // before ("{\"speaker_00\": ...}")
+        // parse this string first to get the actual mapping object
+        let rawMapping: Record<string, string> = {};
+
+        try {
+            // Check access to .res (in case the API structure varies)
+            const mappingSource = mappedSpeakers.value.res || mappedSpeakers.value;
+
+            if (typeof mappingSource === 'string') {
+                rawMapping = JSON.parse(mappingSource);
+            } else if (typeof mappingSource === 'object') {
+                rawMapping = mappingSource as Record<string, string>;
+            }
+        } catch (parseError) {
+            console.error("Error parsing speaker mapping:", parseError);
+        }
+
+        // normalize mapping (prepare case-insensitive lookup)
+        const normalizedMapping: Record<string, string> = {};
+        if (rawMapping) {
+            Object.keys(rawMapping).forEach(key => {
+                normalizedMapping[key.toUpperCase()] = rawMapping[key];
+            });
+        }
+
+        // MAIN FUNCTIONALITY OF FUNCTION: replace speakers and their ids with roles in given transcript
+        if (transcriptCopy.diarized_transcription) {
+            transcriptCopy.diarized_transcription = transcriptCopy.diarized_transcription.map((segment: any) => {
+                const originalSpeaker = segment.speaker;
+
+                // search for the speaker in uppercase
+                const searchKey = originalSpeaker ? originalSpeaker.toUpperCase() : "";
+
+                // Find role or keep original
+                const newRole = normalizedMapping[searchKey] || originalSpeaker;
+
+                return {
+                    ...segment,
+                    speaker: newRole // replace speaker id with role
+                };
+            });
+        }
+
+        // save result in "mappedTranscript" to show in frontend or for later ttl transformation
+        mappedTranscript.value = transcriptCopy;
+
+        // console.log("After replaceSpeakerRoles:", mappedTranscript);
+        isMapped.value = true;
+        return true;
+
+    } catch (error) {
+        console.error("Critical error in mapSpeakerToTranscript:", error);
+        return false;
+    }
+};
+const transformMappedTranscriptToTtl = async (): Promise<boolean> => {
+    // LLM FUNCTION CALL TO TRANSFORM AND ADD THE MAPPED TRANSCRIPT TO THE EXISTING TTL-FILE
+    if (!isMapped.value) {
+        alert('No mapped transcript available to transform to TTL.');
+        return false;
+    } else {
+        isPolling.value = true;
+        pollingMessage.value = "Transforming to ttl...";
+        try {
+            const result = await transformMappedTrascriptToTtl(
+                props.graph,
+                mappedTranscript.value
+            );
+
+            // success
+            console.log("Generated ttl:", result);
+
+            isPolling.value = false;
+            // emit('processingComplete', true);
+            return true;
+        } catch (error) {
+            console.error("Error in ttl generation:", error);
+            isPolling.value = false;
+            // emit('processingComplete', false);
+            return false;
+        }
+    }
+}
+
+const processAudioToTtl = async (): Promise<boolean> => {
+    // Step 1: Diarize
+    const step1 = await submitOnlyDiarization();
+    if (!step1) return false;
+
+    // Step 2: LLM Role Mapping
+    const step2 = await submitRoleMapping();
+    if (!step2) return false;
+
+    // Step 3: Map Speakers to Transcript
+    const step3 = await mapSpeakerToTranscript();
+    if (!step3) return false;
+
+    // Step 4: Convert to TTL
+    const step4 = await transformMappedTranscriptToTtl();
+    return step4;
+};
+defineExpose({
+    hasFile,
+    submitAll: processAudioToTtl,
 });
 </script>
 

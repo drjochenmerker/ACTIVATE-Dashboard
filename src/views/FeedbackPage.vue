@@ -20,7 +20,7 @@ const sessionStore = useSessionStore()
 
 const activeLang = computed(() => sessionStore.activeLanguage)
 const loading = ref(false);
-const transcribed = ref(false);
+// const transcribed = ref(false);
 const transcriptMapped = ref(false);
 
 // mode 
@@ -34,23 +34,52 @@ const audioHasFile = computed(() => audioComponent.value?.hasFile ?? false);
 
 
 // transcription and speaker diarization
-const submitOnlyTranscription = async () => {
+// const submitOnlyTranscription = async () => {
+//     loading.value = true;
+//     let success = false;
+
+//     try {
+//         if (audioComponent.value) {
+//             success = await audioComponent.value.submitOnlyDiarization();
+//             transcribed.value = true;
+//         }
+//     } catch (error) {
+//         console.error("Error in submitOnlyTranscription:", error);
+//         success = false;
+//     }
+//     if (!success) loading.value = false;
+// }
+
+// --- UNIFIED SUBMIT HANDLER ---
+const handleUnifiedSubmit = async () => {
     loading.value = true;
     let success = false;
 
     try {
-        if (audioComponent.value) {
-            success = await audioComponent.value.submitOnlyDiarization();
-            transcribed.value = true;
+        if (viewMode.value === 'form') {
+            // Handle Text Form
+            if (formComponent.value) {
+                success = await formComponent.value.submit();
+            }
+        } else {
+            // Handle Audio Upload (One-Click)
+            if (audioComponent.value) {
+                // Calls the chained function in the child
+                success = await audioComponent.value.submitAll();
+            }
         }
+
+        // If successful, navigate to thank you page
+        if (success) {
+            await router.push('/feedback-thank-you');
+        }
+
     } catch (error) {
-        console.error("Error in submitOnlyTranscription:", error);
-        success = false;
+        console.error("Error during submission:", error);
+    } finally {
+        loading.value = false;
     }
-    if (!success) loading.value = false;
 }
-
-
 const submitFeedback = async () => {
     loading.value = true;
     let success = false;
@@ -78,52 +107,52 @@ const submitFeedback = async () => {
         }
     }
 }
-const submitRoleMapping = async () => {
-    loading.value = true;
-    let success = false;
-    try {
-        if (audioComponent.value) {
-            success = await audioComponent.value.submitRoleMapping();
-        }
-    } catch (error) {
-        console.error("Error in submitRoleMapping:", error);
-        success = false;
-    }
-    if (!success) loading.value = false;
-}
+// const submitRoleMapping = async () => {
+//     loading.value = true;
+//     let success = false;
+//     try {
+//         if (audioComponent.value) {
+//             success = await audioComponent.value.submitRoleMapping();
+//         }
+//     } catch (error) {
+//         console.error("Error in submitRoleMapping:", error);
+//         success = false;
+//     }
+//     if (!success) loading.value = false;
+// }
 
-const mapSpeakerToTranscript = async () => {
-    loading.value = true;
-    let success = false;
+// const mapSpeakerToTranscript = async () => {
+//     loading.value = true;
+//     let success = false;
 
-    try {
-        if (audioComponent.value && transcribed.value) {
-            success = await audioComponent.value.mapSpeakerToTranscript();
-            transcriptMapped.value = true;
-            loading.value = false;
-        }
-    } catch (error) {
-        console.error("Error in mapSpeakerToTranscript:", error);
-        success = false;
-        transcriptMapped.value = false; // just for safety
-    }
-    if (!success) loading.value = false;
-}
+//     try {
+//         if (audioComponent.value && transcribed.value) {
+//             success = await audioComponent.value.mapSpeakerToTranscript();
+//             transcriptMapped.value = true;
+//             loading.value = false;
+//         }
+//     } catch (error) {
+//         console.error("Error in mapSpeakerToTranscript:", error);
+//         success = false;
+//         transcriptMapped.value = false; // just for safety
+//     }
+//     if (!success) loading.value = false;
+// }
 
-const submitMappedTranscript = async () => {
-    loading.value = true;
-    let success = false;
-    try {
-        if (audioComponent.value) {
-            success = await audioComponent.value.transformMappedTranscriptToTtl();
-            loading.value = false; // finished processing
-        }
-    } catch (error) {
-        console.error("Error in submitRoleMapping:", error);
-        success = false;
-    }
-    if (!success) loading.value = false;
-}
+// const submitMappedTranscript = async () => {
+//     loading.value = true;
+//     let success = false;
+//     try {
+//         if (audioComponent.value) {
+//             success = await audioComponent.value.transformMappedTranscriptToTtl();
+//             loading.value = false; // finished processing
+//         }
+//     } catch (error) {
+//         console.error("Error in submitRoleMapping:", error);
+//         success = false;
+//     }
+//     if (!success) loading.value = false;
+// }
 
 const onAudioProcessingComplete = () => {
     loading.value = false;
@@ -171,7 +200,7 @@ const handleMappingUpdate = () => {
             </Button>
 
             <!-- BUTTON FOR TRANSCRIPTION AND DIARIZATION WITHOUT ROLE MAPPING -->
-            <Button v-if="viewMode === 'upload'" variant="secondary" class="w-full" @click="submitOnlyTranscription"
+            <!-- <Button v-if="viewMode === 'upload'" variant="secondary" class="w-full" @click="submitOnlyTranscription"
                 :disabled="loading || !audioHasFile">
                 {{ loading ? 'Processing...' : 'Transcribe Audio' }}
             </Button>
@@ -183,8 +212,12 @@ const handleMappingUpdate = () => {
             </Button>
             <Button v-if="transcriptMapped" @click="submitMappedTranscript">
                 Submit Mapped Transcript as TTL
+            </Button> -->
+            <Button v-if="viewMode === 'upload'" class="w-full" @click="handleUnifiedSubmit"
+                :disabled="loading || !audioHasFile">
+                <!-- ONE-CLICK BUTTON FOR AUDIO PROCESSING -->
+                <span>{{ loading ? 'Processing...' : 'Submit Audio Feedback' }}</span>
             </Button>
-
         </div>
 
         <!-- GLOBAL LOADING OVERLAY -->
