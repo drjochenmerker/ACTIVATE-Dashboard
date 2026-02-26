@@ -87,7 +87,7 @@ const filteredConflicts = computed(() => {
 <style scoped>
 /* Container styling for each conflict */
 .conflict-container {
-  margin-bottom: 20px;
+  padding-bottom: 20px;
 }
 
 /* Styling for the comment section */

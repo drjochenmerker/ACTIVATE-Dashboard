@@ -42,7 +42,7 @@ onMounted(async () => {
 <template>
   <div class="flex flex-col h-screen">
     <NavBar />
-    <main class="flex-grow min-h-0 p-6 overflow-y-auto">
+    <main class="flex-grow min-h-0 lg:w-[1024px] p-6 lg:mx-auto">
       <router-view v-if="activity" :key="$route.path" :activity="activity" :conflicts="conflictDetails" />
     </main>
   </div>
