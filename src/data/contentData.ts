@@ -103,6 +103,11 @@ export const staticContent = {
             en: "The provided password is incorrect. Please try again.",
             de: "Das eingegebene Passwort ist falsch. Bitte versuch es nochmal.",
             sv: "Det angivna lösenordet är felaktigt. Försök igen.",
+        },
+        participantRequired: {
+            en: "Please select participants from at least two and at most three different classes.",
+            de: "Bitte wählen Sie Teilnehmer aus mindestens zwei und maximal drei verschiedenen Klassen aus.",
+            sv: "Vänligen välj deltagare från minst två och högst tre olika klasser.",
         }
     },
     login: {
@@ -276,6 +281,11 @@ export const staticContent = {
             de: "Laden... Dies kann einen Moment dauern.",
             sv: "Laddar... Detta kan ta en stund.",
         },
+        noSelection: {
+            en: "<No selection>",
+            de: "<Keine Auswahl>",
+            sv: "<Inget urval>",
+        },
         password: {
             en: "Password",
             de: "Passwort",
@@ -412,6 +422,16 @@ export const staticContent = {
             de: "Kommentar hinzufügen",
             sv: "Lägg till kommentar",
         },
+        editComment: {
+            en: "Edit comment",
+            de: "Kommentar bearbeiten",
+            sv: "Redigera kommentar",
+        },
+        editConflict: {
+            en: "Edit conflict",
+            de: "Konflikt bearbeiten",
+            sv: "Redigera konflikt",
+        },
         save: {
             en: "Save",
             de: "Speichern",
@@ -421,6 +441,31 @@ export const staticContent = {
             en: "Cancel",
             de: "Abbrechen",
             sv: "Avbryt",
+        },
+        discardChangesQuestion: {
+            en: "Do you want to discard your changes?",
+            de: "Möchten Sie Ihre Änderungen verwerfen?",
+            sv: "Vill du förkasta dina ändringar?",
+        },
+        discardChanges: {
+            en: "Discard",
+            de: "Verwerfen",
+            sv: "Förkasta",
+        },
+        ok: {
+            en: "OK",
+            de: "OK",
+            sv: "OK",
+        },
+        title: {
+            en: "Title",
+            de: "Titel",
+            sv: "Titel",
+        },
+        description: {
+            en: "Description",
+            de: "Beschreibung",
+            sv: "Beskrivning",
         },
         answer: {
             en: "Answer",
