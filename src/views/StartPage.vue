@@ -99,7 +99,9 @@ const addNewActivity = async () => {
   <div class="flex flex-col items-center justify-center py-10 px-4">
     <div class="flex items-center gap-2 justify-end w-full">
       <LanguageSelect />
-      <OptionsButton />
+      <template  v-if="sessionStore.instructorMode">
+        <OptionsButton />
+      </template>
       <LogoutButton />
       <ThemeSwitchButton />
     </div>

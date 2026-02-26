@@ -65,7 +65,9 @@ const sessionStore = useSessionStore();
                 </div>
                 <SceneChangeButton />
                 <LanguageSelect />
-                <OptionsButton />
+                <template  v-if="sessionStore.instructorMode">
+                    <OptionsButton />
+                </template>
                 <HomeButton />
                 <LogoutButton />
                 <ThemeSwitchButton />
