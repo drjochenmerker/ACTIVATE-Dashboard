@@ -67,10 +67,9 @@ router.beforeEach((to) => {
     }
 
     const isPublic = to.name === 'FeedbackPage' || to.name === 'FeedbackThankYouPage';
-    const isOptionsPage = to.path === '/options';
 
     // Allow access to options and public pages without active session
-    if (isOptionsPage || isPublic) {
+    if (isPublic) {
         return;
     }
 
