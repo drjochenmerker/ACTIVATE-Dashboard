@@ -32,6 +32,7 @@ export const useSessionStore = defineStore('session', () => {
     const sessionRole = ref<string | undefined>(undefined);
     const availableRoles = ref<NestedMultiLangObject>({} as NestedMultiLangObject);
     const instructorMode = ref(false);
+    const instructorView = ref(false);
     const isSessionActive = ref(false);
     const activeLanguage = ref<LanguageCode>(LanguageCode.Deutsch); // todo: default language
     const activeScene = ref<string>('Scene 1'); // Default scene
@@ -45,14 +46,15 @@ export const useSessionStore = defineStore('session', () => {
      * Saves session state to localStorage
      */
     const saveSessionToStorage = () => {
-            const sessionState = {
-                sessionActivity: {},
-                sessionRole: sessionRole.value,
-                activeLanguage: activeLanguage.value,
-                activeScene: activeScene.value,
-                instructorMode: instructorMode.value,
-                availableRoles: availableRoles.value,
-            };
+        const sessionState = {
+            sessionActivity: {},
+            sessionRole: sessionRole.value,
+            activeLanguage: activeLanguage.value,
+            activeScene: activeScene.value,
+            instructorMode: instructorMode.value,
+            instructorView: instructorView.value,
+            availableRoles: availableRoles.value,
+        };
         if (sessionActivity.value) {
             sessionState['sessionActivity'] = sessionActivity.value;
         }
@@ -80,6 +82,7 @@ export const useSessionStore = defineStore('session', () => {
                 activeLanguage.value = sessionState.activeLanguage;
                 activeScene.value = sessionState.activeScene;
                 instructorMode.value = sessionState.instructorMode;
+                instructorView.value = sessionState.instructorView;
                 availableRoles.value = sessionState.availableRoles;
                 isSessionActive.value = true;
 
@@ -110,6 +113,8 @@ export const useSessionStore = defineStore('session', () => {
         sessionRole.value = undefined;
         sessionActivity.value = undefined;
         isSessionActive.value = false;
+        instructorMode.value = false;
+        instructorView.value = false;
         localStorage.removeItem(STORAGE_KEY);
         localStorage.removeItem(LAST_ROUTE_KEY);
     };
@@ -132,6 +137,10 @@ export const useSessionStore = defineStore('session', () => {
         () => instructorMode.value,
         () => saveSessionToStorage(),
     );
+    watch(
+        () => instructorView.value,
+        () => saveSessionToStorage(),
+    );
 
     return {
         startSession,
@@ -141,6 +150,7 @@ export const useSessionStore = defineStore('session', () => {
         availableRoles,
         isSessionActive,
         instructorMode,
+        instructorView,
         outdated,
         activeLanguage,
         activeScene,

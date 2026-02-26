@@ -26,16 +26,15 @@ const { title, description, author, deleteFunction } = defineProps<{
     author?: string;
     deleteFunction: () => Promise<void>;
 }>();
-const sessionStore = useSessionStore();
+const sessionStore = useSessionStore(); 
 
 const isDeleteDialogOpen = ref(false);
-const isInstructor = useSessionStore().instructorMode;
 const authorId = author?.replace(' ', '_');
 const allowDelete = computed(() => {
     return (
-        isInstructor ||
+        sessionStore.instructorView ||
         !authorId ||
-        authorId === useSessionStore().sessionRole
+        authorId === sessionStore.sessionRole
     );
 });
 </script>
