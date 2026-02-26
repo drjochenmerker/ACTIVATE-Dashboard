@@ -16,6 +16,12 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Save, Edit, X } from 'lucide-vue-next';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 const llmSettingsStore = useLLMSettingsStore();
 const sessionStore = useSessionStore();
@@ -144,6 +150,7 @@ const getProviderDisplayName = (provider: LLMProvider): string => {
     chatgpt: 'ChatGPT (OpenAI)',
     gemini: 'Gemini (Google)',
     claude: 'Claude (Anthropic)',
+    cortecs: 'Cortecs',
   };
   return names[provider];
 };
@@ -183,8 +190,9 @@ const getCurrentModelConfig = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="chatgpt">ChatGPT (OpenAI)</SelectItem>
-                <SelectItem value="gemini">Gemini (Google)</SelectItem>
-                <SelectItem value="claude">Claude (Anthropic)</SelectItem>
+                <!-- <SelectItem value="gemini">Gemini (Google)</SelectItem>
+                <SelectItem value="claude">Claude (Anthropic)</SelectItem> -->
+                <SelectItem value="cortecs">Cortecs</SelectItem>
               </SelectContent>
             </Select>
           </CardContent>
@@ -220,7 +228,7 @@ const getCurrentModelConfig = () => {
                     <Label class="text-xs text-muted-foreground">{{ staticContent.optionsPage.modelName[sessionStore.activeLanguage] }}</Label>
                     <div class="text-sm font-medium">{{ getCurrentModelConfig()?.config.modelName }}</div>
                   </div>
-                  <div class="grid grid-cols-2 gap-4">
+                  <div class="grid grid-cols-2 gap-4" v-if="selectedProvider !== 'chatgpt'">
                     <div class="space-y-1">
                       <Label class="text-xs text-muted-foreground">{{ staticContent.optionsPage.temperature[sessionStore.activeLanguage] }}</Label>
                       <div class="text-sm">{{ getCurrentModelConfig()?.config.temperature ?? '-' }}</div>
@@ -247,10 +255,31 @@ const getCurrentModelConfig = () => {
                   v-model="formModelName"
                   :placeholder="staticContent.optionsPage.modelNamePlaceholder[sessionStore.activeLanguage]"
                 />
+                <TooltipProvider v-if="selectedProvider === 'cortecs'">
+                  <Tooltip>
+                    <TooltipTrigger as-child>
+                      <p class="text-xs text-muted-foreground">
+                        <a
+                          href="https://cortecs.ai/serverlessModels?euOnly=true"
+                          target="_blank"
+                          rel="noreferrer"
+                          class="underline underline-offset-2"
+                        >
+                          {{ staticContent.optionsPage.cortecsModelLinkText[sessionStore.activeLanguage] }}
+                        </a>
+                      </p>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>
+                        {{ staticContent.optionsPage.cortecsModelTooltip[sessionStore.activeLanguage] }}
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
 
               <!-- LLM Parameters -->
-              <div class="">
+              <div v-if="selectedProvider !== 'chatgpt'" class="">
                 <div class="space-y-2">
                   <Label :for="'form-temperature'">{{ staticContent.optionsPage.temperature[sessionStore.activeLanguage] }}</Label>
                   <Input

@@ -5,7 +5,7 @@ import { ref } from 'vue';
 /**
  * Supported LLM providers
  */
-export type LLMProvider = 'chatgpt' | 'gemini' | 'claude';
+export type LLMProvider = 'chatgpt' | 'gemini' | 'claude' | 'cortecs';
 
 /**
  * Request format configuration for different LLM providers
@@ -47,6 +47,7 @@ export interface LLMSettings {
     chatgpt: LLMModelConfig | null;
     gemini: LLMModelConfig | null;
     claude: LLMModelConfig | null;
+    cortecs: LLMModelConfig | null;
   };
   /**
    * Shared prompts for different LLM tasks
@@ -74,6 +75,7 @@ export const useLLMSettingsStore = defineStore('llmSettings', () => {
       chatgpt: null,
       gemini: null,
       claude: null,
+      cortecs: null,
     },
     prompts: {
       knowledgeGraphGeneration: knowledgeGraphGenerationPrompt,
@@ -105,6 +107,11 @@ export const useLLMSettingsStore = defineStore('llmSettings', () => {
           temperature: 0.7,
           maxTokens: 4096,
           anthropicVersion: '2023-06-01',
+        };
+      case 'cortecs':
+        return {
+          temperature: 0.7,
+          maxTokens: 4096,
         };
       default:
         return {};

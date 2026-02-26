@@ -821,5 +821,15 @@ export const staticContent = {
                 sv: "Spänningsextraktion",
             }
         },
+        cortecsModelLinkText: {
+            en: "Show available Cortecs models",
+            de: "Verfügbare Cortecs-Modelle anzeigen",
+            sv: "Visa tillgängliga Cortecs-modeller",
+        },
+        cortecsModelTooltip: {
+            en: "Click the copy icon next to the model name on the Cortecs page to copy the exact model name. Then paste it into the \"Model Name\" field.",
+            de: "Klicke auf das Kopieren-Symbol rechts neben dem Modellnamen auf der Cortecs-Seite, um den exakten Modellnamen zu kopieren. Füge diesen anschließend im Feld \"Modellname\" ein.",
+            sv: "Klicka på kopieringsikonen bredvid modellnamnet på Cortecs-sidan för att kopiera det exakta modellnamnet. Klistra sedan in det i fältet \"Model Name\".",
+        },
     }
 }
