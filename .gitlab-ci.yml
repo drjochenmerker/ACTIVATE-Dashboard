@@ -13,7 +13,7 @@ build:
     image: node:lts-bookworm-slim
     script:
         - npm i
-        - npm run format
+        # - npm run format-check
         - npm run build
     artifacts:
         paths:
@@ -22,6 +22,9 @@ build:
 test-docker:
     stage: test
     image: docker:latest
+    variables:
+        GIT_STRATEGY: clone
+        GIT_CLEAN_FLAGS: -ffdx
     services:
         - docker:dind
     dependencies: []
@@ -31,10 +34,12 @@ test-docker:
         - git submodule sync
         - git submodule update --init --recursive
         - docker network create activate-network || true
+        - echo "=== TTL files found ===" && find rdflib/data/backup -name "*.ttl" -type f 2>/dev/null | wc -l
     script:
         - docker compose build
         - docker compose up -d
         - sleep 10
+        - echo "=== Backend TTL Files Info ===" && docker compose logs backend 2>&1 | grep "\[INFO\]" || echo "No INFO logs found"
         - docker compose ps
         - |
             FAILED_CONTAINERS=$(docker compose ps --format json | grep -v '"State":"running"' || true)

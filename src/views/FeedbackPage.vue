@@ -177,7 +177,7 @@ const submitFeedback = async () => {
 </script>
 
 <template>
-    <div class="min-h-screen flex flex-col justify-between bg-gray-100 p-4 text-gray-800">
+    <div class="min-h-screen flex flex-col lg:w-[1024px] lg:mx-auto justify-between bg-gray-100 p-4 text-gray-800">
         <div class="space-y-6">
             <div>
                 <LanguageSelect class="absolute top-0 right-0 mt-4 mr-4" />
