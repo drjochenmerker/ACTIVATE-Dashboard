@@ -70,7 +70,7 @@ export const useLLMSettingsStore = defineStore('llmSettings', () => {
 
   // Settings for the three supported models
   const settings = ref<LLMSettings>({
-    selectedProvider: 'gemini',
+    selectedProvider: 'chatgpt',
     models: {
       chatgpt: null,
       gemini: null,
@@ -92,11 +92,13 @@ export const useLLMSettingsStore = defineStore('llmSettings', () => {
     switch (provider) {
       case 'chatgpt':
         return {
+          modelName: 'gpt-5-mini-2025-08-07',
           temperature: 0.7,
           maxTokens: 2000,
         };
       case 'gemini':
         return {
+          modelName: 'gemini-2.5-flash',
           temperature: 0.2,
           maxTokens: 2048,
           topK: 40,
@@ -104,12 +106,14 @@ export const useLLMSettingsStore = defineStore('llmSettings', () => {
         };
       case 'claude':
         return {
+          modelName: 'claude-opus-4-6',
           temperature: 0.7,
           maxTokens: 4096,
           anthropicVersion: '2023-06-01',
         };
       case 'cortecs':
         return {
+          modelName: 'mistral-large-2512',
           temperature: 0.7,
           maxTokens: 4096,
         };
@@ -208,8 +212,35 @@ export const useLLMSettingsStore = defineStore('llmSettings', () => {
     return modelConfig.config;
   };
 
+  const initializeDefaultConfigs = () => {
+    const providers: LLMProvider[] = ['chatgpt', 'gemini', 'claude', 'cortecs'];
+    let changed = false;
+  
+    for (const provider of providers) {
+      if (!settings.value.models[provider]) {
+        const defaults = getDefaultConfig(provider);
+        if (defaults.modelName) {
+          settings.value.models[provider] = {
+            provider,
+            config: {
+              modelName: defaults.modelName,
+              selectedProvider: provider,
+              temperature: defaults.temperature,
+              maxTokens: defaults.maxTokens,
+              ...defaults,
+            },
+          };
+          changed = true;
+        }
+      }
+    }
+  
+    if (changed) saveSettings();
+  };
+
   // Initialize when loading the store
   loadSettings();
+  initializeDefaultConfigs();
 
   return {
     settings,
