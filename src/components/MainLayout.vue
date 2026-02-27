@@ -2,20 +2,12 @@
 import { getAllConflictsWithDetail } from '@/data/knowledge_graph/read_operations';
 import { Activity } from '@/data/knowledge_graph/structures';
 import { useConflictsStore } from '@/stores/conflictsStore';
-import { ref, onMounted, computed } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { ref, onMounted } from 'vue';
 import NavBar from './NavBar.vue';
 import { useSessionStore } from '@/stores/sessionStore';
-import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-vue-next';
 
 const sessionStore = useSessionStore();
-const route = useRoute();
-const router = useRouter();
 const activity = ref<Activity | undefined>(undefined);
-
-const isOptionsRoute = computed(() => route.path === '/options');
-const showMainContent = computed(() => !!activity.value || isOptionsRoute.value);
 
 const conflictsStore = useConflictsStore();
 const conflictDetails = ref<any[]>([]);
