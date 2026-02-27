@@ -26,6 +26,7 @@ import { useActivityStore } from '@/stores/activityStore';
 import { buildTreeStructByLang } from '@/data/knowledge_graph/utils';
 import { staticContent } from '@/data/contentData';
 import LanguageSelect from '@/components/LanguageSelect.vue';
+import InstructorViewSelect from '@/components/InstructorViewSelect.vue';
 import { PlusIcon } from 'lucide-vue-next';
 import { llmSettingGeneration } from '@/data/knowledge_graph/llm_utils';
 import LoadingOverlay from '@/components/LoadingOverlay.vue';
@@ -96,8 +97,9 @@ const addNewActivity = async () => {
 </script>
 
 <template>
-  <div class="flex flex-col items-center justify-center py-10 px-4">
-    <div class="flex items-center gap-2 justify-end w-full">
+  <div class="flex flex-col items-center justify-center py-4 px-4">
+    <div class="flex items-center gap-2 justify-end w-full mb-4">
+      <InstructorViewSelect v-if="sessionStore.instructorMode" />
       <LanguageSelect />
       <template  v-if="sessionStore.instructorMode">
         <OptionsButton />

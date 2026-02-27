@@ -49,19 +49,9 @@ onMounted(async () => {
 </template> -->
 <template>
   <div class="flex flex-col h-screen">
-    <!-- Regular navbar when a session is active, otherwise a basic navbar that allows back navigation --> 
-    <NavBar v-if="sessionStore.isSessionActive" />
-    <header
-      v-if="!sessionStore.isSessionActive"
-      class="flex h-14 shrink-0 items-center border-b bg-background px-6"
-    >
-      <Button variant="ghost" size="sm" class="gap-2" @click="router.push('/start')">
-        <ArrowLeft class="h-4 w-4" />
-      </Button>
-    </header>
-
-    <main class="flex-grow min-h-0 p-6 overflow-y-auto">
-      <router-view v-if="showMainContent" :key="$route.path" :activity="activity" :conflicts="conflictDetails" />
+    <NavBar />
+    <main class="flex-grow min-h-0 lg:w-[1024px] p-6 lg:mx-auto">
+      <router-view v-if="activity" :key="$route.path" :activity="activity" :conflicts="conflictDetails" />
     </main>
   </div>
 </template>

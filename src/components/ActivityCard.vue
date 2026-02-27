@@ -236,7 +236,7 @@ const showUrl = ref(false)
         <Accordion type="single" class="w-full" collapsible>
             <AccordionItem :value="props.activity.graph" class="accordion-item border-0">
 
-                <AccordionTrigger class="accordion-trigger text-lg font-semibold text-middle flex justify-center"
+                <AccordionTrigger class="accordion-trigger text-lg font-semibold text-middle flex justify-center xl:text-xl"
                     @click="getRoles">
                     {{ props.activity.name[sessionStore.activeLanguage] || props.activity.name['default'] }}
                 </AccordionTrigger>
