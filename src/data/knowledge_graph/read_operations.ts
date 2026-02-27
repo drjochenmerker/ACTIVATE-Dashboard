@@ -191,8 +191,21 @@ export async function getConflictDetail(graph: string, conflictId: string): Prom
       switch (item.conflict_p.value.split("#").pop()) {
         case "WrittenBy": {
           const authorId = item.conflict_o.value.split("#").pop();
-          const langTag = item.participant_o?.["xml:lang"] || "default";
-          const labelValue = item.participant_o?.value || authorId;
+          
+          // Try to get language tag from item.participant_o
+          let langTag = "default";
+          let labelValue = authorId;
+          
+          if (item.participant_o) {
+            // Check if item.participant_o has xml:lang property
+            if (item.participant_o["xml:lang"]) {
+              langTag = item.participant_o["xml:lang"];
+              labelValue = item.participant_o.value || authorId;
+            } else if (item.participant_o.value) {
+              // If no xml:lang but has value, use it
+              labelValue = item.participant_o.value;
+            }
+          }
 
           if (!parsedConflict.author) {
             parsedConflict.author = {
@@ -203,6 +216,9 @@ export async function getConflictDetail(graph: string, conflictId: string): Prom
               type: "subject"
             };
           } else {
+            if (!parsedConflict.author.labels) {
+              parsedConflict.author.labels = {};
+            }
             parsedConflict.author.labels[langTag] = labelValue;
           }
           break;
@@ -288,8 +304,20 @@ export async function getConflictDetail(graph: string, conflictId: string): Prom
           const authorIRI = item.o.value;
           const authorId = authorIRI.split("#").pop() || authorIRI;
 
-          const langTag = item.q?.["xml:lang"] || "default";
-          const labelValue = item.q?.value || authorId;
+          // Try to get language tag from item.q
+          let langTag = "default";
+          let labelValue = authorId;
+          
+          if (item.q) {
+            // Check if item.q has xml:lang property
+            if (item.q["xml:lang"]) {
+              langTag = item.q["xml:lang"];
+              labelValue = item.q.value || authorId;
+            } else if (item.q.value) {
+              // If no xml:lang but has value, use it as default
+              labelValue = item.q.value;
+            }
+          }
 
           if (!lookupMap.has(commentId)) {
             lookupMap.set(commentId, {

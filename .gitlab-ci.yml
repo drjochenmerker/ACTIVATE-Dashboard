@@ -1,5 +1,6 @@
 stages:
     - build
+    - test
     - deploy
 
 cache:
@@ -12,11 +13,56 @@ build:
     image: node:lts-bookworm-slim
     script:
         - npm i
-        - npm run format
+        # - npm run format-check
         - npm run build
     artifacts:
         paths:
             - dist/
+
+test-docker:
+    stage: test
+    image: docker:latest
+    variables:
+        GIT_STRATEGY: clone
+        GIT_CLEAN_FLAGS: -ffdx
+    services:
+        - docker:dind
+    dependencies: []
+    before_script:
+        - apk add --no-cache docker-compose git openssh-client
+        - git config --global url."https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.dit.htwk-leipzig.de/".insteadOf "git@gitlab.dit.htwk-leipzig.de:"
+        - git submodule sync
+        - git submodule update --init --recursive
+        - docker network create activate-network || true
+        - echo "=== TTL files found ===" && find rdflib/data/backup -name "*.ttl" -type f 2>/dev/null | wc -l
+    script:
+        - docker compose build
+        - docker compose up -d
+        - sleep 10
+        - echo "=== Backend TTL Files Info ===" && docker compose logs backend 2>&1 | grep "\[INFO\]" || echo "No INFO logs found"
+        - docker compose ps
+        - |
+            FAILED_CONTAINERS=$(docker compose ps --format json | grep -v '"State":"running"' || true)
+            if [ ! -z "$FAILED_CONTAINERS" ]; then
+                echo "ERROR: Some containers are not running properly!"
+                echo "$FAILED_CONTAINERS"
+                for container in $(docker compose ps --format '{{.Name}}'); do
+                    echo ">>> Logs for $container <<<"
+                    docker logs $container --tail 100
+                done
+                exit 1
+            fi
+        - sleep 10
+        - docker compose ps
+        - |
+            RESTARTED=$(docker compose ps --format json | grep '"State":"restarting"' || true)
+            if [ ! -z "$RESTARTED" ]; then
+                echo "ERROR: Containers are in restart loop!"
+                docker compose logs
+                exit 1
+            fi
+    after_script:
+        - docker compose down -v || true
 
 deploy:
     stage: deploy

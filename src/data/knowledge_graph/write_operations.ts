@@ -98,6 +98,35 @@ export async function updateConflict(graph: string, conflictId: string, predicat
     return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: conflictId, action: RDFOperation.insert } as updateResponse;
 }
 
+/**
+ * Updates the title and description of an existing conflict for a specific language
+ * @param graph Graph in which the conflict exists
+ * @param conflictId Id of the conflict to update
+ * @param newTitle Updated title text
+ * @param newDescription Updated description text
+ * @param langTag Language tag for the updated text
+ * @returns updateResponse Object
+ */
+export async function updateConflictText(
+    graph: string,
+    conflictId: string,
+    newTitle: string,
+    newDescription: string,
+    langTag: string
+): Promise<updateResponse> {
+    let query = await getSparqlTemplate(sparqlTemplate.updateConflictText);
+    const mapObj = {
+        "{{graph}}": graph,
+        "{{conflictId}}": conflictId,
+        "{{newTitle}}": EscapeSparqlStringLiteral(newTitle),
+        "{{newDescription}}": EscapeSparqlStringLiteral(newDescription),
+        "{{langTag}}": langTag
+    };
+    query = query.replaceMultiple(mapObj);
+    const data = await fetchSparql(query, true);
+    return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: conflictId, action: RDFOperation.insert } as updateResponse;
+}
+
 export async function updateConflictParticipants(graph: string, conflictId: string, operation: RDFOperation, participantId: string): Promise<updateResponse> {
     let query = (operation == RDFOperation.insert) ? await getSparqlTemplate(sparqlTemplate.addConflictParticipant) : await getSparqlTemplate(sparqlTemplate.deleteConflictParticipant);
     const mapObj = {
@@ -168,6 +197,27 @@ export async function deleteComment(graph: string, commentId: string, isNestedCo
     query = query.replaceMultiple(mapObj);
     const data = await fetchSparql(query, true);
     return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: commentId, action: RDFOperation.delete } as updateResponse;
+}
+
+/**
+ * Updates the description of an existing comment
+ * @param graph Graph in which the comment exists
+ * @param commentId Id of the comment to update
+ * @param comment Updated comment text
+ * @param langTag Language tag for the updated text
+ * @returns updateResponse Object
+ */
+export async function updateComment(graph: string, commentId: string, comment: string, langTag: string): Promise<updateResponse> {
+    let query = await getSparqlTemplate(sparqlTemplate.updateComment);
+    const mapObj = {
+        "{{graph}}": graph,
+        "{{commentId}}": commentId,
+        "{{comment}}": EscapeSparqlStringLiteral(comment),
+        "{{langTag}}": langTag
+    };
+    query = query.replaceMultiple(mapObj);
+    const data = await fetchSparql(query, true);
+    return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: commentId, action: RDFOperation.insert } as updateResponse;
 }
 
 /**

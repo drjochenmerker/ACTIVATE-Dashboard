@@ -98,7 +98,24 @@ export const staticContent = {
             en: "No elements to select from",
             de: "Keine Elemente zur Auswahl",
             sv: "Inga element att välja mellan",
+        },
+        incorrectPassword: {
+            en: "The provided password is incorrect. Please try again.",
+            de: "Das eingegebene Passwort ist falsch. Bitte versuch es nochmal.",
+            sv: "Det angivna lösenordet är felaktigt. Försök igen.",
+        },
+        participantRequired: {
+            en: "Please select participants from at least two and at most three different classes.",
+            de: "Bitte wählen Sie Teilnehmer aus mindestens zwei und maximal drei verschiedenen Klassen aus.",
+            sv: "Vänligen välj deltagare från minst två och högst tre olika klasser.",
         }
+    },
+    login: {
+        loginButton: {
+            en: "Login",
+            de: "Login",
+            sv: "Login",
+        },
     },
     homepage:{
         navbarScene: {
@@ -106,6 +123,18 @@ export const staticContent = {
             de: "Szene",
             sv: "Scen",
         }
+    },
+    navbarInstructorView: {
+        standard: {
+            en: "Standard view",
+            de: "Standardansicht",
+            sv: "Standardvy",
+        },
+        instructor: {
+            en: "Instructor view",
+            de: "Instructoransicht",
+            sv: "Instruktörsvy",
+        },
     },
     terms: {
         setting: {
@@ -153,10 +182,20 @@ export const staticContent = {
             de: "Thema ändern",
             sv: "Ändra tema",
         },
+        settings: {
+            en: "Settings",
+            de: "Einstellungen",
+            sv: "Inställningar",
+        },
         endSession: {
             en: "End Session",
             de: "Sitzung beenden",
             sv: "Avsluta session",
+        },
+        home: {
+            en: "Home",
+            de: "Startseite",
+            sv: "Hem",
         },
         delete: {
             en: "Delete",
@@ -167,6 +206,11 @@ export const staticContent = {
             en: "Clone",
             de: "Klonen",
             sv: "Klon",
+        },
+        cancel: {
+            en: "Cancel",
+            de: "Abbrechen",
+            sv: "Avbryt",
         },
         conflictStatus: {
             open: {
@@ -241,6 +285,16 @@ export const staticContent = {
             en: "Loading... This may take a while.",
             de: "Laden... Dies kann einen Moment dauern.",
             sv: "Laddar... Detta kan ta en stund.",
+        },
+        noSelection: {
+            en: "<No selection>",
+            de: "<Keine Auswahl>",
+            sv: "<Inget urval>",
+        },
+        password: {
+            en: "Password",
+            de: "Passwort",
+            sv: "Lösenord",
         }
     },
     editor: {
@@ -373,6 +427,16 @@ export const staticContent = {
             de: "Kommentar hinzufügen",
             sv: "Lägg till kommentar",
         },
+        editComment: {
+            en: "Edit comment",
+            de: "Kommentar bearbeiten",
+            sv: "Redigera kommentar",
+        },
+        editConflict: {
+            en: "Edit conflict",
+            de: "Konflikt bearbeiten",
+            sv: "Redigera konflikt",
+        },
         save: {
             en: "Save",
             de: "Speichern",
@@ -382,6 +446,31 @@ export const staticContent = {
             en: "Cancel",
             de: "Abbrechen",
             sv: "Avbryt",
+        },
+        discardChangesQuestion: {
+            en: "Do you want to discard your changes?",
+            de: "Möchten Sie Ihre Änderungen verwerfen?",
+            sv: "Vill du förkasta dina ändringar?",
+        },
+        discardChanges: {
+            en: "Discard",
+            de: "Verwerfen",
+            sv: "Förkasta",
+        },
+        ok: {
+            en: "OK",
+            de: "OK",
+            sv: "OK",
+        },
+        title: {
+            en: "Title",
+            de: "Titel",
+            sv: "Titel",
+        },
+        description: {
+            en: "Description",
+            de: "Beschreibung",
+            sv: "Beskrivning",
         },
         answer: {
             en: "Answer",
@@ -435,10 +524,30 @@ export const staticContent = {
             de: "Aktivität löschen",
             sv: "Ta bort aktivitet",
         },
-        deleteConfirm: {
+        deleteActivityConfirm: {
             en: "Are you sure you want to delete this activity?",
             de: "Sind Sie sicher, dass Sie diese Aktivität löschen möchten?",
             sv: "Är du säker på att du vill ta bort denna aktivitet?",
+        },
+        deleteReply: {
+            en: "Delete reply",
+            de: "Antwort löschen",
+            sv: "Ta bort svar",
+        },
+        deleteComment: {
+            en: "Delete comment",
+            de: "Kommentar löschen",
+            sv: "Ta bort kommentar",
+        },
+        deleteCommentConfirm: {
+            en: "Are you sure you want to delete this comment?",
+            de: "Sind Sie sicher, dass Sie diesen Kommentar löschen möchten?",
+            sv: "Är du säker på att du vill ta bort denna kommentar?",
+        },
+        deleteReplyConfirm: {
+            en: "Are you sure you want to delete this reply?",
+            de: "Sind Sie sicher, dass Sie diese Antwort löschen möchten?",
+            sv: "Är du säker på att du vill ta bort detta svar?",
         },
         cloneActivity: {
             en: "Clone activity",
@@ -620,23 +729,6 @@ export const staticContent = {
             de: "Scannen, um Feedback zu dieser Aktivität zu geben.",
             sv: "Skanna för att ge feedback på denna aktivitet."
         },
-        // tmp not asked
-        question1: {
-            en: "1. How do you feel about the interprofessional collaboration simulation you have just completed?",
-            de: "1. Was denken Sie über die Simulation der interprofessionellen Zusammenarbeit, die Sie gerade abgeschlossen haben?",
-            sv: "1. Vad tycker du om simuleringen av det interprofessionella samarbetet som du just har genomfört?"
-        },
-        // TODO Finalize Questions that should be asked in the feedback form
-        question2: {
-            en: "2. Think of a part of the activity that you found very positive, constructive or satisfying. Please describe what happened in this phase in a few sentences.",
-            de: "2. Denken Sie an einen Teil der Aktivität, den Sie sehr positiv, konstruktiv oder befriedigend fanden. Bitte beschreiben Sie in einigen Sätzen, was in dieser Phase passiert ist.",
-            sv: "2. Tänk på en del av aktiviteten som du tyckte var mycket positiv, konstruktiv eller tillfredsställande. Beskriv vad som hände under den här fasen med några få meningar."
-        },
-        question3: {
-            en: "3. Think of a part of the activity that you found very negative, counterproductive or disappointing. Please describe what happened in this phase in a few sentences.",
-            de: "3. Denken Sie an einen Teil der Aktivität, den Sie sehr negativ, kontraproduktiv oder enttäuschend fanden. Bitte beschreiben Sie in einigen Sätzen, was in dieser Phase passiert ist.",
-            sv: "3. Tänk på en del av aktiviteten som du tyckte var mycket negativ, kontraproduktiv eller nedslående. Beskriv vad som hände i den här fasen med några få meningar."
-        },
         thankYou: {
             en: "Thanks for your feedback!",
             de: "Danke für Ihr Feedback!",
@@ -647,5 +739,154 @@ export const staticContent = {
             de: "Sie können die Seite jetzt schließen oder zur Startseite zurückkehren.",
             sv: "Du kan nu stänga sidan eller återvända till huvudsidan."
         }
+    },
+    optionsPage: {
+        title: {
+            en: "LLM Configuration",
+            de: "LLM-Konfiguration",
+            sv: "LLM-konfiguration",
+        },
+        description: {
+            en: "Configure your LLM models and prompts",
+            de: "Konfigurieren Sie Ihre LLM-Modelle und Prompts",
+            sv: "Konfigurera dina LLM-modeller och prompter",
+        },
+        selectModel: {
+            en: "Select Model",
+            de: "Modell auswählen",
+            sv: "Välj modell",
+        },
+        modelConfiguration: {
+            en: "Model Configuration",
+            de: "Modellkonfiguration",
+            sv: "Modellkonfiguration",
+        },
+        promptConfiguration: {
+            en: "Prompt Configuration",
+            de: "Prompt-Konfiguration",
+            sv: "Prompt-konfiguration",
+        },
+        name: {
+            en: "Name",
+            de: "Name",
+            sv: "Namn",
+        },
+        provider: {
+            en: "LLM Provider",
+            de: "LLM-Anbieter",
+            sv: "LLM-leverantör",
+        },
+        modelName: {
+            en: "Model Name",
+            de: "Modellname",
+            sv: "Modellnamn",
+        },
+        modelNamePlaceholder: {
+            en: "e.g., gpt-4, gemini-pro, claude-3-opus",
+            de: "z.B. gpt-4, gemini-pro, claude-3-opus",
+            sv: "t.ex. gpt-4, gemini-pro, claude-3-opus",
+        },
+        endpoint: {
+            en: "API Endpoint (optional)",
+            de: "API-Endpunkt (optional)",
+            sv: "API-slutpunkt (valfritt)",
+        },
+        endpointPlaceholder: {
+            en: "Leave empty for default endpoint",
+            de: "Leer lassen für Standard-Endpunkt",
+            sv: "Lämna tomt för standardslutpunkt",
+        },
+        temperature: {
+            en: "Temperature",
+            de: "Temperatur",
+            sv: "Temperatur",
+        },
+        maxTokens: {
+            en: "Max Tokens",
+            de: "Max. Tokens",
+            sv: "Max tokens",
+        },
+        organizationId: {
+            en: "Organization ID (optional)",
+            de: "Organisations-ID (optional)",
+            sv: "Organisations-ID (valfritt)",
+        },
+        prompt: {
+            en: "Prompt",
+            de: "Prompt",
+            sv: "Prompt",
+        },
+        promptPlaceholder: {
+            en: "Enter the prompt to send to the model",
+            de: "Geben Sie den Prompt ein, der an das Modell gesendet werden soll",
+            sv: "Ange prompten som ska skickas till modellen",
+        },
+        save: {
+            en: "Save",
+            de: "Speichern",
+            sv: "Spara",
+        },
+        edit: {
+            en: "Edit",
+            de: "Bearbeiten",
+            sv: "Redigera",
+        },
+        cancel: {
+            en: "Cancel",
+            de: "Abbrechen",
+            sv: "Avbryt",
+        },
+        currentConfiguration: {
+            en: "Current Configuration",
+            de: "Aktuelle Konfiguration",
+            sv: "Nuvarande konfiguration",
+        },
+        noConfiguration: {
+            en: "No configuration set. Click \"Edit\" to configure this model.",
+            de: "Keine Konfiguration vorhanden. Klicken Sie auf \"Bearbeiten\", um dieses Modell zu konfigurieren.",
+            sv: "Ingen konfiguration inställd. Klicka på \"Redigera\" för att konfigurera denna modell.",
+        },
+        prompts: {
+            knowledgeGraphGeneration: {
+                en: "Knowledge Graph Generation",
+                de: "Knowledge-Graph-Generierung",
+                sv: "Kunskapsgraf-generering",
+            },
+            entityExtraction: {
+                en: "Entity Extraction",
+                de: "Entitätsextraktion",
+                sv: "Entitetsutvinning",
+            },
+            turtleFileMerge: {
+                en: "Turtle File Merge",
+                de: "Turtle-Datei-Zusammenführung",
+                sv: "Sammanfogning av Turtle-filer",
+            },
+            syntaxFixing: {
+                en: "Syntax Fixing",
+                de: "Syntax-Korrektur",
+                sv: "Syntaxkorrigering",
+            },
+            entityAssignment: {
+                en: "Entity Assignment",
+                de: "Entitätenzuweisung",
+                sv: "Enhetsuppdrag",
+            },
+            tensionExtraction: {
+                en: "Tension Extraction",
+                de: "Spannungsextraktion",
+                sv: "Spänningsextraktion",
+            }
+        },
+        cortecsModelLinkText: {
+            en: "Show available Cortecs models",
+            de: "Verfügbare Cortecs-Modelle anzeigen",
+            sv: "Visa tillgängliga Cortecs-modeller",
+        },
+        cortecsModelTooltip: {
+            en: "Click the copy icon next to the model name on the Cortecs page to copy the exact model name. Then paste it into the \"Model Name\" field.",
+            de: "Klicke auf das Kopieren-Symbol rechts neben dem Modellnamen auf der Cortecs-Seite, um den exakten Modellnamen zu kopieren. Füge diesen anschließend im Feld \"Modellname\" ein.",
+            sv: "Klicka på kopieringsikonen bredvid modellnamnet på Cortecs-sidan för att kopiera det exakta modellnamnet. Klistra sedan in det i fältet \"Model Name\".",
+        },
     }
 }

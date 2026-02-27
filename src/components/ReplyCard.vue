@@ -1,11 +1,14 @@
 <script lang="ts" setup>
-import { nextTick, ref } from 'vue';
+import { computed, nextTick, ref } from 'vue';
 import { Button } from '@/components/ui/button';
-import { addComment, deleteComment } from '@/data/knowledge_graph/write_operations';
+import DeletionPopUp from '@/components/DeletionPopUp.vue';
+import { addComment, deleteComment, updateComment } from '@/data/knowledge_graph/write_operations';
 import { useConflictsStore } from '@/stores/conflictsStore';
 import { useSessionStore } from '@/stores/sessionStore';
 import { staticContent } from '@/data/contentData';
 import { useColorMode } from '@vueuse/core';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import ConfirmDiscardDialog from './ui/dialog/ConfirmDiscardDialog.vue';
 
 /** 
  * ReplyCard-Component
@@ -17,6 +20,10 @@ const props = defineProps({
         type: Object,
         required: true,
     },
+    showEdit: {
+        type: Boolean,
+        default: false,
+    }
 });
 
 const colorMode = useColorMode();
@@ -29,6 +36,12 @@ const conflictStore = useConflictsStore();
 const replyInputVisible = ref(false);
 const newReplyText = ref('');
 const textareaRef = ref<HTMLTextAreaElement | null>(null);
+
+const isEditDialogOpen = ref(false);
+const isDiscardDialogOpen = ref(false);
+const editedCommentText = ref('');
+const originalCommentText = ref('');
+const hasChanges = computed(() => editedCommentText.value !== originalCommentText.value);
 
 const toggleReplyInput = async () => {
     replyInputVisible.value = !replyInputVisible.value;
@@ -70,8 +83,65 @@ const handleEnterKey = (event: KeyboardEvent) => {
 // help function
 const hasReplies = (comment: any) => Array.isArray(comment.replies) && comment.replies.length > 0;
 
+const emit = defineEmits(['deleteComment', 'refresh']);
 
-const emit = defineEmits(['deleteComment']);
+const getCommentText = (comment: any) => {
+    if (!comment?.comment) return '';
+    if (typeof comment.comment === 'string') return comment.comment;
+    const commentRecord = comment.comment as Record<string, string>;
+    return commentRecord[sessionStore.activeLanguage]
+        || commentRecord.default
+        || Object.values(commentRecord)[0]
+        || '';
+};
+
+const openEditDialog = () => {
+    originalCommentText.value = getCommentText(props.parentComment);
+    editedCommentText.value = originalCommentText.value;
+    isEditDialogOpen.value = true;
+};
+
+const closeEditDialog = () => {
+    isEditDialogOpen.value = false;
+};
+
+const saveEditedComment = async () => {
+    if (!hasChanges.value) {
+        closeEditDialog();
+        return;
+    }
+    try {
+        await updateComment(
+            sessionStore.sessionActivity!.graph,
+            props.parentComment.id,
+            editedCommentText.value,
+            sessionStore.activeLanguage
+        );
+        await conflictStore.refreshConflictList();
+        emit('refresh');
+        closeEditDialog();
+    } catch (error) {
+        console.error('Error updating comment:', error);
+    }
+};
+
+const cancelEdit = () => {
+    if (!hasChanges.value) {
+        closeEditDialog();
+        return;
+    }
+    isDiscardDialogOpen.value = true;
+};
+
+const confirmDiscardChanges = () => {
+    isDiscardDialogOpen.value = false;
+    closeEditDialog();
+};
+
+const cancelDiscardChanges = () => {
+    isDiscardDialogOpen.value = false;
+};
+
 // Delete comment
 const handleDelete = async (id: string, parentComment: any) => {
     try {
@@ -111,19 +181,63 @@ const removeReply = (id: string) => {
     conflictStore.refreshConflictList();
 };
 
+const refreshReplies = async () => {
+    await conflictStore.refreshConflictList();
+};
+
 </script>
 
 <template>
     <div class="reply-card" :class="{ 'dark': colorMode === 'dark' }">
 
+        <Dialog v-model:open="isEditDialogOpen">
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>
+                        {{ staticContent.noteCards.editComment[sessionStore.activeLanguage] }}
+                    </DialogTitle>
+                </DialogHeader>
+                <textarea v-model="editedCommentText" class="w-full border rounded p-2 my-2 dark:bg-gray-900" />
+                <DialogFooter class="flex justify-between">
+                    <Button variant="secondary" @click="cancelEdit">
+                        {{ staticContent.noteCards.cancel[sessionStore.activeLanguage] }}
+                    </Button>
+                    <Button @click="saveEditedComment">
+                        {{ staticContent.noteCards.save[sessionStore.activeLanguage] }}
+                    </Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+
+        <ConfirmDiscardDialog
+            v-model:open="isDiscardDialogOpen"
+            @confirm="confirmDiscardChanges"
+            @cancel="cancelDiscardChanges"
+        />
+
         <div class="reply-content">
             <div class="reply-head">
-                <p class="reply-author">{{ props.parentComment.author.labels[sessionStore.activeLanguage]
-                    || props.parentComment.author.labels['default'] }}</p>
-                <button class="icon-button" @click="handleDelete(props.parentComment.id, props.parentComment)">
-                    <span class="material-symbols-outlined">delete</span>
-                </button>
-
+                <p class="reply-author">{{ 
+                    props.parentComment.author.labels?.[sessionStore.activeLanguage] ||
+                    props.parentComment.author.labels?.['default'] ||
+                    Object.values(props.parentComment.author.labels || {}).find(label => typeof label === 'string' && label.trim() !== '') ||
+                    props.parentComment.author.id ||
+                    ''
+                }}</p>
+                <div class="flex items-center gap-2">
+                    <!-- Edit button -->
+                    <button v-if="props.showEdit && sessionStore.instructorView" class="icon-button" @click="openEditDialog">
+                        <span class="material-symbols-outlined">edit</span>
+                    </button>
+                    <!-- Delete button -->
+                    <DeletionPopUp
+                        :title="staticContent.startPage.deleteReply[sessionStore.activeLanguage]"
+                        :description="staticContent.startPage.deleteReplyConfirm[sessionStore.activeLanguage]"
+                        :author="props.parentComment.author.id"
+                        :delete-function="() => handleDelete(props.parentComment.id, props.parentComment)"
+                    >
+                    </DeletionPopUp>
+                </div>    
             </div>
             <!-- TODO maybe handle multi-language comments -->
             <p class="reply-text">
@@ -155,7 +269,7 @@ const removeReply = (id: string) => {
         <div v-if="Array.isArray(props.parentComment.replies) && props.parentComment.replies.length"
             class="nested-replies">
             <ReplyCard v-for="nestedReply in props.parentComment.replies" :key="nestedReply.id"
-                :parentComment="nestedReply" @deleteComment="removeReply" />
+                :parentComment="nestedReply" :showEdit="props.showEdit" @deleteComment="removeReply" @refresh="refreshReplies" />
         </div>
 
     </div>

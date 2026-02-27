@@ -57,10 +57,12 @@ const removeComment = (id: string) => {
     <div>
         <h1 class="text-2xl font-semibold mb-4">{{ activateTerms[sessionStore.activeLanguage][pageData!.id] }}</h1>
 
+        <!-- TODO: Add buttons here that are only visible when sessionStore.instructorView is true -->
+        <!-- Example: <Button v-if="sessionStore.instructorView">...</Button> -->
+
         <!-- When not on misc page, show the content -->
         <ContentTemplate v-if="route.params.id !== 'misc' && pageData" :pageData="pageData"
             :conflicts="props.conflicts" />
-
 
         <!-- When on misc page, show misc comments-->
         <div v-if="route.params.id === 'misc'">

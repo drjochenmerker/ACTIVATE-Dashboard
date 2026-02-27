@@ -36,6 +36,8 @@ export enum sparqlTemplate {
     deleteTriple = "deleteTriple",
     deleteTriples = "deleteTriples",
     updateConflict = "updateConflict",
+    updateConflictText = "updateConflictText",
+    updateComment = "updateComment",
     deleteConflictParticipant = "deleteConflictParticipant",
     addConflictParticipant = "addConflictParticipant",
     getMiscComments = "getMiscComments",
