@@ -6,7 +6,6 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 import MainLayout from '@/components/MainLayout.vue';
 import { useSessionStore } from '@/stores/sessionStore';
 import FeedbackThankyouPage from '@/views/FeedbackThankyouPage.vue';
-import OptionsPage from '@/views/OptionsPage.vue';
 import LoginPage from '@/views/LoginPage.vue';
 
 const routes: Array<RouteRecordRaw> = [
@@ -37,7 +36,6 @@ const routes: Array<RouteRecordRaw> = [
         children: [
             { path: '', name: 'HomePage', component: HomePage, props: true }, // Standard dashboard
             { path: ':id', name: 'Content', component: ContentPage, props: true }, // Dynamic content pages
-            { path: 'options', name: 'Options', component: OptionsPage }, // Option page for LLM option
         ],
     },
 ];
