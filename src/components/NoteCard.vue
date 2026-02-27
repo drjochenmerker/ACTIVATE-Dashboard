@@ -10,6 +10,7 @@ import { activateTerms, staticContent } from '@/data/contentData';
 import { buildLanguageString } from '@/lib/utils';
 import { LanguageCode } from '@/data/knowledge_graph/structures'
 import DeletionPopUp from './DeletionPopUp.vue';
+import ConflictEditDialog from './ui/dialog/ConflictEditDialog.vue';
 
 const props = defineProps({
   conflict: {
@@ -67,6 +68,7 @@ const sessionStore = useSessionStore();
 
 
 const textareaRef = ref<HTMLTextAreaElement | null>(null);
+const editDialogRef = ref<InstanceType<typeof ConflictEditDialog> | null>(null);
 
 // Set initial conflict detail
 onMounted(() => {
@@ -154,6 +156,10 @@ const handleEnterKey = (event: KeyboardEvent) => {
     saveReply(props.conflict.id);
   }
 };
+
+const openEditDialog = async () => {
+  editDialogRef.value?.openEditDialog();
+};
 // TODO
 // const showOrigin = async () => {
 //   isShowOriginOpen.value = false;
@@ -181,6 +187,10 @@ const removeReply = (id: string) => {
   if (conflictDetail.value && conflictDetail.value.replies) {
     conflictDetail.value.replies = conflictDetail.value.replies.filter((reply: { id: string; }) => reply.id !== id);
   }
+};
+
+const refreshReplies = async () => {
+  await conflictStore.refreshConflictList();
 };
 
 // const cleanContent = computed(() => {
@@ -235,6 +245,12 @@ const removeReply = (id: string) => {
 
 <template>
   <div class="note-card" :class="[selectedStatus, { 'grayed-out': isGrayedOut }]">
+    <ConflictEditDialog
+      ref="editDialogRef"
+      :conflict="props.conflict"
+      @saved="() => conflictStore.refreshConflictList()"
+    />
+
     <div class="note-card-header">
       <!-- Author-->
       <span class="note-card-author">
@@ -251,14 +267,20 @@ const removeReply = (id: string) => {
             staticContent.terms.conflictStatus.resolved[sessionStore.activeLanguage] }}</option>
         </select>
       </div>
-      <!-- Delete button -->
-      <DeletionPopUp
-        :title="staticContent.startPage.deleteComment[sessionStore.activeLanguage]"
-        :description="staticContent.startPage.deleteCommentConfirm[sessionStore.activeLanguage]"
-        :author="props.authorId"
-        :delete-function="() => handleDelete(props.conflict.id)"
-      >
-      </DeletionPopUp>
+      <div class="flex items-center gap-2">
+        <!-- Edit button -->
+        <button v-if="sessionStore.instructorView" class="icon-button" @click="openEditDialog">
+          <span class="material-symbols-outlined">edit</span>
+        </button>
+        <!-- Delete button -->
+        <DeletionPopUp
+          :title="staticContent.startPage.deleteComment[sessionStore.activeLanguage]"
+          :description="staticContent.startPage.deleteCommentConfirm[sessionStore.activeLanguage]"
+          :author="props.authorId"
+          :delete-function="() => handleDelete(props.conflict.id)"
+        >
+        </DeletionPopUp>
+      </div>
     </div>
 
     <hr class="note-divider" />
@@ -327,7 +349,7 @@ const removeReply = (id: string) => {
 
     <div v-if="conflictDetail && conflictDetail.replies && conflictDetail.replies.length > 0" class="reply-container">
       <ReplyCard v-for="(reply) in conflictDetail.replies" :key="reply.id" :parentComment="reply"
-        :conflictId="conflict.id" @deleteComment="removeReply" />
+        :conflictId="conflict.id" :showEdit="sessionStore.instructorView" @deleteComment="removeReply" @refresh="refreshReplies" />
     </div>
   </div>
 

@@ -1,0 +1,21 @@
+PREFIX : <http://activate.htwk-leipzig.de/model#> 
+PREFIX graph: <http://activate.htwk-leipzig.de/graph/>
+
+DELETE {
+    GRAPH graph:{{graph}} {
+        :{{commentId}} :CommentDescription ?oldComment .
+    }
+}
+INSERT {
+    GRAPH graph:{{graph}} {
+        :{{commentId}} :CommentDescription """{{comment}}"""@{{langTag}} .
+    }
+}
+WHERE {
+    GRAPH graph:{{graph}} {
+        OPTIONAL {
+            :{{commentId}} :CommentDescription ?oldComment .
+            FILTER (lang(?oldComment) = "{{langTag}}")
+        }
+    }
+}
