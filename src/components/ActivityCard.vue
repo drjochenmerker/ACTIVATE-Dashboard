@@ -236,7 +236,8 @@ const showUrl = ref(false)
         <Accordion type="single" class="w-full" collapsible>
             <AccordionItem :value="props.activity.graph" class="accordion-item border-0">
 
-                <AccordionTrigger class="accordion-trigger text-lg font-semibold text-middle flex justify-center xl:text-xl"
+                <AccordionTrigger
+                    class="accordion-trigger text-lg font-semibold text-middle flex justify-center xl:text-xl"
                     @click="getRoles">
                     {{ props.activity.name[sessionStore.activeLanguage] || props.activity.name['default'] }}
                 </AccordionTrigger>
@@ -253,11 +254,9 @@ const showUrl = ref(false)
                     <div class="flex justify-between items-center gap-4 flex-wrap">
                         <!-- Delete Button -->
                         <div>
-                            <DeletionPopUp
-                                :title="staticContent.startPage.deleteActivity[sessionStore.activeLanguage]"
+                            <DeletionPopUp :title="staticContent.startPage.deleteActivity[sessionStore.activeLanguage]"
                                 :description="staticContent.startPage.deleteActivityConfirm[sessionStore.activeLanguage]"
-                                :delete-function="() => deleteThisActivity()"
-                            />
+                                :delete-function="() => deleteThisActivity()" />
                         </div>
 
                         <!-- Edit Button -->
@@ -406,7 +405,7 @@ const showUrl = ref(false)
                                         </DialogTitle>
                                         <DialogDescription>{{
                                             staticContent.startPage.withoutRoleSelectText[sessionStore.activeLanguage]
-                                            }}
+                                        }}
                                         </DialogDescription>
                                     </DialogHeader>
 
@@ -433,15 +432,15 @@ const showUrl = ref(false)
 
                                     <!-- Pooling Button Dialog -->
                                     <DialogFooter class="flex justify-between">
-                                        <DialogTrigger as-child>
-                                            <Button class="mr-auto" type="button">
-                                                {{
-                                                    staticContent.startPage.poolingButton[sessionStore.activeLanguage]
-                                                }}
-                                            </Button>
-                                        </DialogTrigger>
-
                                         <Dialog v-model:open="showPoolingDialog">
+                                            <DialogTrigger as-child>
+                                                <Button class="mr-auto" type="button">
+                                                    {{
+                                                        staticContent.startPage.poolingButton[sessionStore.activeLanguage]
+                                                    }}
+                                                </Button>
+                                            </DialogTrigger>
+
                                             <DialogContent>
                                                 <DialogHeader>
                                                     <DialogTitle>
