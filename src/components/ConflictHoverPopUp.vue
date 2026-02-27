@@ -134,7 +134,11 @@ watch(() => props.position, updatePopupHeight);
         }}
       </p>
       <p><strong>{{ staticContent.terms.author[sessionStore.activeLanguage] }}:</strong> {{
-        hoveredConflictPoint.author.labels[sessionStore.activeLanguage] || hoveredConflictPoint.author.labels['default']
+        hoveredConflictPoint.author.labels?.[sessionStore.activeLanguage] ||
+        hoveredConflictPoint.author.labels?.['default'] ||
+        Object.values(hoveredConflictPoint.author.labels || {}).find(label => typeof label === 'string' && label.trim() !== '') ||
+        hoveredConflictPoint.author.id ||
+        ''
         }}
       </p>
       <p>

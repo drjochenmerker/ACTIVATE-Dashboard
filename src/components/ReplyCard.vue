@@ -217,8 +217,13 @@ const refreshReplies = async () => {
 
         <div class="reply-content">
             <div class="reply-head">
-                <p class="reply-author">{{ props.parentComment.author.labels[sessionStore.activeLanguage]
-                    || props.parentComment.author.labels['default'] }}</p>
+                <p class="reply-author">{{ 
+                    props.parentComment.author.labels?.[sessionStore.activeLanguage] ||
+                    props.parentComment.author.labels?.['default'] ||
+                    Object.values(props.parentComment.author.labels || {}).find(label => typeof label === 'string' && label.trim() !== '') ||
+                    props.parentComment.author.id ||
+                    ''
+                }}</p>
                 <div class="flex items-center gap-2">
                     <!-- Edit button -->
                     <button v-if="props.showEdit && sessionStore.instructorView" class="icon-button" @click="openEditDialog">
