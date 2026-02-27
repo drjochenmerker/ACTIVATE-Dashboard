@@ -1,3 +1,4 @@
+import { LLMRequestConfig, useLLMSettingsStore } from "@/stores/llmSettingsStore";
 import { sparqlTemplate, StringAccessObject } from "./structures";
 import { fetchSparql, getSparqlTemplate } from "./utils";
 
@@ -20,7 +21,8 @@ export type LLMParsingResult = {
  * @param defaultRole default role for the setting - will be generated if not provided
  * @returns LLMParsingResult
  */
-export async function llmSettingGeneration(description: string, title?: string, defaultRole?: string): Promise<LLMParsingResult> {
+export async function llmSettingGeneration(description: string, llmDetail: LLMRequestConfig, title?: string, defaultRole?: string): Promise<LLMParsingResult> {
+    const llmSettingsStore = useLLMSettingsStore();
     // Generate TTL using the LLM Backend
     const llmRes = await fetch(`${import.meta.env.VITE_LLM_URL}${!import.meta.env.VITE_LLM_PORT ? '' : ':' + import.meta.env.VITE_LLM_PORT}/api/feedback/settingGen`, {
         method: "POST",
@@ -30,8 +32,11 @@ export async function llmSettingGeneration(description: string, title?: string, 
         },
         body: JSON.stringify({
             description,
+            llmDetail: JSON.stringify(llmDetail),
+            kgGenPrompt: llmSettingsStore.getPrompts().knowledgeGraphGeneration ?? null,
+            entityExtractionPrompt: llmSettingsStore.getPrompts().entityExtraction ?? null,
             title: title ?? "",
-            defaultRole: defaultRole ?? ""
+            defaultRole: defaultRole ?? "",
         })
     });
     const data = await llmRes.json();
@@ -75,7 +80,8 @@ export async function llmSettingGeneration(description: string, title?: string, 
  * @param data The question and answer pairs to submit
  * @returns LLMParsingResult
  */
-export async function llmSubmit(graphID: string, role: { id: string, label: string }, data: { question: string, answer: string }[]): Promise<LLMParsingResult> {
+export async function llmSubmit(graphID: string, role: { id: string, label: string }, data: { question: string, answer: string }[], llmDetail: LLMRequestConfig): Promise<LLMParsingResult> {
+    const llmSettingsStore = useLLMSettingsStore();
     // Fetch description and entities from the graph
     let description: StringAccessObject = {};
     let entities: StringAccessObject[] = [];
@@ -110,7 +116,10 @@ export async function llmSubmit(graphID: string, role: { id: string, label: stri
             feedback: {
                 role,
                 data: data
-            }
+            },
+            llmDetail: JSON.stringify(llmDetail),
+            entityExtractionPrompt: llmSettingsStore.getPrompts().entityExtraction,
+            tensionExtractionPrompt: llmSettingsStore.getPrompts().tensionExtraction
         })
     });
     const llmData = await llmRes.json();
@@ -237,7 +246,7 @@ export async function llmSubmit(graphID: string, role: { id: string, label: stri
  * @param graphID The ID of the graph to parse
  * @returns LLMParsingResult
  */
-export async function llmPool(graphID: string): Promise<LLMParsingResult> {
+export async function llmPool(graphID: string, llmDetail: LLMRequestConfig): Promise<LLMParsingResult> {
     const debugOn = true; // DEBUG: SET TO TRUE IF DEBUGGING IS NEEDED
     const logger = {
         log: (...args: any[]) => {
@@ -284,6 +293,7 @@ export async function llmPool(graphID: string): Promise<LLMParsingResult> {
     logger.log(`DEBUG: Sorted submissions. Entities: ${entitySubmissions.length}, Tensions: ${tensionSubmissions.length}`);
 
     // Step 2: Pool submissions (LLM API)
+    const llmSettingsStore = useLLMSettingsStore();
     stepStartTime = performance.now(); // Reset timer for step 2
     logger.log("DEBUG: Sending submissions to LLM pooling API...");
     const poolRes = await fetch(`${import.meta.env.VITE_LLM_URL}${!import.meta.env.VITE_LLM_PORT ? '' : ':' + import.meta.env.VITE_LLM_PORT}/api/feedback/pool`, {
@@ -295,6 +305,9 @@ export async function llmPool(graphID: string): Promise<LLMParsingResult> {
         body: JSON.stringify({
             entities: entitySubmissions,
             tensions: tensionSubmissions,
+            llmDetail: JSON.stringify(llmDetail),
+            turtleFileMergePrompt: llmSettingsStore.getPrompts().turtleFileMerge,
+            tensionExtractionPrompt: llmSettingsStore.getPrompts().tensionExtraction
         })
     });
 

@@ -16,6 +16,7 @@ import { getActivityClassIds } from '@/data/knowledge_graph/read_operations';
 import { KnowledgeGraphActivityClass } from '@/data/knowledge_graph/structures';
 import { llmSubmit } from '@/data/knowledge_graph/llm_utils';
 import { staticContentFeedback } from '@/data/feedbackQuestions';
+import { useLLMSettingsStore } from '@/stores/llmSettingsStore';
 
 const props = defineProps<{ graph: string }>()
 
@@ -159,7 +160,8 @@ const submitFeedback = async () => {
 
     try {
         loading.value = true;
-        await llmSubmit(feedbackData.graph, feedbackData.role, feedbackData.data);
+        const llmSettingsStore = useLLMSettingsStore();
+        await llmSubmit(feedbackData.graph, feedbackData.role, feedbackData.data, llmSettingsStore.getCurrentModelRequestConfig());
         loading.value = false;
     } catch (error) {
         loading.value = false;

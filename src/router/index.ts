@@ -65,8 +65,19 @@ router.beforeEach((to) => {
     }
 
     const isPublic = to.name === 'FeedbackPage' || to.name === 'FeedbackThankYouPage';
+    const isOption = to.path === '/options';
 
-    if (!sessionStore.isSessionActive && !isPublic && to.path !== '/login') {
+    // Permit users from accessing options if they aren't instructors
+    if (isOption && sessionStore.instructorMode == false) {
+        return '/start';
+    }
+
+    // Allow access to options and public pages without active session
+    if (isPublic) {
+        return;
+    }
+
+    if (!sessionStore.isSessionActive && to.path !== '/login') {
         return '/login';
     }
 

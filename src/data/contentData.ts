@@ -182,6 +182,11 @@ export const staticContent = {
             de: "Thema ändern",
             sv: "Ändra tema",
         },
+        settings: {
+            en: "Settings",
+            de: "Einstellungen",
+            sv: "Inställningar",
+        },
         endSession: {
             en: "End Session",
             de: "Sitzung beenden",
@@ -734,5 +739,154 @@ export const staticContent = {
             de: "Sie können die Seite jetzt schließen oder zur Startseite zurückkehren.",
             sv: "Du kan nu stänga sidan eller återvända till huvudsidan."
         }
+    },
+    optionsPage: {
+        title: {
+            en: "LLM Configuration",
+            de: "LLM-Konfiguration",
+            sv: "LLM-konfiguration",
+        },
+        description: {
+            en: "Configure your LLM models and prompts",
+            de: "Konfigurieren Sie Ihre LLM-Modelle und Prompts",
+            sv: "Konfigurera dina LLM-modeller och prompter",
+        },
+        selectModel: {
+            en: "Select Model",
+            de: "Modell auswählen",
+            sv: "Välj modell",
+        },
+        modelConfiguration: {
+            en: "Model Configuration",
+            de: "Modellkonfiguration",
+            sv: "Modellkonfiguration",
+        },
+        promptConfiguration: {
+            en: "Prompt Configuration",
+            de: "Prompt-Konfiguration",
+            sv: "Prompt-konfiguration",
+        },
+        name: {
+            en: "Name",
+            de: "Name",
+            sv: "Namn",
+        },
+        provider: {
+            en: "LLM Provider",
+            de: "LLM-Anbieter",
+            sv: "LLM-leverantör",
+        },
+        modelName: {
+            en: "Model Name",
+            de: "Modellname",
+            sv: "Modellnamn",
+        },
+        modelNamePlaceholder: {
+            en: "e.g., gpt-4, gemini-pro, claude-3-opus",
+            de: "z.B. gpt-4, gemini-pro, claude-3-opus",
+            sv: "t.ex. gpt-4, gemini-pro, claude-3-opus",
+        },
+        endpoint: {
+            en: "API Endpoint (optional)",
+            de: "API-Endpunkt (optional)",
+            sv: "API-slutpunkt (valfritt)",
+        },
+        endpointPlaceholder: {
+            en: "Leave empty for default endpoint",
+            de: "Leer lassen für Standard-Endpunkt",
+            sv: "Lämna tomt för standardslutpunkt",
+        },
+        temperature: {
+            en: "Temperature",
+            de: "Temperatur",
+            sv: "Temperatur",
+        },
+        maxTokens: {
+            en: "Max Tokens",
+            de: "Max. Tokens",
+            sv: "Max tokens",
+        },
+        organizationId: {
+            en: "Organization ID (optional)",
+            de: "Organisations-ID (optional)",
+            sv: "Organisations-ID (valfritt)",
+        },
+        prompt: {
+            en: "Prompt",
+            de: "Prompt",
+            sv: "Prompt",
+        },
+        promptPlaceholder: {
+            en: "Enter the prompt to send to the model",
+            de: "Geben Sie den Prompt ein, der an das Modell gesendet werden soll",
+            sv: "Ange prompten som ska skickas till modellen",
+        },
+        save: {
+            en: "Save",
+            de: "Speichern",
+            sv: "Spara",
+        },
+        edit: {
+            en: "Edit",
+            de: "Bearbeiten",
+            sv: "Redigera",
+        },
+        cancel: {
+            en: "Cancel",
+            de: "Abbrechen",
+            sv: "Avbryt",
+        },
+        currentConfiguration: {
+            en: "Current Configuration",
+            de: "Aktuelle Konfiguration",
+            sv: "Nuvarande konfiguration",
+        },
+        noConfiguration: {
+            en: "No configuration set. Click \"Edit\" to configure this model.",
+            de: "Keine Konfiguration vorhanden. Klicken Sie auf \"Bearbeiten\", um dieses Modell zu konfigurieren.",
+            sv: "Ingen konfiguration inställd. Klicka på \"Redigera\" för att konfigurera denna modell.",
+        },
+        prompts: {
+            knowledgeGraphGeneration: {
+                en: "Knowledge Graph Generation",
+                de: "Knowledge-Graph-Generierung",
+                sv: "Kunskapsgraf-generering",
+            },
+            entityExtraction: {
+                en: "Entity Extraction",
+                de: "Entitätsextraktion",
+                sv: "Entitetsutvinning",
+            },
+            turtleFileMerge: {
+                en: "Turtle File Merge",
+                de: "Turtle-Datei-Zusammenführung",
+                sv: "Sammanfogning av Turtle-filer",
+            },
+            syntaxFixing: {
+                en: "Syntax Fixing",
+                de: "Syntax-Korrektur",
+                sv: "Syntaxkorrigering",
+            },
+            entityAssignment: {
+                en: "Entity Assignment",
+                de: "Entitätenzuweisung",
+                sv: "Enhetsuppdrag",
+            },
+            tensionExtraction: {
+                en: "Tension Extraction",
+                de: "Spannungsextraktion",
+                sv: "Spänningsextraktion",
+            }
+        },
+        cortecsModelLinkText: {
+            en: "Show available Cortecs models",
+            de: "Verfügbare Cortecs-Modelle anzeigen",
+            sv: "Visa tillgängliga Cortecs-modeller",
+        },
+        cortecsModelTooltip: {
+            en: "Click the copy icon next to the model name on the Cortecs page to copy the exact model name. Then paste it into the \"Model Name\" field.",
+            de: "Klicke auf das Kopieren-Symbol rechts neben dem Modellnamen auf der Cortecs-Seite, um den exakten Modellnamen zu kopieren. Füge diesen anschließend im Feld \"Modellname\" ein.",
+            sv: "Klicka på kopieringsikonen bredvid modellnamnet på Cortecs-sidan för att kopiera det exakta modellnamnet. Klistra sedan in det i fältet \"Model Name\".",
+        },
     }
 }

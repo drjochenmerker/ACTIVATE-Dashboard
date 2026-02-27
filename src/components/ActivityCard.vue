@@ -27,6 +27,7 @@ import { llmPool } from '@/data/knowledge_graph/llm_utils';
 import LoadingOverlay from '@/components/LoadingOverlay.vue';
 import RecursiveSelect from './RecursiveSelect.vue';
 import { Select, SelectTrigger, SelectContent, SelectValue } from '@/components/ui/select';
+import { useLLMSettingsStore } from '@/stores/llmSettingsStore';
 import DeletionPopUp from './DeletionPopUp.vue';
 
 // consts and props defintion
@@ -207,9 +208,10 @@ const getRoles = async () => {
 
 const sessionStartAllowed = () => true; // TODO tmp for no role selection
 const handlePoolingStart = async () => {
+    const llmSettingsStore = useLLMSettingsStore();
     try {
         loading.value = true;
-        const res = await llmPool(props.activity.graph);
+        const res = await llmPool(props.activity.graph, llmSettingsStore.getCurrentModelRequestConfig());
         if (res.success === false) {
             nothingToPool.value = true;
             loading.value = false;
