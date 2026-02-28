@@ -1,12 +1,14 @@
 <script lang="ts" setup>
-import { addComment, deleteComment } from '@/data/knowledge_graph/write_operations';
-import { nextTick, ref, watch } from 'vue';
-import CustomButton from './ui/button/CustomButton.vue';
-import ReplyCard from './ReplyCard.vue';
-import { useSessionStore } from '@/stores/sessionStore';
-import { useConflictsStore } from '@/stores/conflictsStore';
+import { addComment, deleteComment } from "@/data/knowledge_graph/write_operations";
+import { nextTick, ref, watch } from "vue";
+import CustomButton from "./ui/button/CustomButton.vue";
+import DeletionPopUp from "./DeletionPopUp.vue";
+import ReplyCard from "./ReplyCard.vue";
+import { useSessionStore } from "@/stores/sessionStore";
+import { useConflictsStore } from "@/stores/conflictsStore";
+import { staticContent } from "@/data/contentData";
 
-import { useColorMode } from '@vueuse/core';
+import { useColorMode } from "@vueuse/core";
 
 /**
  * NoteCard for miscellaneous comments
@@ -31,14 +33,14 @@ const sessionStore = useSessionStore();
 
 const graph = sessionStore.sessionActivity!.graph;
 
-const [extractedTitle, extractedContent] = props.comment.comment.split('|');
+const [extractedTitle, extractedContent] = props.comment.comment.split("|");
 
 const conflictDetail = ref(props.comment);
 const replyInputVisible = ref<Record<string, boolean>>({});
 const newReplyText = ref<Record<string, string>>({});
 const textareaRef = ref<HTMLTextAreaElement | null>(null);
 
-const emit = defineEmits(['deleteComment', 'refresh']);
+const emit = defineEmits(["deleteComment", "refresh"]);
 
 /**
  * Watches for changes to the comment prop and updates the local conflictDetail reactive reference
@@ -66,9 +68,9 @@ const handleDelete = async (id: string) => {
         //comment cant be nested because its the misc card
         await deleteComment(graph, id, false);
         useConflictsStore().refreshConflictList();
-        emit('deleteComment', id); // Event an Parent-Komponente senden
+        emit("deleteComment", id); // Event an Parent-Komponente senden
     } catch (error) {
-        console.error('Error deleting conflict: ', error);
+        console.error("Error deleting conflict: ", error);
     }
 };
 
@@ -89,13 +91,13 @@ const toggleReplyInput = async (conflictId: string) => {
         textareaRef.value?.focus();
     }
     if (!replyInputVisible.value[conflictId]) {
-        newReplyText.value[conflictId] = '';
+        newReplyText.value[conflictId] = "";
     }
 };
 
 // Handles the key press event for the textarea
 const handleEnterKey = (event: KeyboardEvent) => {
-    if (event.key === 'Enter' && !event.shiftKey) {
+    if (event.key === "Enter" && !event.shiftKey) {
         event.preventDefault();
         saveReply(props.comment.id);
     }
@@ -127,12 +129,12 @@ const saveReply = async (commentId: string) => {
 
         // Important to refresh the conflict list so that the UI shows the new comment immediately
         useConflictsStore().refreshConflictList();
-        emit('refresh');
+        emit("refresh");
 
         replyInputVisible.value[commentId] = false;
-        newReplyText.value[commentId] = '';
+        newReplyText.value[commentId] = "";
     } catch (error) {
-        console.error('Error saving comment:', error);
+        console.error("Error saving comment:", error);
     }
 };
 
@@ -146,11 +148,16 @@ const removeReply = (id: string) => {
 <template>
     <div class="misc-note-card" :class="{ dark: colorMode === 'dark' }">
         <div class="misc-note-header">
-            <span class="misc-note-author">Author: {{ props.comment.author || 'Unknown' }}</span>
+            <span class="misc-note-author">Author: {{ props.comment.author || "Unknown" }}</span>
             <div>
-                <button class="icon-button" @click="handleDelete(props.comment.id)">
-                    <span class="material-symbols-outlined">delete</span>
-                </button>
+                <!-- Delete button -->
+                <DeletionPopUp
+                    :title="staticContent.startPage.deleteComment[sessionStore.activeLanguage]"
+                    :description="staticContent.startPage.deleteCommentConfirm[sessionStore.activeLanguage]"
+                    :author="props.comment.author.id"
+                    :delete-function="() => handleDelete(props.comment.id)"
+                >
+                </DeletionPopUp>
             </div>
         </div>
 

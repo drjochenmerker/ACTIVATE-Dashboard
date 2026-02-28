@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import { computed } from 'vue';
-import { useRoute } from 'vue-router';
-import NoteCard, { ConflictWithId } from './NoteCard.vue';
-import { useConflictsStore } from '@/stores/conflictsStore';
-import { staticContent } from '@/data/contentData';
-import { useSessionStore } from '@/stores/sessionStore';
+import { computed } from "vue";
+import { useRoute } from "vue-router";
+import NoteCard, { ConflictWithId } from "./NoteCard.vue";
+import { useConflictsStore } from "@/stores/conflictsStore";
+import { staticContent } from "@/data/contentData";
+import { useSessionStore } from "@/stores/sessionStore";
 
 const props = defineProps({
     pageData: {
@@ -68,10 +68,17 @@ const filteredConflicts = computed((): ConflictWithId[] => {
                         :content="conflict.description[sessionStore.activeLanguage] || conflict.description['default']"
                         :origin="conflict.origin"
                         :author="
-                            conflict.author.labels[sessionStore.activeLanguage] || conflict.author.labels['default']
+                            conflict.author.labels?.[sessionStore.activeLanguage] ||
+                            conflict.author.labels?.['default'] ||
+                            Object.values(conflict.author.labels || {}).find(
+                                (label) => typeof label === 'string' && label.trim() !== '',
+                            ) ||
+                            conflict.author.id ||
+                            ''
                         "
+                        :authorId="conflict.author.id"
                         :status="conflict.status"
-                        :is-grayed-out="!!highlightedConflictId && conflict.id !== highlightedConflictId"
+                        :isGrayedOut="!!highlightedConflictId && conflict.id !== highlightedConflictId"
                     />
                 </div>
             </div>
@@ -87,7 +94,7 @@ const filteredConflicts = computed((): ConflictWithId[] => {
 <style scoped>
 /* Container styling for each conflict */
 .conflict-container {
-    margin-bottom: 20px;
+    padding-bottom: 20px;
 }
 
 /* Styling for the comment section */

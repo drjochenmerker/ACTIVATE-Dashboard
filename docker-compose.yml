@@ -9,6 +9,7 @@ services:
             - activate-network
         volumes:
             - ./rdflib/data:/app/data
+        restart: unless-stopped
 
     frontend:
         build:
@@ -19,6 +20,7 @@ services:
             - backend
         networks:
             - activate-network
+        restart: unless-stopped
 
     llm-backend:
         build:
@@ -27,6 +29,7 @@ services:
             - "8003:8005"
         networks:
             - activate-network
+        restart: unless-stopped
 
 networks:
     activate-network:

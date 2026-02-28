@@ -8,6 +8,10 @@ import { useConflictsStore } from '@/stores/conflictsStore';
 import { useSessionStore } from '@/stores/sessionStore';
 import { activateTerms, staticContent } from '@/data/contentData';
 import { buildLanguageString } from '@/lib/utils';
+import { LanguageCode } from '@/data/knowledge_graph/structures'
+import DeletionPopUp from './DeletionPopUp.vue';
+import ConflictEditDialog from './ui/dialog/ConflictEditDialog.vue';
+
 
 export interface ConflictWithId extends Conflict {
     id: string;
@@ -40,6 +44,7 @@ const conflictStore = useConflictsStore();
 const sessionStore = useSessionStore();
 
 const textareaRef = ref<HTMLTextAreaElement | null>(null);
+const editDialogRef = ref<InstanceType<typeof ConflictEditDialog> | null>(null);
 
 // Set initial conflict detail
 onMounted(() => {
@@ -132,6 +137,10 @@ const handleEnterKey = (event: KeyboardEvent) => {
     }
 };
 
+const openEditDialog = async () => {
+  editDialogRef.value?.openEditDialog();
+};
+
 /**
  * Deletes a specific conflict from the conflict store and updates the conflict list.
  *
@@ -156,35 +165,51 @@ const removeReply = (id: string) => {
         conflictDetail.value.replies = conflictDetail.value.replies.filter((reply: { id: string }) => reply.id !== id);
     }
 };
+const refreshReplies = async () => {
+  await conflictStore.refreshConflictList();
+};
+
 </script>
 
 <template>
-    <div class="note-card" :class="[selectedStatus, { 'grayed-out': isGrayedOut }]">
-        <div class="note-card-header">
-            <!-- Author-->
-            <span class="note-card-author">
-                {{ staticContent.terms.author[sessionStore.activeLanguage] }}: {{ props.author }}
-            </span>
-            <!-- Status selector -->
-            <div class="status-selector">
-                <select v-model="selectedStatus">
-                    <option :value="conflictStatus.open">
-                        {{ staticContent.terms.conflictStatus.open[sessionStore.activeLanguage] }}
-                    </option>
-                    <option :value="conflictStatus.inDiscussion">
-                        {{ staticContent.terms.conflictStatus.inDiscussion[sessionStore.activeLanguage] }}
-                    </option>
-                    <option :value="conflictStatus.resolved">
-                        {{ staticContent.terms.conflictStatus.resolved[sessionStore.activeLanguage] }}
-                    </option>
-                </select>
-            </div>
-            <!-- Delete button -->
-            <!-- TODO implement "are you sure?" -->
-            <button class="icon-button" @click="handleDelete(props.conflict.id)">
-                <span class="material-symbols-outlined">delete</span>
-            </button>
-        </div>
+  <div class="note-card" :class="[selectedStatus, { 'grayed-out': isGrayedOut }]">
+    <ConflictEditDialog
+      ref="editDialogRef"
+      :conflict="props.conflict"
+      @saved="() => conflictStore.refreshConflictList()"
+    />
+
+    <div class="note-card-header">
+      <!-- Author-->
+      <span class="note-card-author">
+        {{ staticContent.terms.author[sessionStore.activeLanguage] }}: {{ props.author }}
+      </span>
+      <!-- Status selector -->
+      <div class="status-selector">
+        <select v-model="selectedStatus">
+          <option :value="conflictStatus.open">{{ staticContent.terms.conflictStatus.open[sessionStore.activeLanguage]
+          }}</option>
+          <option :value="conflictStatus.inDiscussion">{{
+            staticContent.terms.conflictStatus.inDiscussion[sessionStore.activeLanguage] }}</option>
+          <option :value="conflictStatus.resolved">{{
+            staticContent.terms.conflictStatus.resolved[sessionStore.activeLanguage] }}</option>
+        </select>
+      </div>
+      <div class="flex items-center gap-2">
+        <!-- Edit button -->
+        <button v-if="sessionStore.instructorView" class="icon-button" @click="openEditDialog">
+          <span class="material-symbols-outlined">edit</span>
+        </button>
+        <!-- Delete button -->
+        <DeletionPopUp
+          :title="staticContent.startPage.deleteComment[sessionStore.activeLanguage]"
+          :description="staticContent.startPage.deleteCommentConfirm[sessionStore.activeLanguage]"
+          :author="props.authorId"
+          :delete-function="() => handleDelete(props.conflict.id)"
+        >
+        </DeletionPopUp>
+      </div>
+    </div>
 
         <hr class="note-divider" />
 
@@ -194,21 +219,19 @@ const removeReply = (id: string) => {
             <!-- eslint-disable-next-line vue/no-v-html -->
             <div class="note-title" v-html="props.title"></div>
 
-            <!-- Participants grouped by type -->
-            <div class="note-participants">
-                <div v-for="(group, type) in groupedParticipants" :key="type" class="participant-group">
-                    <div class="participant-group-box">
-                        <strong class="participant-group-title"
-                            >{{ activateTerms[sessionStore.activeLanguage][type] }}:</strong
-                        >
-                        <div class="participant-tag-container">
-                            <span v-for="participant in group" :key="participant.id" class="participant-tag">
-                                {{ buildLanguageString(participant, sessionStore.activeLanguage, true) }}
-                            </span>
-                        </div>
-                    </div>
-                </div>
+      <!-- Participants grouped by type -->
+      <div class="note-participants">
+        <div v-for="(group, type) in groupedParticipants" :key="type" class="participant-group">
+          <div class="participant-group-box">
+            <strong class="participant-group-title">{{ activateTerms[sessionStore.activeLanguage][type] }}:</strong>
+            <div class="participant-tag-container">
+              <span v-for="participant in group" :key="participant.id" class="participant-tag">
+                {{ buildLanguageString(participant, sessionStore.activeLanguage as LanguageCode, true) }}
+              </span>
             </div>
+          </div>
+        </div>
+      </div>
 
             <!-- Content -->
             <!-- // v-html is fine here because it's not a user input field -->
@@ -239,18 +262,9 @@ const removeReply = (id: string) => {
             }}</CustomButton>
         </div>
 
-        <div
-            v-if="conflictDetail && conflictDetail.replies && conflictDetail.replies.length > 0"
-            class="reply-container"
-        >
-            <ReplyCard
-                v-for="reply in conflictDetail.replies"
-                :key="reply.id"
-                :parent-comment="reply"
-                :conflict-id="conflict.id"
-                @delete-comment="removeReply"
-            />
-        </div>
+    <div v-if="conflictDetail && conflictDetail.replies && conflictDetail.replies.length > 0" class="reply-container">
+      <ReplyCard v-for="(reply) in conflictDetail.replies" :key="reply.id" :parentComment="reply"
+        :conflictId="conflict.id" :showEdit="sessionStore.instructorView" @deleteComment="removeReply" @refresh="refreshReplies" />
     </div>
 </template>
 

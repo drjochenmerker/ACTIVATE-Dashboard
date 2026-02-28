@@ -1,26 +1,26 @@
 <script lang="ts">
-import { defineComponent, ref, onMounted, watch, computed } from 'vue';
-import { useColorMode } from '@vueuse/core';
-import { useRouter } from 'vue-router';
+import { defineComponent, ref, onMounted, watch, computed } from "vue";
+import { useColorMode } from "@vueuse/core";
+import { useRouter } from "vue-router";
 
-import { useSessionStore } from '@/stores/sessionStore';
-import { useConflictsStore } from '@/stores/conflictsStore';
-import { useActivityPointsStore } from '@/stores/activityPointsStore';
+import { useSessionStore } from "@/stores/sessionStore";
+import { useConflictsStore } from "@/stores/conflictsStore";
+import { useActivityPointsStore } from "@/stores/activityPointsStore";
 
-import { calculateConflictPositions } from '@/composables/calculateConflictPositions';
-import { getActivityDetail } from '@/data/knowledge_graph/read_operations';
-import { activateTerms, staticContent } from '@/data/contentData';
-import { Activity, ActivityDetail, Conflict, conflictStatus, Objective } from '@/data/knowledge_graph/structures';
+import { calculateConflictPositions } from "@/composables/calculateConflictPositions";
+import { getActivityDetail } from "@/data/knowledge_graph/read_operations";
+import { activateTerms, staticContent } from "@/data/contentData";
+import { Activity, ActivityDetail, Conflict, conflictStatus, Objective } from "@/data/knowledge_graph/structures";
 
-import PointHoverPopUp from '@/components/PointHoverPopUp.vue';
-import ConflictHoverPopUp from './ConflictHoverPopUp.vue';
+import PointHoverPopUp from "@/components/PointHoverPopUp.vue";
+import ConflictHoverPopUp from "./ConflictHoverPopUp.vue";
 
 /**
  * Activity-Diagram-Component
  * Visualization of the active and inactive elements of the Activity-Diagram
  */
 export default defineComponent({
-    name: 'ActivityDiagramCanvas',
+    name: "ActivityDiagramCanvas",
     components: {
         ConflictHoverPopUp,
         PointHoverPopUp,
@@ -71,8 +71,8 @@ export default defineComponent({
         const hasToBeCleared = computed(() => activityPointStore.getActivePoints.length === 0);
 
         // Changes Point-Colors based on current Theme
-        const getPointColor = () => (mode.value === 'dark' ? 'lightgray' : 'white');
-        const getLineColor = () => (mode.value === 'dark' ? 'gray' : 'black');
+        const getPointColor = () => (mode.value === "dark" ? "lightgray" : "white");
+        const getLineColor = () => (mode.value === "dark" ? "gray" : "black");
 
         /**
          * Points of the activity diagram
@@ -89,7 +89,7 @@ export default defineComponent({
             {
                 x: triangleWidth / 2,
                 y: triangleHeight / 8,
-                id: 'instruments',
+                id: "instruments",
                 label: activateTerms[sessionStore.activeLanguage].instruments,
                 tooltip: staticContent.hoverText.instruments[sessionStore.activeLanguage],
                 color: getPointColor(),
@@ -99,7 +99,7 @@ export default defineComponent({
             {
                 x: triangleWidth / 8,
                 y: (triangleHeight / 8) * 7,
-                id: 'rules',
+                id: "rules",
                 label: activateTerms[sessionStore.activeLanguage].rules,
                 tooltip: staticContent.hoverText.rules[sessionStore.activeLanguage],
                 color: getPointColor(),
@@ -109,7 +109,7 @@ export default defineComponent({
             {
                 x: (triangleWidth / 8) * 7,
                 y: (triangleHeight / 8) * 7,
-                id: 'division_of_labour',
+                id: "division_of_labour",
                 label: activateTerms[sessionStore.activeLanguage].division_of_labour,
                 tooltip: staticContent.hoverText.division_of_labour[sessionStore.activeLanguage],
                 color: getPointColor(),
@@ -119,7 +119,7 @@ export default defineComponent({
             {
                 x: (triangleWidth / 16) * 5,
                 y: triangleHeight / 2,
-                id: 'subject',
+                id: "subject",
                 label: activateTerms[sessionStore.activeLanguage].subject,
                 tooltip: staticContent.hoverText.subject[sessionStore.activeLanguage],
                 color: getPointColor(),
@@ -129,7 +129,7 @@ export default defineComponent({
             {
                 x: (triangleWidth / 16) * 11,
                 y: triangleHeight / 2,
-                id: 'object',
+                id: "object",
                 label: activateTerms[sessionStore.activeLanguage].object,
                 tooltip: staticContent.hoverText.object[sessionStore.activeLanguage],
                 color: getPointColor(),
@@ -139,7 +139,7 @@ export default defineComponent({
             {
                 x: triangleWidth / 2,
                 y: (triangleHeight / 8) * 7,
-                id: 'community',
+                id: "community",
                 label: activateTerms[sessionStore.activeLanguage].community,
                 tooltip: staticContent.hoverText.community[sessionStore.activeLanguage],
                 color: getPointColor(),
@@ -154,18 +154,18 @@ export default defineComponent({
          * @property {bool} active: Specifies if the line is active at the moment
          */
         const lines = ref([
-            { pointIds: ['instruments', 'subject'], color: getLineColor(), active: false },
-            { pointIds: ['instruments', 'object'], color: getLineColor(), active: false },
-            { pointIds: ['rules', 'community'], color: getLineColor(), active: false },
-            { pointIds: ['community', 'division_of_labour'], color: getLineColor(), active: false },
-            { pointIds: ['subject', 'rules'], color: getLineColor(), active: false },
-            { pointIds: ['object', 'division_of_labour'], color: getLineColor(), active: false },
-            { pointIds: ['subject', 'object'], color: getLineColor(), active: false },
-            { pointIds: ['subject', 'community'], color: getLineColor(), active: false },
-            { pointIds: ['community', 'object'], color: getLineColor(), active: false },
-            { pointIds: ['subject', 'division_of_labour'], color: getLineColor(), active: false },
-            { pointIds: ['rules', 'object'], color: getLineColor(), active: false },
-            { pointIds: ['instruments', 'community'], color: getLineColor(), active: false },
+            { pointIds: ["instruments", "subject"], color: getLineColor(), active: false },
+            { pointIds: ["instruments", "object"], color: getLineColor(), active: false },
+            { pointIds: ["rules", "community"], color: getLineColor(), active: false },
+            { pointIds: ["community", "division_of_labour"], color: getLineColor(), active: false },
+            { pointIds: ["subject", "rules"], color: getLineColor(), active: false },
+            { pointIds: ["object", "division_of_labour"], color: getLineColor(), active: false },
+            { pointIds: ["subject", "object"], color: getLineColor(), active: false },
+            { pointIds: ["subject", "community"], color: getLineColor(), active: false },
+            { pointIds: ["community", "object"], color: getLineColor(), active: false },
+            { pointIds: ["subject", "division_of_labour"], color: getLineColor(), active: false },
+            { pointIds: ["rules", "object"], color: getLineColor(), active: false },
+            { pointIds: ["instruments", "community"], color: getLineColor(), active: false },
         ]);
 
         /**
@@ -173,10 +173,10 @@ export default defineComponent({
          * @property {Array} pointIds: Array of the corner point IDs
          */
         const triangles = ref([
-            { pointIds: ['instruments', 'subject', 'object'] },
-            { pointIds: ['subject', 'rules', 'community'] },
-            { pointIds: ['subject', 'community', 'object'] },
-            { pointIds: ['object', 'community', 'division_of_labour'] },
+            { pointIds: ["instruments", "subject", "object"] },
+            { pointIds: ["subject", "rules", "community"] },
+            { pointIds: ["subject", "community", "object"] },
+            { pointIds: ["object", "community", "division_of_labour"] },
         ]);
 
         // Array of all points that are currently selected
@@ -266,7 +266,7 @@ export default defineComponent({
                 const isConnected = line.pointIds.every((id) => triangle.pointIds.includes(id));
                 if (isConnected) {
                     line.active = !triangleIsActive;
-                    line.color = triangleIsActive ? getLineColor() : 'blue';
+                    line.color = triangleIsActive ? getLineColor() : "blue";
                 }
             });
 
@@ -321,11 +321,11 @@ export default defineComponent({
             // Update point colors
             points.value.forEach((point) => {
                 if (hoveredPoint.value === point.id && !point.active) {
-                    point.color = 'deepskyblue';
+                    point.color = "deepskyblue";
                 } else if (point.highlighted) {
-                    point.color = 'deepskyblue';
+                    point.color = "deepskyblue";
                 } else {
-                    point.color = point.active ? 'blue' : getPointColor();
+                    point.color = point.active ? "blue" : getPointColor();
                 }
             });
 
@@ -337,7 +337,7 @@ export default defineComponent({
                     const isConnecting = line.pointIds.every((id) => selectedIds.includes(id));
 
                     if (isConnecting) {
-                        line.color = 'blue';
+                        line.color = "blue";
                         line.active = true;
                     } else {
                         line.color = getLineColor();
@@ -363,7 +363,7 @@ export default defineComponent({
          */
         const draw = () => {
             if (!canvas.value) return;
-            const ctx = canvas.value.getContext('2d');
+            const ctx = canvas.value.getContext("2d");
             if (!ctx) return;
 
             // Reset canvas
@@ -378,8 +378,8 @@ export default defineComponent({
                     ctx.lineTo(p2.x, p2.y);
                     ctx.lineTo(p3.x, p3.y);
                     ctx.closePath();
-                    ctx.strokeStyle = 'blue';
-                    ctx.fillStyle = 'rgba(0, 191, 255, 0.5)';
+                    ctx.strokeStyle = "blue";
+                    ctx.fillStyle = "rgba(0, 191, 255, 0.5)";
                     ctx.stroke();
                     ctx.fill();
                 }
@@ -404,24 +404,24 @@ export default defineComponent({
                 ctx.arc(point.x, point.y, triangleHeight / 40, 0, 2 * Math.PI);
                 ctx.fillStyle = point.color;
                 ctx.fill();
-                ctx.strokeStyle = 'black';
+                ctx.strokeStyle = "black";
                 ctx.lineWidth = 2;
                 ctx.stroke();
 
                 // Draw labels for each point
-                ctx.fillStyle = mode.value === 'dark' ? 'white' : 'black';
+                ctx.fillStyle = mode.value === "dark" ? "white" : "black";
                 ctx.font = point.active ? `bold ${triangleHeight / 40}px Arial` : `${triangleHeight / 40}px Arial`;
-                ctx.textAlign = 'center';
+                ctx.textAlign = "center";
 
                 // WORKAROUND of dynamic positioninig: only the object label adjusted
-                if (point.id === 'rules' || point.id === 'community' || point.id === 'division_of_labour')
+                if (point.id === "rules" || point.id === "community" || point.id === "division_of_labour")
                     ctx.fillText(point.label, point.x, point.y + triangleHeight / 20);
 
-                if (point.id === 'instruments') ctx.fillText(point.label, point.x, point.y - triangleHeight / 30);
-                if (point.id === 'subject')
+                if (point.id === "instruments") ctx.fillText(point.label, point.x, point.y - triangleHeight / 30);
+                if (point.id === "subject")
                     ctx.fillText(point.label, point.x - triangleWidth / 30, point.y - triangleHeight / 30);
-                if (point.id === 'object') {
-                    ctx.textAlign = 'right';
+                if (point.id === "object") {
+                    ctx.textAlign = "right";
                     ctx.fillText(
                         point.label,
                         point.x + triangleWidth / 60 + ctx.measureText(point.label).width,
@@ -438,77 +438,22 @@ export default defineComponent({
                             hoveredConflictPointData.value && hoveredConflictPointData.value.id === conflict.id;
                         const scalingFactor = isHovered ? 1.2 : 1;
                         ctx.beginPath();
-                        if (conflict.hasIntent === 'Negative') {
-                            // Drawn counter clockwise beginning at the top of the bolt
-                            ctx.moveTo(
-                                conflict.x + (triangleHeight / 140) * scalingFactor,
-                                conflict.y - (triangleHeight / 45) * scalingFactor,
-                            );
-                            ctx.lineTo(
-                                conflict.x - (triangleHeight / 80) * scalingFactor,
-                                conflict.y + (triangleHeight / 420) * scalingFactor,
-                            );
-                            ctx.lineTo(
-                                conflict.x - (triangleHeight / 280) * scalingFactor,
-                                conflict.y + (triangleHeight / 260) * scalingFactor,
-                            );
-                            ctx.lineTo(
-                                conflict.x - (triangleHeight / 140) * scalingFactor,
-                                conflict.y + (triangleHeight / 45) * scalingFactor,
-                            );
-                            ctx.lineTo(
-                                conflict.x + (triangleHeight / 80) * scalingFactor,
-                                conflict.y - (triangleHeight / 420) * scalingFactor,
-                            );
-                            ctx.lineTo(
-                                conflict.x + (triangleHeight / 280) * scalingFactor,
-                                conflict.y - (triangleHeight / 260) * scalingFactor,
-                            );
-                            ctx.lineTo(
-                                conflict.x + (triangleHeight / 140) * scalingFactor,
-                                conflict.y - (triangleHeight / 45) * scalingFactor,
-                            );
-                        } else if (conflict.hasIntent === 'Positive') {
-                            // Drawn counter clockwise beginning at the top of the star
-                            ctx.moveTo(conflict.x, conflict.y - (triangleHeight / 45) * scalingFactor);
-                            ctx.lineTo(
-                                conflict.x - (triangleHeight / 180) * scalingFactor,
-                                conflict.y - (triangleHeight / 180) * scalingFactor,
-                            );
-                            ctx.lineTo(conflict.x - (triangleHeight / 45) * scalingFactor, conflict.y);
-                            ctx.lineTo(
-                                conflict.x - (triangleHeight / 180) * scalingFactor,
-                                conflict.y + (triangleHeight / 180) * scalingFactor,
-                            );
-                            ctx.lineTo(conflict.x, conflict.y + (triangleHeight / 45) * scalingFactor);
-                            ctx.lineTo(
-                                conflict.x + (triangleHeight / 180) * scalingFactor,
-                                conflict.y + (triangleHeight / 180) * scalingFactor,
-                            );
-                            ctx.lineTo(conflict.x + (triangleHeight / 45) * scalingFactor, conflict.y);
-                            ctx.lineTo(
-                                conflict.x + (triangleHeight / 180) * scalingFactor,
-                                conflict.y - (triangleHeight / 180) * scalingFactor,
-                            );
-                            ctx.lineTo(conflict.x, conflict.y - (triangleHeight / 45) * scalingFactor);
-                        } else {
-                            // Circle (Neutral intent)
-                            ctx.arc(conflict.x, conflict.y, (triangleHeight / 70) * scalingFactor, 0, 2 * Math.PI);
-                        }
+                        // Circle (Neutral intent)
+                        ctx.arc(conflict.x, conflict.y, (triangleHeight / 70) * scalingFactor, 0, 2 * Math.PI);
 
                         ctx.fillStyle =
                             conflict.status == conflictStatus.open
-                                ? 'red'
+                                ? "red"
                                 : conflict.status == conflictStatus.inDiscussion
-                                  ? 'yellow'
-                                  : 'green';
+                                  ? "yellow"
+                                  : "green";
                         ctx.fill();
-                        ctx.strokeStyle = mode.value === 'dark' ? 'white' : 'black';
+                        ctx.strokeStyle = mode.value === "dark" ? "white" : "black";
                         // Highlight line width when conflict point is hovered
                         ctx.lineWidth = 2.5 * scalingFactor;
                         ctx.stroke();
                     } else {
-                        console.log('ERROR: Conflict position is missing x or y coordinates');
+                        console.log("ERROR: Conflict position is missing x or y coordinates");
                     }
                 });
             }
@@ -610,7 +555,7 @@ export default defineComponent({
                     canvas.value.height = triangleHeight * dpr;
                     canvas.value.style.width = `${triangleWidth}px`;
                     canvas.value.style.height = `${triangleHeight}px`;
-                    const ctx = canvas.value.getContext('2d');
+                    const ctx = canvas.value.getContext("2d");
                     if (ctx) ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
                 } else {
                     // Normal DPI: use base sizes directly

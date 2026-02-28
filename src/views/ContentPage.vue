@@ -1,12 +1,12 @@
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue';
-import { useRoute } from 'vue-router';
-import NoteCardMisc from '@/components/NoteCardMisc.vue';
-import { activateTerms, contentData, staticContent } from '@/data/contentData';
-import ContentTemplate from '@/components/ContentTemplate.vue';
-import { Activity, Comment, Conflict } from '@/data/knowledge_graph/structures';
-import { useSessionStore } from '@/stores/sessionStore';
-import { getMiscComments } from '@/data/knowledge_graph/read_operations';
+import { onMounted, ref } from "vue";
+import { useRoute } from "vue-router";
+import NoteCardMisc from "@/components/NoteCardMisc.vue";
+import { activateTerms, contentData, staticContent } from "@/data/contentData";
+import ContentTemplate from "@/components/ContentTemplate.vue";
+import { Activity, Comment, Conflict } from "@/data/knowledge_graph/structures";
+import { useSessionStore } from "@/stores/sessionStore";
+import { getMiscComments } from "@/data/knowledge_graph/read_operations";
 
 const route = useRoute();
 
@@ -36,7 +36,7 @@ onMounted(async () => {
  * Updates the miscComments reactive reference with the retrieved comments.
  */
 const fetchMiscs = async () => {
-    if (route.params.id === 'misc') {
+    if (route.params.id === "misc") {
         // Get miscellaneous comments from the graph
         miscComments.value = await getMiscComments(graph);
     }
@@ -56,10 +56,13 @@ const removeComment = (id: string) => {
     <div>
         <h1 class="text-2xl font-semibold mb-4">{{ activateTerms[sessionStore.activeLanguage][pageData!.id] }}</h1>
 
+        <!-- TODO: Add buttons here that are only visible when sessionStore.instructorView is true -->
+        <!-- Example: <Button v-if="sessionStore.instructorView">...</Button> -->
+
         <!-- When not on misc page, show the content -->
         <ContentTemplate
             v-if="route.params.id !== 'misc' && pageData"
-            :page-data="pageData"
+            :pageData="pageData"
             :conflicts="props.conflicts"
         />
 

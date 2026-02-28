@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { activateTerms, staticContent } from '@/data/contentData';
-import { Conflict } from '@/data/knowledge_graph/structures';
-import { buildLanguageString } from '@/lib/utils';
-import { useSessionStore } from '@/stores/sessionStore';
-import { useColorMode } from '@vueuse/core';
-import { nextTick, onMounted, ref, watch } from 'vue';
+import { activateTerms, staticContent } from "@/data/contentData";
+import { Conflict } from "@/data/knowledge_graph/structures";
+import { buildLanguageString } from "@/lib/utils";
+import { useSessionStore } from "@/stores/sessionStore";
+import { useColorMode } from "@vueuse/core";
+import { nextTick, onMounted, ref, watch } from "vue";
 
 /**
  * Props of the ConflictHoverPopUp component
@@ -24,10 +24,10 @@ const mode = useColorMode();
  * Used to measure the height dynamically
  */
 const popupRef = ref<HTMLElement | null>(null);
-const popupStyle = ref({ top: props.position.x + 'px', left: props.position.y + 'px' });
+const popupStyle = ref({ top: props.position.x + "px", left: props.position.y + "px" });
 
 const emit = defineEmits<{
-    (e: 'key-cleaned', key: string, newKey: string): void;
+    (e: "key-cleaned", key: string, newKey: string): void;
 }>();
 
 /**
@@ -37,11 +37,11 @@ const emit = defineEmits<{
  */
 onMounted(() => {
     const descKey =
-        sessionStore.activeLanguage in props.hoveredConflictPoint.description ? sessionStore.activeLanguage : 'default';
+        sessionStore.activeLanguage in props.hoveredConflictPoint.description ? sessionStore.activeLanguage : "default";
     const description = props.hoveredConflictPoint.description;
-    if (description && typeof description[descKey] === 'string') {
-        const newKey = props.hoveredConflictPoint.description[descKey].replace(/<\/?[^>]+(>|$)/g, '');
-        emit('key-cleaned', descKey, newKey);
+    if (description && typeof description[descKey] === "string") {
+        const newKey = props.hoveredConflictPoint.description[descKey].replace(/<\/?[^>]+(>|$)/g, "");
+        emit("key-cleaned", descKey, newKey);
     }
     updatePopupHeight(props.position);
 });
@@ -108,11 +108,11 @@ const sessionStore = useSessionStore();
         :class="{ 'popup-dark': mode === 'dark' }"
         :style="popupStyle"
     >
-        <b>{{ hoveredConflictPoint.title[sessionStore.activeLanguage] || hoveredConflictPoint.title['default'] }}</b>
+        <b>{{ hoveredConflictPoint.title[sessionStore.activeLanguage] || hoveredConflictPoint.title["default"] }}</b>
         <p v-if="hoveredConflictPoint.description">
             {{
                 hoveredConflictPoint.description[sessionStore.activeLanguage] ||
-                hoveredConflictPoint.description['default']
+                hoveredConflictPoint.description["default"]
             }}
         </p>
         <div v-if="hoveredConflictPoint.participants.length">
@@ -135,20 +135,25 @@ const sessionStore = useSessionStore();
     <div v-if="sessionStore.activeScene === 'Scene 2'" class="popup-header">
         <div ref="popupRef" class="popup" :class="{ 'popup-dark': mode === 'dark' }" :style="popupStyle">
             <b>{{
-                hoveredConflictPoint.title[sessionStore.activeLanguage] || hoveredConflictPoint.title['default']
+                hoveredConflictPoint.title[sessionStore.activeLanguage] || hoveredConflictPoint.title["default"]
             }}</b>
 
             <p v-if="hoveredConflictPoint.description">
                 {{
                     hoveredConflictPoint.description[sessionStore.activeLanguage] ||
-                    hoveredConflictPoint.description['default']
+                    hoveredConflictPoint.description["default"]
                 }}
             </p>
             <p>
                 <strong>{{ staticContent.terms.author[sessionStore.activeLanguage] }}:</strong>
                 {{
-                    hoveredConflictPoint.author.labels[sessionStore.activeLanguage] ||
-                    hoveredConflictPoint.author.labels['default']
+                    hoveredConflictPoint.author.labels?.[sessionStore.activeLanguage] ||
+                    hoveredConflictPoint.author.labels?.["default"] ||
+                    Object.values(hoveredConflictPoint.author.labels || {}).find(
+                        (label) => typeof label === "string" && label.trim() !== "",
+                    ) ||
+                    hoveredConflictPoint.author.id ||
+                    ""
                 }}
             </p>
             <p>

@@ -1,0 +1,618 @@
+@prefix : <http://activate.htwk-leipzig.de/model#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+:Aengste a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Ängste"@de,
+        "Fears"@en,
+        "Rädslor"@sv .
+
+:Angstzustaende a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Angstzustände"@de,
+        "Anxiety attacks"@en,
+        "Ångesttillstånd"@sv .
+
+:AnwesenheitVorOrt a :Community,
+        owl:NamedIndividual ;
+    rdfs:label "Anwesenheit vor Ort"@de,
+        "On-site presence"@en,
+        "Närvaro på plats"@sv .
+
+:Arzteschaft a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Ärzteschaft"@de,
+        "Medical Profession"@en,
+        "Läkarkåren"@sv .
+
+:Atemprobleme a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Atemprobleme"@de,
+        "Breathing problems"@en,
+        "Andningsproblem"@sv .
+
+:AufeinandertreffenVonPerspektiven a :Community,
+        owl:NamedIndividual ;
+    rdfs:label "Aufeinandertreffen von Perspektiven"@de,
+        "Clash of perspectives"@en,
+        "Kollision av perspektiv"@sv .
+
+:Auseinandersetzung a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Auseinandersetzung"@de,
+        "Discussion/Confrontation"@en,
+        "Diskussion/Konfrontation"@sv .
+
+:Belastungsdyspnoe a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Belastungsdyspnoe"@de,
+        "exertional dyspnea"@en,
+        "ansträngningsdyspné"@sv .
+
+:BesteEntscheidung a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Beste Entscheidung"@de,
+        "Best possible decision"@en,
+        "Bästa möjliga beslut"@sv .
+
+:BestmoeglicheLoesung a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Bestmögliche Lösung"@de,
+        "Best possible solution"@en,
+        "Bästa möjliga lösning"@sv .
+
+:Conflict1 a :Conflict ;
+    :ConflictDescription "Die Teilnehmerin empfand die Simulation als sehr realitätsnah und spiegelte Situationen wider, die häufig im Klinikum vorkommen."@de,
+        "The participant found the simulation to be very realistic, reflecting situations frequently encountered in the clinic."@en,
+        "Deltagaren fann simuleringen mycket realistisk och återspeglade situationer som ofta förekommer på kliniken."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Realitätsnähe der Simulation"@de,
+        "Realism of the Simulation"@en,
+        "Realism i simuleringen"@sv ;
+    :CreationDate "2025-09-12T15:08:17.266Z" ;
+    :HasIntent :Positive ;
+    :HasParticipant :Arztin,
+        :Klinikum,
+        :RealitaetsnaeheDerSituation ;
+    :IsAI true ;
+    :Origin "{\"question\": \"1. Was denken Sie über die Simulation der interprofessionellen Zusammenarbeit, die Sie gerade abgeschlossen haben?\", \"answer\": \"Es war eine sehr realitätsnahe Situation, die wir so auch häufig im Klinikum haben.\"}" ;
+    :WrittenBy :Arztin .
+
+:Conflict2 a :Conflict ;
+    :ConflictDescription "Das interprofessionelle Team, bestehend aus Ärztin, Pflege- und Physiotherapiepersonal, hat im Teamraum erfolgreich Patientenunterlagen besprochen. Alle konnten etwas beitragen, um das Bild über die Patientin zu ergänzen und die Entscheidungsfindung zu unterstützen, auch wenn es anfangs etwas dauerte, eine gemeinsame Sprache zu finden."@de,
+        "The interprofessional team, including the doctor, nursing, and physiotherapy staff, successfully reviewed patient documents in the team room. Everyone contributed to a more complete picture of the patient, aiding in decision-making, despite an initial need to find a common language."@en,
+        "Det interprofessionella teamet, inklusive läkare, sjuksköterskor och fysioterapeuter, granskade framgångsrikt patientdokument i teamrummet. Alla bidrog till en mer komplett bild av patienten, vilket underlättade beslutsfattandet, trots ett initialt behov av att hitta ett gemensamt språk."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Erfolgreiche interprofessionelle Zusammenarbeit"@de,
+        "Successful Interprofessional Collaboration"@en,
+        "Framgångsrikt interprofessionellt samarbete"@sv ;
+    :CreationDate "2025-09-12T15:08:17.266Z" ;
+    :HasIntent :Positive ;
+    :HasParticipant :Arztin,
+        :BildUeberDiePatientin,
+        :Entscheidungsfindung,
+        :GemeinsameSprache,
+        :Pflegepersonal,
+        :PhysiotherapiePersonal ;
+    :IsAI true ;
+    :Origin "{\"question\": \"2. Denken Sie an einen Teil der Aktivität, den Sie sehr positiv, konstruktiv oder befriedigend fanden. Bitte beschreiben Sie in einigen Sätzen, was in dieser Phase passiert ist.\", \"answer\": \"Wir haben im Teamraum zusammen mit Pflege und Physiotherapie über die Unterlagen gesprochen, die wir über die Patientin haben. Alle konnten etwas einbringen, dass das Bild über die Patientin weiter ergänzt hat und uns bei der Entscheidungsfindung geholfen hat. Es dauerte zwar einen kurzen Moment, bis wir eine gemeinsame Sprache gefunden haben, aber danach hat es sehr gut funktioniert.\"}" ;
+    :WrittenBy :Arztin .
+
+:Conflict3 a :Conflict ;
+    :ConflictDescription "Die Ärztin beobachtete, dass das Gespräch des Krankenpflegers mit den Angehörigen, insbesondere bezüglich der Bedenken der Enkelin, sehr schwierig war und abgebrochen wurde. Die Ärztin meinte, dass mehr Feinfühligkeit hätte gezeigt werden können."@de,
+        "The doctor observed that the nurse's conversation with the patient's relatives, particularly regarding the granddaughter's concerns, was very difficult and was aborted. The doctor felt that more sensitivity could have been shown."@en,
+        "Läkaren observerade att sjuksköterskans samtal med patientens anhöriga, särskilt angående barnbarnets farhågor, var mycket svårt och avbröts. Läkaren ansåg att mer finkänslighet kunde ha visats."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Schwieriges Gespräch mit Angehörigen"@de,
+        "Difficult Conversation with Relatives"@en,
+        "Svårt samtal med anhöriga"@sv ;
+    :CreationDate "2025-09-12T15:08:17.266Z" ;
+    :HasComment :Comment1 ;
+    :HasIntent :Negative ;
+    :HasParticipant :Angehorige,
+        :BedenkenDerEnkelin,
+        :Enkelin,
+        :Feinfuehligkeit,
+        :GesprachAbbrechen,
+        :Krankenpfleger ;
+    :IsAI true ;
+    :Origin "{\"question\": \"3. Denken Sie an einen Teil der Aktivität, den Sie sehr negativ, kontraproduktiv oder enttäuschend fanden. Bitte beschreiben Sie in einigen Sätzen, was in dieser Phase passiert ist.\", \"answer\": \"Das Gespräch, dass der Krankenpfleger mit den Angehörigen geführt hat, war offensichtlich sehr schwierig und er hat es abgebrochen. Ich wäre etwas feinfühliger auf die Bedenken der Enkelin eingegangen. Das konnte ich dem Krankenpfleger aber zurückmelden und er war sehr froh über mein Feedback.\"}" ;
+    :WrittenBy :Arztin .
+
+:Conflict4_1 a :Conflict ;
+    :ConflictDescription "Das Physiotherapiepersonal beabsichtigt, sich besser auf zukünftige Gespräche vorzubereiten und die Patientenunterlagen genauer zu studieren, um die Sicherheit in ihren Aussagen zu erhöhen."@de,
+        "The physiotherapy staff intends to prepare better for future discussions and study patient documents more thoroughly to increase confidence in their statements."@en,
+        "Fysioterapipersonalen avser att förbereda sig bättre inför framtida diskussioner och studera patientdokument mer noggrant för att öka säkerheten i sina uttalanden."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Wunsch nach verbesserter Vorbereitung und Aktenstudium"@de,
+        "Desire for Improved Preparation and Document Study"@en,
+        "Önskan om förbättrad förberedelse och dokumentstudie"@sv ;
+    :CreationDate "2025-09-15T07:37:06.715Z" ;
+    :HasIntent :Neutral ;
+    :HasParticipant :Gesprächsvorbereitung,
+        :Patientenunterlagen,
+        :PhysiotherapiePersonal ;
+    :IsAI true ;
+    :Origin "{\"question\": \"4. Was würden Sie das nächste Mal anders machen?\", \"answer\": \"Ich würde mich noch besser auf das Gespräch vorbereiten und die Unterlagen der Patientin noch genauer studieren, um noch sicherer in meinen Aussagen zu sein. Ich würde auch versuchen, meine Informationen noch früher im Gespräch einzubringen, damit sie von Anfang an berücksichtigt werden.\"}" ;
+    :WrittenBy :PhysiotherapiePersonal .
+
+:Conflict4_2 a :Conflict ;
+    :ConflictDescription "Das Physiotherapiepersonal plant, ihre Informationen in zukünftigen Gesprächen früher einzubringen, um sicherzustellen, dass sie von Anfang an berücksichtigt werden."@de,
+        "The physiotherapy staff plans to introduce their information earlier in future discussions to ensure it is considered from the outset."@en,
+        "Fysioterapipersonalen planerar att presentera sin information tidigare i framtida diskussioner för att säkerställa att den beaktas från början."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Absicht, Informationen früher einzubringen"@de,
+        "Intention to Introduce Information Earlier"@en,
+        "Avsikt att presentera information tidigare"@sv ;
+    :CreationDate "2025-09-15T07:37:06.715Z" ;
+    :HasIntent :Neutral ;
+    :HasParticipant :Gespräch,
+        :Informationen,
+        :PhysiotherapiePersonal ;
+    :IsAI true ;
+    :Origin "{\"question\": \"4. Was würden Sie das nächste Mal anders machen?\", \"answer\": \"Ich würde mich noch besser auf das Gespräch vorbereiten und die Unterlagen der Patientin noch genauer studieren, um noch sicherer in meinen Aussagen zu sein. Ich würde auch versuchen, meine Informationen noch früher im Gespräch einzubringen, damit sie von Anfang an berücksichtigt werden.\"}" ;
+    :WrittenBy :PhysiotherapiePersonal .
+
+:Conflict_1 a :Conflict ;
+    :ConflictDescription "Die Ärztin empfand die interprofessionelle Diskussion im Teamraum mit Pflege und Physiotherapie als sehr positiv und konstruktiv. Alle Teammitglieder trugen zu einem umfassenden Bild der Patientin bei, was die Entscheidungsfindung maßgeblich unterstützte."@de,
+        "The physician experienced the interprofessional discussion in the team room with nursing and physiotherapy as very positive and constructive. All team members contributed to a comprehensive understanding of the patient, which significantly aided in the decision-making process."@en,
+        "Läkaren upplevde den interprofessionella diskussionen i teamrummet med sjuksköterskor och fysioterapi som mycket positiv och konstruktiv. Alla teammedlemmar bidrog till en omfattande förståelse av patienten, vilket avsevärt underlättade beslutsfattandet."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Positive interprofessionelle Zusammenarbeit im Teamraum"@de,
+        "Positive Interprofessional Collaboration in the Team Room"@en,
+        "Positivt interprofessionellt samarbete i teamrummet"@sv ;
+    :CreationDate "2025-09-12T15:36:39.616Z" ;
+    :HasComment :Comment_1 ;
+    :HasIntent :Positive ;
+    :HasParticipant :Arztin,
+        :BildUeberDiePatientin,
+        :EffektiveZusammenarbeit,
+        :Entscheidungsfindung,
+        :Pflegepersonal,
+        :PhysiotherapiePersonal,
+        :Teamraum ;
+    :IsAI true ;
+    :Origin "{\"question\": \"2. Denken Sie an einen Teil der Aktivität, den Sie sehr positiv, konstruktiv oder befriedigend fanden. Bitte beschreiben Sie in einigen Sätzen, was in dieser Phase passiert ist.\", \"answer\": \"Wir haben im Teamraum zusammen mit Pflege und Physiotherapie über die Unterlagen gesprochen, die wir über die Patientin haben. Alle konnten etwas einbringen, dass das Bild über die Patientin weiter ergänzt hat und uns bei der Entscheidungsfindung geholfen hat. Es dauerte zwar einen kurzen Moment, bis wir eine gemeinsame Sprache gefunden haben, aber danach hat es sehr gut funktioniert.\"}" ;
+    :WrittenBy :Arztin .
+
+:EinwaendeUndErgaenzungen a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Einwände und Ergänzungen"@de,
+        "Objections and additions"@en,
+        "Invändningar och tillägg"@sv .
+
+:EmotionaleSimulation a :Community,
+        owl:NamedIndividual ;
+    rdfs:label "Emotionale Simulation"@de,
+        "Emotional Simulation"@en,
+        "Känslomässig simulering"@sv .
+
+:EmpfehlungGeben a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Empfehlung geben"@de,
+        "give recommendation"@en,
+        "ge rekommendation"@sv .
+
+:EntscheidungImSinneDerPatientin a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Entscheidung im Sinne der Patientin"@de,
+        "Decision in the patient's best interest"@en,
+        "Beslut i patientens bästa intresse"@sv .
+
+:ErfolgreicheZusammenarbeit a :Instrument,
+        :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Erfolgreiche Zusammenarbeit"@de,
+        "Successful collaboration"@en,
+        "Framgångsrikt samarbete"@sv .
+
+:Ergebnis a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Ergebnis"@de,
+        "Result"@en,
+        "Resultat"@sv .
+
+:ErheblicheVerkalkung a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "erhebliche Verkalkung"@de,
+        "significant calcification"@en,
+        "betydande förkalkning"@sv .
+
+:FaelleAusDerPraxis a :Rule,
+        owl:NamedIndividual ;
+    rdfs:label "Fälle aus der Praxis"@de,
+        "Cases from practice"@en,
+        "Fall från praktiken"@sv .
+
+:FruehePositionierung a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Frühe Positionierung"@de,
+        "Early positioning"@en,
+        "Tidig positionering"@sv .
+
+:GespracheMitAngehorigenUndPatientin a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Gespräche mit Angehörigen und Patientin"@de,
+        "discussions with relatives and patient"@en,
+        "samtal med anhöriga och patient"@sv .
+
+:GuteKommunikation a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Gute Kommunikation"@de,
+        "Good communication"@en,
+        "God kommunikation"@sv .
+
+:Herausforderung a :Community,
+        owl:NamedIndividual ;
+    rdfs:label "Herausforderung"@de,
+        "Challenge"@en,
+        "Utmaning"@sv .
+
+:HerzklappenPraeOP_Simulation a owl:NamedIndividual ;
+    :ActivityDescription "Simulation, die sich auf die präoperative Abklärung einer älteren Patientin mit schwerer Aortenklappenstenose konzentriert, gekennzeichnet durch ein neues Herzgeräusch, Belastungsdyspnoe und erhebliche Verkalkung, die eine Klappenersatztherapie erfordert. Die Patientin steht der OP kritisch gegenüber. Die Tochter und Enkelin sind vor Ort und möchten mit jemandem aus der Pflege über die bevorstehende OP sprechen. Ziel der Simulation ist es, dass ein interprofessionelles Team bestehend aus Verteter*innen aus Pflege, Physiotherapie und Ärzteschaft nach Sichtung der Unterlagen und Gesprächen mit Angehörigen und Patientin eine Empfehlung gibt, ob die OP durchgeführt werden soll."@de,
+        "Simulation focusing on the preoperative clarification of an elderly patient with severe aortic valve stenosis, presenting with a new heart murmur, exertional dyspnea, and significant calcification, necessitating valve replacement therapy. The patient is critical of the surgery. The daughter and granddaughter are present and wish to speak with nursing staff about the upcoming operation. The goal is for an interprofessional team (nursing, physiotherapy, medical doctors) to review documents, conduct discussions with the family and patient, and then provide a recommendation on whether the surgery should proceed."@en,
+        "Simulering som fokuserar på preoperativ utredning av en äldre patient med svår aortastenos, kännetecknad av ett nytt hjärtljud, ansträngningsdyspné och betydande förkalkning, vilket kräver klaffersättningsterapi. Patienten är kritisk till operationen. Dottern och barnbarnet är närvarande och vill prata med vårdpersonalen om den kommande operationen. Målet är att ett interprofessionellt team (sjuksköterskor, fysioterapeuter, läkare) efter granskning av dokument och samtal med anhöriga och patienten ska ge en rekommendation om operationen ska utföras."@sv ;
+    :ActivityName "Herzklappen Prä-OP"@de,
+        "Heart Valve Pre-Op"@en,
+        "Hjärtklaff Pre-Op"@sv .
+
+:Herzoperation a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Herzoperation"@de,
+        "Heart operation"@en,
+        "Hjärtoperation"@sv .
+
+:IgnorierenVonBeitraegen a :EntityClass,
+        :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Ignorieren von Beiträgen"@de,
+        "Ignoring Contributions"@en,
+        "Ignorera bidrag"@sv .
+
+:InformationEinbringen a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Information einbringen"@de,
+        "Contributing information"@en,
+        "Bidra med information"@sv .
+
+:InteresseDerPatientin a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Interesse der Patientin"@de,
+        "Patient's best interest"@en,
+        "Patientens bästa intresse"@sv .
+
+:InterprofessionellesTeam a :DivisionOfLabour,
+        owl:NamedIndividual ;
+    rdfs:label "interprofessionelles Team"@de,
+        "interprofessional team"@en,
+        "interprofessionellt team"@sv .
+
+:Klappenersatztherapie a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Klappenersatztherapie"@de,
+        "valve replacement therapy"@en,
+        "klaffersättningsterapi"@sv .
+
+:KommunikationAufAugenhoehe a :DivisionOfLabour,
+        owl:NamedIndividual ;
+    rdfs:label "Kommunikation auf Augenhöhe"@de,
+        "Communication at eye level"@en,
+        "Kommunikation på lika villkor"@sv .
+
+:KompliziertesGespraech a :Community,
+        owl:NamedIndividual ;
+    rdfs:label "Kompliziertes Gespräch"@de,
+        "Complicated discussion"@en,
+        "Komplicerat samtal"@sv .
+
+:MentaleGesundheit a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Mentale Gesundheit"@de,
+        "Mental health"@en,
+        "Mental hälsa"@sv .
+
+:NeuesHerzgerausch a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "neues Herzgeräusch"@de,
+        "new heart murmur"@en,
+        "nytt hjärtblåsljud"@sv .
+
+:NichtErnstGenommenWerden a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Nicht ernst genommen werden"@de,
+        "Not being taken seriously"@en,
+        "Att inte tas på allvar"@sv .
+
+:Operation a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Operation"@de,
+        "Surgery"@en,
+        "Operation"@sv .
+
+:Patientin a :Object,
+        :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Patientin"@de,
+        "Patient"@en,
+        "Patient"@sv .
+
+:PatientinKritischeHaltung a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "kritische Haltung der Patientin"@de,
+        "Patient's critical attitude"@en,
+        "Patientens kritiska inställning"@sv .
+
+:PerspektivenDerDisziplinen a :DivisionOfLabour,
+        owl:NamedIndividual ;
+    rdfs:label "Perspektiven der Disziplinen"@de,
+        "Perspectives of disciplines"@en,
+        "Disciplinernas perspektiv"@sv .
+
+:PerspektivenVereinigung a :EntityClass,
+        :Instrument,
+        :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Perspektivenvereinigung"@de,
+        "Uniting Perspectives"@en,
+        "Förena perspektiv"@sv .
+
+:PhysiotherapieUnterlagen a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Physiotherapie-Unterlagen"@de,
+        "Physiotherapy documents"@en,
+        "Fysioterapidokument"@sv .
+
+:PraoperativeAbklarung a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "präoperative Abklärung"@de,
+        "preoperative clarification"@en,
+        "preoperativ utredning"@sv .
+
+:RespektDerPatientenwunsche a :Rule,
+        owl:NamedIndividual ;
+    rdfs:label "Respekt der Patientenwünsche"@de,
+        "Respect for patient's wishes"@en,
+        "Respekt för patientens önskemål"@sv .
+
+:SchnellesErfassen a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Schnelles Erfassen"@de,
+        "Quick understanding"@en,
+        "Snabb förståelse"@sv .
+
+:SchwereAortenklappenstenose a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "schwere Aortenklappenstenose"@de,
+        "severe aortic valve stenosis"@en,
+        "svår aortastenos"@sv .
+
+:SichtungDerUnterlagen a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Sichtung der Unterlagen"@de,
+        "review of documents"@en,
+        "granskning av handlingar"@sv .
+
+:Tochter a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Tochter"@de,
+        "Daughter"@en,
+        "Dotter"@sv .
+
+:Unterlagen a :EntityClass,
+        :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Unterlagen"@de,
+        "Documents"@en,
+        "Handlingar"@sv .
+
+:VerstaendnisDerSituation a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Verständnis der Situation"@de,
+        "Understanding of the situation"@en,
+        "Förståelse för situationen"@sv .
+
+:Vorstellungen a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Vorstellungen"@de,
+        "Conceptions"@en,
+        "Föreställningar"@sv .
+
+:WarmUpPhaseImTeam a :Community,
+        owl:NamedIndividual ;
+    rdfs:label "Warm-Up-Phase im Team"@de,
+        "Team warm-up phase"@en,
+        "Uppvärmningsfas i teamet"@sv .
+
+:WiderspruchDerPatientin a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Widerspruch der Patientin"@de,
+        "Patient's contradiction"@en,
+        "Patientens motsägelse"@sv .
+
+:ZweifelAnVerlaesslichkeitDerInformationen a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Zweifel an Verlässlichkeit der Informationen"@de,
+        "Doubt about reliability of information"@en,
+        "Tvivel på informationens tillförlitlighet"@sv .
+
+:Angehorige a :Community,
+        :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Angehörige"@de,
+        "Relatives"@en,
+        "Anhöriga"@sv .
+
+:Anpassungsphase a :Community,
+        owl:NamedIndividual ;
+    rdfs:label "Anpassungsphase"@de,
+        "Adjustment phase"@en,
+        "Anpassningsfas"@sv .
+
+:BedenkenDerEnkelin a :EntityClass,
+        :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Bedenken der Enkelin"@de,
+        "Concerns of the granddaughter"@en,
+        "Granddaughter's concerns"@en,
+        "Barnbarnets farhågor"@sv .
+
+:Comment1 a :Comment ;
+    :CommentDescription "Die Ärztin gab dem Krankenpfleger Feedback bezüglich des schwierigen Gesprächs, und der Krankenpfleger zeigte sich dankbar für die Rückmeldung."@de,
+        "The doctor provided feedback to the nurse regarding the difficult conversation, and the nurse expressed gratitude for the input."@en,
+        "Läkaren gav sjuksköterskan feedback angående det svåra samtalet, och sjuksköterskan uttryckte tacksamhet för synpunkterna."@sv ;
+    :CreationDate "2025-09-12T15:08:17.266Z" ;
+    :HasParticipant :Arztin,
+        :DankbarkeitFuerFeedback,
+        :FeedbackGeben,
+        :Krankenpfleger ;
+    :IsAI true ;
+    :Origin "{\"question\": \"3. Denken Sie an einen Teil der Aktivität, den Sie sehr negativ, kontraproduktiv oder enttäuschend fanden. Bitte beschreiben Sie in einigen Sätzen, was in dieser Phase passiert ist.\", \"answer\": \"Das Gespräch, dass der Krankenpfleger mit den Angehörigen geführt hat, war offensichtlich sehr schwierig und er hat es abgebrochen. Ich wäre etwas feinfühliger auf die Bedenken der Enkelin eingegangen. Das konnte ich dem Krankenpfleger aber zurückmelden und er war sehr froh über mein Feedback.\"}" ;
+    :WrittenBy :Arztin .
+
+:Comment_1 a :Comment ;
+    :CommentDescription "Die Ärztin bemerkte, dass das interprofessionelle Team anfangs einen kurzen Moment benötigte, um eine gemeinsame Sprache zu finden, doch nach dieser anfänglichen Phase funktionierte die Zusammenarbeit sehr gut."@de,
+        "The physician noted that initially, the interprofessional team needed a short period to establish a common language, but after this initial phase, the collaboration proceeded very effectively."@en,
+        "Läkaren noterade att det interprofessionella teamet initialt behövde en kort stund för att hitta ett gemensamt språk, men efter denna inledande fas fungerade samarbetet mycket väl."@sv ;
+    :CreationDate "2025-09-12T15:36:39.616Z" ;
+    :HasParticipant :Anpassungsphase,
+        :Arztin,
+        :EffektiveZusammenarbeit ;
+    :IsAI true ;
+    :Origin "{\"question\": \"2. Denken Sie an einen Teil der Aktivität, den Sie sehr positiv, konstruktiv oder befriedigend fanden. Bitte beschreiben Sie in einigen Sätzen, was in dieser Phase passiert ist.\", \"answer\": \"Wir haben im Teamraum zusammen mit Pflege und Physiotherapie über die Unterlagen gesprochen, die wir über die Patientin haben. Alle konnten etwas einbringen, dass das Bild über die Patientin weiter ergänzt hat und uns bei der Entscheidungsfindung geholfen hat. Es dauerte zwar einen kurzen Moment, bis wir eine gemeinsame Sprache gefunden haben, aber danach hat es sehr gut funktioniert.\"}" ;
+    :WrittenBy :Arztin .
+
+:DankbarkeitFuerFeedback a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Dankbarkeit für Feedback"@de,
+        "Gratitude for feedback"@en,
+        "Tacksamhet för feedback"@sv .
+
+:Enkelin a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Enkelin"@de,
+        "Granddaughter"@en,
+        "Barnbarn"@sv .
+
+:FeedbackGeben a :EntityClass,
+        :Instrument,
+        :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Feedback geben"@de,
+        "Giving feedback"@en,
+        "Ge feedback"@sv .
+
+:Feinfuehligkeit a :EntityClass,
+        :Instrument,
+        :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Feinfühligkeit"@de,
+        "Sensitivity"@en,
+        "Sensitivity/Tact"@en,
+        "Finkänslighet"@sv,
+        "Känslighet"@sv .
+
+:GemeinsameSprache a :EntityClass,
+        :Instrument,
+        :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Gemeinsame Sprache"@de,
+        "Common language"@en,
+        "Common language/Shared understanding"@en,
+        "Gemensamt språk"@sv .
+
+:GesprachAbbrechen a :EntityClass,
+        :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Gespräch abbrechen"@de,
+        "Aborting conversation"@en,
+        "Aborting the conversation/Breaking off the discussion"@en,
+        "Avbryta samtal"@sv,
+        "Avbryta samtalet"@sv .
+
+:Informationen a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Informationen"@de,
+        "Information"@en,
+        "Information"@sv .
+
+:Klinikum a :Community,
+        :EntityClass,
+        owl:NamedIndividual ;
+    rdfs:label "Klinikum"@de,
+        "Clinic"@en,
+        "Clinic/Hospital"@en,
+        "Klinik"@sv,
+        "Klinik/Sjukhus"@sv .
+
+:RealitaetsnaeheDerSituation a :Community,
+        owl:NamedIndividual ;
+    rdfs:label "Realitätsnähe der Situation"@de,
+        "Realism of the situation"@en,
+        "Realism i situationen"@sv .
+
+:Teamraum a :Community,
+        :EntityClass,
+        owl:NamedIndividual ;
+    rdfs:label "Teamraum"@de,
+        "Team room"@en,
+        "Teamrum"@sv .
+
+:BildUeberDiePatientin a :EntityClass,
+        :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Bild über die Patientin"@de,
+        "Patient's overall picture/Understanding of the patient"@en,
+        "Picture of the patient"@en,
+        "Bilden av patienten"@sv,
+        "Helhetsbild av patienten"@sv .
+
+:EffektiveZusammenarbeit a :Instrument,
+        :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Effektive Zusammenarbeit"@de,
+        "Effective collaboration"@en,
+        "Effektivt samarbete"@sv .
+
+:Entscheidungsfindung a :EntityClass,
+        :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Entscheidungsfindung"@de,
+        "Decision-making"@en,
+        "Beslutsfattande"@sv .
+
+:Krankenpfleger a :DivisionOfLabour,
+        :EntityClass,
+        :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Krankenpfleger"@de,
+        "Nurse"@en,
+        "Nurse (male)"@en,
+        "Sjuksköterska"@sv,
+        "Sjuksköterska (manlig)"@sv .
+
+:Pflegepersonal a :DivisionOfLabour,
+        :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Pflegepersonal"@de,
+        "Care Staff"@en,
+        "Nursing staff"@en,
+        "Sjukvårdspersonal"@sv,
+        "Vårdpersonal"@sv .
+
+:PhysiotherapiePersonal a :DivisionOfLabour,
+        :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Physiotherapiepersonal"@de,
+        "Physiotherapy Staff"@en,
+        "Physiotherapy staff"@en,
+        "Fysioterapipersonal"@sv .
+
+:Arztin a :DivisionOfLabour,
+        :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Ärztin"@de,
+        "Doctor"@en,
+        "Läkare"@sv .
+
