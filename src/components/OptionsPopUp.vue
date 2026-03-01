@@ -51,17 +51,7 @@ const isEditingPrompt = ref(false);
 
 onMounted(() => {
   llmSettingsStore.loadSettings();
-  if (llmSettingsStore.settings.selectedProvider) {
-    selectedProvider.value = llmSettingsStore.settings.selectedProvider;
-  }
-  else {
-    if (sessionStore.instructorMode) {
-      selectedProvider.value = 'gemini';
-    }
-    else {
-      selectedProvider.value = 'chatgpt';
-    }
-  }
+  selectedProvider.value = llmSettingsStore.settings.selectedProvider;
   const prompts = llmSettingsStore.getPrompts();
   knowledgeGraphPrompt.value = prompts.knowledgeGraphGeneration;
   entityExtractionPrompt.value = prompts.entityExtraction;
