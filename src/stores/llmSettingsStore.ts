@@ -1,6 +1,7 @@
 import { entityAssignmentPrompt, entityExtractionPrompt, knowledgeGraphGenerationPrompt, tensionExtractionPrompt, ttlMergePrompt, ttlSyntaxFixPrompt } from '@/data/knowledge_graph/prompts';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
+import { useSessionStore } from './sessionStore';
 
 /**
  * Supported LLM providers
@@ -67,10 +68,11 @@ export interface LLMSettings {
  */
 export const useLLMSettingsStore = defineStore('llmSettings', () => {
   const SETTINGS_STORAGE_KEY = 'activate_llm_settings';
+  const sessionStore = useSessionStore();
 
   // Settings for the three supported models
   const settings = ref<LLMSettings>({
-    selectedProvider: 'chatgpt',
+    selectedProvider: sessionStore.instructorMode ? 'gemini' : 'chatgpt',
     models: {
       chatgpt: null,
       gemini: null,

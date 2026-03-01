@@ -33,7 +33,7 @@ const llmSettingsStore = useLLMSettingsStore();
 const sessionStore = useSessionStore();
 
 const open = defineModel<boolean>('open', { default: false });
-const selectedProvider = ref<LLMProvider>('chatgpt');
+const selectedProvider = ref<LLMProvider>('gemini');
 
 const isEditing = ref(false);
 
@@ -51,8 +51,7 @@ const isEditingPrompt = ref(false);
 
 onMounted(() => {
   llmSettingsStore.loadSettings();
-  console.log(llmSettingsStore.settings.selectedProvider);
-  selectedProvider.value = llmSettingsStore.settings.selectedProvider ? llmSettingsStore.settings.selectedProvider : 'chatgpt';
+  selectedProvider.value = llmSettingsStore.settings.selectedProvider;
   const prompts = llmSettingsStore.getPrompts();
   knowledgeGraphPrompt.value = prompts.knowledgeGraphGeneration;
   entityExtractionPrompt.value = prompts.entityExtraction;
@@ -200,8 +199,8 @@ const getCurrentModelConfig = () => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="chatgpt">ChatGPT (OpenAI)</SelectItem>
-                  <!-- <SelectItem value="gemini">Gemini (Google)</SelectItem>
-                  <SelectItem value="claude">Claude (Anthropic)</SelectItem> -->
+                  <SelectItem value="gemini">Gemini (Google)</SelectItem>
+                  <!-- <SelectItem value="claude">Claude (Anthropic)</SelectItem> -->
                   <SelectItem value="cortecs">Cortecs</SelectItem>
                 </SelectContent>
               </Select>
