@@ -3,11 +3,11 @@ import { addComment, deleteComment } from '@/data/knowledge_graph/write_operatio
 import { nextTick, ref, watch } from 'vue';
 import Button from './ui/button/Button.vue';
 import DeletionPopUp from './DeletionPopUp.vue';
+import CommentEditDialog from './ui/dialog/CommentEditDialog.vue';
 import ReplyCard from './ReplyCard.vue';
 import { useSessionStore } from '@/stores/sessionStore';
 import { useConflictsStore } from '@/stores/conflictsStore';
 import { staticContent } from '@/data/contentData';
-
 import { useColorMode } from '@vueuse/core';
 
 /** 
@@ -41,6 +41,10 @@ const conflictDetail = ref(props.comment);
 const replyInputVisible = ref<Record<string, boolean>>({});
 const newReplyText = ref<Record<string, string>>({});
 const textareaRef = ref<HTMLTextAreaElement | null>(null);
+
+    
+const editDialogRef = ref<InstanceType<typeof CommentEditDialog> | null>(null);
+
 
 const emit = defineEmits(['deleteComment', 'refresh']);
 
@@ -151,22 +155,42 @@ const authorLabel = () => {
     return roleNode ? roleNode.labels[sessionStore.activeLanguage] || roleNode.labels['default'] || roleNode.labels['en'] : 'Unknown';
 }
 
+const openEditDialog = async () => {
+  editDialogRef.value?.openEditDialog();
+};
+
+const refreshReplies = async () => {
+  await useConflictsStore().refreshConflictList();
+};
+
+
 </script>
 
 <template>
     <div class="misc-note-card" :class="{ 'dark': colorMode === 'dark' }">
+            <CommentEditDialog
+                ref="editDialogRef"
+                :comment="props.comment"
+                @saved="() => useConflictsStore().refreshConflictList()"
+            />
+
         <div class="misc-note-header">
             <span class="misc-note-author"><strong>{{ staticContent.terms.author[sessionStore.activeLanguage] }}:</strong> {{
                 authorLabel() }}</span>
             <div>
+                <!-- Edit button -->
+                <button v-if="sessionStore.instructorView" class="icon-button" @click="openEditDialog">
+                <span class="material-symbols-outlined">edit</span>
+                </button>
+
                 <!-- Delete button -->
-      <DeletionPopUp
-        :title="staticContent.startPage.deleteComment[sessionStore.activeLanguage]"
-        :description="staticContent.startPage.deleteCommentConfirm[sessionStore.activeLanguage]"
-        :author="props.comment.author.id"
-        :delete-function="() => handleDelete(props.comment.id)"
-      >
-      </DeletionPopUp>
+                <DeletionPopUp
+                    :title="staticContent.startPage.deleteComment[sessionStore.activeLanguage]"
+                    :description="staticContent.startPage.deleteCommentConfirm[sessionStore.activeLanguage]"
+                    :author="props.comment.author.id"
+                    :delete-function="() => handleDelete(props.comment.id)"
+                >
+                </DeletionPopUp>
             </div>
         </div>
 
@@ -189,7 +213,7 @@ const authorLabel = () => {
 
         <div v-if="props.comment && props.comment.replies && props.comment.replies.length > 0" class="reply-container">
             <ReplyCard v-for="(reply) in conflictDetail.replies" :key="reply.id" :parentComment="reply"
-                :conflictId="conflictDetail.id" @deleteComment="removeReply" />
+                :conflictId="conflictDetail.id" @deleteComment="removeReply" @refresh="refreshReplies" :showEdit="sessionStore.instructorView"/>
         </div>
 
     </div>
