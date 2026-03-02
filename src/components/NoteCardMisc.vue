@@ -151,8 +151,8 @@ const removeReply = (id: string) => {
 
 const authorLabel = () => {
     if (!props.comment?.author) return 'Unknown';
-    if (props.comment.author.includes("Anonymous")) return "Anonymous";
     const roleId = props.comment.author.split('#').pop(); // The role ID is the last part after splitting by '#'
+    if (roleId ==='Anonymous') return roleId;
     const roleNode = useSessionStore().getRoleById(useSessionStore().availableRoles || {}, (roleId ||  props.comment.author));
     return roleNode ? roleNode.labels[sessionStore.activeLanguage] || roleNode.labels['default'] || roleNode.labels['en'] : 'Unknown';
 }
