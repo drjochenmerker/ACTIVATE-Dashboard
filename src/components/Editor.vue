@@ -125,13 +125,21 @@ export default {
       this.quill = new Quill(this.$refs.editorContainer, {
         theme: 'snow',
         placeholder: this.staticContent.placeholders.description[this.sessionStore.activeLanguage] || this.staticContent.placeholders.description.en,
+        // disabled toolbar as currently only basic text formatting is available anywhere else on the dashboard
         modules: {
           toolbar: [
-            ['bold', 'italic', 'underline'],
-            [{ list: 'ordered' }, { list: 'bullet' }]
+             [], [{}]
           ]
         },
-        formats: ['bold', 'italic', 'underline', 'list']
+        formats: []
+        // possible toolbar configuration
+        //           toolbar: [
+        //     ['bold', 'italic', 'underline'],
+        //     [{ list: 'ordered' }, { list: 'bullet' }]
+        //   ]
+        // },
+        // formats: ['bold', 'italic', 'underline', 'list']
+     
       });
 
       this.quill.root.innerHTML = this.value;
