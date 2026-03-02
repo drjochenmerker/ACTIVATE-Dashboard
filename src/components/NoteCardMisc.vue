@@ -69,8 +69,8 @@ const handleDelete = async (id: string) => {
     try {
         //comment cant be nested because its the misc card
         await deleteComment(graph, id, false);
-        useConflictsStore().refreshConflictList();
         emit('deleteComment', id); // Event an Parent-Komponente senden
+        location.reload(); // reload to reflect any potential changes in the misc section
     } catch (error) {
         console.error("Error deleting conflict: ", error);
     }
