@@ -43,6 +43,26 @@ const editedCommentText = ref('');
 const originalCommentText = ref('');
 const hasChanges = computed(() => editedCommentText.value !== originalCommentText.value);
 
+const currentReplyText = () => {
+    if (!props.parentComment?.comment) return '';
+    if (typeof props.parentComment.comment === 'string') return props.parentComment.comment;
+    return props.parentComment.comment[sessionStore.activeLanguage]?.trim() ||
+        props.parentComment.comment['default']?.trim() ||
+        Object.values(props.parentComment.comment).find(c => typeof c === 'string' && c.trim() !== '') ||
+        '';
+};
+
+const authorLabel = () => {
+    if (!props.parentComment?.author) return '';
+    let authorNode = props.parentComment.author;
+    if(authorNode && !authorNode.labels) {
+        const authorId = authorNode.split('#').pop();
+        authorNode = useSessionStore().getRoleById(useSessionStore().availableRoles  || {}, authorId || authorNode);
+    }
+    return authorNode ? authorNode.labels?.[sessionStore.activeLanguage] ||
+        authorNode.labels?.['default'] || Object.values(authorNode.labels || {}).find(label => typeof label === 'string' && label.trim() !== '') || authorNode ||
+        'Unknown' : 'Unknown';
+};
 const toggleReplyInput = async () => {
     replyInputVisible.value = !replyInputVisible.value;
     if (replyInputVisible.value) {
@@ -218,11 +238,7 @@ const refreshReplies = async () => {
         <div class="reply-content">
             <div class="reply-head">
                 <p class="reply-author">{{ 
-                    props.parentComment.author.labels?.[sessionStore.activeLanguage] ||
-                    props.parentComment.author.labels?.['default'] ||
-                    Object.values(props.parentComment.author.labels || {}).find(label => typeof label === 'string' && label.trim() !== '') ||
-                    props.parentComment.author.id ||
-                    ''
+                   authorLabel()
                 }}</p>
                 <div class="flex items-center gap-2">
                     <!-- Edit button -->
@@ -239,13 +255,9 @@ const refreshReplies = async () => {
                     </DeletionPopUp>
                 </div>    
             </div>
-            <!-- TODO maybe handle multi-language comments -->
             <p class="reply-text">
                 {{
-                    props.parentComment.comment?.[sessionStore.activeLanguage]?.trim() ||
-                    props.parentComment.comment?.['default']?.trim() ||
-                    Object.values(props.parentComment.comment || {}).find(c => typeof c === 'string' && c.trim() !== '') ||
-                    ''
+                    currentReplyText()
                 }}
             </p>
 
