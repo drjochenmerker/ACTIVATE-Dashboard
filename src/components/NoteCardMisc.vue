@@ -150,6 +150,8 @@ const removeReply = (id: string) => {
 };
 
 const authorLabel = () => {
+    if (!props.comment?.author) return 'Unknown';
+    if (props.comment.author.includes("Anonymous")) return "Anonymous";
     const roleId = props.comment.author.split('#').pop(); // The role ID is the last part after splitting by '#'
     const roleNode = useSessionStore().getRoleById(useSessionStore().availableRoles || {}, (roleId ||  props.comment.author));
     return roleNode ? roleNode.labels[sessionStore.activeLanguage] || roleNode.labels['default'] || roleNode.labels['en'] : 'Unknown';
@@ -177,10 +179,10 @@ const refreshReplies = async () => {
         <div class="misc-note-header">
             <span class="misc-note-author"><strong>{{ staticContent.terms.author[sessionStore.activeLanguage] }}:</strong> {{
                 authorLabel() }}</span>
-            <div>
+            <div class="flex items-center gap-2">
                 <!-- Edit button -->
                 <button v-if="sessionStore.instructorView" class="icon-button" @click="openEditDialog">
-                <span class="material-symbols-outlined">edit</span>
+                    <span class="material-symbols-outlined">edit</span>
                 </button>
 
                 <!-- Delete button -->
