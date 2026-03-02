@@ -276,6 +276,19 @@ const refreshReplies = async () => {
     font-weight: normal;
 }
 
+/* icon */
+.icon-button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  font-size: 24px;
+  color: red;
+}
+
+.icon-button:hover {
+  color: darkred;
+}
 
 /* comment input */
 .comment-input {
