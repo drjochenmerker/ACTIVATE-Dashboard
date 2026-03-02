@@ -1,5 +1,5 @@
 // src/stores/activityStore.ts
-import { Activity, LanguageCode, NestedMultiLangObject } from '@/data/knowledge_graph/structures';
+import { Activity, LanguageCode, MultiLangObject, NestedMultiLangObject } from '@/data/knowledge_graph/structures';
 import { defineStore } from 'pinia';
 import { ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
@@ -119,6 +119,41 @@ export const useSessionStore = defineStore('session', () => {
         localStorage.removeItem(LAST_ROUTE_KEY);
     };
 
+    /**
+     * Returns the label for a given role ID in the specified language.
+     * @param tree The nested multi-language object tree to search in. (Usually the availableRoles)
+     * @param roleId The ID of the role to find.
+     * @returns The author node or null if not found.
+     */
+    const getRoleById = (
+        tree: NestedMultiLangObject,
+        roleId: string | undefined
+    ): MultiLangObject | null => {
+
+        if(tree.values && tree.values.length > 0) {
+        // check current level
+            for (const val of tree.values) {
+                if (val.id === roleId) {
+                    return val;
+                }
+            }
+        }
+
+        if(!tree.next) {
+            return null;
+        }
+
+        // recursive check in levels below
+        for (const child of tree.next) {
+            const found = getRoleById(child, roleId);
+            if (found) {
+                return found;
+            }
+        }
+
+        return null;
+    };
+
     // Watch for changes to frequently-changing session state and persist
     // Only watch properties that change during a session, not those set once at initialization
     watch(
@@ -157,5 +192,6 @@ export const useSessionStore = defineStore('session', () => {
         restoreSession,
         saveLastRoute,
         lastRoute,
+        getRoleById,
     };
 });

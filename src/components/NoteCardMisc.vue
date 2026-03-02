@@ -145,12 +145,19 @@ const removeReply = (id: string) => {
     }
 };
 
+const authorLabel = () => {
+    const roleId = props.comment.author.split('#').pop(); // The role ID is the last part after splitting by '#'
+    const roleNode = useSessionStore().getRoleById(useSessionStore().availableRoles || {}, (roleId ||  props.comment.author));
+    return roleNode ? roleNode.labels[sessionStore.activeLanguage] || roleNode.labels['default'] || roleNode.labels['en'] : 'Unknown';
+}
+
 </script>
 
 <template>
     <div class="misc-note-card" :class="{ 'dark': colorMode === 'dark' }">
         <div class="misc-note-header">
-            <span class="misc-note-author">Author: {{ props.comment.author || 'Unknown' }}</span>
+            <span class="misc-note-author"><strong>{{ staticContent.terms.author[sessionStore.activeLanguage] }}:</strong> {{
+                authorLabel() }}</span>
             <div>
                 <!-- Delete button -->
       <DeletionPopUp

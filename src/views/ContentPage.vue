@@ -7,6 +7,11 @@ import ContentTemplate from '@/components/ContentTemplate.vue';
 import { Comment } from '@/data/knowledge_graph/structures';
 import { useSessionStore } from '@/stores/sessionStore';
 import { getMiscComments } from '@/data/knowledge_graph/read_operations';
+import Editor from '@/components/Editor.vue';
+import { Button } from '@/components/ui/button';
+import { useActivityPointsStore } from "@/stores/activityPointsStore";
+import { storeToRefs } from 'pinia';
+import { PlusIcon } from 'lucide-vue-next';
 
 const route = useRoute();
 
@@ -15,6 +20,11 @@ const props = defineProps<{ conflicts: any[], activity: any }>();
 
 // Stores
 const sessionStore = useSessionStore();
+
+const activityPointStore = useActivityPointsStore();
+const { getActivePoints } = storeToRefs(activityPointStore);
+
+const isEditorDrawerOpen = ref(false);
 
 // Define the expected structure of pageData
 type PageDataType = { id: string; number: number } | undefined;
@@ -66,6 +76,22 @@ const removeComment = (id: string) => {
 
         <!-- When on misc page, show misc comments-->
         <div v-if="route.params.id === 'misc'">
+            <div>
+                <Button @click="isEditorDrawerOpen = !isEditorDrawerOpen" v-if="useSessionStore().instructorView"
+                    :title="isEditorDrawerOpen ? 'Hide Editor' : 'Show Editor'" variant="default" size="icon" :class="[
+                    'z-50 rounded-full shadow transition-all',
+                    isEditorDrawerOpen ? 'rotate-45' : ''
+                    ]">
+                    <PlusIcon class="h-6 w-6" />
+                </Button>
+                <div class="flex flex-col py-2" v-if="useSessionStore().instructorView">
+                    <transition name="fade">
+                    <div v-if="isEditorDrawerOpen" class="transition-all duration-300 ease-in-out">
+                        <Editor :activePoints="getActivePoints" :isNote="true" />
+                    </div>
+                    </transition>
+                </div>
+            </div>
             <div v-if="miscComments.length > 0">
                 <ul>
                     <li v-for="(comment, index) in miscComments" :key="index">
