@@ -44,12 +44,13 @@ const originalCommentText = ref('');
 const hasChanges = computed(() => editedCommentText.value !== originalCommentText.value);
 
 const currentReplyText = () => {
-    if (!props.parentComment?.comment) return '';
-    if (typeof props.parentComment.comment === 'string') return props.parentComment.comment;
-    return props.parentComment.comment[sessionStore.activeLanguage]?.trim() ||
-        props.parentComment.comment['default']?.trim() ||
-        Object.values(props.parentComment.comment).find(c => typeof c === 'string' && c.trim() !== '') ||
-        '';
+    const comment = props.parentComment?.comment;
+    const lang = sessionStore.activeLanguage;
+    if (!comment) return '';
+    if (typeof comment === 'string') return comment;
+    if(comment[lang]?.trim()) return comment[lang]?.trim();
+    if(comment['default']?.trim()) return comment['default']?.trim();
+     return  Object.values(comment).find(c => typeof c === 'string' && c.trim() !== '') ||'';
 };
 
 const authorLabel = () => {
@@ -59,9 +60,18 @@ const authorLabel = () => {
         const authorId = authorNode.split('#').pop();
         authorNode = useSessionStore().getRoleById(useSessionStore().availableRoles  || {}, authorId || authorNode);
     }
-    return authorNode ? authorNode.labels?.[sessionStore.activeLanguage] ||
-        authorNode.labels?.['default'] || Object.values(authorNode.labels || {}).find(label => typeof label === 'string' && label.trim() !== '') || authorNode ||
-        'Unknown' : 'Unknown';
+    if(authorNode) {
+        const labels = authorNode.labels || {};
+        const lang = sessionStore.activeLanguage;
+        if(labels?.[lang]) return labels?.[lang];
+        if(labels?.['default']) return labels?.['default'];
+        if(Object.keys(labels).length > 0) {
+            const label = Object.values(labels).find(label => typeof label === 'string' && label.trim() !== '');
+            if(label) return label;
+        }
+        return authorNode;
+    }
+    return 'Unknown';
 };
 const toggleReplyInput = async () => {
     replyInputVisible.value = !replyInputVisible.value;
