@@ -382,7 +382,7 @@ export default {
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  /* width only needed is the editor is used in the side bar*/
+  /* width only needed if the editor is used in the side bar*/
   /* width: 400px;
   max-width: 600px; */
   margin: 0 auto;

@@ -116,7 +116,7 @@ defineExpose({
       <DialogContent class="max-w-2xl max-h-[90vh] flex flex-col">
         <DialogHeader>
           <DialogTitle>
-            {{ staticContent.noteCards.editComment?.[sessionStore.activeLanguage] || 'Edit Comment' }}
+            {{ staticContent.noteCards.editComment[sessionStore.activeLanguage] }}
           </DialogTitle>
         </DialogHeader>
         <div class="overflow-y-auto flex-1 pr-2">
