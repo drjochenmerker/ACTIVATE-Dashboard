@@ -67,9 +67,6 @@ const removeComment = (id: string) => {
     <div>
         <h1 class="text-2xl font-semibold mb-4">{{ activateTerms[sessionStore.activeLanguage][pageData!.id] }}</h1>
 
-        <!-- TODO: Add buttons here that are only visible when sessionStore.instructorView is true -->
-        <!-- Example: <Button v-if="sessionStore.instructorView">...</Button> -->
-
         <!-- When not on misc page, show the content -->
         <ContentTemplate v-if="route.params.id !== 'misc' && pageData" :pageData="pageData"
             :conflicts="props.conflicts" />
@@ -77,14 +74,14 @@ const removeComment = (id: string) => {
         <!-- When on misc page, show misc comments-->
         <div v-if="route.params.id === 'misc'">
             <div>
-                <Button @click="isEditorDrawerOpen = !isEditorDrawerOpen" v-if="useSessionStore().instructorView"
+                <Button @click="isEditorDrawerOpen = !isEditorDrawerOpen"
                     :title="isEditorDrawerOpen ? 'Hide Editor' : 'Show Editor'" variant="default" size="icon" :class="[
                     'z-50 rounded-full shadow transition-all',
                     isEditorDrawerOpen ? 'rotate-45' : ''
                     ]">
                     <PlusIcon class="h-6 w-6" />
                 </Button>
-                <div class="flex flex-col py-2" v-if="useSessionStore().instructorView">
+                <div class="flex flex-col py-2">
                     <transition name="fade">
                     <div v-if="isEditorDrawerOpen" class="transition-all duration-300 ease-in-out">
                         <Editor :activePoints="getActivePoints" :isNote="true" />
