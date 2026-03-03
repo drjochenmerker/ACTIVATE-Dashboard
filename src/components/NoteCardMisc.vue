@@ -137,10 +137,10 @@ const saveReply = async (commentId: string) => {
                 conflictDetail.value.replies = [];
             }
         }
-
+        
         // Important to refresh the conflict list so that the UI shows the new comment immediately
         refreshConflicts()
-
+        
         replyInputVisible.value[commentId] = false;
         newReplyText.value[commentId] = '';
     } catch (error) {
@@ -215,7 +215,7 @@ const openEditDialog = async () => {
 
         <div v-if="props.comment && props.comment.replies && props.comment.replies.length > 0" class="reply-container">
             <ReplyCard v-for="(reply) in conflictDetail.replies" :key="reply.id" :parentComment="reply"
-                :conflictId="conflictDetail.id" @deleteComment="removeReply" @refresh="refreshConflicts" :showEdit="sessionStore.instructorView"/>
+                :conflictId="conflictDetail.id" @deleteComment="removeReply" @refresh="refreshConflicts" @save="saveReply" :showEdit="sessionStore.instructorView" />
         </div>
 
     </div>

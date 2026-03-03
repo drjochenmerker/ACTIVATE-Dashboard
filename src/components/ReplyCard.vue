@@ -90,6 +90,7 @@ const saveReply = async (parentCommentId: string) => {
             newReplyText.value
         );
 
+        emit('refresh');
 
         replyInputVisible.value = false; // hide input field
         newReplyText.value = ''; // empty the text field 
@@ -113,7 +114,7 @@ const handleEnterKey = (event: KeyboardEvent) => {
 // help function
 const hasReplies = (comment: any) => Array.isArray(comment.replies) && comment.replies.length > 0;
 
-const emit = defineEmits(['deleteComment', 'refresh']);
+const emit = defineEmits(['deleteComment', 'refresh', 'save']);
 
 const getCommentText = (comment: any) => {
     if (!comment?.comment) return '';
@@ -291,7 +292,7 @@ const refreshReplies = async () => {
         <div v-if="Array.isArray(props.parentComment.replies) && props.parentComment.replies.length"
             class="nested-replies">
             <ReplyCard v-for="nestedReply in props.parentComment.replies" :key="nestedReply.id"
-                :parentComment="nestedReply" :showEdit="props.showEdit" @deleteComment="removeReply" @refresh="refreshReplies" />
+                :parentComment="nestedReply" :showEdit="props.showEdit" @deleteComment="removeReply" @refresh="refreshReplies" @save="saveReply"/>
         </div>
 
     </div>
