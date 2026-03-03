@@ -17,7 +17,7 @@ const routes: Array<RouteRecordRaw> = [
     {
         path: "/start",
         name: "Start",
-        component: StartPage,
+        component: StartPage, // dedicated start page for activity creation and selection
     },
     {
         path: "/feedback/:graph",
@@ -31,7 +31,7 @@ const routes: Array<RouteRecordRaw> = [
         component: FeedbackThankyouPage,
     },
     {
-        path: "/",
+        path: "/", // Main dashboard route with dynamic content pages as children
         component: MainLayout,
         children: [
             { path: "", name: "HomePage", component: HomePage, props: true }, // Standard dashboard
@@ -64,7 +64,6 @@ router.beforeEach((to) => {
         }
     }
 
-    // const isPublic = to.name === 'FeedbackPage' || to.name === 'FeedbackThankYouPage';
     const isPublic = to.name === "FeedbackThankYouPage";
     const isOption = to.path === "/options";
 
@@ -77,6 +76,12 @@ router.beforeEach((to) => {
     if (isPublic) {
         return;
     }
+    const isFeedbackPage = to.path.startsWith("/feedback/");
+
+    // Workaround: only if it is not feedback page, direct route to start page
+    if (!isFeedbackPage && to.name === "HomePage" && !sessionStore.sessionActivity) {
+        return "/start";
+    }
     // If not logged in and trying to access a non-public page, redirect to login
     if (!sessionStore.isSessionActive && to.path !== "/login") {
         // to.fullPath beinhaltet auch Parameter wie /feedback/123
@@ -85,10 +90,6 @@ router.beforeEach((to) => {
             query: { redirect: to.fullPath },
         };
     }
-
-    // if (!sessionStore.isSessionActive && to.path !== '/login') {
-    //     return '/login';
-    // }
 
     // Save the current route as the last visited route (for session persistence), except for the start page
     if (sessionStore.isSessionActive && !isPublic && to.path !== "/start") {

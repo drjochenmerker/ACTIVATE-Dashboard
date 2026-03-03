@@ -45,7 +45,7 @@ const login = async () => {
       // check if redirect query parameter exists (e.g., /login?redirect=/feedback)
       const redirectPath = route.query.redirect as string;
 
-      if (redirectPath) {
+      if (redirectPath && redirectPath !== '/') {
         // if yes, redirect to that path
         router.push(redirectPath);
       } else {

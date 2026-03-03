@@ -187,7 +187,6 @@ const submitFeedback = async () => {
     <div class="min-h-screen flex flex-col lg:w-[1024px] lg:mx-auto justify-between bg-gray-100 p-4 text-gray-800">
 
         <div class="flex items-center gap-2 justify-end w-full mb-4">
-            <InstructorViewSelect v-if="sessionStore.instructorMode" />
             <LanguageSelect />
             <template v-if="sessionStore.instructorMode">
                 <OptionsButton />

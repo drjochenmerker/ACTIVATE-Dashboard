@@ -16,10 +16,20 @@ const router = useRouter();
 const route = useRoute();
 
 const logout = () => {
+    const currentPath = route.fullPath;
     sessionStore.endSession();
+    let targetRedirect = '/start';
+
+    if (currentPath.includes('/feedback/')) {
+        // important check to prevent redirect loops:
+        // if the user is currently on a feedback page, redirect to the start page after logout
+        // instead of the feedback page
+        targetRedirect = currentPath;
+    }
+
     router.replace({
         path: '/login',
-        query: { redirect: route.fullPath }
+        query: { redirect: targetRedirect }
     });
 };
 </script>
