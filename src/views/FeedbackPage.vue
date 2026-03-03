@@ -18,7 +18,6 @@ import { llmSubmit } from '@/data/knowledge_graph/llm_utils';
 import { staticContentFeedback } from '@/data/feedbackQuestions';
 import { useLLMSettingsStore } from '@/stores/llmSettingsStore';
 import LogoutButton from '@/components/LogoutButton.vue';
-import InstructorViewSelect from '@/components/InstructorViewSelect.vue';
 import OptionsButton from '@/components/OptionsButton.vue';
 import ThemeSwitchButton from '@/components/ThemeSwitchButton.vue';
 import HomeButton from '@/components/HomeButton.vue';
