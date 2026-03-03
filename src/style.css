@@ -113,3 +113,9 @@
         height: 100%;
     }
 }  
+
+
+/* hide Quill toolbar */
+div.ql-toolbar {
+  display: none;
+}

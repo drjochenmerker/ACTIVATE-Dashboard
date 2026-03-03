@@ -131,6 +131,7 @@ export default {
              [], [{}]
           ]
         },
+        toolbarHtml: ' ',
         formats: []
         // possible toolbar configuration
         //           toolbar: [
