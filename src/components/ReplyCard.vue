@@ -9,6 +9,7 @@ import { staticContent } from '@/data/contentData';
 import { useColorMode } from '@vueuse/core';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import ConfirmDiscardDialog from './ui/dialog/ConfirmDiscardDialog.vue';
+import { useMiscsStore } from "@/stores/miscsStore";
 
 /** 
  * ReplyCard-Component
@@ -31,6 +32,8 @@ const colorMode = useColorMode();
 // Store
 const sessionStore = useSessionStore();
 const conflictStore = useConflictsStore();
+const miscStore = useMiscsStore();
+
 
 // Toggle for visibility of reply input field
 const replyInputVisible = ref(false);
@@ -90,7 +93,9 @@ const saveReply = async (parentCommentId: string) => {
             newReplyText.value
         );
 
+        miscStore.fetchMiscs()
         emit('refresh');
+
 
         replyInputVisible.value = false; // hide input field
         newReplyText.value = ''; // empty the text field 
@@ -114,7 +119,7 @@ const handleEnterKey = (event: KeyboardEvent) => {
 // help function
 const hasReplies = (comment: any) => Array.isArray(comment.replies) && comment.replies.length > 0;
 
-const emit = defineEmits(['deleteComment', 'refresh', 'save']);
+const emit = defineEmits(['deleteComment', 'refresh']);
 
 const getCommentText = (comment: any) => {
     if (!comment?.comment) return '';

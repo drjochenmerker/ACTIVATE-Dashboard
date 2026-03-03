@@ -4,14 +4,13 @@ import { useRoute } from 'vue-router';
 import NoteCardMisc from '@/components/NoteCardMisc.vue';
 import { activateTerms, contentData, staticContent } from '@/data/contentData';
 import ContentTemplate from '@/components/ContentTemplate.vue';
-import { Comment } from '@/data/knowledge_graph/structures';
 import { useSessionStore } from '@/stores/sessionStore';
-import { getMiscComments } from '@/data/knowledge_graph/read_operations';
 import Editor from '@/components/Editor.vue';
 import { Button } from '@/components/ui/button';
 import { useActivityPointsStore } from "@/stores/activityPointsStore";
 import { storeToRefs } from 'pinia';
 import { PlusIcon } from 'lucide-vue-next';
+import { useMiscsStore } from "@/stores/miscsStore";
 
 const route = useRoute();
 
@@ -20,6 +19,7 @@ const props = defineProps<{ conflicts: any[], activity: any }>();
 
 // Stores
 const sessionStore = useSessionStore();
+const miscStore = useMiscsStore();
 
 const activityPointStore = useActivityPointsStore();
 const { getActivePoints } = storeToRefs(activityPointStore);
@@ -31,35 +31,14 @@ type PageDataType = { id: string; number: number } | undefined;
 // Assign pageData with a proper type
 const pageData: PageDataType = contentData.find((item) => item.id === route.params.id);
 
-const graph = sessionStore.sessionActivity!.graph;
 
-// Reactive variable to hold miscellaneous comments
-const miscComments = ref<Comment[]>([]);
 
 // Fetch miscellaneous comments on mount
 onMounted(async () => {
-    fetchMiscs();
+    miscStore.fetchMiscs();
 });
 
-/**
- * Fetches miscellaneous comments from the knowledge graph when on the 'misc' page.
- * Updates the miscComments reactive reference with the retrieved comments.
- */
-const fetchMiscs = async () => {
-    if (route.params.id === 'misc') {
-        // Get miscellaneous comments from the graph
-        miscComments.value = await getMiscComments(graph);
-    }
-}
 
-/**
- * Promised function
- * Removes a specific comment from the miscellaneous comments list.
- * @param id The unique identifier of the comment to be removed.
- */
-const removeComment = (id: string) => {
-    miscComments.value = miscComments.value.filter(comment => comment.id !== id);
-};
 
 </script>
 
@@ -89,10 +68,10 @@ const removeComment = (id: string) => {
                     </transition>
                 </div>
             </div>
-            <div v-if="miscComments.length > 0">
+            <div v-if="miscStore.miscComments.length > 0">
                 <ul>
-                    <li v-for="(comment, index) in miscComments" :key="index">
-                        <NoteCardMisc :comment="comment" @deleteComment="removeComment" @refresh="fetchMiscs" />
+                    <li v-for="(comment, index) in miscStore.miscComments" :key="index">
+                        <NoteCardMisc :comment="comment" />
                     </li>
                 </ul>
             </div>

@@ -9,6 +9,7 @@ import { useSessionStore } from '@/stores/sessionStore';
 import { useConflictsStore } from '@/stores/conflictsStore';
 import { staticContent } from '@/data/contentData';
 import { useColorMode } from '@vueuse/core';
+import { useMiscsStore } from "@/stores/miscsStore";
 
 /** 
  * NoteCard for miscellaneous comments
@@ -32,6 +33,8 @@ const colorMode = useColorMode();
 // Stores for the conflicts and the session
 const sessionStore = useSessionStore();
 const conflictStore = useConflictsStore();
+const miscStore = useMiscsStore();
+
 
 const graph = sessionStore.sessionActivity!.graph
 
@@ -47,7 +50,6 @@ const textareaRef = ref<HTMLTextAreaElement | null>(null);
 const editDialogRef = ref<InstanceType<typeof CommentEditDialog> | null>(null);
 
 
-const emit = defineEmits(['deleteComment', 'refresh']);
 
 /** 
  * Watches for changes to the comment prop and updates the local conflictDetail reactive reference
@@ -70,7 +72,7 @@ const handleDelete = async (id: string) => {
     try {
         //comment cant be nested because its the misc card
         await deleteComment(graph, id, false);
-        emit('deleteComment', id); // Event an Parent-Komponente senden
+        miscStore.removeComment(id)
         location.reload(); // reload to reflect any potential changes in the misc section
     } catch (error) {
         console.error("Error deleting conflict: ", error);
@@ -108,7 +110,7 @@ const handleEnterKey = (event: KeyboardEvent) => {
 
 const refreshConflicts = async () => {
   await conflictStore.refreshConflictList();
-  emit('refresh');
+  miscStore.fetchMiscs()
 };
 
 /** 
@@ -140,7 +142,7 @@ const saveReply = async (commentId: string) => {
         
         // Important to refresh the conflict list so that the UI shows the new comment immediately
         refreshConflicts()
-        
+
         replyInputVisible.value[commentId] = false;
         newReplyText.value[commentId] = '';
     } catch (error) {
@@ -152,6 +154,7 @@ const removeReply = (id: string) => {
     if (conflictDetail.value && conflictDetail.value.replies) {
         conflictDetail.value.replies = conflictDetail.value.replies.filter((reply: { id: string; }) => reply.id !== id);
     }
+    miscStore.removeComment(id)
 };
 
 const authorLabel = () => {
@@ -215,7 +218,7 @@ const openEditDialog = async () => {
 
         <div v-if="props.comment && props.comment.replies && props.comment.replies.length > 0" class="reply-container">
             <ReplyCard v-for="(reply) in conflictDetail.replies" :key="reply.id" :parentComment="reply"
-                :conflictId="conflictDetail.id" @deleteComment="removeReply" @refresh="refreshConflicts" @save="saveReply" :showEdit="sessionStore.instructorView" />
+                :conflictId="conflictDetail.id" @deleteComment="removeReply" @refresh="refreshConflicts" :showEdit="sessionStore.instructorView" />
         </div>
 
     </div>
