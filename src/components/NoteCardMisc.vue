@@ -29,8 +29,9 @@ const props = defineProps({
 const colorMode = useColorMode();
 
 
-// store for the session
+// Stores for the conflicts and the session
 const sessionStore = useSessionStore();
+const conflictStore = useConflictsStore();
 
 const graph = sessionStore.sessionActivity!.graph
 
@@ -105,6 +106,11 @@ const handleEnterKey = (event: KeyboardEvent) => {
     }
 };
 
+const refreshConflicts = async () => {
+  await conflictStore.refreshConflictList();
+  emit('refresh');
+};
+
 /** 
  * Saves a reply to a specific comment
  * 
@@ -133,8 +139,7 @@ const saveReply = async (commentId: string) => {
         }
 
         // Important to refresh the conflict list so that the UI shows the new comment immediately
-        useConflictsStore().refreshConflictList();
-        emit('refresh');
+        refreshConflicts()
 
         replyInputVisible.value[commentId] = false;
         newReplyText.value[commentId] = '';
@@ -161,11 +166,6 @@ const openEditDialog = async () => {
   editDialogRef.value?.openEditDialog();
 };
 
-const refreshReplies = async () => {
-  await useConflictsStore().refreshConflictList();
-};
-
-
 </script>
 
 <template>
@@ -173,7 +173,7 @@ const refreshReplies = async () => {
             <CommentEditDialog
                 ref="editDialogRef"
                 :comment="props.comment"
-                @saved="() => useConflictsStore().refreshConflictList()"
+                @saved="() => conflictStore.refreshConflictList()"
             />
 
         <div class="misc-note-header">
@@ -215,7 +215,7 @@ const refreshReplies = async () => {
 
         <div v-if="props.comment && props.comment.replies && props.comment.replies.length > 0" class="reply-container">
             <ReplyCard v-for="(reply) in conflictDetail.replies" :key="reply.id" :parentComment="reply"
-                :conflictId="conflictDetail.id" @deleteComment="removeReply" @refresh="refreshReplies" :showEdit="sessionStore.instructorView"/>
+                :conflictId="conflictDetail.id" @deleteComment="removeReply" @refresh="refreshConflicts" :showEdit="sessionStore.instructorView"/>
         </div>
 
     </div>
