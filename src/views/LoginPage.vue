@@ -10,7 +10,7 @@ import {
 import LanguageSelect from '@/components/LanguageSelect.vue';
 import { ref } from 'vue';
 import { ACCOUNT_ROLE, checkPassword } from '@/data/auth';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router'; // ÄNDERUNG: useRoute importieren
 import { useSessionStore } from '@/stores/sessionStore';
 import { staticContent } from '@/data/contentData';
 import ThemeSwitchButton from '@/components/ThemeSwitchButton.vue';
@@ -22,6 +22,7 @@ const passwordInput = ref('');
 const showValidationErrors = ref(false);
 
 const router = useRouter();
+const route = useRoute(); // ÄNDERUNG: route initialisieren
 const sessionStore = useSessionStore();
 
 const login = async () => {
@@ -39,9 +40,19 @@ const login = async () => {
 
       // Set instructor mode as true if the root password has been entered
       sessionStore.instructorMode = role == ACCOUNT_ROLE.ROOT;
-      router.push('/start');
-    }
-    else {
+
+      // redirect logic
+      // check if redirect query parameter exists (e.g., /login?redirect=/feedback)
+      const redirectPath = route.query.redirect as string;
+
+      if (redirectPath) {
+        // if yes, redirect to that path
+        router.push(redirectPath);
+      } else {
+        // Fallback: redirect to start page
+        router.push('/start');
+      }
+    } else {
       showValidationErrors.value = true;
     }
   } catch (error) {
@@ -49,7 +60,6 @@ const login = async () => {
     loading.value = false;
   }
 };
-
 </script>
 
 <template>
@@ -60,7 +70,6 @@ const login = async () => {
     </div>
     <Card class="w-full max-w-5xl">
 
-      <!-- Card header with logo -->
       <CardHeader class="flex justify-center items-center">
         <CardTitle class="flex justify-center w-full">
           <div class="flex flex-col items-center w-full">
@@ -74,7 +83,8 @@ const login = async () => {
 
       <div class="flex justify-center my-6">
         <form @submit.prevent="login">
-          <input v-model="passwordInput" :disabled="loading" type="password" class="dark:bg-gray-900 border border-gray-600 rounded-md p-2"
+          <input v-model="passwordInput" :disabled="loading" type="password"
+            class="dark:bg-gray-900 border border-gray-600 rounded-md p-2"
             :placeholder="staticContent.placeholders.password[sessionStore.activeLanguage]">
         </form>
       </div>

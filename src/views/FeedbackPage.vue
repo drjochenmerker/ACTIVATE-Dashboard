@@ -17,6 +17,11 @@ import { KnowledgeGraphActivityClass } from '@/data/knowledge_graph/structures';
 import { llmSubmit } from '@/data/knowledge_graph/llm_utils';
 import { staticContentFeedback } from '@/data/feedbackQuestions';
 import { useLLMSettingsStore } from '@/stores/llmSettingsStore';
+import LogoutButton from '@/components/LogoutButton.vue';
+import InstructorViewSelect from '@/components/InstructorViewSelect.vue';
+import OptionsButton from '@/components/OptionsButton.vue';
+import ThemeSwitchButton from '@/components/ThemeSwitchButton.vue';
+import HomeButton from '@/components/HomeButton.vue';
 
 const props = defineProps<{ graph: string }>()
 
@@ -180,43 +185,50 @@ const submitFeedback = async () => {
 
 <template>
     <div class="min-h-screen flex flex-col lg:w-[1024px] lg:mx-auto justify-between bg-gray-100 p-4 text-gray-800">
+
+        <div class="flex items-center gap-2 justify-end w-full mb-4">
+            <InstructorViewSelect v-if="sessionStore.instructorMode" />
+            <LanguageSelect />
+            <template v-if="sessionStore.instructorMode">
+                <OptionsButton />
+            </template>
+            <HomeButton />
+            <LogoutButton />
+            <ThemeSwitchButton />
+        </div>
+
         <div class="space-y-6">
-            <div>
-                <LanguageSelect class="absolute top-0 right-0 mt-4 mr-4" />
+            <div class="mb-6">
+                <Select :model-value="sessionStore.sessionRole" @update:model-value="sessionStore.sessionRole = $event"
+                    id="roleSelect" class="my-4">
+                    <SelectTrigger>
+                        <SelectValue
+                            :placeholder="staticContent.placeholders.roleSelect[sessionStore.activeLanguage] || sessionStore.sessionRole" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <RecursiveSelect :node="sessionStore.availableRoles" />
+                    </SelectContent>
+                </Select>
             </div>
-            <div>
 
-                <div class="mb-6">
-                    <Select :model-value="sessionStore.sessionRole"
-                        @update:model-value="sessionStore.sessionRole = $event" id="roleSelect" class="my-4">
-                        <SelectTrigger>
-                            <SelectValue
-                                :placeholder="staticContent.placeholders.roleSelect[sessionStore.activeLanguage] || sessionStore.sessionRole" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <RecursiveSelect :node="sessionStore.availableRoles" />
-                        </SelectContent>
-                    </Select>
+            <div v-for="group in groupedQuestionData" :key="group.key"
+                class="mb-6 p-4 border rounded-lg bg-white shadow-sm space-y-4">
+
+                <h2 class="text-xl font-semibold text-gray-900 border-b pb-2">
+                    {{ group.title }}
+                </h2>
+
+                <div v-for="question in group.questions" :key="question.key" class="space-y-2">
+                    <label :for="group.key + question.key" class="block text-lg font-medium">
+                        {{ question.text }}
+                    </label>
+                    <textarea :id="group.key + question.key" v-model="answers[group.key][question.key]"
+                        class="w-full p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
+                        rows="4" :placeholder="staticContent.placeholders.feedbackAnswer[activeLang]" />
                 </div>
-
-                <div v-for="group in groupedQuestionData" :key="group.key"
-                    class="mb-6 p-4 border rounded-lg bg-white shadow-sm space-y-4">
-
-                    <h2 class="text-xl font-semibold text-gray-900 border-b pb-2">
-                        {{ group.title }}
-                    </h2>
-
-                    <div v-for="question in group.questions" :key="question.key" class="space-y-2">
-                        <label :for="group.key + question.key" class="block text-lg font-medium">
-                            {{ question.text }}
-                        </label>
-                        <textarea :id="group.key + question.key" v-model="answers[group.key][question.key]"
-                            class="w-full p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
-                            rows="4" :placeholder="staticContent.placeholders.feedbackAnswer[activeLang]" />
-                    </div>
-                </div>
-
             </div>
+
+
         </div>
 
         <div class="mt-8">
