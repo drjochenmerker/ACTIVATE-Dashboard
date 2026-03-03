@@ -101,14 +101,14 @@ const addNewActivity = async () => {
     <div class="flex items-center gap-2 justify-end w-full mb-4">
       <InstructorViewSelect v-if="sessionStore.instructorMode" />
       <LanguageSelect />
-      <template  v-if="sessionStore.instructorMode">
+      <template v-if="sessionStore.instructorMode">
         <OptionsButton />
       </template>
       <LogoutButton />
       <ThemeSwitchButton />
     </div>
     <Card class="w-full max-w-5xl">
-    
+
 
       <!-- Card header with logo -->
       <CardHeader class="flex justify-center items-center">
@@ -122,7 +122,7 @@ const addNewActivity = async () => {
         </CardTitle>
       </CardHeader>
       <!-- "add button" in the middle -->
-      <div class="flex justify-center my-6">
+      <div v-if="sessionStore.instructorMode" class="flex justify-center my-6">
         <Dialog v-model:open="dialogOpen">
           <DialogTrigger as-child>
             <Button
