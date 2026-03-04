@@ -18,12 +18,33 @@ export interface RequiredEntitiesStructure {
     divisionsOfLabour: RequiredEntity[];
 }
 
+function parseRequiredEntitiesOrFallback(customPredefinedEntitiesJson?: string): RequiredEntitiesStructure {
+    if (!customPredefinedEntitiesJson || !customPredefinedEntitiesJson.trim()) {
+        return requiredEntitiesData as RequiredEntitiesStructure;
+    }
+
+    try {
+        const parsed = JSON.parse(customPredefinedEntitiesJson) as Partial<RequiredEntitiesStructure>;
+        return {
+            subjects: parsed.subjects ?? [],
+            objects: parsed.objects ?? [],
+            instruments: parsed.instruments ?? [],
+            rules: parsed.rules ?? [],
+            communities: parsed.communities ?? [],
+            divisionsOfLabour: parsed.divisionsOfLabour ?? [],
+        };
+    } catch (error) {
+        console.error('Invalid predefinedEntities JSON, using default requiredEntities.json', error);
+        return requiredEntitiesData as RequiredEntitiesStructure;
+    }
+}
+
 /**
  * Adds all required entities to a specific graph using the addEntity function
  * @param graphId The graph ID where entities will be added
  */
-export async function addRequiredEntitiesToGraph(graphId: string): Promise<void> {
-    const data = requiredEntitiesData as RequiredEntitiesStructure;
+export async function addRequiredEntitiesToGraph(graphId: string, customPredefinedEntitiesJson?: string): Promise<void> {
+    const data = parseRequiredEntitiesOrFallback(customPredefinedEntitiesJson);
     const labelLanguages: LanguageCode[] = [
         LanguageCode.Deutsch,
         LanguageCode.English,

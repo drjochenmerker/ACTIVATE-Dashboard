@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch, computed } from 'vue';
 import { useLLMSettingsStore, type LLMProvider, type LLMRequestConfig } from '@/stores/llmSettingsStore';
 import { useSessionStore } from '@/stores/sessionStore';
 import { staticContent } from '@/data/contentData';
@@ -47,7 +47,21 @@ const turtleFileMergePrompt = ref('');
 // const syntaxFixPrompt = ref(''); // TODO: Discuss if adjusting this prompt is necessary
 const entityAssignmentPrompt = ref('');
 const tensionExtractionPrompt = ref('');
+const predefinedEntitiesPrompt = ref('');
 const isEditingPrompt = ref(false);
+
+const isPredefinedEntitiesJsonValid = computed(() => {
+  if (!predefinedEntitiesPrompt.value.trim()) {
+    return true;
+  }
+
+  try {
+    JSON.parse(predefinedEntitiesPrompt.value);
+    return true;
+  } catch {
+    return false;
+  }
+});
 
 onMounted(() => {
   llmSettingsStore.loadSettings();
@@ -59,6 +73,7 @@ onMounted(() => {
   // syntaxFixPrompt.value = prompts.syntaxFixing;
   tensionExtractionPrompt.value = prompts.tensionExtraction;
   entityAssignmentPrompt.value = prompts.entityAssignment;
+  predefinedEntitiesPrompt.value = prompts.predefinedEntities;
   loadModelConfig(selectedProvider.value);
 });
 
@@ -127,6 +142,7 @@ const startEditingPrompt = () => {
   // syntaxFixPrompt.value = prompts.syntaxFixing;
   entityAssignmentPrompt.value = prompts.entityAssignment;
   tensionExtractionPrompt.value = prompts.tensionExtraction;
+  predefinedEntitiesPrompt.value = prompts.predefinedEntities;
 };
 
 const cancelEditingPrompt = () => {
@@ -137,17 +153,23 @@ const cancelEditingPrompt = () => {
   turtleFileMergePrompt.value = prompts.turtleFileMerge;
   // syntaxFixPrompt.value = prompts.syntaxFixing;
   entityAssignmentPrompt.value = prompts.entityAssignment;
-  tensionExtractionPrompt.value = prompts.tensionExtraction
+  tensionExtractionPrompt.value = prompts.tensionExtraction;
+  predefinedEntitiesPrompt.value = prompts.predefinedEntities;
 };
 
 const savePrompt = () => {
+  if (!isPredefinedEntitiesJsonValid.value) {
+    return;
+  }
+
   llmSettingsStore.setPrompts({
     knowledgeGraphGeneration: knowledgeGraphPrompt.value,
     entityExtraction: entityExtractionPrompt.value,
     turtleFileMerge: turtleFileMergePrompt.value,
     // syntaxFixing: syntaxFixPrompt.value,
     entityAssignment: entityAssignmentPrompt.value,
-    tensionExtraction: tensionExtractionPrompt.value
+    tensionExtraction: tensionExtractionPrompt.value,
+    predefinedEntities: predefinedEntitiesPrompt.value,
   });
   isEditingPrompt.value = false;
 };
@@ -404,6 +426,16 @@ const getCurrentModelConfig = () => {
                       </pre>
                     </div>
                   </div>
+                  <div class="space-y-2">
+                    <Label class="text-xs text-muted-foreground">
+                      {{ staticContent.optionsPage.prompts.predefinedEntities[sessionStore.activeLanguage] }}
+                    </Label>
+                    <div class="rounded-md border bg-muted p-4 min-h-[60px]">
+                      <pre class="whitespace-pre-wrap text-sm font-mono">
+{{ llmSettingsStore.getPrompts().predefinedEntities || staticContent.optionsPage.noConfiguration[sessionStore.activeLanguage] }}
+                      </pre>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -476,12 +508,26 @@ const getCurrentModelConfig = () => {
                     class="min-h-[120px] font-mono text-sm"
                   />
                 </div>
+                <div class="space-y-2">
+                  <Label :for="'form-prompt-predefined-entities'">
+                    {{ staticContent.optionsPage.prompts.predefinedEntities[sessionStore.activeLanguage] }}
+                  </Label>
+                  <Textarea
+                    id="form-prompt-predefined-entities"
+                    v-model="predefinedEntitiesPrompt"
+                    :placeholder="staticContent.optionsPage.promptPlaceholder[sessionStore.activeLanguage]"
+                    class="min-h-[220px] font-mono text-sm"
+                  />
+                  <p v-if="!isPredefinedEntitiesJsonValid" class="text-sm text-destructive">
+                    {{ staticContent.optionsPage.prompts.predefinedEntitiesInvalidJson[sessionStore.activeLanguage] }}
+                  </p>
+                </div>
                 <div class="flex justify-end gap-2">
                   <Button variant="outline" @click="cancelEditingPrompt">
                     <X class="w-4 h-4 mr-2" />
                     {{ staticContent.optionsPage.cancel[sessionStore.activeLanguage] }}
                   </Button>
-                  <Button @click="savePrompt">
+                  <Button @click="savePrompt" :disabled="!isPredefinedEntitiesJsonValid">
                     <Save class="w-4 h-4 mr-2" />
                     {{ staticContent.optionsPage.save[sessionStore.activeLanguage] }}
                   </Button>

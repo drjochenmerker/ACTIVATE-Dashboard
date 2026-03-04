@@ -37,6 +37,7 @@ export async function llmSettingGeneration(description: string, llmDetail: LLMRe
             llmDetail: JSON.stringify(llmDetail),
             knowledgeGraphGenerationPrompt: llmSettingsStore.getPrompts().knowledgeGraphGeneration ?? null,
             entityAssignmentPrompt: llmSettingsStore.getPrompts().entityAssignment ?? null,
+            predefinedEntities: llmSettingsStore.getPrompts().predefinedEntities ?? null,
             title: title ?? "",
             defaultRole: defaultRole ?? "",
         })
@@ -64,7 +65,7 @@ export async function llmSettingGeneration(description: string, llmDetail: LLMRe
     }
     const rdfData = await rdfRes.json();
     if (rdfData.message === 'success') {
-        await addRequiredEntitiesToGraph(rdfData.graph_id);
+        await addRequiredEntitiesToGraph(rdfData.graph_id, llmSettingsStore.getPrompts().predefinedEntities);
         
         return {
             success: true,

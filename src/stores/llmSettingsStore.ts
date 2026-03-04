@@ -1,4 +1,5 @@
 import { entityAssignmentPrompt, entityExtractionPrompt, knowledgeGraphGenerationPrompt, tensionExtractionPrompt, ttlMergePrompt, ttlSyntaxFixPrompt } from '@/data/knowledge_graph/prompts';
+import requiredEntitiesData from '@/data/knowledge_graph/requiredEntities.json';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { useSessionStore } from './sessionStore';
@@ -60,6 +61,7 @@ export interface LLMSettings {
     syntaxFixing: string;
     tensionExtraction: string;
     entityAssignment: string;
+    predefinedEntities: string;
   };
 }
 
@@ -85,7 +87,8 @@ export const useLLMSettingsStore = defineStore('llmSettings', () => {
       turtleFileMerge: ttlMergePrompt,
       syntaxFixing: ttlSyntaxFixPrompt,
       tensionExtraction: tensionExtractionPrompt,
-      entityAssignment: entityAssignmentPrompt
+      entityAssignment: entityAssignmentPrompt,
+      predefinedEntities: JSON.stringify(requiredEntitiesData, null, 2),
     },
   });
 
@@ -138,6 +141,7 @@ export const useLLMSettingsStore = defineStore('llmSettings', () => {
           syntaxFixing: parsed.prompts?.syntaxFixing ?? settings.value.prompts.syntaxFixing,
           tensionExtraction: parsed.prompts?.tensionExtraction ?? settings.value.prompts.tensionExtraction,
           entityAssignment: parsed.prompts?.entityAssignment ?? settings.value.prompts.entityAssignment,
+          predefinedEntities: parsed.prompts?.predefinedEntities ?? settings.value.prompts.predefinedEntities,
         };
 
         settings.value = { ...settings.value, ...parsed };
