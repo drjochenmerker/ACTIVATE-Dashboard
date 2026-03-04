@@ -99,9 +99,10 @@ const addNewActivity = async () => {
 <template>
   <div class="flex flex-col items-center justify-center py-4 px-4">
     <div class="flex items-center gap-2 justify-end w-full mb-4">
+      <!-- instructorview select has to stay instructorMode so the button stays clickable for the instructor lol  -->
       <InstructorViewSelect v-if="sessionStore.instructorMode" />
       <LanguageSelect />
-      <template v-if="sessionStore.instructorMode">
+      <template v-if="sessionStore.instructorView">
         <OptionsButton />
       </template>
       <LogoutButton />
@@ -122,7 +123,7 @@ const addNewActivity = async () => {
         </CardTitle>
       </CardHeader>
       <!-- "add button" in the middle -->
-      <div v-if="sessionStore.instructorMode" class="flex justify-center my-6">
+      <div v-if="sessionStore.instructorView" class="flex justify-center my-6">
         <Dialog v-model:open="dialogOpen">
           <DialogTrigger as-child>
             <Button

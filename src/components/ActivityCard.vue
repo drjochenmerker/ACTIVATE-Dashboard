@@ -187,7 +187,7 @@ const showUrl = ref(false)
                     <!-- Buttons-->
                     <div class="flex justify-between items-center gap-4 flex-wrap">
                         <!-- Delete Button -->
-                        <div v-if="sessionStore.instructorMode">
+                        <div v-if="sessionStore.instructorView">
                             <DeletionPopUp :title="staticContent.startPage.deleteActivity[sessionStore.activeLanguage]"
                                 :description="staticContent.startPage.deleteActivityConfirm[sessionStore.activeLanguage]"
                                 :delete-function="() => deleteThisActivity()" />
@@ -270,7 +270,7 @@ const showUrl = ref(false)
 
                                     <!-- Pooling/combine Button Dialog -->
                                     <DialogFooter class="flex justify-between">
-                                        <Dialog v-if="sessionStore.instructorMode" v-model:open="showPoolingDialog">
+                                        <Dialog v-if="sessionStore.instructorView" v-model:open="showPoolingDialog">
                                             <DialogTrigger as-child>
                                                 <Button class="mr-auto" type="button">
                                                     {{

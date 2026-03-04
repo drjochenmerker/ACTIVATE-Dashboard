@@ -8,8 +8,8 @@ import { staticContent } from '@/data/contentData';
 const sessionStore = useSessionStore();
 
 const viewOptions = computed(() => [
+  { value: 'true', label: staticContent.navbarInstructorView.instructor[sessionStore.activeLanguage] },
   { value: 'false', label: staticContent.navbarInstructorView.standard[sessionStore.activeLanguage] },
-  { value: 'true', label: staticContent.navbarInstructorView.instructor[sessionStore.activeLanguage] }
 ]);
 
 const selectedView = computed({
@@ -22,17 +22,17 @@ const selectedView = computed({
 </script>
 
 <template>
-    <div class="flex flex-row gap-2 items-center">
-        <GraduationCap class="w-5 h-5" />
-        <Select :default-value="'false'" v-model="selectedView" id="instructorViewSelect">
-            <SelectTrigger class="w-40 overflow-hidden whitespace-nowrap truncate">
-                <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem v-for="option in viewOptions" :key="option.value" :value="option.value">
-                    {{ option.label }}
-                </SelectItem>
-            </SelectContent>
-        </Select>
-    </div>
+  <div class="flex flex-row gap-2 items-center">
+    <GraduationCap class="w-5 h-5" />
+    <Select :default-value="'false'" v-model="selectedView" id="instructorViewSelect">
+      <SelectTrigger class="w-40 overflow-hidden whitespace-nowrap truncate">
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem v-for="option in viewOptions" :key="option.value" :value="option.value">
+          {{ option.label }}
+        </SelectItem>
+      </SelectContent>
+    </Select>
+  </div>
 </template>
