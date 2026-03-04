@@ -1,6 +1,8 @@
 import { LLMRequestConfig, useLLMSettingsStore } from "@/stores/llmSettingsStore";
-import { sparqlTemplate, StringAccessObject } from "./structures";
+import { useSessionStore } from "@/stores/sessionStore";
+import { sparqlTemplate, StringAccessObject, LanguageCode } from "./structures";
 import { fetchSparql, getSparqlTemplate } from "./utils";
+import { addRequiredEntitiesToGraph } from "./requiredEntities";
 
 /**
  * Type definition for the result of LLM parsing operations.
@@ -23,6 +25,8 @@ export type LLMParsingResult = {
  */
 export async function llmSettingGeneration(description: string, llmDetail: LLMRequestConfig, title?: string, defaultRole?: string): Promise<LLMParsingResult> {
     const llmSettingsStore = useLLMSettingsStore();
+    const sessionStore = useSessionStore();
+    
     // Generate TTL using the LLM Backend
     const llmRes = await fetch(`${import.meta.env.VITE_LLM_URL}${!import.meta.env.VITE_LLM_PORT ? '' : ':' + import.meta.env.VITE_LLM_PORT}/api/feedback/settingGen`, {
         method: "POST",
@@ -62,6 +66,8 @@ export async function llmSettingGeneration(description: string, llmDetail: LLMRe
     }
     const rdfData = await rdfRes.json();
     if (rdfData.message === 'success') {
+        await addRequiredEntitiesToGraph(rdfData.graph_id, sessionStore.activeLanguage as LanguageCode);
+        
         return {
             success: true,
             message: "Setting generated and added successfully",
