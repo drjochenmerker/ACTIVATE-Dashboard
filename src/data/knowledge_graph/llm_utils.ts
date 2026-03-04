@@ -34,7 +34,7 @@ export async function llmSettingGeneration(description: string, llmDetail: LLMRe
             description,
             llmDetail: JSON.stringify(llmDetail),
             kgGenPrompt: llmSettingsStore.getPrompts().knowledgeGraphGeneration ?? null,
-            entityExtractionPrompt: llmSettingsStore.getPrompts().entityExtraction ?? null,
+            entityAssignmentPrompt: llmSettingsStore.getPrompts().entityAssignment ?? null,
             title: title ?? "",
             defaultRole: defaultRole ?? "",
         })
