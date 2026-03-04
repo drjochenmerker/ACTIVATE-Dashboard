@@ -102,7 +102,8 @@ const addNewActivity = async () => {
       <!-- instructorview select has to stay instructorMode so the button stays clickable for the instructor lol  -->
       <InstructorViewSelect v-if="sessionStore.instructorMode" />
       <LanguageSelect />
-      <template v-if="sessionStore.instructorView">
+      <!-- options button always visible if instructor mode is active -->
+      <template v-if="sessionStore.instructorMode">
         <OptionsButton />
       </template>
       <LogoutButton />
