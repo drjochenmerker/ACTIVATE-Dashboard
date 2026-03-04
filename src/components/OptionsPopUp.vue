@@ -443,9 +443,21 @@ const getCurrentModelConfig = () => {
                   />
                 </div>
                 <div class="space-y-2">
-                  <Label :for="'form-prompt-assignment'">
-                    {{ staticContent.optionsPage.prompts.entityAssignment[sessionStore.activeLanguage] }}
-                  </Label>
+                  <div class="flex items-center gap-2">
+                    <Label :for="'form-prompt-assignment'">
+                      {{ staticContent.optionsPage.prompts.entityAssignment[sessionStore.activeLanguage] }}
+                    </Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger as-child>
+                          <span class="inline-flex h-4 w-4 items-center justify-center rounded-full border text-xs font-medium cursor-help">i</span>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>{{ staticContent.optionsPage.prompts.entityAssignmentHint[sessionStore.activeLanguage] }}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
                   <Textarea
                     id="form-prompt-assignment"
                     v-model="entityAssignmentPrompt"

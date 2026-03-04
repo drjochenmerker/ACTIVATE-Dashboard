@@ -872,6 +872,11 @@ export const staticContent = {
                 de: "Entitätenzuweisung",
                 sv: "Enhetsuppdrag",
             },
+            entityAssignmentHint: {
+                en: "{{PREDEFINED_ENTITIES}} is replaced by the predefined entities.",
+                de: "{{PREDEFINED_ENTITIES}} wird ausgetauscht durch die vordefinierten Entitäten.",
+                sv: "{{PREDEFINED_ENTITIES}} ersätts av de fördefinierade entiteterna.",
+            },
             tensionExtraction: {
                 en: "Tension Extraction",
                 de: "Spannungsextraktion",
