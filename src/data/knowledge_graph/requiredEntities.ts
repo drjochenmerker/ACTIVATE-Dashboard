@@ -21,10 +21,14 @@ export interface RequiredEntitiesStructure {
 /**
  * Adds all required entities to a specific graph using the addEntity function
  * @param graphId The graph ID where entities will be added
- * @param language The language code for the entity labels
  */
-export async function addRequiredEntitiesToGraph(graphId: string, language: LanguageCode = LanguageCode.English): Promise<void> {
+export async function addRequiredEntitiesToGraph(graphId: string): Promise<void> {
     const data = requiredEntitiesData as RequiredEntitiesStructure;
+    const labelLanguages: LanguageCode[] = [
+        LanguageCode.Deutsch,
+        LanguageCode.English,
+        LanguageCode.Svenska,
+    ];
     
     const classMap: { [key: string]: KnowledgeGraphActivityClass } = {
         'subjects': KnowledgeGraphActivityClass.subject,
@@ -39,9 +43,14 @@ export async function addRequiredEntitiesToGraph(graphId: string, language: Lang
         const entities = data[classKey as keyof RequiredEntitiesStructure] || [];
         for (const entity of entities) {
             try {
-                // Get the label in the specified language or fall back to English
-                const label = entity.labels[language] || entity.labels['en'] || Object.values(entity.labels)[0];
-                await addEntity(graphId, label, activityClass, language);
+                for (const lang of labelLanguages) {
+                    const label = entity.labels[lang];
+                    if (!label) {
+                        console.error(`Missing required label for entity ${entity.id} in language ${lang}`);
+                        continue;
+                    }
+                    await addEntity(graphId, label, activityClass, lang, entity.id);
+                }
             } catch (error) {
                 console.error(`Failed to add required entity ${entity.id} to graph ${graphId}:`, error);
             }
