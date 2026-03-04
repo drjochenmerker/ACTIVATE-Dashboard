@@ -872,6 +872,21 @@ export const staticContent = {
                 de: "Entitätenzuweisung",
                 sv: "Enhetsuppdrag",
             },
+            predefinedEntities: {
+                en: "Predefined Entities (JSON)",
+                de: "Vordefinierte Entitäten (JSON)",
+                sv: "Fördefinierade entiteter (JSON)",
+            },
+            predefinedEntitiesInvalidJson: {
+                en: "Invalid JSON format. Please provide valid JSON.",
+                de: "Ungültiges JSON-Format. Bitte gültiges JSON eingeben.",
+                sv: "Ogiltigt JSON-format. Ange giltig JSON.",
+            },
+            entityAssignmentHint: {
+                en: "{{PREDEFINED_ENTITIES}} is replaced by the predefined entities.",
+                de: "{{PREDEFINED_ENTITIES}} wird ausgetauscht durch die vordefinierten Entitäten.",
+                sv: "{{PREDEFINED_ENTITIES}} ersätts av de fördefinierade entiteterna.",
+            },
             tensionExtraction: {
                 en: "Tension Extraction",
                 de: "Spannungsextraktion",
