@@ -9,6 +9,7 @@ import { activateTerms, staticContent } from '@/data/contentData';
 import { buildLanguageString } from '@/lib/utils';
 import { getActivityClassIds } from '@/data/knowledge_graph/read_operations';
 import ConfirmDiscardDialog from './ConfirmDiscardDialog.vue';
+import LoadingOverlay from '@/components/LoadingOverlay.vue';
 import {
   Dialog,
   DialogContent,
@@ -37,6 +38,7 @@ const emit = defineEmits(['close', 'saved']);
 const isEditDialogOpen = ref(false);
 const isDiscardDialogOpen = ref(false);
 const isParticipantRequiredOpen = ref(false);
+const isSaving = ref(false);
 const editedTitle = ref('');
 const editedDescription = ref('');
 const originalTitle = ref('');
@@ -240,6 +242,7 @@ const saveEditedConflict = async () => {
     isParticipantRequiredOpen.value = true;
     return;
   }
+  isSaving.value = true;
   try {
     if (textChanged.value) {
       await updateConflictText(
@@ -267,6 +270,8 @@ const saveEditedConflict = async () => {
     emit('saved');
   } catch (error) {
     console.error('Error updating conflict text: ', error);
+  } finally {
+    isSaving.value = false;
   }
 };
 
@@ -294,6 +299,7 @@ defineExpose({
 
 <template>
   <div>
+    <LoadingOverlay :visible="isSaving" />
     <Dialog v-model:open="isEditDialogOpen">
       <DialogContent class="max-w-2xl max-h-[90vh] flex flex-col">
         <DialogHeader>
@@ -350,10 +356,10 @@ defineExpose({
           </div>
         </div>
         <DialogFooter class="flex justify-between mt-4">
-          <Button variant="secondary" @click="cancelEdit">
+          <Button variant="secondary" @click="cancelEdit" :disabled="isSaving">
             {{ staticContent.noteCards.cancel[sessionStore.activeLanguage] }}
           </Button>
-          <Button @click="saveEditedConflict">
+          <Button @click="saveEditedConflict" :disabled="isSaving">
             {{ staticContent.noteCards.save[sessionStore.activeLanguage] }}
           </Button>
         </DialogFooter>

@@ -145,10 +145,10 @@ export async function updateConflictParticipants(graph: string, conflictId: stri
  * @param comment Comment as string
  * @returns 
  */
-export async function addComment(parentId: string, comment: string): Promise<updateResponse> {
+export async function addComment(parentId: string, comment: string, anonymous: boolean = false): Promise<updateResponse> {
     const sessionStore = useSessionStore();
     const graph = sessionStore.sessionActivity!.graph;
-    const author = sessionStore.sessionRole || '';
+    const author = anonymous ? 'Anonymous' : (sessionStore.sessionRole || '');
 
     // Create unique hash as a conflict ID
     const timestamp = new Date().toISOString();
