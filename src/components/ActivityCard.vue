@@ -6,6 +6,7 @@ import { useSessionStore } from '@/stores/sessionStore';
 import { getActivityClassIds } from '@/data/knowledge_graph/read_operations';
 import { useActivityStore } from '@/stores/activityStore';
 import { buildTreeStructByLang } from '@/data/knowledge_graph/utils';
+import { cloneActivity } from '@/data/knowledge_graph/write_operations';
 
 // functional components
 import { Activity, KnowledgeGraphActivityClass, NestedMultiLangObject } from '@/data/knowledge_graph/structures';
@@ -145,15 +146,50 @@ const handlePoolingStart = async () => {
     const llmSettingsStore = useLLMSettingsStore();
     try {
         loading.value = true;
+        
+        // Create a clone of the original activity before pooling
+        const newActivityNames: Record<string, string> = {};
+        const copySuffix = staticContent.terms.copySuffix;
+        
+        // Update name to "[...] - Copy" for all languages
+        for (const [lang, name] of Object.entries((props.activity as Activity).name)) {
+            // Get the suffix for this language, default to English if not found
+            const suffix = copySuffix[lang as keyof typeof copySuffix] || copySuffix.en;
+            newActivityNames[lang] = `${name} - ${suffix}`;
+        }
+        
+        const cloneResult = await cloneActivity(props.activity as Activity, newActivityNames);
+        if (cloneResult.status !== "OK") {
+            console.error("Failed to create snapshot before pooling:", cloneResult);
+            loading.value = false;
+            return;
+        }
+        const snapshotGraphId = cloneResult.modified;
+        console.log(`Snapshot created: ${snapshotGraphId}`);
+        
+        // Pool the feedback on the original activity
         const res = await llmPool(props.activity.graph, llmSettingsStore.getCurrentModelRequestConfig());
         if (res.success === false) {
+            // If pooling fails, delete the snapshot we just created
+            console.warn("Pooling failed, deleting snapshot:", snapshotGraphId);
+            await activityStore.removeActivity(snapshotGraphId);
+            console.log("Snapshot deleted after pooling failure");
             nothingToPool.value = true;
             loading.value = false;
             return;
         }
+        
+        // Pooling succeeded - snapshot remains, both versions are now persistent
+        console.log("Pooling succeeded. Snapshot and pooled version are now persistent.");
+        
+        // Refresh activity list to show both versions
+        await activityStore.refreshActivityList();
+        
         showPoolingDialog.value = false;
     } catch (error) {
         console.error("Error during pooling:", error);
+    } finally {
+        loading.value = false;
     }
 }
 

@@ -364,34 +364,104 @@ export async function updateActivity(activity: Activity): Promise<updateResponse
 }
 
 /**
- * Clones an existing activity
- * @param activity Activity object containing the old graph identifier as well as optionallly a new name and description
- * @returns updateResponse Object
+ * Clones an existing activity with custom names
+ * @param activity Activity object containing the old graph identifier
+ * @param newActivityNames Optional: new activity names with custom suffixes (e.g., "Activity - Copy")
+ * @returns updateResponse Object with the new graph ID for the cloned activity
  */
-export async function cloneActivity(activity: Activity): Promise<updateResponse> {
-    // Handle missing props
-    // // todo
-    // if (activity.name.trim() == "") activity.name = activity.graph + "_copy";
-    // if (activity.description?.trim() == "") activity.description = "No description given";
-    // // Clone activity
-    // let query = await getSparqlTemplate(sparqlTemplate.cloneActivity);
-    // const cloneHash = hash(activity)
-    // const newGraphID = EscapeSparqlStringLiteral(CapitalizeFirstLetter(activity.name.trim().replaceAll(" ", "_") + "_" + cloneHash))
-    // const mapObj = {
-    //     "{{graph}}": activity.graph,
-    //     "{{newName}}": newGraphID
-    // }
-    // query = query.replaceMultiple(mapObj);
-    // const data = await fetchSparql(query, true);
-    // // Update name and description
-    // await updateActivity({
-    //     graph: newGraphID,
-    //     name: activity.name,
-    //     description: activity.description
-    // });
-    // return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: activity.graph, action: RDFOperation.insert } as updateResponse;
-    // TODO handle cloning of activities
-    return { code: 501, status: "Not Implemented", modified: activity.graph, action: RDFOperation.insert } as updateResponse;
+export async function cloneActivity(activity: Activity, newActivityNames?: Record<string, string>): Promise<updateResponse> {
+    try {
+        // Generate new graph ID with timestamp to ensure uniqueness
+        const timestamp = new Date().getTime();
+        const cloneHash = hash(activity);
+        const newGraphID = `${activity.graph}_${timestamp}_${cloneHash.substring(0, 8)}`;
+        
+        console.log(`Cloning activity: ${activity.graph} -> ${newGraphID}`);
+        
+        // Use provided names or keep original names
+        const finalActivityNames = newActivityNames || activity.name;
+        
+        // Format the activity names for SPARQL INSERT
+        const activityNamesForSparql = Object.entries(finalActivityNames)
+            .map(([lang, name]) => `"""${EscapeSparqlStringLiteral(name)}"""@${lang}`)
+            .join(" , ");
+        
+        console.log("Activity names for clone:", finalActivityNames);
+        
+        // Clone activity using SPARQL query with name update
+        let query = await getSparqlTemplate(sparqlTemplate.cloneActivityWithNameUpdate);
+        const mapObj = {
+            "{{graph}}": activity.graph,
+            "{{newName}}": newGraphID,
+            "{{activityNames}}": activityNamesForSparql
+        };
+        query = query.replaceMultiple(mapObj);        
+        const data = await fetchSparql(query, true);
+        
+        // Accept 200, 201, 204 as successful responses
+        if (data.status < 200 || data.status >= 300) {
+            console.error(`Clone failed with status ${data.status}:`, data);
+            return { 
+                code: data.status, 
+                status: "Error", 
+                modified: activity.graph, 
+                action: RDFOperation.insert 
+            } as updateResponse;
+        }
+        
+        console.log(`Successfully cloned to: ${newGraphID}`);
+        
+        // Save cloned graph to file
+        try {
+            // Export the cloned graph as TTL
+            const exportRes = await fetch(`${import.meta.env.VITE_KNOWLEDGE_GRAPH_URL}${!import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT ? '' : ':' + import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT}/export-graph/${newGraphID}`);
+            
+            if (!exportRes.ok) {
+                console.error(`Failed to export cloned graph: ${exportRes.status}`);
+                return { 
+                    code: exportRes.status, 
+                    status: "Error", 
+                    modified: newGraphID, 
+                    action: RDFOperation.insert 
+                } as updateResponse;
+            }
+            
+            const exportData = await exportRes.json();
+            console.log(`Exported TTL for graph ${newGraphID}`);
+            
+            // Upload the TTL to save it to file
+            const persistRes = await fetch(`${import.meta.env.VITE_KNOWLEDGE_GRAPH_URL}${!import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT ? '' : ':' + import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT}/upload-ttl/?graph_id=${newGraphID}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: exportData.ttl,
+            });
+            
+            if (!persistRes.ok) {
+                console.error(`Failed to persist cloned graph: ${persistRes.status}`);
+            } else {
+                console.log(`Cloned graph persisted successfully: ${newGraphID}`);
+            }
+        } catch (persistError) {
+            console.error("Error persisting cloned graph:", persistError);
+        }
+        
+        return { 
+            code: data.status, 
+            status: "OK", 
+            modified: newGraphID, 
+            action: RDFOperation.insert 
+        } as updateResponse;
+    } catch (error) {
+        console.error("Error in cloneActivity:", error);
+        return { 
+            code: 500, 
+            status: "Error", 
+            modified: activity.graph, 
+            action: RDFOperation.insert 
+        } as updateResponse;
+    }
 }
 
 function getStringFromRecord(record: Record<string, string>, lang = "en"): string {

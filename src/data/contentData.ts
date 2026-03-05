@@ -207,6 +207,11 @@ export const staticContent = {
             de: "Klonen",
             sv: "Klon",
         },
+        copySuffix: {
+            en: "Copy",
+            de: "Kopie",
+            sv: "Kopia",
+        },
         cancel: {
             en: "Cancel",
             de: "Abbrechen",
