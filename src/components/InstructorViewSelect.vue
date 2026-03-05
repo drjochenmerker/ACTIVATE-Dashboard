@@ -24,7 +24,7 @@ const selectedView = computed({
 <template>
   <div class="flex flex-row gap-2 items-center">
     <GraduationCap class="w-5 h-5" />
-    <Select :default-value="'false'" v-model="selectedView" id="instructorViewSelect">
+    <Select :default-value="'true'" v-model="selectedView" id="instructorViewSelect">
       <SelectTrigger class="w-40 overflow-hidden whitespace-nowrap truncate">
         <SelectValue />
       </SelectTrigger>
