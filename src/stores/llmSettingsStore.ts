@@ -1,6 +1,8 @@
 import { entityAssignmentPrompt, entityExtractionPrompt, knowledgeGraphGenerationPrompt, tensionExtractionPrompt, ttlMergePrompt, ttlSyntaxFixPrompt } from '@/data/knowledge_graph/prompts';
+import requiredEntitiesData from '@/data/knowledge_graph/requiredEntities.json';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
+import { useSessionStore } from './sessionStore';
 
 /**
  * Supported LLM providers
@@ -59,6 +61,7 @@ export interface LLMSettings {
     syntaxFixing: string;
     tensionExtraction: string;
     entityAssignment: string;
+    predefinedEntities: string;
   };
 }
 
@@ -67,10 +70,11 @@ export interface LLMSettings {
  */
 export const useLLMSettingsStore = defineStore('llmSettings', () => {
   const SETTINGS_STORAGE_KEY = 'activate_llm_settings';
+  const sessionStore = useSessionStore();
 
   // Settings for the three supported models
   const settings = ref<LLMSettings>({
-    selectedProvider: 'chatgpt',
+    selectedProvider: sessionStore.instructorMode ? 'gemini' : 'chatgpt',
     models: {
       chatgpt: null,
       gemini: null,
@@ -83,7 +87,8 @@ export const useLLMSettingsStore = defineStore('llmSettings', () => {
       turtleFileMerge: ttlMergePrompt,
       syntaxFixing: ttlSyntaxFixPrompt,
       tensionExtraction: tensionExtractionPrompt,
-      entityAssignment: entityAssignmentPrompt
+      entityAssignment: entityAssignmentPrompt,
+      predefinedEntities: JSON.stringify(requiredEntitiesData, null, 2),
     },
   });
 
@@ -136,6 +141,7 @@ export const useLLMSettingsStore = defineStore('llmSettings', () => {
           syntaxFixing: parsed.prompts?.syntaxFixing ?? settings.value.prompts.syntaxFixing,
           tensionExtraction: parsed.prompts?.tensionExtraction ?? settings.value.prompts.tensionExtraction,
           entityAssignment: parsed.prompts?.entityAssignment ?? settings.value.prompts.entityAssignment,
+          predefinedEntities: parsed.prompts?.predefinedEntities ?? settings.value.prompts.predefinedEntities,
         };
 
         settings.value = { ...settings.value, ...parsed };

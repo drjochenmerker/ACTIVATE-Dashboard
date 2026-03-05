@@ -9,6 +9,7 @@ import { staticContent } from '@/data/contentData';
 import { useColorMode } from '@vueuse/core';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import ConfirmDiscardDialog from './ui/dialog/ConfirmDiscardDialog.vue';
+import { useMiscsStore } from "@/stores/miscsStore";
 
 /** 
  * ReplyCard-Component
@@ -31,6 +32,8 @@ const colorMode = useColorMode();
 // Store
 const sessionStore = useSessionStore();
 const conflictStore = useConflictsStore();
+const miscStore = useMiscsStore();
+
 
 // Toggle for visibility of reply input field
 const replyInputVisible = ref(false);
@@ -43,6 +46,36 @@ const editedCommentText = ref('');
 const originalCommentText = ref('');
 const hasChanges = computed(() => editedCommentText.value !== originalCommentText.value);
 
+const currentReplyText = () => {
+    const comment = props.parentComment?.comment;
+    const lang = sessionStore.activeLanguage;
+    if (!comment) return '';
+    if (typeof comment === 'string') return comment;
+    if(comment[lang]?.trim()) return comment[lang]?.trim();
+    if(comment['default']?.trim()) return comment['default']?.trim();
+     return  Object.values(comment).find(c => typeof c === 'string' && c.trim() !== '') ||'';
+};
+
+const authorLabel = () => {
+    if (!props.parentComment?.author) return '';
+    let authorNode = props.parentComment.author;
+    if(authorNode && !authorNode.labels) {
+        const authorId = authorNode.split('#').pop();
+        authorNode = useSessionStore().getRoleById(useSessionStore().availableRoles  || {}, authorId || authorNode);
+    }
+    if(authorNode) {
+        const labels = authorNode.labels || {};
+        const lang = sessionStore.activeLanguage;
+        if(labels?.[lang]) return labels?.[lang];
+        if(labels?.['default']) return labels?.['default'];
+        if(Object.keys(labels).length > 0) {
+            const label = Object.values(labels).find(label => typeof label === 'string' && label.trim() !== '');
+            if(label) return label;
+        }
+        return authorNode;
+    }
+    return 'Unknown';
+};
 const toggleReplyInput = async () => {
     replyInputVisible.value = !replyInputVisible.value;
     if (replyInputVisible.value) {
@@ -59,6 +92,9 @@ const saveReply = async (parentCommentId: string) => {
             parentCommentId,
             newReplyText.value
         );
+
+        miscStore.fetchMiscs()
+        emit('refresh');
 
 
         replyInputVisible.value = false; // hide input field
@@ -218,11 +254,7 @@ const refreshReplies = async () => {
         <div class="reply-content">
             <div class="reply-head">
                 <p class="reply-author">{{ 
-                    props.parentComment.author.labels?.[sessionStore.activeLanguage] ||
-                    props.parentComment.author.labels?.['default'] ||
-                    Object.values(props.parentComment.author.labels || {}).find(label => typeof label === 'string' && label.trim() !== '') ||
-                    props.parentComment.author.id ||
-                    ''
+                   authorLabel()
                 }}</p>
                 <div class="flex items-center gap-2">
                     <!-- Edit button -->
@@ -239,13 +271,9 @@ const refreshReplies = async () => {
                     </DeletionPopUp>
                 </div>    
             </div>
-            <!-- TODO maybe handle multi-language comments -->
             <p class="reply-text">
                 {{
-                    props.parentComment.comment?.[sessionStore.activeLanguage]?.trim() ||
-                    props.parentComment.comment?.['default']?.trim() ||
-                    Object.values(props.parentComment.comment || {}).find(c => typeof c === 'string' && c.trim() !== '') ||
-                    ''
+                    currentReplyText()
                 }}
             </p>
 
@@ -269,7 +297,7 @@ const refreshReplies = async () => {
         <div v-if="Array.isArray(props.parentComment.replies) && props.parentComment.replies.length"
             class="nested-replies">
             <ReplyCard v-for="nestedReply in props.parentComment.replies" :key="nestedReply.id"
-                :parentComment="nestedReply" :showEdit="props.showEdit" @deleteComment="removeReply" @refresh="refreshReplies" />
+                :parentComment="nestedReply" :showEdit="props.showEdit" @deleteComment="removeReply" @refresh="refreshReplies" @save="saveReply"/>
         </div>
 
     </div>

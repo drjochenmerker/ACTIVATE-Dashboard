@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch, computed } from 'vue';
 import { useLLMSettingsStore, type LLMProvider, type LLMRequestConfig } from '@/stores/llmSettingsStore';
 import { useSessionStore } from '@/stores/sessionStore';
 import { staticContent } from '@/data/contentData';
@@ -33,7 +33,7 @@ const llmSettingsStore = useLLMSettingsStore();
 const sessionStore = useSessionStore();
 
 const open = defineModel<boolean>('open', { default: false });
-const selectedProvider = ref<LLMProvider>('chatgpt');
+const selectedProvider = ref<LLMProvider>('gemini');
 
 const isEditing = ref(false);
 
@@ -47,12 +47,25 @@ const turtleFileMergePrompt = ref('');
 // const syntaxFixPrompt = ref(''); // TODO: Discuss if adjusting this prompt is necessary
 const entityAssignmentPrompt = ref('');
 const tensionExtractionPrompt = ref('');
+const predefinedEntitiesPrompt = ref('');
 const isEditingPrompt = ref(false);
+
+const isPredefinedEntitiesJsonValid = computed(() => {
+  if (!predefinedEntitiesPrompt.value.trim()) {
+    return true;
+  }
+
+  try {
+    JSON.parse(predefinedEntitiesPrompt.value);
+    return true;
+  } catch {
+    return false;
+  }
+});
 
 onMounted(() => {
   llmSettingsStore.loadSettings();
-  console.log(llmSettingsStore.settings.selectedProvider);
-  selectedProvider.value = llmSettingsStore.settings.selectedProvider ? llmSettingsStore.settings.selectedProvider : 'chatgpt';
+  selectedProvider.value = llmSettingsStore.settings.selectedProvider;
   const prompts = llmSettingsStore.getPrompts();
   knowledgeGraphPrompt.value = prompts.knowledgeGraphGeneration;
   entityExtractionPrompt.value = prompts.entityExtraction;
@@ -60,6 +73,7 @@ onMounted(() => {
   // syntaxFixPrompt.value = prompts.syntaxFixing;
   tensionExtractionPrompt.value = prompts.tensionExtraction;
   entityAssignmentPrompt.value = prompts.entityAssignment;
+  predefinedEntitiesPrompt.value = prompts.predefinedEntities;
   loadModelConfig(selectedProvider.value);
 });
 
@@ -128,6 +142,7 @@ const startEditingPrompt = () => {
   // syntaxFixPrompt.value = prompts.syntaxFixing;
   entityAssignmentPrompt.value = prompts.entityAssignment;
   tensionExtractionPrompt.value = prompts.tensionExtraction;
+  predefinedEntitiesPrompt.value = prompts.predefinedEntities;
 };
 
 const cancelEditingPrompt = () => {
@@ -138,17 +153,23 @@ const cancelEditingPrompt = () => {
   turtleFileMergePrompt.value = prompts.turtleFileMerge;
   // syntaxFixPrompt.value = prompts.syntaxFixing;
   entityAssignmentPrompt.value = prompts.entityAssignment;
-  tensionExtractionPrompt.value = prompts.tensionExtraction
+  tensionExtractionPrompt.value = prompts.tensionExtraction;
+  predefinedEntitiesPrompt.value = prompts.predefinedEntities;
 };
 
 const savePrompt = () => {
+  if (!isPredefinedEntitiesJsonValid.value) {
+    return;
+  }
+
   llmSettingsStore.setPrompts({
     knowledgeGraphGeneration: knowledgeGraphPrompt.value,
     entityExtraction: entityExtractionPrompt.value,
     turtleFileMerge: turtleFileMergePrompt.value,
     // syntaxFixing: syntaxFixPrompt.value,
     entityAssignment: entityAssignmentPrompt.value,
-    tensionExtraction: tensionExtractionPrompt.value
+    tensionExtraction: tensionExtractionPrompt.value,
+    predefinedEntities: predefinedEntitiesPrompt.value,
   });
   isEditingPrompt.value = false;
 };
@@ -200,8 +221,8 @@ const getCurrentModelConfig = () => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="chatgpt">ChatGPT (OpenAI)</SelectItem>
-                  <!-- <SelectItem value="gemini">Gemini (Google)</SelectItem>
-                  <SelectItem value="claude">Claude (Anthropic)</SelectItem> -->
+                  <SelectItem value="gemini">Gemini (Google)</SelectItem>
+                  <!-- <SelectItem value="claude">Claude (Anthropic)</SelectItem> -->
                   <SelectItem value="cortecs">Cortecs</SelectItem>
                 </SelectContent>
               </Select>
@@ -405,6 +426,16 @@ const getCurrentModelConfig = () => {
                       </pre>
                     </div>
                   </div>
+                  <div class="space-y-2">
+                    <Label class="text-xs text-muted-foreground">
+                      {{ staticContent.optionsPage.prompts.predefinedEntities[sessionStore.activeLanguage] }}
+                    </Label>
+                    <div class="rounded-md border bg-muted p-4 min-h-[60px]">
+                      <pre class="whitespace-pre-wrap text-sm font-mono">
+{{ llmSettingsStore.getPrompts().predefinedEntities || staticContent.optionsPage.noConfiguration[sessionStore.activeLanguage] }}
+                      </pre>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -444,9 +475,21 @@ const getCurrentModelConfig = () => {
                   />
                 </div>
                 <div class="space-y-2">
-                  <Label :for="'form-prompt-assignment'">
-                    {{ staticContent.optionsPage.prompts.entityAssignment[sessionStore.activeLanguage] }}
-                  </Label>
+                  <div class="flex items-center gap-2">
+                    <Label :for="'form-prompt-assignment'">
+                      {{ staticContent.optionsPage.prompts.entityAssignment[sessionStore.activeLanguage] }}
+                    </Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger as-child>
+                          <span class="inline-flex h-4 w-4 items-center justify-center rounded-full border text-xs font-medium cursor-help">i</span>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>{{ staticContent.optionsPage.prompts.entityAssignmentHint[sessionStore.activeLanguage] }}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
                   <Textarea
                     id="form-prompt-assignment"
                     v-model="entityAssignmentPrompt"
@@ -465,12 +508,26 @@ const getCurrentModelConfig = () => {
                     class="min-h-[120px] font-mono text-sm"
                   />
                 </div>
+                <div class="space-y-2">
+                  <Label :for="'form-prompt-predefined-entities'">
+                    {{ staticContent.optionsPage.prompts.predefinedEntities[sessionStore.activeLanguage] }}
+                  </Label>
+                  <Textarea
+                    id="form-prompt-predefined-entities"
+                    v-model="predefinedEntitiesPrompt"
+                    :placeholder="staticContent.optionsPage.promptPlaceholder[sessionStore.activeLanguage]"
+                    class="min-h-[220px] font-mono text-sm"
+                  />
+                  <p v-if="!isPredefinedEntitiesJsonValid" class="text-sm text-destructive">
+                    {{ staticContent.optionsPage.prompts.predefinedEntitiesInvalidJson[sessionStore.activeLanguage] }}
+                  </p>
+                </div>
                 <div class="flex justify-end gap-2">
                   <Button variant="outline" @click="cancelEditingPrompt">
                     <X class="w-4 h-4 mr-2" />
                     {{ staticContent.optionsPage.cancel[sessionStore.activeLanguage] }}
                   </Button>
-                  <Button @click="savePrompt">
+                  <Button @click="savePrompt" :disabled="!isPredefinedEntitiesJsonValid">
                     <Save class="w-4 h-4 mr-2" />
                     {{ staticContent.optionsPage.save[sessionStore.activeLanguage] }}
                   </Button>

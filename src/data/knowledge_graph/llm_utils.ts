@@ -1,6 +1,7 @@
 import { LLMRequestConfig, useLLMSettingsStore } from "@/stores/llmSettingsStore";
 import { sparqlTemplate, StringAccessObject } from "./structures";
 import { fetchSparql, getSparqlTemplate } from "./utils";
+import { addRequiredEntitiesToGraph } from "./requiredEntities";
 
 /**
  * Type definition for the result of LLM parsing operations.
@@ -23,6 +24,7 @@ export type LLMParsingResult = {
  */
 export async function llmSettingGeneration(description: string, llmDetail: LLMRequestConfig, title?: string, defaultRole?: string): Promise<LLMParsingResult> {
     const llmSettingsStore = useLLMSettingsStore();
+    
     // Generate TTL using the LLM Backend
     const llmRes = await fetch(`${import.meta.env.VITE_LLM_URL}${!import.meta.env.VITE_LLM_PORT ? '' : ':' + import.meta.env.VITE_LLM_PORT}/api/feedback/settingGen`, {
         method: "POST",
@@ -33,8 +35,9 @@ export async function llmSettingGeneration(description: string, llmDetail: LLMRe
         body: JSON.stringify({
             description,
             llmDetail: JSON.stringify(llmDetail),
-            kgGenPrompt: llmSettingsStore.getPrompts().knowledgeGraphGeneration ?? null,
-            entityExtractionPrompt: llmSettingsStore.getPrompts().entityExtraction ?? null,
+            knowledgeGraphGenerationPrompt: llmSettingsStore.getPrompts().knowledgeGraphGeneration ?? null,
+            entityAssignmentPrompt: llmSettingsStore.getPrompts().entityAssignment ?? null,
+            predefinedEntities: llmSettingsStore.getPrompts().predefinedEntities ?? null,
             title: title ?? "",
             defaultRole: defaultRole ?? "",
         })
@@ -62,6 +65,8 @@ export async function llmSettingGeneration(description: string, llmDetail: LLMRe
     }
     const rdfData = await rdfRes.json();
     if (rdfData.message === 'success') {
+        await addRequiredEntitiesToGraph(rdfData.graph_id, llmSettingsStore.getPrompts().predefinedEntities);
+        
         return {
             success: true,
             message: "Setting generated and added successfully",

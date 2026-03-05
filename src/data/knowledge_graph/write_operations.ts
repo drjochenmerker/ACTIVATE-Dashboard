@@ -145,10 +145,10 @@ export async function updateConflictParticipants(graph: string, conflictId: stri
  * @param comment Comment as string
  * @returns 
  */
-export async function addComment(parentId: string, comment: string): Promise<updateResponse> {
+export async function addComment(parentId: string, comment: string, anonymous: boolean = false): Promise<updateResponse> {
     const sessionStore = useSessionStore();
     const graph = sessionStore.sessionActivity!.graph;
-    const author = sessionStore.sessionRole || '';
+    const author = anonymous ? 'Anonymous' : (sessionStore.sessionRole || '');
 
     // Create unique hash as a conflict ID
     const timestamp = new Date().toISOString();
@@ -279,9 +279,15 @@ export async function addPredicate(graph: string, predicate: string, domains: Kn
  * @param activityClass Activity class of the entity
  * @returns UpdateResponse Object
  */
-export async function addEntity(graph: string, entityLabel: string, activityClass: KnowledgeGraphActivityClass, language: LanguageCode): Promise<updateResponse> {
+export async function addEntity(
+    graph: string,
+    entityLabel: string,
+    activityClass: KnowledgeGraphActivityClass,
+    language: LanguageCode,
+    fixedEntityId?: string
+): Promise<updateResponse> {
     let query = await getSparqlTemplate(sparqlTemplate.addEntity);
-    const entityId = hash({
+    const entityId = fixedEntityId || hash({
         entityName: entityLabel,
         timestamp: new Date().toISOString(),
         activityClass: activityClass,
@@ -290,7 +296,7 @@ export async function addEntity(graph: string, entityLabel: string, activityClas
     const mapObj = {
         "{{graph}}": graph,
         "{{entityId}}": entityId,
-        "{{entity}}": EscapeSparqlStringLiteral(CapitalizeFirstLetter(entityLabel.trim())),
+        "{{entity}}": EscapeSparqlStringLiteral(entityLabel),
         "{{activityClass}}": activityClass,
         "{{lang}}": language
     }
