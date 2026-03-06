@@ -204,7 +204,7 @@ export default {
           if (response.status === "OK") {
             // Show toast notification for successful comment addition
             this.toast.success(staticContent.toastNotification.noteAdded[useSessionStore().activeLanguage]);
-            await useConflictsStore().refreshConflictList();
+            location.reload();
           } else {
             console.warn("Error saving the comment: ", response);
             this.toast.error("Error");
