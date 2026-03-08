@@ -72,7 +72,7 @@ const sessionStore = useSessionStore();
       <h1 class="text-2xl font-semibold mb-1 text-center">
         {{ staticContent.terms.setting[sessionStore.activeLanguage] }}:
         {{
-          activity.name && activity.name[sessionStore.activeLanguage] || activity.name['default']
+          activity.name && (activity.name[sessionStore.activeLanguage] || activity.name['default'])
             ? activity.name[sessionStore.activeLanguage] || activity.name['default']
             : `${staticContent.errors.activityNameLoad[sessionStore.activeLanguage]} - Graph-ID: ${activity.graph}`
         }}
