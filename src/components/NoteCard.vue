@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { ref, onMounted, nextTick, computed, watch } from 'vue';
+import DOMPurify from 'dompurify';
 import { conflictPredicate, conflictStatus, Participant } from '@/data/knowledge_graph/structures';
 import ReplyCard from './ReplyCard.vue';
 import { addComment, deleteConflict, updateConflict } from "@/data/knowledge_graph/write_operations";
@@ -69,6 +70,10 @@ const sessionStore = useSessionStore();
 
 const textareaRef = ref<HTMLTextAreaElement | null>(null);
 const editDialogRef = ref<InstanceType<typeof ConflictEditDialog> | null>(null);
+
+// Sanitize HTML content to prevent XSS attacks
+const sanitizedTitle = computed(() => DOMPurify.sanitize(props.title || ''));
+const sanitizedContent = computed(() => DOMPurify.sanitize(props.content || ''));
 
 // Set initial conflict detail
 onMounted(() => {
@@ -287,7 +292,7 @@ const refreshReplies = async () => {
 
     <div class="note-card-content">
       <!-- Note title -->
-      <div class="note-title" v-html="props.title"></div>
+      <div class="note-title" v-html="sanitizedTitle"></div>
       <!-- Note origin -->
       <!-- <div class="note-origin">
         <Dialog v-model:open="isShowOriginOpen">
@@ -328,7 +333,7 @@ const refreshReplies = async () => {
       </div>
 
       <!-- Content -->
-      <div class="note-content" v-html="props.content"></div>
+      <div class="note-content" v-html="sanitizedContent"></div>
     </div>
 
     <!-- Note comment section starting with add comment button -->

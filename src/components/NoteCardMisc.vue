@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { addComment, deleteComment } from '@/data/knowledge_graph/write_operations';
-import { nextTick, ref, watch } from 'vue';
+import { nextTick, ref, watch, computed } from 'vue';
+import DOMPurify from 'dompurify';
 import Button from './ui/button/Button.vue';
 import DeletionPopUp from './DeletionPopUp.vue';
 import CommentEditDialog from './ui/dialog/CommentEditDialog.vue';
@@ -40,6 +41,10 @@ const graph = sessionStore.sessionActivity!.graph
 
 
 const [extractedTitle, extractedContent] = props.comment.comment.split('|');
+
+// Sanitize HTML content to prevent XSS attacks
+const sanitizedTitle = computed(() => DOMPurify.sanitize(extractedTitle || ''));
+const sanitizedContent = computed(() => DOMPurify.sanitize(extractedContent || ''));
 
 const conflictDetail = ref(props.comment);
 const replyInputVisible = ref<Record<string, boolean>>({});
@@ -202,8 +207,8 @@ const openEditDialog = async () => {
         <hr class="misc-note-divider" />
 
         <div class="misc-note-content">
-            <div class="misc-note-title" v-html="extractedTitle"></div>
-            <div class="misc-note-description" v-html="extractedContent"></div>
+            <div class="misc-note-title" v-html="sanitizedTitle"></div>
+            <div class="misc-note-description" v-html="sanitizedContent"></div>
         </div>
 
         <div class="note-comment-section">
