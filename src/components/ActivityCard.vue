@@ -22,6 +22,7 @@ import { llmPool } from '@/data/knowledge_graph/llm_utils';
 import LoadingOverlay from '@/components/LoadingOverlay.vue';
 import RecursiveSelect from './RecursiveSelect.vue';
 import { Select, SelectTrigger, SelectContent, SelectValue } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
 import { useLLMSettingsStore } from '@/stores/llmSettingsStore';
 import DeletionPopUp from './DeletionPopUp.vue';
 
@@ -45,6 +46,7 @@ const showPoolingDialog = ref(false)
 const nothingToPool = ref(false);
 const loading = ref(false);
 const copied = ref(false);
+const createCopyBeforePooling = ref(false);
 
 
 // activity store management
@@ -146,41 +148,49 @@ const handlePoolingStart = async () => {
     const llmSettingsStore = useLLMSettingsStore();
     try {
         loading.value = true;
-        
-        // Create a clone of the original activity before pooling
-        const newActivityNames: Record<string, string> = {};
-        const copySuffix = staticContent.terms.copySuffix;
-        
-        // Update name to "[...] - Copy" for all languages
-        for (const [lang, name] of Object.entries((props.activity as Activity).name)) {
-            // Get the suffix for this language, default to English if not found
-            const suffix = copySuffix[lang as keyof typeof copySuffix] || copySuffix.en;
-            newActivityNames[lang] = `${name} - ${suffix}`;
+        nothingToPool.value = false;
+
+        let snapshotGraphId: string | null = null;
+        if (createCopyBeforePooling.value) {
+            // Create a clone of the original activity before pooling
+            const newActivityNames: Record<string, string> = {};
+            const copySuffix = staticContent.terms.copySuffix;
+
+            // Update name to "[...] - Copy" for all languages
+            for (const [lang, name] of Object.entries((props.activity as Activity).name)) {
+                // Get the suffix for this language, default to English if not found
+                const suffix = copySuffix[lang as keyof typeof copySuffix] || copySuffix.en;
+                newActivityNames[lang] = `${name} - ${suffix}`;
+            }
+
+            const cloneResult = await cloneActivity(props.activity as Activity, newActivityNames);
+            if (cloneResult.status !== "OK") {
+                console.error("Failed to create snapshot before pooling:", cloneResult);
+                loading.value = false;
+                return;
+            }
+            snapshotGraphId = cloneResult.modified;
+            console.log(`Snapshot created: ${snapshotGraphId}`);
         }
-        
-        const cloneResult = await cloneActivity(props.activity as Activity, newActivityNames);
-        if (cloneResult.status !== "OK") {
-            console.error("Failed to create snapshot before pooling:", cloneResult);
-            loading.value = false;
-            return;
-        }
-        const snapshotGraphId = cloneResult.modified;
-        console.log(`Snapshot created: ${snapshotGraphId}`);
         
         // Pool the feedback on the original activity
         const res = await llmPool(props.activity.graph, llmSettingsStore.getCurrentModelRequestConfig());
         if (res.success === false) {
             // If pooling fails, delete the snapshot we just created
-            console.warn("Pooling failed, deleting snapshot:", snapshotGraphId);
-            await activityStore.removeActivity(snapshotGraphId);
-            console.log("Snapshot deleted after pooling failure");
+            if (snapshotGraphId) {
+                console.warn("Pooling failed, deleting snapshot:", snapshotGraphId);
+                await activityStore.removeActivity(snapshotGraphId);
+                console.log("Snapshot deleted after pooling failure");
+            }
             nothingToPool.value = true;
             loading.value = false;
             return;
         }
-        
-        // Pooling succeeded - snapshot remains, both versions are now persistent
-        console.log("Pooling succeeded. Snapshot and pooled version are now persistent.");
+
+        if (snapshotGraphId) {
+            // Pooling succeeded - snapshot remains, both versions are now persistent
+            console.log("Pooling succeeded. Snapshot and pooled version are now persistent.");
+        }
         
         // Refresh activity list to show both versions
         await activityStore.refreshActivityList();
@@ -327,6 +337,16 @@ const showUrl = ref(false)
                                                             staticContent.startPage.confirmationText[sessionStore.activeLanguage]
                                                         }}
                                                     </DialogDescription>
+                                                    <div class="mt-4 flex items-center gap-2">
+                                                        <Checkbox id="create-copy-before-pooling"
+                                                            v-model:checked="createCopyBeforePooling" />
+                                                        <label for="create-copy-before-pooling"
+                                                            class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                                            {{
+                                                                staticContent.startPage.createCopyBeforePooling[sessionStore.activeLanguage]
+                                                            }}
+                                                        </label>
+                                                    </div>
                                                     <div class="flex justify-between items-center mt-4">
                                                         <Button variant="secondary" @click="showPoolingDialog = false">
                                                             Cancel

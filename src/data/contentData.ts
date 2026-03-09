@@ -644,6 +644,11 @@ export const staticContent = {
             de: "Dies wird die Zusammenführung starten. Möchten Sie fortfahren? Dies kann eine Weile dauern.",
             sv: "Detta kommer att starta poolningsprocessen. Vill du fortsätta? Detta kan ta en stund.",
         },
+        createCopyBeforePooling: {
+            en: "Create copy before combining?",
+            de: "Kopie vor Zusammenführung erstellen?",
+            sv: "Skapa kopia före kombinering?",
+        },
         pool:{
             en: "Yes start.",
             de: "Ja, starten.",
