@@ -21,6 +21,10 @@ import LogoutButton from '@/components/LogoutButton.vue';
 import OptionsButton from '@/components/OptionsButton.vue';
 import ThemeSwitchButton from '@/components/ThemeSwitchButton.vue';
 import HomeButton from '@/components/HomeButton.vue';
+import ErrorDialog from '@/components/ErrorDialog.vue';
+import { showError, useErrorDialog } from '@/composables/useErrorDialog';
+
+const { isOpen: errorDialogOpen } = useErrorDialog();
 
 const props = defineProps<{ graph: string }>()
 
@@ -165,12 +169,21 @@ const submitFeedback = async () => {
     try {
         loading.value = true;
         const llmSettingsStore = useLLMSettingsStore();
-        await llmSubmit(feedbackData.graph, feedbackData.role, feedbackData.data, llmSettingsStore.getCurrentModelRequestConfig());
+        const result = await llmSubmit(feedbackData.graph, feedbackData.role, feedbackData.data, llmSettingsStore.getCurrentModelRequestConfig());
         loading.value = false;
+        
+        if (!result.success) {
+            showError(
+                result.message || staticContent.errors.llmActionFailed,
+                undefined,
+                result.llmError
+            );
+            return;
+        }
     } catch (error) {
         loading.value = false;
         console.error("Error submitting feedback:", error);
-        alert('Failed to submit feedback. Please try again.');
+        showError(staticContent.errors.llmActionFailed);
         return;
     }
     try {
@@ -184,6 +197,7 @@ const submitFeedback = async () => {
 
 <template>
     <div class="min-h-screen flex flex-col lg:w-[1024px] lg:mx-auto justify-between bg-gray-100 p-4 text-gray-800">
+        <ErrorDialog v-if="errorDialogOpen" />
 
         <div class="flex items-center gap-2 justify-end w-full mb-4">
             <LanguageSelect />
