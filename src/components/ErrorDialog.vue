@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button'
 import { useErrorDialog } from '@/composables/useErrorDialog';
 
 const sessionStore = useSessionStore();
-const { isOpen, errorMessage, errorTitle, llmError, closeError } = useErrorDialog();
+const { isOpen, errorMessage, llmError, closeError } = useErrorDialog();
 </script>
 
 <template>
@@ -21,7 +21,7 @@ const { isOpen, errorMessage, errorTitle, llmError, closeError } = useErrorDialo
         <DialogContent>
             <DialogHeader>
                 <DialogTitle>
-                    {{ errorTitle || staticContent.errors.llmActionFailed[sessionStore.activeLanguage] }}
+                    {{ staticContent.errors.llmActionFailed[sessionStore.activeLanguage] }}
                 </DialogTitle>
                 <DialogDescription class="pt-2">
                     {{ typeof errorMessage === 'string' ? errorMessage : errorMessage[sessionStore.activeLanguage] }}

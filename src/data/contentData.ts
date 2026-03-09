@@ -110,9 +110,9 @@ export const staticContent = {
             sv: "Vänligen välj deltagare från minst två och högst tre olika klasser.",
         },
         llmActionFailed: {
-            en: "LLM action failed. Please try again.",
-            de: "LLM-Aktion fehlgeschlagen. Bitte versuchen Sie es erneut.",
-            sv: "LLM-åtgärden misslyckades. Försök igen.",
+            en: "Action failed. Please try again.",
+            de: "Aktion fehlgeschlagen. Bitte versuchen Sie es erneut.",
+            sv: "Åtgärden misslyckades. Försök igen.",
         },
         llmErrorLabel: {
             en: "LLM error",

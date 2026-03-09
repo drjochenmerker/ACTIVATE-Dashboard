@@ -175,7 +175,6 @@ const submitFeedback = async () => {
         if (!result.success) {
             showError(
                 result.message || staticContent.errors.llmActionFailed,
-                undefined,
                 result.llmError
             );
             return;

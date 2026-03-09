@@ -6,18 +6,15 @@ import { ref } from 'vue';
  */
 const isOpen = ref(false);
 const errorMessage = ref<string | { en?: string; de?: string; sv?: string }>('');
-const errorTitle = ref('');
 const llmError = ref('');
 
 /**
  * Show error dialog with a message
  * @param message - Error message to display (string or multilingual object)
- * @param title - Optional title for the error dialog
  * @param llmErrorText - Optional LLM error details
  */
-export function showError(message: string | { en?: string; de?: string; sv?: string }, title?: string, llmErrorText?: string) {
+export function showError(message: string | { en?: string; de?: string; sv?: string }, llmErrorText?: string) {
     errorMessage.value = message;
-    errorTitle.value = title || '';
     llmError.value = llmErrorText || '';
     isOpen.value = true;
 }
@@ -28,7 +25,6 @@ export function showError(message: string | { en?: string; de?: string; sv?: str
 export function closeError() {
     isOpen.value = false;
     errorMessage.value = '';
-    errorTitle.value = '';
     llmError.value = '';
 }
 
@@ -39,7 +35,6 @@ export function useErrorDialog() {
     return {
         isOpen,
         errorMessage,
-        errorTitle,
         llmError,
         showError,
         closeError,
