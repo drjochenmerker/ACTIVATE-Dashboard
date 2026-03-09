@@ -40,6 +40,8 @@ const login = async () => {
 
       // Set instructor mode as true if the root password has been entered
       sessionStore.instructorMode = role == ACCOUNT_ROLE.ROOT;
+      // Set instructor view as true if the root password has been entered
+      sessionStore.instructorView = role == ACCOUNT_ROLE.ROOT;
 
       // redirect logic
       // check if redirect query parameter exists (e.g., /login?redirect=/feedback)
