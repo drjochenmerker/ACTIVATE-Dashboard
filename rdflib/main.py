@@ -147,6 +147,49 @@ async def debug_ttl(graph_id: str):
             content = f.read()
         return {"content": content} # Hier schicken wir den Inhalt mit!
     raise HTTPException(status_code=404)
+
+# Logging endpoint for activity changes
+@app.post("/api/logs/activity")
+async def log_activity(request: Request):
+    """
+    Logs manual changes to activities/situations
+    Stores logs in ./logs directory with format: [timestamp] - Aktion: [operation]
+    """
+    try:      
+        data = await request.json()
+        graph_id = data.get("graphId")
+        operation = data.get("operation")
+        timestamp = data.get("timestamp")
+        log_message = data.get("logMessage")
+        
+        # Validate required fields
+        if not graph_id or not operation or not timestamp:
+            raise HTTPException(status_code=400, detail="Missing required fields: graphId, operation, timestamp")
+        
+        # Validate operation type
+        valid_operations = ["Erstellung", "Löschung", "Änderung"]
+        if operation not in valid_operations:
+            raise HTTPException(status_code=400, detail=f"Invalid operation type. Must be one of: {', '.join(valid_operations)}")
+        
+        # Create logs directory if it doesn't exist
+        logs_dir = "./logs"
+        if not os.path.exists(logs_dir):
+            os.makedirs(logs_dir, exist_ok=True)
+        
+        # Write to log file named after the graphId
+        log_file = os.path.join(logs_dir, f"activity_{graph_id}.log")
+        final_message = log_message or f"[{timestamp}] - Aktion: {operation}"
+        
+        with open(log_file, "a", encoding="utf-8") as f:
+            f.write(f"{final_message}\n")
+        
+        return {
+            "status": "OK",
+            "message": "Log entry recorded successfully",
+            "logFile": f"activity_{graph_id}.log"
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error logging activity change: {str(e)}")
     
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
