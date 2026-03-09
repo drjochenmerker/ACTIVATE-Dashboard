@@ -108,6 +108,16 @@ export const staticContent = {
             en: "Please select participants from at least two and at most three different classes.",
             de: "Bitte wählen Sie Teilnehmer aus mindestens zwei und maximal drei verschiedenen Klassen aus.",
             sv: "Vänligen välj deltagare från minst två och högst tre olika klasser.",
+        },
+        llmActionFailed: {
+            en: "LLM action failed. Please try again.",
+            de: "LLM-Aktion fehlgeschlagen. Bitte versuchen Sie es erneut.",
+            sv: "LLM-åtgärden misslyckades. Försök igen.",
+        },
+        llmErrorLabel: {
+            en: "LLM error",
+            de: "LLM-Fehler",
+            sv: "LLM-fel",
         }
     },
     login: {

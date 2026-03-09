@@ -18,7 +18,7 @@ const { isOpen, errorMessage, errorTitle, llmError, closeError } = useErrorDialo
 
 <template>
     <Dialog v-model:open="isOpen">
-        <DialogContent class="z-[100]">
+        <DialogContent>
             <DialogHeader>
                 <DialogTitle>
                     {{ errorTitle || staticContent.errors.llmActionFailed[sessionStore.activeLanguage] }}

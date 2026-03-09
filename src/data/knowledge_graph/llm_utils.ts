@@ -9,7 +9,8 @@ import { addRequiredEntitiesToGraph } from "./requiredEntities";
  */
 export type LLMParsingResult = {
     success: boolean;
-    message: string;
+    message: string | { en?: string; de?: string; sv?: string };
+    llmError?: string;
     data?: any;
 }
 
@@ -46,7 +47,8 @@ export async function llmSettingGeneration(description: string, llmDetail: LLMRe
     if (!llmRes.ok || data.error) {
         return {
             success: false,
-            message: data.error
+            message: data.error, 
+            llmError: data.llmError,
         }
     }
     // Add TTL to Sparql Backend
@@ -131,7 +133,8 @@ export async function llmSubmit(graphID: string, role: { id: string, label: stri
     if (!llmRes.ok || llmData.error) {
         return {
             success: false,
-            message: llmData.error
+            message: llmData.error,
+            llmError: llmData.llmError,
         }
     }
     // Save results temporary in the graph as a literal
