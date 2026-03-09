@@ -151,7 +151,6 @@ const handlePoolingStart = async () => {
     const llmSettingsStore = useLLMSettingsStore();
     try {
         loading.value = true;
-        nothingToPool.value = false;
 
         let snapshotGraphId: string | null = null;
         if (createCopyBeforePooling.value) {
