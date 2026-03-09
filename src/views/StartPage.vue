@@ -91,7 +91,8 @@ const addNewActivity = async () => {
     
     if (!result.success) {
       showError(
-        result.message || staticContent.errors.llmActionFailed,
+        result.errorType || 'unexpected',
+        result.message,
         result.llmError
       );
       return;
@@ -106,7 +107,7 @@ const addNewActivity = async () => {
   } catch (error) {
     loading.value = false;
     console.error("Error during LLM generation:", error);
-    showError(staticContent.errors.llmActionFailed);
+    showError('unexpected', staticContent.errors.unexpectedActionFailed);
   }
 };
 

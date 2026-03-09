@@ -152,19 +152,18 @@ const handlePoolingStart = async () => {
         loading.value = false;
         
         if (res.success === false) {
-            if (res.message || res.llmError) {
-                showError(
-                    res.message || staticContent.errors.llmActionFailed,
-                    res.llmError
-                );
-            }
+            showError(
+                res.errorType || 'unexpected',
+                res.message,
+                res.llmError
+            );
             return;
         }
         showPoolingDialog.value = false;
     } catch (error) {
         loading.value = false;
         console.error("Error during pooling:", error);
-        showError(staticContent.errors.llmActionFailed);
+        showError('unexpected', staticContent.errors.unexpectedActionFailed);
     }
 }
 

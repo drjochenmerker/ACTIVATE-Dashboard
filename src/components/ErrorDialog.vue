@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import { staticContent } from '@/data/contentData';
 import { useSessionStore } from '@/stores/sessionStore';
 import {
@@ -13,7 +14,36 @@ import { Button } from '@/components/ui/button'
 import { useErrorDialog } from '@/composables/useErrorDialog';
 
 const sessionStore = useSessionStore();
-const { isOpen, errorMessage, llmError, closeError } = useErrorDialog();
+const { isOpen, errorType, errorMessage, llmError, closeError } = useErrorDialog();
+
+const dialogTitle = computed(() => {
+    if (errorType.value === 'validation') {
+        return staticContent.errors.validationTitle[sessionStore.activeLanguage];
+    }
+    if (errorType.value === 'llm') {
+        return staticContent.errors.llmTitle[sessionStore.activeLanguage];
+    }
+    return staticContent.errors.unexpectedTitle[sessionStore.activeLanguage];
+});
+
+const dialogMessage = computed(() => {
+
+    if (typeof errorMessage.value === 'string') {
+        if (errorMessage.value.trim() !== '') {
+            return errorMessage.value;
+        }
+    } else {
+        return errorMessage.value[sessionStore.activeLanguage];
+    }
+
+    if (errorType.value === 'validation') {
+        return staticContent.errors.validationActionFailed[sessionStore.activeLanguage];
+    }
+    if (errorType.value === 'llm') {
+        return staticContent.errors.llmActionFailed[sessionStore.activeLanguage];
+    }
+    return staticContent.errors.unexpectedActionFailed[sessionStore.activeLanguage];
+});
 </script>
 
 <template>
@@ -21,13 +51,13 @@ const { isOpen, errorMessage, llmError, closeError } = useErrorDialog();
         <DialogContent>
             <DialogHeader>
                 <DialogTitle>
-                    {{ staticContent.errors.llmActionFailed[sessionStore.activeLanguage] }}
+                    {{ dialogTitle }}
                 </DialogTitle>
                 <DialogDescription class="pt-2">
-                    {{ typeof errorMessage === 'string' ? errorMessage : errorMessage[sessionStore.activeLanguage] }}
+                    {{ dialogMessage }}
                 </DialogDescription>
-                <DialogDescription v-if="llmError" class="pt-2 whitespace-pre-wrap break-words text-xs opacity-80">
-                    {{ staticContent.errors.llmErrorLabel[sessionStore.activeLanguage] }}: {{ llmError }}
+                <DialogDescription v-if="errorType === 'llm' && llmError" class="pt-2 whitespace-pre-wrap break-words text-xs opacity-80">
+                    {{ staticContent.errors.technicalDetailsLabel[sessionStore.activeLanguage] }}: {{ llmError }}
                 </DialogDescription>
             </DialogHeader>
             <DialogFooter class="mt-4">

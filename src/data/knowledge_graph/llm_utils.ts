@@ -5,6 +5,18 @@ import { addRequiredEntitiesToGraph } from "./requiredEntities";
 import { staticContent } from "../contentData";
 import { useSessionStore } from '@/stores/sessionStore';
 
+type ErrorType = 'validation' | 'llm' | 'unexpected';
+
+function classifyBackendError(status: number, llmError?: string): ErrorType {
+    if (status === 400) {
+        return 'validation';
+    }
+    if (llmError && llmError.trim() !== '') {
+        return 'llm';
+    }
+    return 'unexpected';
+}
+
 /**
  * Type definition for the result of LLM parsing operations.
  * It includes a success flag, a message, and optional data.
@@ -12,6 +24,7 @@ import { useSessionStore } from '@/stores/sessionStore';
 export type LLMParsingResult = {
     success: boolean;
     message: string | { en?: string; de?: string; sv?: string };
+    errorType?: ErrorType;
     llmError?: string;
     data?: any;
 };
@@ -32,6 +45,7 @@ export async function llmSettingGeneration(
     defaultRole?: string,
 ): Promise<LLMParsingResult> {
     const llmSettingsStore = useLLMSettingsStore();
+    const sessionStore = useSessionStore();
 
     // Generate TTL using the LLM Backend
     const llmRes = await fetch(
@@ -57,14 +71,10 @@ export async function llmSettingGeneration(
     if (!llmRes.ok || data.error) {
         return {
             success: false,
-<<<<<<< HEAD
-            message: data.error, 
+            message: data.error,
+            errorType: classifyBackendError(llmRes.status, data.llmError),
             llmError: data.llmError,
         }
-=======
-            message: data.error,
-        };
->>>>>>> dev-prod
     }
     // Add TTL to Sparql Backend
     const rdfRes = await fetch(
@@ -80,7 +90,8 @@ export async function llmSettingGeneration(
     if (!rdfRes.ok) {
         return {
             success: false,
-            message: "Failed to upload generated TTL",
+            message: staticContent.errors.uploadGeneratedTTLFailed[sessionStore.activeLanguage],
+            errorType: 'unexpected',
         };
     }
     const rdfData = await rdfRes.json();
@@ -94,7 +105,8 @@ export async function llmSettingGeneration(
     }
     return {
         success: false,
-        message: "Uncaught error while generating and adding TTL",
+        message: staticContent.errors.uncaughtGenerationError[sessionStore.activeLanguage],
+        errorType: 'unexpected',
     };
 }
 
@@ -112,6 +124,7 @@ export async function llmSubmit(
     llmDetail: LLMRequestConfig,
 ): Promise<LLMParsingResult> {
     const llmSettingsStore = useLLMSettingsStore();
+    const sessionStore = useSessionStore();
     // Fetch description and entities from the graph
     let description: StringAccessObject = {};
     let entities: StringAccessObject[] = [];
@@ -159,12 +172,9 @@ export async function llmSubmit(
         return {
             success: false,
             message: llmData.error,
-<<<<<<< HEAD
+            errorType: classifyBackendError(llmRes.status, llmData.llmError),
             llmError: llmData.llmError,
         }
-=======
-        };
->>>>>>> dev-prod
     }
     // Save results temporary in the graph as a literal
     // Entities
@@ -188,7 +198,8 @@ export async function llmSubmit(
     if (!EntityRes.ok || !TensionRes.ok) {
         return {
             success: false,
-            message: "Failed to stash results",
+            message: staticContent.errors.stashResultsFailed[sessionStore.activeLanguage],
+            errorType: 'unexpected',
         };
     }
     return {
@@ -317,7 +328,8 @@ export async function llmPool(graphID: string, llmDetail: LLMRequestConfig): Pro
         logger.log(`DEBUG: llmPool finished (FAILURE) in ${performance.now() - totalStartTime} ms.`);
         return {
             success: false,
-            message: staticContent.startPage.noPoolAvailable[sessionStore.activeLanguage]
+            message: staticContent.startPage.noPoolAvailable[sessionStore.activeLanguage],
+            errorType: 'validation',
         }
     }
     const entitySubmissions: string[] = [];
@@ -367,6 +379,7 @@ export async function llmPool(graphID: string, llmDetail: LLMRequestConfig): Pro
         return {
             success: false,
             message: data.error,
+            errorType: classifyBackendError(poolRes.status, data.llmError),
             llmError: data.llmError,
         }
     }
@@ -397,7 +410,8 @@ export async function llmPool(graphID: string, llmDetail: LLMRequestConfig): Pro
         logger.log(`DEBUG: llmPool finished (FAILURE) in ${performance.now() - totalStartTime} ms.`);
         return {
             success: false,
-            message: "Failed to upload pooled TTL",
+            message: staticContent.errors.uploadPooledTTLFailed[sessionStore.activeLanguage],
+            errorType: 'unexpected',
         };
     }
 
@@ -421,7 +435,8 @@ export async function llmPool(graphID: string, llmDetail: LLMRequestConfig): Pro
         logger.log(`DEBUG: llmPool finished (FAILURE) in ${performance.now() - totalStartTime} ms.`);
         return {
             success: false,
-            message: "Failed to delete temporary submissions",
+            message: staticContent.errors.deleteTempSubmissionsFailed[sessionStore.activeLanguage],
+            errorType: 'unexpected',
         };
     }
 

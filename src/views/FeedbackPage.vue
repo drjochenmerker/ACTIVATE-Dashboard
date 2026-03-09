@@ -117,7 +117,7 @@ const getRoles = async () => {
 
 const submitFeedback = async () => {
     if (!sessionStore.sessionRole) {
-        alert('Please select your role before submitting.')
+        showError('validation', staticContent.errors.roleNotSelected);
         return
     }
 
@@ -125,7 +125,7 @@ const submitFeedback = async () => {
     const selectedRole = roles.find(role => role.id === sessionStore.sessionRole);
 
     if (!selectedRole) {
-        alert('Selected role not found!');
+        showError('validation', staticContent.errors.roleNotFound);
         return;
     }
 
@@ -178,7 +178,8 @@ const submitFeedback = async () => {
         
         if (!result.success) {
             showError(
-                result.message || staticContent.errors.llmActionFailed,
+                result.errorType || 'unexpected',
+                result.message,
                 result.llmError
             );
             return;
@@ -186,7 +187,7 @@ const submitFeedback = async () => {
     } catch (error) {
         loading.value = false;
         console.error("Error submitting feedback:", error);
-        showError(staticContent.errors.llmActionFailed);
+        showError('unexpected', staticContent.errors.unexpectedActionFailed);
         return;
     }
     try {
