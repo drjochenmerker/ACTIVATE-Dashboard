@@ -1,0 +1,26 @@
+PREFIX : <http://activate.htwk-leipzig.de/model#> 
+PREFIX graph: <http://activate.htwk-leipzig.de/graph/>
+
+INSERT {
+  GRAPH graph:{{newName}} {
+    ?s ?p ?o .
+  }
+}
+WHERE {
+  GRAPH graph:{{graph}} {
+    ?s ?p ?o .
+    FILTER (?p != :ActivityName)
+  }
+}
+;
+INSERT {
+  GRAPH graph:{{newName}} {
+    ?activity :ActivityName {{activityNames}} .
+  }
+}
+WHERE {
+  GRAPH graph:{{graph}} {
+    ?activity a owl:NamedIndividual ;
+      :ActivityDescription ?desc .
+  }
+}
