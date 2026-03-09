@@ -23,9 +23,13 @@ import RecursiveSelect from './RecursiveSelect.vue';
 import { Select, SelectTrigger, SelectContent, SelectValue } from '@/components/ui/select';
 import { useLLMSettingsStore } from '@/stores/llmSettingsStore';
 import DeletionPopUp from './DeletionPopUp.vue';
+import ErrorDialog from '@/components/ErrorDialog.vue';
+import { showError, useErrorDialog } from '@/composables/useErrorDialog';
 
 // consts and props defintion
 const sessionStore = useSessionStore();
+const { isOpen: errorDialogOpen } = useErrorDialog();
+
 const props = defineProps({
     activity: {
         type: Object,
@@ -41,7 +45,6 @@ const feedbackUrl = computed(() => {
 sessionStore.availableRoles = {} as NestedMultiLangObject;
 
 const showPoolingDialog = ref(false)
-const nothingToPool = ref(false);
 const loading = ref(false);
 const copied = ref(false);
 
@@ -146,14 +149,22 @@ const handlePoolingStart = async () => {
     try {
         loading.value = true;
         const res = await llmPool(props.activity.graph, llmSettingsStore.getCurrentModelRequestConfig());
+        loading.value = false;
+        
         if (res.success === false) {
-            nothingToPool.value = true;
-            loading.value = false;
+            if (res.message || res.llmError) {
+                showError(
+                    res.message || staticContent.errors.llmActionFailed,
+                    res.llmError
+                );
+            }
             return;
         }
         showPoolingDialog.value = false;
     } catch (error) {
+        loading.value = false;
         console.error("Error during pooling:", error);
+        showError(staticContent.errors.llmActionFailed);
     }
 }
 
@@ -165,6 +176,7 @@ const showUrl = ref(false)
 </script>
 
 <template>
+    <ErrorDialog v-if="errorDialogOpen" />
     <div class="rounded-xl shadow-md bg-white dark:bg-gray-900 p-4 transition-all hover:shadow-lg">
 
         <Accordion type="single" class="w-full" collapsible>
@@ -303,11 +315,6 @@ const showUrl = ref(false)
 
                                                     <LoadingOverlay :visible="loading"
                                                         :message="staticContent.placeholders.loading[sessionStore.activeLanguage]" />
-                                                    <p v-if="nothingToPool" class="mt-4 text-red-500 font-semibold">
-                                                        {{
-                                                            staticContent.startPage.noPoolAvailable[sessionStore.activeLanguage]
-                                                        }}
-                                                    </p>
                                                 </DialogHeader>
                                             </DialogContent>
                                         </Dialog>

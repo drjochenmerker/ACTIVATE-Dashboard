@@ -2,6 +2,8 @@ import { LLMRequestConfig, useLLMSettingsStore } from "@/stores/llmSettingsStore
 import { sparqlTemplate, StringAccessObject } from "./structures";
 import { fetchSparql, getSparqlTemplate } from "./utils";
 import { addRequiredEntitiesToGraph } from "./requiredEntities";
+import { staticContent } from "../contentData";
+import { useSessionStore } from '@/stores/sessionStore';
 
 /**
  * Type definition for the result of LLM parsing operations.
@@ -255,6 +257,7 @@ export async function llmSubmit(graphID: string, role: { id: string, label: stri
  * @returns LLMParsingResult
  */
 export async function llmPool(graphID: string, llmDetail: LLMRequestConfig): Promise<LLMParsingResult> {
+    const sessionStore = useSessionStore();
     const debugOn = true; // DEBUG: SET TO TRUE IF DEBUGGING IS NEEDED
     const logger = {
         log: (...args: any[]) => {
@@ -285,7 +288,7 @@ export async function llmPool(graphID: string, llmDetail: LLMRequestConfig): Pro
         logger.log(`DEBUG: llmPool finished (FAILURE) in ${performance.now() - totalStartTime} ms.`);
         return {
             success: false,
-            message:"Failed to fetch submissions"
+            message: staticContent.startPage.noPoolAvailable[sessionStore.activeLanguage]
         }
     }
     const entitySubmissions: string[] = [];
@@ -327,7 +330,8 @@ export async function llmPool(graphID: string, llmDetail: LLMRequestConfig): Pro
         logger.log(`DEBUG: llmPool finished (FAILURE) in ${performance.now() - totalStartTime} ms.`);
         return {
             success: false,
-            message: data.error
+            message: data.error,
+            llmError: data.llmError,
         }
     }
     
