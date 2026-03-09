@@ -7,6 +7,7 @@ import MainLayout from "@/components/MainLayout.vue";
 import { useSessionStore } from "@/stores/sessionStore";
 import FeedbackThankyouPage from "@/views/FeedbackThankyouPage.vue";
 import LoginPage from "@/views/LoginPage.vue";
+import LlmTestPage from "@/views/LlmTestPage.vue";
 
 const routes: Array<RouteRecordRaw> = [
     {
@@ -37,6 +38,13 @@ const routes: Array<RouteRecordRaw> = [
             { path: "", name: "HomePage", component: HomePage, props: true }, // Standard dashboard
             { path: ":id", name: "Content", component: ContentPage, props: true }, // Dynamic content pages
         ],
+    },
+
+    // debug route for llm testing, must be removed later
+    {
+        path: "/llm-test",
+        name: "LlmTestPage",
+        component: LlmTestPage,
     },
 ];
 

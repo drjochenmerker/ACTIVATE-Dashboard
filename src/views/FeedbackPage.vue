@@ -21,6 +21,9 @@ import LogoutButton from '@/components/LogoutButton.vue';
 import OptionsButton from '@/components/OptionsButton.vue';
 import ThemeSwitchButton from '@/components/ThemeSwitchButton.vue';
 import HomeButton from '@/components/HomeButton.vue';
+import { useColorMode } from '@vueuse/core';
+
+useColorMode();
 
 const props = defineProps<{ graph: string }>()
 
@@ -29,6 +32,8 @@ const sessionStore = useSessionStore()
 
 const activeLang = computed(() => sessionStore.activeLanguage)
 const loading = ref(false);
+
+
 
 // 1. Define groups
 const questionGroups = Object.keys(staticContentFeedback)
@@ -183,7 +188,7 @@ const submitFeedback = async () => {
 </script>
 
 <template>
-    <div class="min-h-screen flex flex-col lg:w-[1024px] lg:mx-auto justify-between bg-gray-100 p-4 text-gray-800">
+    <div class="min-h-screen flex flex-col lg:w-[1024px] lg:mx-auto justify-between p-4">
 
         <div class="flex items-center gap-2 justify-end w-full mb-4">
             <LanguageSelect />
@@ -210,9 +215,9 @@ const submitFeedback = async () => {
             </div>
 
             <div v-for="group in groupedQuestionData" :key="group.key"
-                class="mb-6 p-4 border rounded-lg bg-white shadow-sm space-y-4">
+                class="mb-6 p-4 border rounded-lg shadow-sm space-y-4">
 
-                <h2 class="text-xl font-semibold text-gray-900 border-b pb-2">
+                <h2 class="text-xl font-semibold border-b pb-2">
                     {{ group.title }}
                 </h2>
 
@@ -221,7 +226,7 @@ const submitFeedback = async () => {
                         {{ question.text }}
                     </label>
                     <textarea :id="group.key + question.key" v-model="answers[group.key][question.key]"
-                        class="w-full p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
+                        class="dark:bg-gray-900 w-full p-3 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
                         rows="4" :placeholder="staticContent.placeholders.feedbackAnswer[activeLang]" />
                 </div>
             </div>
@@ -230,7 +235,7 @@ const submitFeedback = async () => {
         </div>
 
         <div class="mt-8">
-            <Button class="w-full" @click="submitFeedback">
+            <Button class="w-full text-black bg-white border border-black hover:bg-black hover:text-white disabled:hover:bg-white disabled:hover:text-black" @click="submitFeedback">
                 {{ staticContent.noteCards.save[activeLang] }}
             </Button>
         </div>
