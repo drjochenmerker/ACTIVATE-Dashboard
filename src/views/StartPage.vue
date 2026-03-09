@@ -34,6 +34,10 @@ import { useLLMSettingsStore } from '@/stores/llmSettingsStore';
 import OptionsButton from '@/components/OptionsButton.vue';
 import ThemeSwitchButton from '@/components/ThemeSwitchButton.vue';
 import LogoutButton from '@/components/LogoutButton.vue';
+import ErrorDialog from '@/components/ErrorDialog.vue';
+import { showError, useErrorDialog } from '@/composables/useErrorDialog';
+
+const { isOpen: errorDialogOpen } = useErrorDialog();
 
 useColorMode();
 const sessionStore = useSessionStore();
@@ -77,20 +81,34 @@ watch(selectedActivity, async () => {
 
 const addNewActivity = async () => {
   showValidationErrors.value = true;
+  if (!newDescription.value.trim()) {
+    return;
+  }
   try {
     loading.value = true;
-    await llmSettingGeneration(newDescription.value, useLLMSettingsStore().getCurrentModelRequestConfig(), newTitle.value, defaultRole.value);
+    const result = await llmSettingGeneration(newDescription.value, useLLMSettingsStore().getCurrentModelRequestConfig(), newTitle.value, defaultRole.value);
     loading.value = false;
-  } catch (error) {
-    console.error("Error during LLM generation:", error);
-  }
+    
+    if (!result.success) {
+      showError(
+        result.message || staticContent.errors.llmActionFailed,
+        undefined,
+        result.llmError
+      );
+      return;
+    }
 
-  dialogOpen.value = false;
-  newTitle.value = '';
-  newDescription.value = '';
-  defaultRole.value = '';
-  showValidationErrors.value = false; // Reset validation state
-  await activityStore.refreshActivityList();
+    dialogOpen.value = false;
+    newTitle.value = '';
+    newDescription.value = '';
+    defaultRole.value = '';
+    showValidationErrors.value = false; // Reset validation state
+    await activityStore.refreshActivityList();
+  } catch (error) {
+    loading.value = false;
+    console.error("Error during LLM generation:", error);
+    showError(staticContent.errors.llmActionFailed);
+  }
 };
 
 
@@ -98,6 +116,7 @@ const addNewActivity = async () => {
 
 <template>
   <div class="flex flex-col items-center justify-center py-4 px-4">
+    <ErrorDialog v-if="errorDialogOpen" />
     <div class="flex items-center gap-2 justify-end w-full mb-4">
       <!-- instructorview select has to stay instructorMode so the button stays clickable for the instructor lol  -->
       <InstructorViewSelect v-if="sessionStore.instructorMode" />
