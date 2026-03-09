@@ -121,5 +121,15 @@ async def parse_pool(request: Request):
 # async def serve_frontend():
 #     return FileResponse(os.path.join(FRONTEND_DIR, "index.html"))
 
+# debug endpoint to print TTL content of a graph
+@app.get("/debug-ttl/{graph_id}")
+async def debug_ttl(graph_id: str):
+    file_path = os.path.join(DATA_DIR, f"{graph_id}.ttl")
+    if os.path.exists(file_path):
+        with open(file_path, "r", encoding="utf-8") as f:
+            content = f.read()
+        return {"content": content} # Hier schicken wir den Inhalt mit!
+    raise HTTPException(status_code=404)
+    
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
