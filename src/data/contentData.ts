@@ -131,12 +131,12 @@ export const staticContent = {
         },
         llmActionFailed: {
             en: "Action failed. Please try again.",
-            de: "Aktion fehlgeschlagen. Bitte versuchen Sie es erneut.",
+            de: "Aktion fehlgeschlagen. Bitte versuchen Sie es später erneut.",
             sv: "Åtgärden misslyckades. Försök igen.",
         },
         unexpectedActionFailed: {
             en: "Something went wrong. Please try again.",
-            de: "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
+            de: "Etwas ist schiefgelaufen. Bitte versuchen Sie es später erneut.",
             sv: "Något gick fel. Försök igen.",
         },
         technicalDetailsLabel: {
