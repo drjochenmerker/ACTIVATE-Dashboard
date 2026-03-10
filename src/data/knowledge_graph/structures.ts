@@ -127,7 +127,7 @@ export type Conflict = {
 }
 
 export interface ConflictWithId extends Conflict {
-    id: string;
+    id?: string;
 }
 
 

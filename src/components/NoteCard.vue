@@ -57,8 +57,8 @@ watch(() => props.conflict, (newConflict) => {
 
 // Watcher for the selected status that causes the update of the conflict status
 watch(selectedStatus, async (newStatus) => {
-  await updateConflict(sessionStore.sessionActivity!.graph, props.conflict.id, conflictPredicate.status, newStatus);
-  conflictStore.updateConflict(props.conflict.id, sessionStore.sessionActivity!.graph);
+  await updateConflict(sessionStore.sessionActivity!.graph, props.conflict.id ?? '', conflictPredicate.status, newStatus);
+  conflictStore.updateConflict(props.conflict.id ?? '', sessionStore.sessionActivity!.graph);
 });
 
 // Toggle for the input field
@@ -128,7 +128,7 @@ const saveReply = async (conflictId: string) => {
 const handleEnterKey = (event: KeyboardEvent) => {
   if (event.key === 'Enter' && !event.shiftKey) {
     event.preventDefault();
-    saveReply(props.conflict.id);
+    saveReply(props.conflict.id ?? '');
   }
 };
 
@@ -201,8 +201,8 @@ const refreshReplies = async () => {
         <DeletionPopUp
           :title="staticContent.startPage.deleteComment[sessionStore.activeLanguage]"
           :description="staticContent.startPage.deleteCommentConfirm[sessionStore.activeLanguage]"
-          :author="props.authorId"
-          :delete-function="() => handleDelete(props.conflict.id)"
+          :author="props.author"
+          :delete-function="() => handleDelete(props.conflict.id ?? '')"
         >
         </DeletionPopUp>
       </div>
@@ -238,19 +238,19 @@ const refreshReplies = async () => {
 
     <!-- Note comment section starting with add comment button -->
 
-    <div v-if="!replyInputVisible[conflict.id]" class="note-comment-section">
-      <Button @click="toggleReplyInput(conflict.id)">
+    <div v-if="!replyInputVisible[conflict.id ?? '']" class="note-comment-section">
+      <Button @click="toggleReplyInput(conflict.id ?? '')">
         {{ staticContent.noteCards.addComment[sessionStore.activeLanguage] }} </Button>
     </div>
 
-    <div v-if="replyInputVisible[conflict.id]" class="comment-input">
-      <Button @click="toggleReplyInput(conflict.id)">
+    <div v-if="replyInputVisible[conflict.id ?? '']" class="comment-input">
+      <Button @click="toggleReplyInput(conflict.id ?? '')">
         {{ staticContent.noteCards.cancel[sessionStore.activeLanguage] }} </Button>
       <textarea
-ref="textareaRef" v-model="newReplyText[conflict.id]"
+ref="textareaRef" v-model="newReplyText[conflict.id ?? '']"
         :placeholder="staticContent.placeholders.answer[sessionStore.activeLanguage]"
         @keydown.enter="handleEnterKey($event)" />
-      <Button @click="saveReply(conflict.id)">{{ staticContent.noteCards.save[sessionStore.activeLanguage] }}</Button>
+      <Button @click="saveReply(conflict.id ?? '')">{{ staticContent.noteCards.save[sessionStore.activeLanguage] }}</Button>
     </div>
 
     <div v-if="conflictDetail && conflictDetail.replies && conflictDetail.replies.length > 0" class="reply-container">
