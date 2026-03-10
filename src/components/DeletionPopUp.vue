@@ -20,7 +20,7 @@ import { ref, computed } from 'vue';
  * @property creator - (optional) Creator of the item to be deleted, used for permission checks
  * @property deleteFunction - Function that is called when the deletion is confirmed
  */
-const { title, description, author, deleteFunction } = defineProps<{
+const { title, description, author = '', deleteFunction } = defineProps<{
     title: string;
     description: string;
     author?: string;

@@ -12,8 +12,8 @@ import { activateTerms, staticContent } from '@/data/contentData';
  * Props of the AddEntityModal component
  * @property isOpen - Indicates if the modal is open (passed from parent)
  */
-defineProps<{
-  isOpen: Boolean,
+const props = defineProps<{
+  isOpen: boolean,
 }>();
 
 // Current color mode (Light- or Dark-Mode)
@@ -23,7 +23,7 @@ const mode = useColorMode();
 const sessionStore = useSessionStore();
 
 // Local state for modal visibility and input values
-const isOpen = ref(false);
+const isOpen = ref(props.isOpen);
 const entityName = ref('');
 const selectedClass = ref<KnowledgeGraphActivityClass | ''>('');
 
@@ -107,7 +107,8 @@ const applyEntity = async () => {
     {{ staticContent.entitiyAdd.addButton[sessionStore.activeLanguage] }}
   </Button>
 
-  <div v-if="isOpen" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+  <div
+v-if="isOpen" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
     @click.self="closeDialog">
     <div :class="mode === 'dark' ? 'modal-container dark' : 'modal-container light'">
       <button class="close-btn" @click="closeDialog">×</button>
@@ -118,9 +119,11 @@ const applyEntity = async () => {
       <!-- Side-by-side inputs for entity name and activity class -->
       <div class="inputs-container mb-4">
         <div class="input-group">
-          <label for="entityName"
+          <label
+for="entityName"
             class="input-label">{{ staticContent.entitiyAdd.entityName[sessionStore.activeLanguage] }}</label>
-          <input id="entityName" type="text" v-model="entityName"
+          <input
+id="entityName" v-model="entityName" type="text"
             :placeholder="staticContent.alerts.entityEnter[sessionStore.activeLanguage]" class="input-field" />
         </div>
         <div class="input-group">

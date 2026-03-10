@@ -10,7 +10,7 @@ import { addRequiredEntitiesToGraph } from "./requiredEntities";
 export type LLMParsingResult = {
     success: boolean;
     message: string;
-    data?: any;
+    data?: { question: string; answer: string };
 };
 
 /**
@@ -104,8 +104,8 @@ export async function llmSubmit(
 ): Promise<LLMParsingResult> {
     const llmSettingsStore = useLLMSettingsStore();
     // Fetch description and entities from the graph
-    let description: StringAccessObject = {};
-    let entities: StringAccessObject[] = [];
+    const description: StringAccessObject = {};
+    const entities: StringAccessObject[] = [];
     let query = await getSparqlTemplate(sparqlTemplate.getLLMDetail);
     const graphRes = await fetchSparql(query.replace("{{graph}}", graphID));
     graphRes.forEach((triple: StringAccessObject) => {
@@ -272,12 +272,12 @@ export async function llmSubmit(
 export async function llmPool(graphID: string, llmDetail: LLMRequestConfig): Promise<LLMParsingResult> {
     const debugOn = true; // DEBUG: SET TO TRUE IF DEBUGGING IS NEEDED
     const logger = {
-        log: (...args: any[]) => {
+        log: (...args: string[]) => {
             if (debugOn) {
                 console.log(...args);
             }
         },
-        error: (...args: any[]) => {
+        error: (...args: string[]) => {
             if (debugOn) {
                 console.error(...args);
             }

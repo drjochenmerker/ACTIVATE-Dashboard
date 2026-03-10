@@ -3,16 +3,14 @@
  * This is a dirty fix which prevent TS form comlaining about dynamic keys
  */
 
-/**
- * Type for data returned by the knowledge graph
- * in order to prevent VSCode from complaining about dynamic keys
- */
 export type KnowledgeGraphData = {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     [key: string]: any;
 };
 
 
 export type StringAccessObject = {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     [key: string]: any;
 }
 
@@ -57,12 +55,6 @@ export enum sparqlTemplate {
 /**
  * Activity in the knowledge graph
  */
-// OLD
-// export type Activity = {
-//     graph: string;
-//     name: string;
-//     description?: string;
-// }
 export type Activity = {
   graph: string;
   name: Record<string, string>;
@@ -116,21 +108,11 @@ export interface Participant {
 /**
  * Conflict in the knowledge graph
  */
-// export type Conflict = {
-//     // title: string,
-//     title: Record<string, string>;
-//     participants: Participant[],
-//     author: string,
-//     status: conflictStatus,
-//     // description?: string,
-//     description: Record<string, string>,
-//     timestamp?: Date,
-//     replies?: Comment[],
-//     id?: string
-// }
 export type Conflict = {
-    origin?: any; // TODO 
-    isAI?: any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    origin?: any; // TODO: add correct types and remove disable lint
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    isAI?: any; // TODO
     hasIntent?: string;
     title: Record<string, string>;
     participants: Participant[];
@@ -144,13 +126,17 @@ export type Conflict = {
     y?: number;
 }
 
+export interface ConflictWithId extends Conflict {
+    id: string;
+}
+
 
 /**
  * Comment in the knowledge graph
  */
 export type Comment = {
     id: string,
-    author?: Participant;
+    author?: Participant | string | MultiLangObject;
     comment?: Record<string, string>,
     timestamp?: Date,
     replies?: Comment[]
@@ -290,11 +276,11 @@ export class PredicateDict {
         }
     }
 
-    get(tuple: [string, string]): {}[] {
+    get(tuple: [string, string]): Predicate[] {
         return this.dict[tuple.join("#")].sort((a, b) => a.id.localeCompare(b.id)) || [];
     }
 
-    getBidirectional(tuple: [string, string]): {} {
+    getBidirectional(tuple: [string, string]): {given: Predicate[]; reversed: Predicate[]} {
         return {
             given: this.dict[tuple.join("#")].sort((a, b) => a.id.localeCompare(b.id)) || [],
             reversed: this.dict[tuple.reverse().join("#")].sort((a, b) => a.id.localeCompare(b.id)) || []

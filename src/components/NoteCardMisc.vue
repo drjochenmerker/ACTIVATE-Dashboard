@@ -202,7 +202,9 @@ const openEditDialog = async () => {
         <hr class="misc-note-divider" />
 
         <div class="misc-note-content">
+            <!-- eslint-disable-next-line vue/no-v-html -->
             <div class="misc-note-title" v-html="extractedTitle"></div>
+             <!-- eslint-disable-next-line vue/no-v-html -->
             <div class="misc-note-description" v-html="extractedContent"></div>
         </div>
 
@@ -211,14 +213,16 @@ const openEditDialog = async () => {
         </div>
 
         <div v-if="replyInputVisible[props.comment.id]" class="comment-input">
-            <textarea ref="textareaRef" v-model="newReplyText[props.comment.id]" placeholder="Write a reply..."
+            <textarea
+ref="textareaRef" v-model="newReplyText[props.comment.id]" placeholder="Write a reply..."
                 @keydown.enter="handleEnterKey($event)" />
             <Button @click="saveReply(props.comment.id)">{{ staticContent.noteCards.saveComment[sessionStore.activeLanguage] }}</Button>
         </div>
 
         <div v-if="props.comment && props.comment.replies && props.comment.replies.length > 0" class="reply-container">
-            <ReplyCard v-for="(reply) in conflictDetail.replies" :key="reply.id" :parentComment="reply"
-                :conflictId="conflictDetail.id" @deleteComment="removeReply" @refresh="refreshConflicts" :showEdit="sessionStore.instructorView" />
+            <ReplyCard
+v-for="(reply) in conflictDetail.replies" :key="reply.id" :parent-comment="reply"
+                :conflict-id="conflictDetail.id" :show-edit="sessionStore.instructorView" @delete-comment="removeReply" @refresh="refreshConflicts" />
         </div>
 
     </div>

@@ -15,13 +15,14 @@ function handleLanguageChange() {
 <template>
     <div class="flex flex-row gap-2 items-center w-32">
         <LanguagesIcon class=" w-1/3" />
-        <Select :default-value="LanguageCode.English" v-model="sessionStore.activeLanguage" id="languageSelect"
+        <Select
+id="languageSelect" v-model="sessionStore.activeLanguage" :default-value="LanguageCode.English"
             @update:model-value="handleLanguageChange">
             <SelectTrigger class="w-[180px] overflow-hidden whitespace-nowrap truncate">
                 <SelectValue />
             </SelectTrigger>
             <SelectContent>
-                <SelectItem v-for="lang in Object.entries(LanguageCode)" :value="lang[1]">
+                <SelectItem v-for="lang in Object.entries(LanguageCode)" :key="lang[1]" :value="lang[1]">
                     {{ lang[0] }}
                 </SelectItem>
             </SelectContent>

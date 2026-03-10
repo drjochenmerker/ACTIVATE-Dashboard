@@ -10,7 +10,7 @@ import { useActivityPointsStore } from "@/stores/activityPointsStore";
 import { calculateConflictPositions } from "@/composables/calculateConflictPositions";
 import { getActivityDetail } from "@/data/knowledge_graph/read_operations";
 import { activateTerms, staticContent } from "@/data/contentData";
-import { Activity, Conflict, conflictStatus, Objective } from "@/data/knowledge_graph/structures";
+import { Activity, ActivityDetail, Conflict, conflictStatus, Objective } from "@/data/knowledge_graph/structures";
 
 import { Button } from '@/components/ui/button';
 import PointHoverPopUp from '@/components/PointHoverPopUp.vue';
@@ -52,14 +52,6 @@ export default defineComponent({
         const conflictStore = useConflictsStore();
         const sessionStore = useSessionStore();
 
-        // labels for the points
-        // const communityLabel = computed(() => activateTerms[sessionStore.activeLanguage].community);
-        // const subjectLabel = computed(() => activateTerms[sessionStore.activeLanguage].subject);
-        // const objectLabel = computed(() => activateTerms[sessionStore.activeLanguage].object);
-        // const instrumentsLabel = computed(() => activateTerms[sessionStore.activeLanguage].instruments);
-        // const rulesLabel = computed(() => activateTerms[sessionStore.activeLanguage].rules);
-        // const divisionOfLabourLabel = computed(() => activateTerms[sessionStore.activeLanguage].division_of_labour);
-
         // Data of the hovered point
         const hoveredPointData = ref<null | {
             label: string;
@@ -75,10 +67,11 @@ export default defineComponent({
 
         // Conflict Data
         let conflictData = conflictStore.getConflicts;
-        const activityData = ref<any>(null);
+        const activityData = ref<ActivityDetail | null>(null);
+
 
         // Checks if the Activity-Diagram has to be cleared when a Comment is sent by the editor
-        let hasToBeCleared = computed(() => activityPointStore.getActivePoints.length === 0);
+        const hasToBeCleared = computed(() => activityPointStore.getActivePoints.length === 0);
 
         // Changes Point-Colors based on current Theme
         const getPointColor = () => (mode.value === "dark" ? "lightgray" : "white");
@@ -94,14 +87,6 @@ export default defineComponent({
          * @property {boolean} active: Specifies if the point is active at the moment.
          * @property {boolean} highlighted: Specifies if the point is highlighted at the moment.
          */
-        // let points = ref([
-        //     { x: triangleWidth / 2, y: triangleHeight / 8, id: "instruments", label: instrumentsLabel, tooltip: staticContent.hoverText.instruments[sessionStore.activeLanguage], color: getPointColor(), active: false, highlighted: false }, // Ecke oben
-        //     { x: triangleWidth / 8, y: (triangleHeight / 8) * 7, id: "rules", label: rulesLabel, tooltip: staticContent.hoverText.rules[sessionStore.activeLanguage], color: getPointColor(), active: false, highlighted: false }, // Ecke Links Unten
-        //     { x: (triangleWidth / 8) * 7, y: (triangleHeight / 8) * 7, id: "division_of_labour", label: divisionOfLabourLabel, tooltip: staticContent.hoverText.division_of_labour[sessionStore.activeLanguage], color: getPointColor(), active: false, highlighted: false }, // Ecke Rechts Unten
-        //     { x: (triangleWidth / 16) * 5, y: triangleHeight / 2, id: "subject", label: subjectLabel, tooltip: staticContent.hoverText.subject[sessionStore.activeLanguage], color: getPointColor(), active: false, highlighted: false }, // Links Mitte
-        //     { x: (triangleWidth / 16) * 11, y: triangleHeight / 2, id: "object", label: objectLabel, tooltip: staticContent.hoverText.object[sessionStore.activeLanguage], color: getPointColor(), active: false, highlighted: false }, // Rechts Mitte
-        //     { x: triangleWidth / 2, y: (triangleHeight / 8) * 7, id: "community", label: communityLabel, tooltip: staticContent.hoverText.community[sessionStore.activeLanguage], color: getPointColor(), active: false, highlighted: false }, // Unten Mitte
-        // ]);
 
         const points = computed(() => [
             {
@@ -205,10 +190,7 @@ export default defineComponent({
         const hoveredTriangle = ref<{ pointIds: string[] } | null>(null);
 
         // Positions of the conflict points
-        //old
-        //  let conflictPositions = calculateConflictPositions(conflictData, points.value, 20);
-        // new
-        const conflictPositions = ref<any[]>([]);
+        const conflictPositions = ref<Conflict[]>([]);
         /**
          * Updates the selected points using the activityPointStore based on the active property of the points
          */
@@ -379,23 +361,6 @@ export default defineComponent({
             // Reset canvas
             ctx.clearRect(0, 0, triangleWidth, triangleHeight);
 
-            // If traingle is hovered, draw it with a slightly blue fill
-            // TEMPORARILY disabled because of confusion
-            // TRIANGLE IS STILL SELECTABLE but not hovered
-            /**if (hoveredTriangle.value) {
-                const [p1, p2, p3] = hoveredTriangle.value.pointIds.map((id) => points.value.find((p) => p.id === id));
-                if (p1 && p2 && p3) {
-                    ctx.beginPath();
-                    ctx.moveTo(p1.x, p1.y);
-                    ctx.lineTo(p2.x, p2.y);
-                    ctx.lineTo(p3.x, p3.y);
-                    ctx.closePath();
-                    ctx.fillStyle = "rgba(0, 191, 255, 0.5)";
-                    ctx.stroke();
-                    ctx.fill();
-                }
-            }*/
-
             // Draw blue triangle between 3 points if 3 points are currently selected
             if (selectedPoints.value.length === 3) {
                 const [p1, p2, p3] = selectedPoints.value.map((id) => points.value.find((p) => p.id === id));
@@ -437,8 +402,7 @@ export default defineComponent({
 
                 // Draw labels for each point
                 ctx.fillStyle = mode.value === "dark" ? "white" : "black";
-                point.active ? ctx.font = `bold ${triangleHeight / 40}px Arial` : ctx.font = `${triangleHeight / 40}px Arial`;
-                ctx.textAlign = "center";
+                ctx.font = point.active ? `bold ${triangleHeight / 40}px Arial` : `${triangleHeight / 40}px Arial`;                ctx.textAlign = "center";
 
                 // WORKAROUND of dynamic positioninig: only the object label adjusted
                 if (point.id === "rules" || point.id === "community" || point.id === "division_of_labour") ctx.fillText(point.label, point.x, point.y + triangleHeight / 20);
@@ -488,20 +452,24 @@ export default defineComponent({
 
             hoverPosition.value = { x: event.clientX, y: event.clientY };
 
-            let foundPoint: { label: string, tooltip: String, content: Array<Objective> } | null = null;
+            let foundPoint: { label: string, tooltip: string, content: Array<Objective> } | null = null;
 
             // Check if a point is hovered -> if yes, set foundPoint to the hovered point, set hoveredPosition for hoverPopUp
             points.value.forEach((point) => {
                 const distance = Math.sqrt((mouseX - point.x) ** 2 + (mouseY - point.y) ** 2);
                 if (distance < triangleHeight / 40) {
-                    foundPoint = { label: point.label, tooltip: point.tooltip, content: activityData.value[point.id] || [] };
-                }
+                        foundPoint = {
+                        label: point.label,
+                        tooltip: point.tooltip,
+                        content: activityData.value ? activityData.value[point.id] : [],
+                    };                }
             });
 
             let foundConflictPoint: Conflict | null = null;
 
             // Check if a conflict point is hovered -> if yes, set foundConflictPoint to the hovered conflict point
             conflictPositions.value.forEach((conflict) => {
+                if (!conflict.x || !conflict.y) return;
                 const distance = Math.sqrt((mouseX - conflict.x) ** 2 + (mouseY - conflict.y) ** 2);
                 if (distance < triangleHeight / 80) {
                     foundConflictPoint = conflict;
@@ -537,11 +505,12 @@ export default defineComponent({
             });
 
             conflictPositions.value.forEach((conflict) => {
+                if (!conflict.x || !conflict.y) return;
                 const distance = Math.sqrt((mouseX - conflict.x) ** 2 + (mouseY - conflict.y) ** 2);
                 if (distance < triangleHeight / 80) {
                     conflictPointWasClicked = true;
 
-                    const conflictParticipantTypes = conflict.participants.map((participant: { type: any; }) => participant.type)
+                    const conflictParticipantTypes = conflict.participants.map((participant: { type: string; }) => participant.type)
                     router.push({
                         path: `/${conflictParticipantTypes[0]}`,
                         query: {
@@ -590,25 +559,6 @@ export default defineComponent({
             updateColors();
         });
 
-        // Watcher for the sessionStore to update diagram when the activityData changes
-        // watch(() => sessionStore.outdated, async () => {
-        //     if (sessionStore.outdated) {
-        //         points = ref([
-        //             { x: triangleWidth / 2, y: triangleHeight / 8, id: "instruments", label: activateTerms[sessionStore.activeLanguage].instruments, tooltip: staticContent.hoverText.instruments[sessionStore.activeLanguage], color: getPointColor(), active: false, highlighted: false }, // Ecke oben
-        //             { x: triangleWidth / 8, y: (triangleHeight / 8) * 7, id: "rules", label: activateTerms[sessionStore.activeLanguage].rules, tooltip: staticContent.hoverText.rules[sessionStore.activeLanguage], color: getPointColor(), active: false, highlighted: false }, // Ecke Links Unten
-        //             { x: (triangleWidth / 8) * 7, y: (triangleHeight / 8) * 7, id: "division_of_labour", label: activateTerms[sessionStore.activeLanguage].division_of_labour, tooltip: staticContent.hoverText.division_of_labour[sessionStore.activeLanguage], color: getPointColor(), active: false, highlighted: false }, // Ecke Rechts Unten
-        //             { x: (triangleWidth / 16) * 5, y: triangleHeight / 2, id: "subject", label: activateTerms[sessionStore.activeLanguage].subject, tooltip: staticContent.hoverText.subject[sessionStore.activeLanguage], color: getPointColor(), active: false, highlighted: false }, // Links Mitte
-        //             { x: (triangleWidth / 16) * 11, y: triangleHeight / 2, id: "object", label: activateTerms[sessionStore.activeLanguage].object, tooltip: staticContent.hoverText.object[sessionStore.activeLanguage], color: getPointColor(), active: false, highlighted: false }, // Rechts Mitte
-        //             { x: triangleWidth / 2, y: (triangleHeight / 8) * 7, id: "community", label: activateTerms[sessionStore.activeLanguage].community, tooltip: staticContent.hoverText.community[sessionStore.activeLanguage], color: getPointColor(), active: false, highlighted: false }, // Unten Mitte
-        //         ]);
-        //         activityData.value = await getActivityDetail(sessionStore.sessionActivity as Activity)
-        //         await conflictStore.refreshConflictList();
-        //         conflictData = conflictStore.getConflicts;
-        //         sessionStore.outdated = false;
-        //         draw();
-        //     }
-        // });
-
         // Watcher for the hasToBeCleared state
         watch(hasToBeCleared, () => {
             if (hasToBeCleared.value) {
@@ -641,6 +591,11 @@ export default defineComponent({
             updateColors();
         });
 
+        const onKeyCleaned = (key: string, newKey: string) => {
+            if (!hoveredConflictPointData.value) return;
+            hoveredConflictPointData.value.description[key] = newKey;
+        };
+
 
         return {
             canvas,
@@ -651,6 +606,7 @@ export default defineComponent({
             hoveredPointData,
             hoveredConflictPointData,
             hoverPosition,
+            onKeyCleaned
         };
     },
 });
@@ -658,12 +614,15 @@ export default defineComponent({
 
 <template>
     <div @mouseleave="hoveredPointData = null">
-        <canvas ref="canvas" :width="triangleWidth" :height="triangleHeight" @mousemove="handleHover"
+        <canvas
+ref="canvas" :width="triangleWidth" :height="triangleHeight" @mousemove="handleHover"
             @click="handleClick" />
 
-        <PointHoverPopUp v-if="hoveredPointData" :hoveredPoint="hoveredPointData" :position="hoverPosition" />
-        <ConflictHoverPopUp v-if="hoveredConflictPointData" :hoveredConflictPoint="hoveredConflictPointData"
-            :position="hoverPosition" />
+        <PointHoverPopUp v-if="hoveredPointData" :hovered-point="hoveredPointData" :position="hoverPosition" />
+        <ConflictHoverPopUp
+v-if="hoveredConflictPointData" :hovered-conflict-point="hoveredConflictPointData"
+            :position="hoverPosition" @key-cleaned="onKeyCleaned"
+ />
     </div>
 </template>
 

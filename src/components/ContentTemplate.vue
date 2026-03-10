@@ -64,7 +64,8 @@ const filteredConflicts = computed(() => {
       <div class="conflict-container">
         <div class="note-container">
           <!-- NoteCard component for displaying conflict details -->
-          <NoteCard :conflict="conflict"
+          <NoteCard
+            :conflict="conflict"
             :title="conflict.title[sessionStore.activeLanguage] || conflict.title['default']"
             :content="conflict.description[sessionStore.activeLanguage] || conflict.description['default']"
             :origin="conflict.origin"
@@ -72,8 +73,8 @@ const filteredConflicts = computed(() => {
                      conflict.author.labels?.['default'] || 
                      Object.values(conflict.author.labels || {}).find(label => typeof label === 'string' && label.trim() !== '') || 
                      conflict.author.id || ''"
-            :authorId="conflict.author.id"
-            :status="conflict.status" :isGrayedOut="!!highlightedConflictId && conflict.id !== highlightedConflictId" />
+            :author-id="conflict.author.id"
+            :status="conflict.status" :is-grayed-out="!!highlightedConflictId && conflict.id !== highlightedConflictId" />
         </div>
 
       </div>
