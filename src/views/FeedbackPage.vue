@@ -2,7 +2,7 @@
 import { computed, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 
-import { Button } from '@/components/ui/button'
+import { ButtonComponent } from '@/components/ui/button'
 import { Select, SelectContent, SelectTrigger, SelectValue } from '@/components/ui/select';
 import RecursiveSelect from '@/components/RecursiveSelect.vue';
 import LoadingOverlay from '@/components/LoadingOverlay.vue'
@@ -236,9 +236,9 @@ v-for="group in groupedQuestionData" :key="group.key"
         </div>
 
         <div class="mt-8">
-            <Button class="w-full text-black bg-white border border-black hover:bg-black hover:text-white disabled:hover:bg-white disabled:hover:text-black" @click="submitFeedback">
+            <ButtonComponent class="w-full text-black bg-white border border-black hover:bg-black hover:text-white disabled:hover:bg-white disabled:hover:text-black" @click="submitFeedback">
                 {{ staticContent.noteCards.save[activeLang] }}
-            </Button>
+            </ButtonComponent>
         </div>
         <LoadingOverlay :visible="loading" :message="staticContent.placeholders.loading[activeLang]" />
     </div>

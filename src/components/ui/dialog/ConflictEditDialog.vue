@@ -2,7 +2,7 @@
 import { ref, computed } from 'vue';
 import { KnowledgeGraphActivityClass, Participant, RDFOperation } from '@/data/knowledge_graph/structures';
 import { updateConflictText, updateConflictParticipants } from "@/data/knowledge_graph/write_operations";
-import { Button } from '@/components/ui/button';
+import { ButtonComponent } from '@/components/ui/button';
 import { useConflictsStore } from '@/stores/conflictsStore';
 import { useSessionStore } from '@/stores/sessionStore';
 import { activateTerms, staticContent } from '@/data/contentData';
@@ -333,10 +333,10 @@ v-model="editedDescription" class="w-full border rounded p-2 dark:bg-gray-900 da
               </label>
               <DropdownMenu>
                 <DropdownMenuTrigger as-child>
-                  <Button variant="outline" class="w-full justify-between mt-2 h-auto min-h-[40px] py-2">
+                  <ButtonComponent variant="outline" class="w-full justify-between mt-2 h-auto min-h-[40px] py-2">
                     <span class="text-left flex-1 whitespace-normal break-words">{{ getSelectedParticipantsText(activityClass) }}</span>
                     <span class="text-xs ml-2 flex-shrink-0">▼</span>
-                  </Button>
+                  </ButtonComponent>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent class="max-h-64 w-[--radix-dropdown-menu-trigger-width] overflow-y-auto">
                   <DropdownMenuLabel>
@@ -358,12 +358,12 @@ v-model="editedDescription" class="w-full border rounded p-2 dark:bg-gray-900 da
           </div>
         </div>
         <DialogFooter class="flex justify-between mt-4">
-          <Button variant="secondary" :disabled="isSaving" @click="cancelEdit">
+          <ButtonComponent variant="secondary" :disabled="isSaving" @click="cancelEdit">
             {{ staticContent.noteCards.cancel[sessionStore.activeLanguage] }}
-          </Button>
-          <Button :disabled="isSaving" @click="saveEditedConflict">
+          </ButtonComponent>
+          <ButtonComponent :disabled="isSaving" @click="saveEditedConflict">
             {{ staticContent.noteCards.save[sessionStore.activeLanguage] }}
-          </Button>
+          </ButtonComponent>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -382,9 +382,9 @@ v-model="editedDescription" class="w-full border rounded p-2 dark:bg-gray-900 da
           </DialogTitle>
         </DialogHeader>
         <DialogFooter class="flex justify-end">
-          <Button variant="destructive" @click="isParticipantRequiredOpen = false">
+          <ButtonComponent variant="destructive" @click="isParticipantRequiredOpen = false">
             {{ staticContent.noteCards.ok[sessionStore.activeLanguage] }}
-          </Button>
+          </ButtonComponent>
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -3,7 +3,7 @@ import { ref, onMounted, nextTick, computed, watch } from 'vue';
 import { conflictPredicate, conflictStatus, ConflictWithId, Participant } from '@/data/knowledge_graph/structures';
 import ReplyCard from './ReplyCard.vue';
 import { addComment, deleteConflict, updateConflict } from "@/data/knowledge_graph/write_operations";
-import { Button } from '@/components/ui/button';
+import { ButtonComponent } from '@/components/ui/button';
 import { useConflictsStore } from '@/stores/conflictsStore';
 import { useSessionStore } from '@/stores/sessionStore';
 import { activateTerms, staticContent } from '@/data/contentData';
@@ -239,18 +239,18 @@ const refreshReplies = async () => {
     <!-- Note comment section starting with add comment button -->
 
     <div v-if="!replyInputVisible[conflict.id ?? '']" class="note-comment-section">
-      <Button @click="toggleReplyInput(conflict.id ?? '')">
-        {{ staticContent.noteCards.addComment[sessionStore.activeLanguage] }} </Button>
+      <ButtonComponent @click="toggleReplyInput(conflict.id ?? '')">
+        {{ staticContent.noteCards.addComment[sessionStore.activeLanguage] }} </ButtonComponent>
     </div>
 
     <div v-if="replyInputVisible[conflict.id ?? '']" class="comment-input">
-      <Button @click="toggleReplyInput(conflict.id ?? '')">
-        {{ staticContent.noteCards.cancel[sessionStore.activeLanguage] }} </Button>
+      <ButtonComponent @click="toggleReplyInput(conflict.id ?? '')">
+        {{ staticContent.noteCards.cancel[sessionStore.activeLanguage] }} </ButtonComponent>
       <textarea
 ref="textareaRef" v-model="newReplyText[conflict.id ?? '']"
         :placeholder="staticContent.placeholders.answer[sessionStore.activeLanguage]"
         @keydown.enter="handleEnterKey($event)" />
-      <Button @click="saveReply(conflict.id ?? '')">{{ staticContent.noteCards.save[sessionStore.activeLanguage] }}</Button>
+      <ButtonComponent @click="saveReply(conflict.id ?? '')">{{ staticContent.noteCards.save[sessionStore.activeLanguage] }}</ButtonComponent>
     </div>
 
     <div v-if="conflictDetail && conflictDetail.replies && conflictDetail.replies.length > 0" class="reply-container">

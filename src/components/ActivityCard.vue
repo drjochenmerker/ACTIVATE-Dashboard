@@ -15,7 +15,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogD
 import QrcodeVue from 'qrcode.vue'
 
 // ui components
-import { Button } from '@/components/ui/button';
+import { ButtonComponent } from '@/components/ui/button';
 import { Play } from 'lucide-vue-next';
 import { staticContent } from '@/data/contentData';
 import { llmPool } from '@/data/knowledge_graph/llm_utils';
@@ -245,9 +245,9 @@ const showUrl = ref(false)
                         <div>
                             <Dialog v-model:open="showQrDialog">
                                 <DialogTrigger as-child>
-                                    <Button variant="secondary" size="icon">
+                                    <ButtonComponent variant="secondary" size="icon">
                                         <span class="material-symbols-outlined">qr_code</span>
-                                    </Button>
+                                    </ButtonComponent>
                                 </DialogTrigger>
                                 <DialogContent>
                                     <DialogHeader>
@@ -264,20 +264,20 @@ const showUrl = ref(false)
 
                                     <!-- Button to show/copy URL -->
                                     <div class="flex flex-col items-center gap-2">
-                                        <Button variant="outline" @click="showUrl = !showUrl">
+                                        <ButtonComponent variant="outline" @click="showUrl = !showUrl">
                                             {{ showUrl ? staticContent.startPage.hideQr[sessionStore.activeLanguage] :
                                                 staticContent.startPage.showQr[sessionStore.activeLanguage] }}
-                                        </Button>
+                                        </ButtonComponent>
 
                                         <div
 v-if="showUrl"
                                             class="w-full max-w-md break-words text-center flex flex-col items-center gap-3 p-4 border rounded bg-gray-50 dark:bg-gray-900 border-gray-300">
                                             <div id="feedback-url-text">{{ feedbackUrl }}</div>
-                                            <Button variant="outline" @click="copyUrlToClipboard">
+                                            <ButtonComponent variant="outline" @click="copyUrlToClipboard">
                                                 {{ copied ?
                                                     staticContent.startPage.copiedLink[sessionStore.activeLanguage] :
                                                     staticContent.startPage.copyLink[sessionStore.activeLanguage] }}
-                                            </Button>
+                                            </ButtonComponent>
                                         </div>
 
                                     </div>
@@ -289,9 +289,9 @@ v-if="showUrl"
                         <div>
                             <Dialog>
                                 <DialogTrigger as-child>
-                                    <Button variant="default" size="icon">
+                                    <ButtonComponent variant="default" size="icon">
                                         <Play class="w-4 h-4" />
-                                    </Button>
+                                    </ButtonComponent>
                                 </DialogTrigger>
                                 <DialogContent>
                                     <DialogHeader>
@@ -320,11 +320,11 @@ v-if="showUrl"
                                     <DialogFooter class="flex justify-between">
                                         <Dialog v-if="sessionStore.instructorView" v-model:open="showPoolingDialog">
                                             <DialogTrigger as-child>
-                                                <Button class="mr-auto" type="button">
+                                                <ButtonComponent class="mr-auto" type="button">
                                                     {{
                                                         staticContent.startPage.poolingButton[sessionStore.activeLanguage]
                                                     }}
-                                                </Button>
+                                                </ButtonComponent>
                                             </DialogTrigger>
 
                                             <DialogContent>
@@ -352,13 +352,13 @@ for="create-copy-before-pooling"
                                                         </label>
                                                     </div>
                                                     <div class="flex justify-between items-center mt-4">
-                                                        <Button variant="secondary" @click="showPoolingDialog = false">
+                                                        <ButtonComponent variant="secondary" @click="showPoolingDialog = false">
                                                             Cancel
-                                                        </Button>
-                                                        <Button variant="destructive" @click="handlePoolingStart()">
+                                                        </ButtonComponent>
+                                                        <ButtonComponent variant="destructive" @click="handlePoolingStart()">
                                                             {{ staticContent.startPage.pool[sessionStore.activeLanguage]
                                                             }}
-                                                        </Button>
+                                                        </ButtonComponent>
                                                     </div>
 
                                                     <LoadingOverlay
@@ -374,7 +374,7 @@ for="create-copy-before-pooling"
                                         </Dialog>
 
                                         <!-- Start Session Button -->
-                                        <Button type="submit" @click="() => handleStartSession()">
+                                        <ButtonComponent type="submit" @click="() => handleStartSession()">
                                             <template v-if="sessionStartAllowed()">
                                                 {{
                                                     staticContent.startPage.startDebriefing[sessionStore.activeLanguage]
@@ -385,7 +385,7 @@ for="create-copy-before-pooling"
                                                 {{ staticContent.startPage.startDebriefing[sessionStore.activeLanguage]
                                                 }}
                                             </template>
-                                        </Button>
+                                        </ButtonComponent>
                                     </DialogFooter>
                                 </DialogContent>
                             </Dialog>

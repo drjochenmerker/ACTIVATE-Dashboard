@@ -11,7 +11,7 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { ButtonComponent } from '@/components/ui/button';
 import ActivityCard from '@/components/ActivityCard.vue';
 import {
   Dialog,
@@ -127,10 +127,10 @@ const addNewActivity = async () => {
       <div v-if="sessionStore.instructorView" class="flex justify-center my-6">
         <Dialog v-model:open="dialogOpen">
           <DialogTrigger as-child>
-            <Button
+            <ButtonComponent
               class="text-3xl px-6 py-3 rounded-full text-black bg-white border border-black hover:bg-black hover:text-white transition-colors duration-300">
               <PlusIcon class="h-6 w-6" />
-            </Button>
+            </ButtonComponent>
           </DialogTrigger>
           <DialogContent class="sm:max-w-[425px]">
             <DialogHeader>
@@ -159,7 +159,7 @@ v-model="newDescription" class="w-full border rounded p-2 mb-1 dark:bg-gray-900"
               </DialogDescription>
               <input v-model="defaultRole" class="w-full border rounded p-2 mb-2 dark:bg-gray-900 border-gray-300" />
 
-              <Button @click="addNewActivity">{{ staticContent.terms.done[sessionStore.activeLanguage] }}</Button>
+              <ButtonComponent @click="addNewActivity">{{ staticContent.terms.done[sessionStore.activeLanguage] }}</ButtonComponent>
 
               <!-- <div v-if="loading">
                 <Loader2 class="animate-spin h-5 w-5 ml-2 inline-block" />

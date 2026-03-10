@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import OptionsButton from '@/components/OptionsButton.vue';
-import Button from '@/components/ui/button/Button.vue';
+import ButtonComponent from '@/components/ui/button/ButtonComponent.vue';
 import { llmSubmit, llmPool, llmSettingGeneration } from '@/data/knowledge_graph/llm_utils';
 import { getActivities, getConflictIds } from '@/data/knowledge_graph/read_operations';
 import { useLLMSettingsStore } from '@/stores/llmSettingsStore';
@@ -208,7 +208,7 @@ const combineData = async () => {
                 <div>
                     <h3 class="font-semibold text-gray-800 text-sm mb-2">Aktivität erstellen. ID aus console ziehen.
                     </h3>
-                    <Button variant="outline" @click="createActivity">Create Activity</Button>
+                    <ButtonComponent variant="outline" @click="createActivity">Create Activity</ButtonComponent>
                 </div>
                 <div class="p-4 bg-white rounded-lg shadow-sm border border-gray-200">
                     <label class="text-sm font-semibold text-gray-700 block mb-2">Aktive Graph ID:</label>
@@ -228,14 +228,14 @@ v-model="graphId" type="text" placeholder="Graph ID eingeben..."
                         </select>
                     </div>
                     <div class="flex flex-wrap gap-2">
-                        <Button
+                        <ButtonComponent
 :disabled="isTesting" class="bg-blue-600 hover:bg-blue-700 text-white"
                             @click="runTests">
                             {{ isTesting ? 'Verarbeite...' : 'Test starten' }}
-                        </Button>
-                        <Button
+                        </ButtonComponent>
+                        <ButtonComponent
 variant="outline" :disabled="!readyForCombine" class="border-blue-600 text-blue-600 hover:bg-blue-50"
-                            @click="combineData">Combine (Pool)</Button>
+                            @click="combineData">Combine (Pool)</ButtonComponent>
 
                     </div>
                 </div>
@@ -274,11 +274,11 @@ v-model="qa.answer" rows="2" class="w-full p-1.5 text-sm border rounded"
                     <div class="flex justify-between items-center mt-2">
                         <button class="text-xs text-blue-600 font-medium hover:underline" @click="addCustomQAPair">+ Q/A
                             hinzufügen</button>
-                        <Button
+                        <ButtonComponent
 :disabled="isTesting" class="bg-green-600 hover:bg-green-700 text-white text-xs py-1"
                             @click="testCustomData">
                             Senden
-                        </Button>
+                        </ButtonComponent>
                     </div>
                 </div>
             </div>
@@ -310,7 +310,7 @@ class="w-2 h-2 rounded-full"
                     </div>
                 </div>
                 <div>
-                    <Button variant="outline" @click="getActivityData">Aktivitätsdaten abrufen (API Test)</Button>
+                    <ButtonComponent variant="outline" @click="getActivityData">Aktivitätsdaten abrufen (API Test)</ButtonComponent>
                 </div>
                 <div class="space-y-2">
                     <h3 class="font-semibold text-gray-800 text-sm ml-1">Vordefinierte Daten ansehen</h3>

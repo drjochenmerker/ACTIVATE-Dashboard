@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref, computed } from 'vue';
 import { updateComment } from "@/data/knowledge_graph/write_operations";
-import { Button } from '@/components/ui/button';
+import { ButtonComponent } from '@/components/ui/button';
 import { useSessionStore } from '@/stores/sessionStore';
 import { useConflictsStore } from '@/stores/conflictsStore';
 import { staticContent } from '@/data/contentData';
@@ -140,12 +140,12 @@ v-model="editedDescription" class="w-full border rounded p-2 dark:bg-gray-900 da
           </div>
         </div>
         <DialogFooter class="flex justify-between mt-4">
-          <Button variant="secondary" :disabled="isSaving" @click="cancelEdit">
+          <ButtonComponent variant="secondary" :disabled="isSaving" @click="cancelEdit">
             {{ staticContent.noteCards.cancel[sessionStore.activeLanguage] }}
-          </Button>
-          <Button :disabled="isSaving" @click="saveEditedComment">
+          </ButtonComponent>
+          <ButtonComponent :disabled="isSaving" @click="saveEditedComment">
             {{ staticContent.noteCards.save[sessionStore.activeLanguage] }}
-          </Button>
+          </ButtonComponent>
         </DialogFooter>
       </DialogContent>
     </Dialog>

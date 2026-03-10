@@ -5,7 +5,7 @@ import { useSessionStore } from '@/stores/sessionStore';
 import { staticContent } from '@/data/contentData';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
+import { ButtonComponent } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Select,
@@ -239,7 +239,7 @@ const getCurrentModelConfig = () => {
                     {{ getProviderDisplayName(selectedProvider) }}
                   </CardDescription>
                 </div>
-                <Button
+                <ButtonComponent
                   v-if="!isEditing"
                   variant="outline"
                   size="sm"
@@ -247,7 +247,7 @@ const getCurrentModelConfig = () => {
                 >
                   <Edit class="w-4 h-4 mr-2" />
                   {{ staticContent.optionsPage.edit[sessionStore.activeLanguage] }}
-                </Button>
+                </ButtonComponent>
               </div>
             </CardHeader>
             <CardContent>
@@ -335,17 +335,17 @@ const getCurrentModelConfig = () => {
                 </div>
 
                 <div class="flex justify-end gap-2 pt-2">
-                  <Button variant="outline" @click="cancelEditing">
+                  <ButtonComponent variant="outline" @click="cancelEditing">
                     <X class="w-4 h-4 mr-2" />
                     {{ staticContent.optionsPage.cancel[sessionStore.activeLanguage] }}
-                  </Button>
-                  <Button
+                  </ButtonComponent>
+                  <ButtonComponent
                     :disabled="!formModelName.trim() || formTemperature < 0"
                     @click="saveModelConfig"
                   >
                     <Save class="w-4 h-4 mr-2" />
                     {{ staticContent.optionsPage.save[sessionStore.activeLanguage] }}
-                  </Button>
+                  </ButtonComponent>
                 </div>
               </div>
             </CardContent>
@@ -361,7 +361,7 @@ const getCurrentModelConfig = () => {
                     {{ staticContent.optionsPage.promptPlaceholder[sessionStore.activeLanguage] }}
                   </CardDescription>
                 </div>
-                <Button
+                <ButtonComponent
                   v-if="!isEditingPrompt"
                   variant="outline"
                   size="sm"
@@ -369,7 +369,7 @@ const getCurrentModelConfig = () => {
                 >
                   <Edit class="w-4 h-4 mr-2" />
                   {{ staticContent.optionsPage.edit[sessionStore.activeLanguage] }}
-                </Button>
+                </ButtonComponent>
               </div>
             </CardHeader>
             <CardContent>
@@ -523,14 +523,14 @@ const getCurrentModelConfig = () => {
                   </p>
                 </div>
                 <div class="flex justify-end gap-2">
-                  <Button variant="outline" @click="cancelEditingPrompt">
+                  <ButtonComponent variant="outline" @click="cancelEditingPrompt">
                     <X class="w-4 h-4 mr-2" />
                     {{ staticContent.optionsPage.cancel[sessionStore.activeLanguage] }}
-                  </Button>
-                  <Button :disabled="!isPredefinedEntitiesJsonValid" @click="savePrompt">
+                  </ButtonComponent>
+                  <ButtonComponent :disabled="!isPredefinedEntitiesJsonValid" @click="savePrompt">
                     <Save class="w-4 h-4 mr-2" />
                     {{ staticContent.optionsPage.save[sessionStore.activeLanguage] }}
-                  </Button>
+                  </ButtonComponent>
                 </div>
               </div>
             </CardContent>

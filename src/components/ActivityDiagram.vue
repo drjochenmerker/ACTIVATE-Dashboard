@@ -12,7 +12,6 @@ import { getActivityDetail } from "@/data/knowledge_graph/read_operations";
 import { activateTerms, staticContent } from "@/data/contentData";
 import { Activity, ActivityDetail, Conflict, conflictStatus, Objective } from "@/data/knowledge_graph/structures";
 
-import { Button } from '@/components/ui/button';
 import PointHoverPopUp from '@/components/PointHoverPopUp.vue';
 import ConflictHoverPopUp from "./ConflictHoverPopUp.vue";
 
@@ -25,7 +24,6 @@ export default defineComponent({
     components: {
         ConflictHoverPopUp,
         PointHoverPopUp,
-        Button
     },
 
     /**

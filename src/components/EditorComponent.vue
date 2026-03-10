@@ -1,7 +1,7 @@
 <script>
 import Quill from 'quill';
 import 'quill/dist/quill.snow.css';
-import Button from '@/components/ui/button/Button.vue';
+import { ButtonComponent } from '@/components/ui/button';
 import Dropdown from './Dropdown.vue';
 
 import { useToast } from 'vue-toastification';
@@ -22,9 +22,9 @@ import { buildLanguageString } from '@/lib/utils';
  * Allows to add new conflicts and miscellaneous comments to the graph
  */
 export default {
-  name: 'Editor',
+  name: 'EditorComponent',
   components: {
-    Button,
+    ButtonComponent,
     Dropdown
   },
   props: {
@@ -368,9 +368,9 @@ v-if="activePoints.length == 3"
     </label>
 
 
-    <Button variant="primary" size="large" class="transfer-button" :disabled="isDoneDisabled" @click="transferText">
+    <ButtonComponent variant="primary" size="large" class="transfer-button" :disabled="isDoneDisabled" @click="transferText">
       {{ staticContent.terms.done[sessionStore.activeLanguage] || staticContent.terms.done.en }}
-    </Button>
+    </ButtonComponent>
 
   </div>
 </template>

@@ -5,8 +5,7 @@ import NoteCardMisc from '@/components/NoteCardMisc.vue';
 import { activateTerms, contentData, staticContent } from '@/data/contentData';
 import ContentTemplate from '@/components/ContentTemplate.vue';
 import { useSessionStore } from '@/stores/sessionStore';
-import Editor from '@/components/Editor.vue';
-import { Button } from '@/components/ui/button';
+import { ButtonComponent } from '@/components/ui/button';
 import { useActivityPointsStore } from "@/stores/activityPointsStore";
 import { storeToRefs } from 'pinia';
 import { PlusIcon } from 'lucide-vue-next';
@@ -56,18 +55,18 @@ v-if="route.params.id !== 'misc' && pageData" :page-data="pageData"
         <!-- When on misc page, show misc comments-->
         <div v-if="route.params.id === 'misc'">
             <div>
-                <Button
+                <ButtonComponent
 :title="isEditorDrawerOpen ? 'Hide Editor' : 'Show Editor'"
                     variant="default" size="icon" :class="[
                     'z-50 rounded-full shadow transition-all',
                     isEditorDrawerOpen ? 'rotate-45' : ''
                     ]" @click="isEditorDrawerOpen = !isEditorDrawerOpen">
                     <PlusIcon class="h-6 w-6" />
-                </Button>
+                </ButtonComponent>
                 <div class="flex flex-col py-2">
                     <transition name="fade">
                     <div v-if="isEditorDrawerOpen" class="transition-all duration-300 ease-in-out">
-                        <Editor :active-points="getActivePoints" :is-note="true" />
+                        <EditorComponent :active-points="getActivePoints" :is-note="true" />
                     </div>
                     </transition>
                 </div>
