@@ -17,7 +17,7 @@ declare global {
 const pinia = createPinia();
 
 String.prototype.replaceMultiple = function (mapObj) {
-    var re = new RegExp(Object.keys(mapObj).join("|"), "gi");
+    const re = new RegExp(Object.keys(mapObj).join("|"), "gi");
 
     return this.replace(re, function (matched) {
         return mapObj[matched];

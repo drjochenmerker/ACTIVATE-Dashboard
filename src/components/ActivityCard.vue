@@ -6,6 +6,7 @@ import { useSessionStore } from '@/stores/sessionStore';
 import { getActivityClassIds } from '@/data/knowledge_graph/read_operations';
 import { useActivityStore } from '@/stores/activityStore';
 import { buildTreeStructByLang } from '@/data/knowledge_graph/utils';
+import { cloneActivity } from '@/data/knowledge_graph/write_operations';
 
 // functional components
 import { Activity, KnowledgeGraphActivityClass, NestedMultiLangObject } from '@/data/knowledge_graph/structures';
@@ -21,6 +22,7 @@ import { llmPool } from '@/data/knowledge_graph/llm_utils';
 import LoadingOverlay from '@/components/LoadingOverlay.vue';
 import RecursiveSelect from './RecursiveSelect.vue';
 import { Select, SelectTrigger, SelectContent, SelectValue } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
 import { useLLMSettingsStore } from '@/stores/llmSettingsStore';
 import DeletionPopUp from './DeletionPopUp.vue';
 
@@ -44,11 +46,12 @@ const showPoolingDialog = ref(false)
 const nothingToPool = ref(false);
 const loading = ref(false);
 const copied = ref(false);
+const createCopyBeforePooling = ref(false);
 
 
 // activity store management
 const activityStore = useActivityStore();
-let activities = ref<Activity[]>([]);
+const activities = ref<Activity[]>([]);
 
 // load all activities on component mount
 onMounted(async () => {
@@ -145,15 +148,58 @@ const handlePoolingStart = async () => {
     const llmSettingsStore = useLLMSettingsStore();
     try {
         loading.value = true;
+        nothingToPool.value = false;
+
+        let snapshotGraphId: string | null = null;
+        if (createCopyBeforePooling.value) {
+            // Create a clone of the original activity before pooling
+            const newActivityNames: Record<string, string> = {};
+            const copySuffix = staticContent.terms.copySuffix;
+
+            // Update name to "[...] - Copy" for all languages
+            for (const [lang, name] of Object.entries((props.activity as Activity).name)) {
+                // Get the suffix for this language, default to English if not found
+                const suffix = copySuffix[lang as keyof typeof copySuffix] || copySuffix.en;
+                newActivityNames[lang] = `${name} - ${suffix}`;
+            }
+
+            const cloneResult = await cloneActivity(props.activity as Activity, newActivityNames);
+            if (cloneResult.status !== "OK") {
+                console.error("Failed to create snapshot before pooling:", cloneResult);
+                loading.value = false;
+                return;
+            }
+            snapshotGraphId = cloneResult.modified;
+            console.log(`Snapshot created: ${snapshotGraphId}`);
+        }
+        
+        // Pool the feedback on the original activity
         const res = await llmPool(props.activity.graph, llmSettingsStore.getCurrentModelRequestConfig());
         if (res.success === false) {
+            // If pooling fails, delete the snapshot we just created
+            if (snapshotGraphId) {
+                console.warn("Pooling failed, deleting snapshot:", snapshotGraphId);
+                await activityStore.removeActivity(snapshotGraphId);
+                console.log("Snapshot deleted after pooling failure");
+            }
             nothingToPool.value = true;
             loading.value = false;
             return;
         }
+
+        if (snapshotGraphId) {
+            // Pooling succeeded - snapshot remains, both versions are now persistent
+            console.log("Pooling succeeded. Snapshot and pooled version are now persistent.");
+        }
+        
+        // Refresh activity list to show both versions
+        await activityStore.refreshActivityList();
+        
         showPoolingDialog.value = false;
     } catch (error) {
         console.error("Error during pooling:", error);
+    } finally {
+        loading.value = false;
     }
 }
 
@@ -188,7 +234,8 @@ const showUrl = ref(false)
                     <div class="flex justify-between items-center gap-4 flex-wrap">
                         <!-- Delete Button -->
                         <div v-if="sessionStore.instructorView">
-                            <DeletionPopUp :title="staticContent.startPage.deleteActivity[sessionStore.activeLanguage]"
+                            <DeletionPopUp
+:title="staticContent.startPage.deleteActivity[sessionStore.activeLanguage]"
                                 :description="staticContent.startPage.deleteActivityConfirm[sessionStore.activeLanguage]"
                                 :delete-function="() => deleteThisActivity()" />
                         </div>
@@ -222,7 +269,8 @@ const showUrl = ref(false)
                                                 staticContent.startPage.showQr[sessionStore.activeLanguage] }}
                                         </Button>
 
-                                        <div v-if="showUrl"
+                                        <div
+v-if="showUrl"
                                             class="w-full max-w-md break-words text-center flex flex-col items-center gap-3 p-4 border rounded bg-gray-50 dark:bg-gray-900 border-gray-300">
                                             <div id="feedback-url-text">{{ feedbackUrl }}</div>
                                             <Button variant="outline" @click="copyUrlToClipboard">
@@ -257,7 +305,7 @@ const showUrl = ref(false)
                                     </DialogHeader>
 
                                     <!-- Select a role-->
-                                    <Select v-model="sessionStore.sessionRole" id="roleSelect" class="my-4">
+                                    <Select id="roleSelect" v-model="sessionStore.sessionRole" class="my-4">
                                         <SelectTrigger>
                                             <SelectValue
                                                 :placeholder="staticContent.placeholders.roleSelect[sessionStore.activeLanguage]" />
@@ -291,6 +339,18 @@ const showUrl = ref(false)
                                                             staticContent.startPage.confirmationText[sessionStore.activeLanguage]
                                                         }}
                                                     </DialogDescription>
+                                                    <div class="mt-4 flex items-center gap-2">
+                                                        <Checkbox
+id="create-copy-before-pooling"
+                                                            v-model:checked="createCopyBeforePooling" />
+                                                        <label
+for="create-copy-before-pooling"
+                                                            class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                                            {{
+                                                                staticContent.startPage.createCopyBeforePooling[sessionStore.activeLanguage]
+                                                            }}
+                                                        </label>
+                                                    </div>
                                                     <div class="flex justify-between items-center mt-4">
                                                         <Button variant="secondary" @click="showPoolingDialog = false">
                                                             Cancel
@@ -301,7 +361,8 @@ const showUrl = ref(false)
                                                         </Button>
                                                     </div>
 
-                                                    <LoadingOverlay :visible="loading"
+                                                    <LoadingOverlay
+:visible="loading"
                                                         :message="staticContent.placeholders.loading[sessionStore.activeLanguage]" />
                                                     <p v-if="nothingToPool" class="mt-4 text-red-500 font-semibold">
                                                         {{

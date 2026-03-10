@@ -71,7 +71,8 @@ const tooltipList = computed(() => {
 
 <template>
   <!-- SCENE 1 -->
-  <div v-if="sessionStore.activeScene === 'Scene 1'" ref="popupRef" class="popup"
+  <div
+v-if="sessionStore.activeScene === 'Scene 1'" ref="popupRef" class="popup"
     :class="{ 'popup-dark': mode === 'dark' }" :style="popupStyle">
     <b>{{ hoveredPoint.label }}:</b>
     <br>
@@ -83,7 +84,8 @@ const tooltipList = computed(() => {
   </div>
 
   <!-- SCENE 2 -->
-  <div v-if="sessionStore.activeScene === 'Scene 2'" ref="popupRef" class="popup"
+  <div
+v-if="sessionStore.activeScene === 'Scene 2'" ref="popupRef" class="popup"
     :class="{ 'popup-dark': mode === 'dark' }" :style="popupStyle">
     <b>{{ hoveredPoint.label }}:</b>
     <br>

@@ -14,8 +14,9 @@ import { staticContent } from '@/data/contentData';
  * Props of the RDFTripleAdder component
  * @property isOpen - Determines if the modal is open (controlled from parent)
  */
-defineProps<{
-    isOpen: Boolean,
+
+const props = defineProps<{
+    isOpen: boolean;
 }>();
 
 // Global state
@@ -23,7 +24,7 @@ const sessionStore = useSessionStore()
 const mode = useColorMode();
 
 // State variables
-const isOpen = ref(false);
+const isOpen = ref(props.isOpen);
 const subject = ref({} as Objective);
 const predicate = ref({} as Predicate);
 const object = ref({} as Objective);
@@ -109,7 +110,7 @@ watch([subject, object], () => {
             if (subject.value.type && object.value.type && activityPredicates.value) {
                 try {
                     predicates.value = (activityPredicates.value.get([subject.value.type, object.value.type]) as Array<Predicate>) || [];
-                } catch (error) {
+                } catch (_error) {
                     predicates.value = [];
                 }
             }
@@ -168,7 +169,8 @@ const applyTriple = async () => {
         {{ staticContent.tripleAdd.addTripleText[sessionStore.activeLanguage] }}
     </Button>
 
-    <div v-if="isOpen" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+    <div
+v-if="isOpen" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
         @click.self="closeDialog">
         <div
             :class="mode === 'dark' ? 'rounded shadow p-6 w-full max-w-5xl bg-gray-800 relative' : 'rounded shadow p-6 w-full max-w-5xl bg-white relative'">
@@ -199,25 +201,29 @@ const applyTriple = async () => {
 
                 <!-- Subject Field -->
                 <div class="flex-1">
-                    <RDFAdditionDropdown label="Agent" :options="activityParticipants" v-model="subject"
+                    <RDFAdditionDropdown
+v-model="subject" label="Agent" :options="activityParticipants"
                         :disabled="false" />
                 </div>
 
                 <!-- Predicate Field -->
                 <div class="flex-1">
-                    <RDFAdditionDropdown label="Predicate" :options="predicateOptions" v-model="predicate"
+                    <RDFAdditionDropdown
+v-model="predicate" label="Predicate" :options="predicateOptions"
                         :disabled="!isSubjectValid || !isObjectValid" />
                 </div>
 
                 <!-- Object Field -->
                 <div class="flex-1">
-                    <RDFAdditionDropdown label="Target" :options="activityParticipants" v-model="object"
+                    <RDFAdditionDropdown
+v-model="object" label="Target" :options="activityParticipants"
                         :disabled="!isSubjectValid" />
                 </div>
             </div>
 
             <div class="flex gap-4">
-                <Button class="w-full" :disabled="!isApplyEnabled"
+                <Button
+class="w-full" :disabled="!isApplyEnabled"
                     @click="applyTriple">{{ staticContent.tripleAdd.addTripleText[sessionStore.activeLanguage] }}</Button>
             </div>
         </div>

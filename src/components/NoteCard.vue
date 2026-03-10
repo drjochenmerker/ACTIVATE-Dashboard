@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref, onMounted, nextTick, computed, watch } from 'vue';
 import DOMPurify from 'dompurify';
-import { conflictPredicate, conflictStatus, Participant } from '@/data/knowledge_graph/structures';
+import { conflictPredicate, conflictStatus, ConflictWithId, Participant } from '@/data/knowledge_graph/structures';
 import ReplyCard from './ReplyCard.vue';
 import { addComment, deleteConflict, updateConflict } from "@/data/knowledge_graph/write_operations";
 import { Button } from '@/components/ui/button';
@@ -13,40 +13,15 @@ import { LanguageCode } from '@/data/knowledge_graph/structures'
 import DeletionPopUp from './DeletionPopUp.vue';
 import ConflictEditDialog from './ui/dialog/ConflictEditDialog.vue';
 
-const props = defineProps({
-  conflict: {
-    type: Object,
-    required: true,
-  },
-  title: {
-    type: String,
-    required: true,
-  },
-  content: {
-    type: String,
-    required: true,
-  },
-  origin: {
-    type: String,
-    required: true,
-  },
-  author: {
-    type: String,
-    required: true,
-  },
-  authorId: {
-    type: String,
-    required: true,
-  },
-  status: {
-    type: String,
-    required: true,
-  },
-  isGrayedOut: {
-    type: Boolean,
-    default: false,
-  }
-});
+const props = defineProps<{
+    conflict: ConflictWithId;
+    title: string;
+    content: string;
+    origin: string;
+    author: string;
+    status: string;
+    isGrayedOut: boolean;
+}>();
 
 /** 
  * Reactive references for managing conflict details and reply input state
@@ -54,14 +29,14 @@ const props = defineProps({
  * - replyInputVisible: Tracks visibility of reply input for each conflict
  * - newReplyText: Stores temporary reply text for each conflict
  */
-const conflictDetail = ref<any>(null);
+const conflictDetail = ref<ConflictWithId | null>(null);
 // todo
 // const isShowOriginOpen = ref(false);
 const replyInputVisible = ref<Record<string, boolean>>({});
 const newReplyText = ref<Record<string, string>>({});
 
 // Set status from props
-const selectedStatus = ref<any>(props.status);
+const selectedStatus = ref<string>(props.status);
 
 // Stores for the conflicts and the session
 const conflictStore = useConflictsStore();
@@ -165,10 +140,7 @@ const handleEnterKey = (event: KeyboardEvent) => {
 const openEditDialog = async () => {
   editDialogRef.value?.openEditDialog();
 };
-// TODO
-// const showOrigin = async () => {
-//   isShowOriginOpen.value = false;
-// }
+
 /**
  * Deletes a specific conflict from the conflict store and updates the conflict list.
  * 
@@ -197,53 +169,6 @@ const removeReply = (id: string) => {
 const refreshReplies = async () => {
   await conflictStore.refreshConflictList();
 };
-
-// const cleanContent = computed(() => {
-//   if (!props.content) return '';
-
-//   // Remove all <span class="ql-ui" contenteditable="false"></span> from the string
-//   return props.content.replace(/<span class="ql-ui" contenteditable="false"><\/span>/g, '');
-// });
-
-// const cleanAndWrapLists = computed(() => {
-//   if (!props.content) return '';
-
-//   // 1. Remove the empty spans first
-//   let html = props.content.replace(/<span class="ql-ui" contenteditable="false"><\/span>/g, '');
-
-//   // 2. Convert li with data-list="ordered" into proper <ol><li>...</li></ol>
-//   // and li with data-list="bullet" into <ul><li>...</li></ul>
-
-//   // We do this by splitting content on li and grouping
-//   // Here is a simple regex-based approach:
-
-//   // Match all <li data-list="ordered">...</li>
-//   const orderedListItems = html.match(/<li data-list="ordered">(.*?)<\/li>/gs) || [];
-//   if (orderedListItems.length) {
-//     // Replace all these lis with just <li>content</li>
-//     const orderedLis = orderedListItems.map(item =>
-//       item.replace(/<li data-list="ordered">/, '<li>').replace('</li>', '</li>')
-//     ).join('');
-//     // Replace all ordered lis in original with empty string
-//     html = html.replace(/<li data-list="ordered">(.*?)<\/li>/gs, '');
-
-//     // Insert the <ol> wrapper before the first ordered li was, append after last
-//     // (Simple approach: prepend ol + joined lis + close ol to start of html)
-//     html = `<ol>${orderedLis}</ol>` + html;
-//   }
-
-//   // Similarly for bullet
-//   const bulletListItems = html.match(/<li data-list="bullet">(.*?)<\/li>/gs) || [];
-//   if (bulletListItems.length) {
-//     const bulletLis = bulletListItems.map(item =>
-//       item.replace(/<li data-list="bullet">/, '<li>').replace('</li>', '</li>')
-//     ).join('');
-//     html = html.replace(/<li data-list="bullet">(.*?)<\/li>/gs, '');
-//     html = `<ul>${bulletLis}</ul>` + html;
-//   }
-
-//   return html;
-// });
 
 
 </script>
@@ -281,7 +206,7 @@ const refreshReplies = async () => {
         <DeletionPopUp
           :title="staticContent.startPage.deleteComment[sessionStore.activeLanguage]"
           :description="staticContent.startPage.deleteCommentConfirm[sessionStore.activeLanguage]"
-          :author="props.authorId"
+          :author="props.author"
           :delete-function="() => handleDelete(props.conflict.id)"
         >
         </DeletionPopUp>
@@ -292,31 +217,9 @@ const refreshReplies = async () => {
 
     <div class="note-card-content">
       <!-- Note title -->
+      <!-- // v-html is fine here because it's not a user input field -->
+      <!-- eslint-disable-next-line vue/no-v-html -->
       <div class="note-title" v-html="sanitizedTitle"></div>
-      <!-- Note origin -->
-      <!-- <div class="note-origin">
-        <Dialog v-model:open="isShowOriginOpen">
-          <DialogTrigger as-child>
-            <Button>
-              {{ staticContent.noteCards.showOrigin[sessionStore.activeLanguage] }}
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>{{
-                staticContent.noteCards.origin[sessionStore.activeLanguage] }}
-              </DialogTitle>
-              <DialogDescription>
-                {{ props.origin }}
-              </DialogDescription>
-            </DialogHeader>
-            <DialogFooter>
-              <Button @click="() => showOrigin()">{{ staticContent.noteCards.cancel[sessionStore.activeLanguage]
-              }}</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      </div> -->
 
       <!-- Participants grouped by type -->
       <div class="note-participants">
@@ -333,6 +236,8 @@ const refreshReplies = async () => {
       </div>
 
       <!-- Content -->
+       <!-- // v-html is fine here because it's not a user input field -->
+       <!-- eslint-disable-next-line vue/no-v-html -->
       <div class="note-content" v-html="sanitizedContent"></div>
     </div>
 
@@ -346,15 +251,17 @@ const refreshReplies = async () => {
     <div v-if="replyInputVisible[conflict.id]" class="comment-input">
       <Button @click="toggleReplyInput(conflict.id)">
         {{ staticContent.noteCards.cancel[sessionStore.activeLanguage] }} </Button>
-      <textarea ref="textareaRef" v-model="newReplyText[conflict.id]"
+      <textarea
+ref="textareaRef" v-model="newReplyText[conflict.id]"
         :placeholder="staticContent.placeholders.answer[sessionStore.activeLanguage]"
         @keydown.enter="handleEnterKey($event)" />
       <Button @click="saveReply(conflict.id)">{{ staticContent.noteCards.save[sessionStore.activeLanguage] }}</Button>
     </div>
 
     <div v-if="conflictDetail && conflictDetail.replies && conflictDetail.replies.length > 0" class="reply-container">
-      <ReplyCard v-for="(reply) in conflictDetail.replies" :key="reply.id" :parentComment="reply"
-        :conflictId="conflict.id" :showEdit="sessionStore.instructorView" @deleteComment="removeReply" @refresh="refreshReplies" />
+      <ReplyCard
+v-for="(reply) in conflictDetail.replies" :key="reply.id" :parent-comment="reply"
+        :conflict-id="conflict.id" :show-edit="sessionStore.instructorView" @delete-comment="removeReply" @refresh="refreshReplies" />
     </div>
   </div>
 
@@ -530,21 +437,6 @@ const refreshReplies = async () => {
 
 .note-content {
   font-weight: normal;
-  /**display: block !important;*/
-
 }
 
-/**
-
-.note-content ul,
-.note-content ol {
-  list-style-type: disc !important;
-  margin-left: 1.5em !important;
-  padding-left: 1.5em !important;
-  display: block !important;
-}
-
-.note-content li {
-  display: list-item !important;
-} */
 </style>

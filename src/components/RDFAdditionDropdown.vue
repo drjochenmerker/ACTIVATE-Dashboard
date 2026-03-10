@@ -2,7 +2,6 @@
 import { activateTerms, staticContent } from '@/data/contentData';
 import { buildLanguageString } from '@/lib/utils';
 import { useSessionStore } from '@/stores/sessionStore';
-import { Delete, DeleteIcon } from 'lucide-vue-next';
 
 export default {
   name: 'Dropdown',
@@ -25,7 +24,7 @@ export default {
     },
     modelValue: {
       type: Object,
-      default: {}
+      default: () => {},
     },
     disabled: {
       type: Boolean,
@@ -66,6 +65,25 @@ export default {
         return buildLanguageString(option, lang, isLabel);
       };
     }
+  },
+  watch: {
+    /**
+     * Updates local search value when modelValue prop changes
+     */
+    modelValue(newVal) {
+      try {
+        this.search = buildLanguageString(newVal, this.sessionStore.activeLanguage, true);
+      }
+      catch (_error) {
+        this.search = '';
+      }
+    }
+  },
+  mounted() {
+    document.addEventListener('click', this.handleClickOutside);
+  },
+  beforeUnmount() {
+    document.removeEventListener('click', this.handleClickOutside);
   },
   methods: {
     /**
@@ -108,41 +126,23 @@ export default {
       this.$emit('update:modelValue', {});
       this.showDropdown = false;
     }
-  },
-  watch: {
-    /**
-     * Updates local search value when modelValue prop changes
-     */
-    modelValue(newVal) {
-      try {
-        this.search = buildLanguageString(newVal, this.sessionStore.activeLanguage, true);
-      }
-      catch (error) {
-        this.search = '';
-      }
-    }
-  },
-  mounted() {
-    document.addEventListener('click', this.handleClickOutside);
-  },
-  beforeUnmount() {
-    document.removeEventListener('click', this.handleClickOutside);
   }
 };
 </script>
 
 <template>
-  <div class="dropdown" ref="dropdownContainer">
+  <div ref="dropdownContainer" class="dropdown">
     <h3 class="label" :class="{ disabled: disabled }">{{ label }}:</h3>
     <div class="search-container" :class="{ disabled: disabled }">
-      <input class="text-input" :class="{ disabled: disabled }" type="text" v-model="search"
-        @focus="!disabled && (showDropdown = true)" @input="handleInput" :placeholder="placeholderText" :disabled="disabled" />
+      <input
+v-model="search" class="text-input" :class="{ disabled: disabled }" type="text"
+        :placeholder="placeholderText" :disabled="disabled" @focus="!disabled && (showDropdown = true)" @input="handleInput" />
       <button v-if="search" type="button" class="clear-btn" @click="clearInput">×</button>
     </div>
 
     <ul v-if="showDropdown && !disabled" class="dropdown-list">
       <li v-for="option in filteredOptions" :key="option.id" @mousedown.prevent="selectOption(option)">
-        {{ buildLanguageString(option, sessionStore.activeLanguage, true) + (activateTerms[this.sessionStore.activeLanguage][option.type] ? " (" + activateTerms[this.sessionStore.activeLanguage][option.type] + ")" : "")}}
+        {{ buildLanguageString(option, sessionStore.activeLanguage, true) + (activateTerms[sessionStore.activeLanguage][option.type] ? " (" + activateTerms[sessionStore.activeLanguage][option.type] + ")" : "")}}
       </li>
     </ul>
   </div>

@@ -241,9 +241,9 @@ const getCurrentModelConfig = () => {
                 </div>
                 <Button
                   v-if="!isEditing"
-                  @click="startEditing"
                   variant="outline"
                   size="sm"
+                  @click="startEditing"
                 >
                   <Edit class="w-4 h-4 mr-2" />
                   {{ staticContent.optionsPage.edit[sessionStore.activeLanguage] }}
@@ -259,7 +259,7 @@ const getCurrentModelConfig = () => {
                       <Label class="text-xs text-muted-foreground">{{ staticContent.optionsPage.modelName[sessionStore.activeLanguage] }}</Label>
                       <div class="text-sm font-medium">{{ getCurrentModelConfig()?.config.modelName }}</div>
                     </div>
-                    <div class="grid grid-cols-2 gap-4" v-if="selectedProvider !== 'chatgpt'">
+                    <div v-if="selectedProvider !== 'chatgpt'" class="grid grid-cols-2 gap-4">
                       <div class="space-y-1">
                         <Label class="text-xs text-muted-foreground">{{ staticContent.optionsPage.temperature[sessionStore.activeLanguage] }}</Label>
                         <div class="text-sm">{{ getCurrentModelConfig()?.config.temperature ?? '-' }}</div>
@@ -340,8 +340,8 @@ const getCurrentModelConfig = () => {
                     {{ staticContent.optionsPage.cancel[sessionStore.activeLanguage] }}
                   </Button>
                   <Button
-                    @click="saveModelConfig"
                     :disabled="!formModelName.trim() || formTemperature < 0"
+                    @click="saveModelConfig"
                   >
                     <Save class="w-4 h-4 mr-2" />
                     {{ staticContent.optionsPage.save[sessionStore.activeLanguage] }}
@@ -363,9 +363,9 @@ const getCurrentModelConfig = () => {
                 </div>
                 <Button
                   v-if="!isEditingPrompt"
-                  @click="startEditingPrompt"
                   variant="outline"
                   size="sm"
+                  @click="startEditingPrompt"
                 >
                   <Edit class="w-4 h-4 mr-2" />
                   {{ staticContent.optionsPage.edit[sessionStore.activeLanguage] }}
@@ -527,7 +527,7 @@ const getCurrentModelConfig = () => {
                     <X class="w-4 h-4 mr-2" />
                     {{ staticContent.optionsPage.cancel[sessionStore.activeLanguage] }}
                   </Button>
-                  <Button @click="savePrompt" :disabled="!isPredefinedEntitiesJsonValid">
+                  <Button :disabled="!isPredefinedEntitiesJsonValid" @click="savePrompt">
                     <Save class="w-4 h-4 mr-2" />
                     {{ staticContent.optionsPage.save[sessionStore.activeLanguage] }}
                   </Button>
