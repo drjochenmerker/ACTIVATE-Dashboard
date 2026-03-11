@@ -31,9 +31,9 @@ export function calculateConflictPositions(
     conflictData: Conflict[],
     points: Point[],
     spacing: number = 20,
-): ComputedRef<any[]> {
+): ComputedRef<Conflict[]> {
     return computed(() => {
-        const result: Array<any> = [];
+        const result: Array<Conflict> = [];
 
         // Define possible groups
         const singlePointGroups: Map<string, Conflict[]> = new Map();

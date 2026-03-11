@@ -5,17 +5,18 @@ import NoteCardMisc from '@/components/NoteCardMisc.vue';
 import { activateTerms, contentData, staticContent } from '@/data/contentData';
 import ContentTemplate from '@/components/ContentTemplate.vue';
 import { useSessionStore } from '@/stores/sessionStore';
-import Editor from '@/components/Editor.vue';
-import { Button } from '@/components/ui/button';
+import { ButtonComponent } from '@/components/ui/button';
 import { useActivityPointsStore } from "@/stores/activityPointsStore";
 import { storeToRefs } from 'pinia';
 import { PlusIcon } from 'lucide-vue-next';
 import { useMiscsStore } from "@/stores/miscsStore";
+import { Activity, Conflict } from "@/data/knowledge_graph/structures";
+
 
 const route = useRoute();
 
 // Define props
-const props = defineProps<{ conflicts: any[], activity: any }>();
+const props = defineProps<{ conflicts: Conflict[], activity: Activity }>();
 
 // Stores
 const sessionStore = useSessionStore();
@@ -47,23 +48,25 @@ onMounted(async () => {
         <h1 class="text-2xl font-semibold mb-4">{{ activateTerms[sessionStore.activeLanguage][pageData!.id] }}</h1>
 
         <!-- When not on misc page, show the content -->
-        <ContentTemplate v-if="route.params.id !== 'misc' && pageData" :pageData="pageData"
+        <ContentTemplate
+v-if="route.params.id !== 'misc' && pageData" :page-data="pageData"
             :conflicts="props.conflicts" />
 
         <!-- When on misc page, show misc comments-->
         <div v-if="route.params.id === 'misc'">
             <div>
-                <Button @click="isEditorDrawerOpen = !isEditorDrawerOpen"
-                    :title="isEditorDrawerOpen ? 'Hide Editor' : 'Show Editor'" variant="default" size="icon" :class="[
+                <ButtonComponent
+:title="isEditorDrawerOpen ? 'Hide Editor' : 'Show Editor'"
+                    variant="default" size="icon" :class="[
                     'z-50 rounded-full shadow transition-all',
                     isEditorDrawerOpen ? 'rotate-45' : ''
-                    ]">
+                    ]" @click="isEditorDrawerOpen = !isEditorDrawerOpen">
                     <PlusIcon class="h-6 w-6" />
-                </Button>
+                </ButtonComponent>
                 <div class="flex flex-col py-2">
                     <transition name="fade">
                     <div v-if="isEditorDrawerOpen" class="transition-all duration-300 ease-in-out">
-                        <Editor :activePoints="getActivePoints" :isNote="true" />
+                        <EditorComponent :active-points="getActivePoints" :is-note="true" />
                     </div>
                     </transition>
                 </div>
