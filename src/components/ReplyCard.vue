@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { computed, nextTick, ref } from 'vue';
-import { Button } from '@/components/ui/button';
+import { ButtonComponent } from '@/components/ui/button';
 import DeletionPopUp from '@/components/DeletionPopUp.vue';
 import { addComment, deleteComment, updateComment } from '@/data/knowledge_graph/write_operations';
 import { useConflictsStore } from '@/stores/conflictsStore';
@@ -10,22 +10,17 @@ import { useColorMode } from '@vueuse/core';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import ConfirmDiscardDialog from './ui/dialog/ConfirmDiscardDialog.vue';
 import { useMiscsStore } from "@/stores/miscsStore";
+import { Comment } from "@/data/knowledge_graph/structures";
 
 /** 
  * ReplyCard-Component
  * Shows a reply for a specific parent element
  */
 
-const props = defineProps({
-    parentComment: {
-        type: Object,
-        required: true,
-    },
-    showEdit: {
-        type: Boolean,
-        default: false,
-    }
-});
+const props = defineProps<{
+    parentComment: Comment;
+    showEdit: boolean;
+}>();
 
 const colorMode = useColorMode();
 
@@ -59,22 +54,22 @@ const currentReplyText = () => {
 const authorLabel = () => {
     if (!props.parentComment?.author) return '';
     let authorNode = props.parentComment.author;
-    if(authorNode && !authorNode.labels) {
+    if( typeof authorNode === 'string' ) {
         const authorId = authorNode.split('#').pop();
-        authorNode = useSessionStore().getRoleById(useSessionStore().availableRoles  || {}, authorId || authorNode);
+        authorNode = useSessionStore().getRoleById(useSessionStore().availableRoles || {}, authorId || authorNode) ?? '';
     }
-    if(authorNode) {
-        const labels = authorNode.labels || {};
-        const lang = sessionStore.activeLanguage;
-        if(labels?.[lang]) return labels?.[lang];
-        if(labels?.['default']) return labels?.['default'];
-        if(Object.keys(labels).length > 0) {
-            const label = Object.values(labels).find(label => typeof label === 'string' && label.trim() !== '');
-            if(label) return label;
-        }
-        return authorNode;
+    if (!authorNode || typeof authorNode === 'string') return 'Unknown';
+    const labels = authorNode.labels || {};
+    const lang = sessionStore.activeLanguage;
+    if(labels?.[lang]) return labels?.[lang];
+    if(labels?.['default']) return labels?.['default'];
+    if(Object.keys(labels).length > 0) {
+        const label = Object.values(labels).find(label => typeof label === 'string' && label.trim() !== '');
+        if(label) return label;
     }
-    return 'Unknown';
+    return authorNode;
+    
+   
 };
 const toggleReplyInput = async () => {
     replyInputVisible.value = !replyInputVisible.value;
@@ -117,11 +112,11 @@ const handleEnterKey = (event: KeyboardEvent) => {
 };
 
 // help function
-const hasReplies = (comment: any) => Array.isArray(comment.replies) && comment.replies.length > 0;
+const hasReplies = (comment: Comment) => Array.isArray(comment.replies) && comment.replies.length > 0;
 
 const emit = defineEmits(['deleteComment', 'refresh']);
 
-const getCommentText = (comment: any) => {
+const getCommentText = (comment: Comment) => {
     if (!comment?.comment) return '';
     if (typeof comment.comment === 'string') return comment.comment;
     const commentRecord = comment.comment as Record<string, string>;
@@ -179,7 +174,7 @@ const cancelDiscardChanges = () => {
 };
 
 // Delete comment
-const handleDelete = async (id: string, parentComment: any) => {
+const handleDelete = async (id: string, parentComment: Comment) => {
     try {
         // Delete the comment (is it a nested comment?)
         const isNestedComment = hasReplies(parentComment);
@@ -196,7 +191,7 @@ const handleDelete = async (id: string, parentComment: any) => {
             //parentComment.comment = "This comment is deleted.";
             // if comment is nested, remove it from the replies
             if (parentComment.replies) {
-                parentComment.replies = parentComment.replies.filter((reply: any) => reply.id !== id);
+                parentComment.replies = parentComment.replies.filter((reply: Comment) => reply.id !== id);
             }
 
             // if comment is not nested, delete it directly
@@ -235,12 +230,12 @@ const refreshReplies = async () => {
                 </DialogHeader>
                 <textarea v-model="editedCommentText" class="w-full border rounded p-2 my-2 dark:bg-gray-900" />
                 <DialogFooter class="flex justify-between">
-                    <Button variant="secondary" @click="cancelEdit">
+                    <ButtonComponent variant="secondary" @click="cancelEdit">
                         {{ staticContent.noteCards.cancel[sessionStore.activeLanguage] }}
-                    </Button>
-                    <Button @click="saveEditedComment">
+                    </ButtonComponent>
+                    <ButtonComponent @click="saveEditedComment">
                         {{ staticContent.noteCards.save[sessionStore.activeLanguage] }}
-                    </Button>
+                    </ButtonComponent>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
@@ -263,9 +258,10 @@ const refreshReplies = async () => {
                     </button>
                     <!-- Delete button -->
                     <DeletionPopUp
+                    v-if="typeof props.parentComment.author !== 'string'"
                         :title="staticContent.startPage.deleteReply[sessionStore.activeLanguage]"
                         :description="staticContent.startPage.deleteReplyConfirm[sessionStore.activeLanguage]"
-                        :author="props.parentComment.author.id"
+                        :author="props.parentComment.author?.id"
                         :delete-function="() => handleDelete(props.parentComment.id, props.parentComment)"
                     >
                     </DeletionPopUp>
@@ -280,24 +276,27 @@ const refreshReplies = async () => {
         </div>
 
         <!-- Reply Button to hide input field -->
-        <Button @click="toggleReplyInput()">
+        <ButtonComponent @click="toggleReplyInput()">
             {{ replyInputVisible ? staticContent.noteCards.cancel[sessionStore.activeLanguage] :
                 staticContent.noteCards.answer[sessionStore.activeLanguage] }}
-        </Button>
+        </ButtonComponent>
 
         <!-- Reply input field -->
         <div v-if="replyInputVisible" class="reply-input">
-            <textarea ref="textareaRef" v-model="newReplyText"
+            <textarea
+ref="textareaRef" v-model="newReplyText"
                 :placeholder="staticContent.placeholders.answer[sessionStore.activeLanguage]"
                 @keydown.enter="handleEnterKey($event)"></textarea>
-            <Button @click="saveReply(props.parentComment.id)">{{
-                staticContent.noteCards.saveComment[sessionStore.activeLanguage] }}</Button>
+            <ButtonComponent @click="saveReply(props.parentComment.id)">{{
+                staticContent.noteCards.saveComment[sessionStore.activeLanguage] }}</ButtonComponent>
         </div>
 
-        <div v-if="Array.isArray(props.parentComment.replies) && props.parentComment.replies.length"
+        <div
+v-if="Array.isArray(props.parentComment.replies) && props.parentComment.replies.length"
             class="nested-replies">
-            <ReplyCard v-for="nestedReply in props.parentComment.replies" :key="nestedReply.id"
-                :parentComment="nestedReply" :showEdit="props.showEdit" @deleteComment="removeReply" @refresh="refreshReplies" @save="saveReply"/>
+            <ReplyCard
+v-for="nestedReply in props.parentComment.replies" :key="nestedReply.id"
+                :parent-comment="nestedReply" :show-edit="props.showEdit" @delete-comment="removeReply" @refresh="refreshReplies" @save="saveReply"/>
         </div>
 
     </div>

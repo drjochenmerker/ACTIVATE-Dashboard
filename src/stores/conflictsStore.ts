@@ -13,7 +13,7 @@ export const useConflictsStore = defineStore('ActivityConflicts', () => {
     /**
      * Reactive list of conflicts with detailed data
      */
-    let conflictDetails = ref<Conflict[]>([]);
+    const conflictDetails = ref<Conflict[]>([]);
 
     // Access to the current session/activity context
     const sessionStore = useSessionStore();

@@ -5,7 +5,7 @@ import { useSessionStore } from '@/stores/sessionStore';
 import { staticContent } from '@/data/contentData';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
+import { ButtonComponent } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Select,
@@ -239,15 +239,15 @@ const getCurrentModelConfig = () => {
                     {{ getProviderDisplayName(selectedProvider) }}
                   </CardDescription>
                 </div>
-                <Button
+                <ButtonComponent
                   v-if="!isEditing"
-                  @click="startEditing"
                   variant="outline"
                   size="sm"
+                  @click="startEditing"
                 >
                   <Edit class="w-4 h-4 mr-2" />
                   {{ staticContent.optionsPage.edit[sessionStore.activeLanguage] }}
-                </Button>
+                </ButtonComponent>
               </div>
             </CardHeader>
             <CardContent>
@@ -259,7 +259,7 @@ const getCurrentModelConfig = () => {
                       <Label class="text-xs text-muted-foreground">{{ staticContent.optionsPage.modelName[sessionStore.activeLanguage] }}</Label>
                       <div class="text-sm font-medium">{{ getCurrentModelConfig()?.config.modelName }}</div>
                     </div>
-                    <div class="grid grid-cols-2 gap-4" v-if="selectedProvider !== 'chatgpt'">
+                    <div v-if="selectedProvider !== 'chatgpt'" class="grid grid-cols-2 gap-4">
                       <div class="space-y-1">
                         <Label class="text-xs text-muted-foreground">{{ staticContent.optionsPage.temperature[sessionStore.activeLanguage] }}</Label>
                         <div class="text-sm">{{ getCurrentModelConfig()?.config.temperature ?? '-' }}</div>
@@ -335,17 +335,17 @@ const getCurrentModelConfig = () => {
                 </div>
 
                 <div class="flex justify-end gap-2 pt-2">
-                  <Button variant="outline" @click="cancelEditing">
+                  <ButtonComponent variant="outline" @click="cancelEditing">
                     <X class="w-4 h-4 mr-2" />
                     {{ staticContent.optionsPage.cancel[sessionStore.activeLanguage] }}
-                  </Button>
-                  <Button
-                    @click="saveModelConfig"
+                  </ButtonComponent>
+                  <ButtonComponent
                     :disabled="!formModelName.trim() || formTemperature < 0"
+                    @click="saveModelConfig"
                   >
                     <Save class="w-4 h-4 mr-2" />
                     {{ staticContent.optionsPage.save[sessionStore.activeLanguage] }}
-                  </Button>
+                  </ButtonComponent>
                 </div>
               </div>
             </CardContent>
@@ -361,15 +361,15 @@ const getCurrentModelConfig = () => {
                     {{ staticContent.optionsPage.promptPlaceholder[sessionStore.activeLanguage] }}
                   </CardDescription>
                 </div>
-                <Button
+                <ButtonComponent
                   v-if="!isEditingPrompt"
-                  @click="startEditingPrompt"
                   variant="outline"
                   size="sm"
+                  @click="startEditingPrompt"
                 >
                   <Edit class="w-4 h-4 mr-2" />
                   {{ staticContent.optionsPage.edit[sessionStore.activeLanguage] }}
-                </Button>
+                </ButtonComponent>
               </div>
             </CardHeader>
             <CardContent>
@@ -523,14 +523,14 @@ const getCurrentModelConfig = () => {
                   </p>
                 </div>
                 <div class="flex justify-end gap-2">
-                  <Button variant="outline" @click="cancelEditingPrompt">
+                  <ButtonComponent variant="outline" @click="cancelEditingPrompt">
                     <X class="w-4 h-4 mr-2" />
                     {{ staticContent.optionsPage.cancel[sessionStore.activeLanguage] }}
-                  </Button>
-                  <Button @click="savePrompt" :disabled="!isPredefinedEntitiesJsonValid">
+                  </ButtonComponent>
+                  <ButtonComponent :disabled="!isPredefinedEntitiesJsonValid" @click="savePrompt">
                     <Save class="w-4 h-4 mr-2" />
                     {{ staticContent.optionsPage.save[sessionStore.activeLanguage] }}
-                  </Button>
+                  </ButtonComponent>
                 </div>
               </div>
             </CardContent>
