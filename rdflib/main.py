@@ -153,7 +153,7 @@ async def debug_ttl(graph_id: str):
 async def log_activity(request: Request):
     """
     Logs manual changes to activities/situations
-    Stores logs in ./logs directory with format: [timestamp] - Aktion: [operation]
+    Stores logs in ./logs directory with format: [timestamp] - Action: [operation]
     """
     try:      
         data = await request.json()
@@ -167,7 +167,7 @@ async def log_activity(request: Request):
             raise HTTPException(status_code=400, detail="Missing required fields: graphId, operation, timestamp")
         
         # Validate operation type
-        valid_operations = ["Erstellung", "Löschung", "Änderung"]
+        valid_operations = ["Creation", "Deletion", "Modification"]
         if operation not in valid_operations:
             raise HTTPException(status_code=400, detail=f"Invalid operation type. Must be one of: {', '.join(valid_operations)}")
         
@@ -178,7 +178,7 @@ async def log_activity(request: Request):
         
         # Write to log file named after the graphId
         log_file = os.path.join(logs_dir, f"activity_{graph_id}.log")
-        final_message = log_message or f"[{timestamp}] - Aktion: {operation}"
+        final_message = log_message or f"[{timestamp}] - Action: {operation}"
         
         with open(log_file, "a", encoding="utf-8") as f:
             f.write(f"{final_message}\n")
