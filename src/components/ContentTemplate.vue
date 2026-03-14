@@ -5,6 +5,7 @@ import NoteCard from './NoteCard.vue';
 import { useConflictsStore } from '@/stores/conflictsStore';
 import { staticContent } from '@/data/contentData';
 import { useSessionStore } from '@/stores/sessionStore';
+import { ConflictWithId } from '@/data/knowledge_graph/structures';
 
 const props = defineProps({
   pageData: {
@@ -32,7 +33,7 @@ const highlightedConflictId = route.query.conflictId
  * 
  * @returns {Array} An array of conflicts relevant to the current page context
  */
-const filteredConflicts = computed(() => {
+const filteredConflicts = computed<ConflictWithId[]>(() => {
   // with the higlighted conflict on top
   const conflicts = conflictStore.getConflicts.filter(conflict => {
     return Array.isArray(conflict.participants) &&

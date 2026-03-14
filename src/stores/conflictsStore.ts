@@ -1,5 +1,5 @@
 import { getAllConflictsWithDetail, getConflictDetail } from '@/data/knowledge_graph/read_operations';
-import { Conflict } from '@/data/knowledge_graph/structures';
+import { ConflictWithId } from '@/data/knowledge_graph/structures';
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import { useSessionStore } from './sessionStore';
@@ -13,7 +13,7 @@ export const useConflictsStore = defineStore('ActivityConflicts', () => {
     /**
      * Reactive list of conflicts with detailed data
      */
-    const conflictDetails = ref<Conflict[]>([]);
+    const conflictDetails = ref<ConflictWithId[]>([]);
 
     // Access to the current session/activity context
     const sessionStore = useSessionStore();
@@ -34,7 +34,7 @@ export const useConflictsStore = defineStore('ActivityConflicts', () => {
      * Adds a single conflict to the local list
      * @param conflict - The conflict to be added
      */
-    const addConflict = (conflict: Conflict) => {
+    const addConflict = (conflict: ConflictWithId) => {
         conflictDetails.value.push(conflict);
     }
 
@@ -42,7 +42,7 @@ export const useConflictsStore = defineStore('ActivityConflicts', () => {
      * Sets the complete list of conflicts
      * @param conflicts - The new list of conflicts
      */
-    const setConflicts = (conflicts: Conflict[]) => {
+    const setConflicts = (conflicts: ConflictWithId[]) => {
         conflictDetails.value = conflicts;
     };
 

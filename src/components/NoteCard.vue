@@ -19,6 +19,7 @@ const props = defineProps<{
     content: string;
     origin: string;
     author: string;
+    authorId: string;
     status: string;
     isGrayedOut: boolean;
 }>();
@@ -206,7 +207,7 @@ const refreshReplies = async () => {
         <DeletionPopUp
           :title="staticContent.startPage.deleteComment[sessionStore.activeLanguage]"
           :description="staticContent.startPage.deleteCommentConfirm[sessionStore.activeLanguage]"
-          :author="props.author"
+          :author="props.authorId"
           :delete-function="() => handleDelete(props.conflict.id)"
         >
         </DeletionPopUp>
