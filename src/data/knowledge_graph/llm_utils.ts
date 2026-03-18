@@ -26,7 +26,7 @@ export type LLMParsingResult = {
     message: string | { en?: string; de?: string; sv?: string };
     errorType?: ErrorType;
     llmError?: string;
-    data?: any;
+    data?: { question: string; answer: string };
 };
 
 /**
@@ -126,8 +126,8 @@ export async function llmSubmit(
     const llmSettingsStore = useLLMSettingsStore();
     const sessionStore = useSessionStore();
     // Fetch description and entities from the graph
-    let description: StringAccessObject = {};
-    let entities: StringAccessObject[] = [];
+    const description: StringAccessObject = {};
+    const entities: StringAccessObject[] = [];
     let query = await getSparqlTemplate(sparqlTemplate.getLLMDetail);
     const graphRes = await fetchSparql(query.replace("{{graph}}", graphID));
     graphRes.forEach((triple: StringAccessObject) => {
@@ -298,12 +298,12 @@ export async function llmPool(graphID: string, llmDetail: LLMRequestConfig): Pro
     const sessionStore = useSessionStore();
     const debugOn = true; // DEBUG: SET TO TRUE IF DEBUGGING IS NEEDED
     const logger = {
-        log: (...args: any[]) => {
+        log: (...args: string[]) => {
             if (debugOn) {
                 console.log(...args);
             }
         },
-        error: (...args: any[]) => {
+        error: (...args: string[]) => {
             if (debugOn) {
                 console.error(...args);
             }

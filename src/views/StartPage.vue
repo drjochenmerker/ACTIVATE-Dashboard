@@ -11,7 +11,7 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { ButtonComponent } from '@/components/ui/button';
 import ActivityCard from '@/components/ActivityCard.vue';
 import {
   Dialog,
@@ -146,10 +146,10 @@ const addNewActivity = async () => {
       <div v-if="sessionStore.instructorView" class="flex justify-center my-6">
         <Dialog v-model:open="dialogOpen">
           <DialogTrigger as-child>
-            <Button
+            <ButtonComponent
               class="text-3xl px-6 py-3 rounded-full text-black bg-white border border-black hover:bg-black hover:text-white transition-colors duration-300">
               <PlusIcon class="h-6 w-6" />
-            </Button>
+            </ButtonComponent>
           </DialogTrigger>
           <DialogContent class="sm:max-w-[425px]">
             <DialogHeader>
@@ -158,13 +158,15 @@ const addNewActivity = async () => {
               <!-- Optional Title -->
               <DialogDescription>{{ staticContent.startPage.enterTitle[sessionStore.activeLanguage] }}
               </DialogDescription>
-              <input type="text" v-model="newTitle"
+              <input
+v-model="newTitle" type="text"
                 class="w-full border rounded p-2 mb-2 dark:bg-gray-900 border-gray-300" />
 
               <!-- Required Description -->
               <DialogDescription>{{ staticContent.startPage.enterDescription[sessionStore.activeLanguage] }}
               </DialogDescription>
-              <textarea v-model="newDescription" class="w-full border rounded p-2 mb-1 dark:bg-gray-900" :class="[
+              <textarea
+v-model="newDescription" class="w-full border rounded p-2 mb-1 dark:bg-gray-900" :class="[
                 showValidationErrors && !newDescription.trim() ? 'border-red-500' : 'border-gray-300'
               ]" />
               <p v-if="showValidationErrors && !newDescription.trim()" class="text-red-500 text-sm mb-2">
@@ -176,14 +178,15 @@ const addNewActivity = async () => {
               </DialogDescription>
               <input v-model="defaultRole" class="w-full border rounded p-2 mb-2 dark:bg-gray-900 border-gray-300" />
 
-              <Button @click="addNewActivity">{{ staticContent.terms.done[sessionStore.activeLanguage] }}</Button>
+              <ButtonComponent @click="addNewActivity">{{ staticContent.terms.done[sessionStore.activeLanguage] }}</ButtonComponent>
 
               <!-- <div v-if="loading">
                 <Loader2 class="animate-spin h-5 w-5 ml-2 inline-block" />
                 {{ staticContent.placeholders.loading[sessionStore.activeLanguage] }}
               </div> -->
             </DialogHeader>
-            <LoadingOverlay :visible="loading"
+            <LoadingOverlay
+:visible="loading"
               :message="staticContent.placeholders.loading[sessionStore.activeLanguage]"
               class="mt-4 text-red-500 font-semibold" />
           </DialogContent>

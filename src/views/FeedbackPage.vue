@@ -2,8 +2,7 @@
 import { computed, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 
-// UI components
-import { Button } from '@/components/ui/button'
+import { ButtonComponent } from '@/components/ui/button'
 import { Select, SelectContent, SelectTrigger, SelectValue } from '@/components/ui/select';
 import RecursiveSelect from '@/components/RecursiveSelect.vue';
 import LoadingOverlay from '@/components/LoadingOverlay.vue'
@@ -15,7 +14,7 @@ import { buildTreeStructByLang } from '@/data/knowledge_graph/utils';
 import { getActivityClassIds } from '@/data/knowledge_graph/read_operations';
 import { KnowledgeGraphActivityClass } from '@/data/knowledge_graph/structures';
 import { llmSubmit } from '@/data/knowledge_graph/llm_utils';
-import { staticContentFeedback } from '@/data/feedbackQuestions';
+import { QuestionGroupType, QuestionKeyType, StaticContentFeedback, staticContentFeedback } from '@/data/feedbackQuestions';
 import { useLLMSettingsStore } from '@/stores/llmSettingsStore';
 import LogoutButton from '@/components/LogoutButton.vue';
 import OptionsButton from '@/components/OptionsButton.vue';
@@ -149,9 +148,8 @@ const submitFeedback = async () => {
             const answer = groupAnswers[questionKey];
 
             // Find the question text in the original data (with fallback)
-            const groupStatic = (staticContentFeedback as any)[groupKey];
-            const questionText = groupStatic?.[questionKey]?.[lang] || groupStatic?.[questionKey]?.['de'];
-
+            const groupStatic = (staticContentFeedback as StaticContentFeedback)[groupKey as QuestionGroupType];
+            const questionText = groupStatic?.[questionKey as QuestionKeyType]?.[lang] || groupStatic?.[questionKey as QuestionKeyType]?.["de"];
             // Add only if question text exists
             if (questionText && questionText.trim() !== '') {
                 fullData.push({
@@ -215,8 +213,9 @@ const submitFeedback = async () => {
 
         <div class="space-y-6">
             <div class="mb-6">
-                <Select :model-value="sessionStore.sessionRole" @update:model-value="sessionStore.sessionRole = $event"
-                    id="roleSelect" class="my-4">
+                <Select
+id="roleSelect" :model-value="sessionStore.sessionRole"
+                    class="my-4" @update:model-value="sessionStore.sessionRole = $event">
                     <SelectTrigger>
                         <SelectValue
                             :placeholder="staticContent.placeholders.roleSelect[sessionStore.activeLanguage] || sessionStore.sessionRole" />
@@ -227,7 +226,8 @@ const submitFeedback = async () => {
                 </Select>
             </div>
 
-            <div v-for="group in groupedQuestionData" :key="group.key"
+            <div
+v-for="group in groupedQuestionData" :key="group.key"
                 class="mb-6 p-4 border rounded-lg shadow-sm space-y-4">
 
                 <h2 class="text-xl font-semibold border-b pb-2">
@@ -238,7 +238,8 @@ const submitFeedback = async () => {
                     <label :for="group.key + question.key" class="block text-lg font-medium">
                         {{ question.text }}
                     </label>
-                    <textarea :id="group.key + question.key" v-model="answers[group.key][question.key]"
+                    <textarea
+:id="group.key + question.key" v-model="answers[group.key][question.key]"
                         class="dark:bg-gray-900 w-full p-3 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
                         rows="4" :placeholder="staticContent.placeholders.feedbackAnswer[activeLang]" />
                 </div>
@@ -248,9 +249,9 @@ const submitFeedback = async () => {
         </div>
 
         <div class="mt-8">
-            <Button class="w-full text-black bg-white border border-black hover:bg-black hover:text-white disabled:hover:bg-white disabled:hover:text-black" @click="submitFeedback">
+            <ButtonComponent class="w-full text-black bg-white border border-black hover:bg-black hover:text-white disabled:hover:bg-white disabled:hover:text-black" @click="submitFeedback">
                 {{ staticContent.noteCards.save[activeLang] }}
-            </Button>
+            </ButtonComponent>
         </div>
         <LoadingOverlay :visible="loading" :message="staticContent.placeholders.loading[activeLang]" />
     </div>

@@ -10,7 +10,7 @@ import {
     DialogDescription,
     DialogFooter
 } from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
+import { ButtonComponent } from '@/components/ui/button'
 import { useErrorDialog } from '@/composables/useErrorDialog';
 
 const sessionStore = useSessionStore();
@@ -61,9 +61,9 @@ const dialogMessage = computed(() => {
                 </DialogDescription>
             </DialogHeader>
             <DialogFooter class="mt-4">
-                <Button @click="closeError" class="w-full">
+                <ButtonComponent @click="closeError" class="w-full">
                     {{ staticContent.noteCards.ok[sessionStore.activeLanguage] }}
-                </Button>
+                </ButtonComponent>
             </DialogFooter>
         </DialogContent>
     </Dialog>

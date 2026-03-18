@@ -1,6 +1,6 @@
 import hash from "object-hash";
 import { CapitalizeFirstLetter, fetchSparql, getSparqlTemplate, RDFSyntaxCheck, EscapeSparqlStringLiteral } from "./utils";
-import { Activity, Conflict, conflictPredicate, conflictStatus, KnowledgeGraphActivityClass, LanguageCode, LanguageLabel, RDFOperation, RDFTriple, sparqlTemplate, updateResponse } from "./structures";
+import { Activity, Conflict, conflictPredicate, conflictStatus, KnowledgeGraphActivityClass, LanguageCode, LanguageLabel, RDFOperation, RDFTriple, sparqlTemplate, StringAccessObject, updateResponse } from "./structures";
 import { useSessionStore } from "@/stores/sessionStore";
 
 /**
@@ -54,7 +54,7 @@ export async function deleteConflict(graph: string, conflictId: string): Promise
         "{{conflict}}": conflictId
     };
     commentQuery = commentQuery.replaceMultiple(commentMapObj);
-    const commentIds = (await fetchSparql(commentQuery, false)).map((res: any) => {
+    const commentIds = (await fetchSparql(commentQuery, false)).map((res: StringAccessObject) => {
         return res.s.value ? res.s.value.split("#").pop() : null;
     });
     // Remove Conflict

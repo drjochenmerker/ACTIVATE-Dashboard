@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button } from '@/components/ui/button';
+import { ButtonComponent } from '@/components/ui/button';
 import { useSessionStore } from '@/stores/sessionStore';
 import { LogOut } from 'lucide-vue-next';
 import {
@@ -38,9 +38,9 @@ const logout = () => {
     <TooltipProvider>
         <Tooltip>
             <TooltipTrigger as-child>
-                <Button size="icon" class="rounded-full" variant="secondary" @click="logout">
+                <ButtonComponent size="icon" class="rounded-full" variant="secondary" @click="logout">
                     <LogOut />
-                </Button>
+                </ButtonComponent>
             </TooltipTrigger>
             <TooltipContent>
                 <p>{{ staticContent.terms.endSession[sessionStore.activeLanguage] }}</p>

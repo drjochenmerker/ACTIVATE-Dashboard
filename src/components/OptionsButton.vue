@@ -10,7 +10,7 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { Button } from '@/components/ui/button';
+import { ButtonComponent } from '@/components/ui/button';
 
 const isOpen = ref(false);
 
@@ -25,9 +25,9 @@ const openPopUp = () => {
   <TooltipProvider>
     <Tooltip>
       <TooltipTrigger as-child>
-        <Button size="icon" class="rounded-full" variant="secondary" @click="openPopUp">
+        <ButtonComponent size="icon" class="rounded-full" variant="secondary" @click="openPopUp">
           <Settings />
-        </Button>
+        </ButtonComponent>
       </TooltipTrigger>
       <TooltipContent>
         <p>{{ staticContent.terms.settings[sessionStore.activeLanguage] }}</p>

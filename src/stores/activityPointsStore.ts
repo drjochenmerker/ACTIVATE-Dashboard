@@ -10,7 +10,7 @@ export const useActivityPointsStore = defineStore('activityPoints', () => {
     /**
      * Reactive list of currently active point IDs
      */
-    let activePoints = ref<string[]>([]);
+    const activePoints = ref<string[]>([]);
 
 
     /**

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref, computed } from 'vue';
 import { updateComment } from "@/data/knowledge_graph/write_operations";
-import { Button } from '@/components/ui/button';
+import { ButtonComponent } from '@/components/ui/button';
 import { useSessionStore } from '@/stores/sessionStore';
 import { useConflictsStore } from '@/stores/conflictsStore';
 import { staticContent } from '@/data/contentData';
@@ -125,25 +125,27 @@ defineExpose({
               <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 {{ staticContent.noteCards.title[sessionStore.activeLanguage] }}
               </label>
-              <input v-model="editedTitle" class="w-full border rounded p-2 dark:bg-gray-900 dark:border-gray-700 focus-visible:outline-none focus-visible:ring-0 focus:border-gray-300 dark:focus:border-white"
+              <input
+v-model="editedTitle" class="w-full border rounded p-2 dark:bg-gray-900 dark:border-gray-700 focus-visible:outline-none focus-visible:ring-0 focus:border-gray-300 dark:focus:border-white"
                 :placeholder="staticContent.placeholders.title[sessionStore.activeLanguage]" />
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 {{ staticContent.noteCards.description[sessionStore.activeLanguage] }}
               </label>
-              <textarea v-model="editedDescription" class="w-full border rounded p-2 dark:bg-gray-900 dark:border-gray-700 min-h-[100px] focus-visible:outline-none focus-visible:ring-0 focus:border-gray-300 dark:focus:border-white"
+              <textarea
+v-model="editedDescription" class="w-full border rounded p-2 dark:bg-gray-900 dark:border-gray-700 min-h-[100px] focus-visible:outline-none focus-visible:ring-0 focus:border-gray-300 dark:focus:border-white"
                 :placeholder="staticContent.placeholders.description[sessionStore.activeLanguage]" />
             </div>
           </div>
         </div>
         <DialogFooter class="flex justify-between mt-4">
-          <Button variant="secondary" @click="cancelEdit" :disabled="isSaving">
+          <ButtonComponent variant="secondary" :disabled="isSaving" @click="cancelEdit">
             {{ staticContent.noteCards.cancel[sessionStore.activeLanguage] }}
-          </Button>
-          <Button @click="saveEditedComment" :disabled="isSaving">
+          </ButtonComponent>
+          <ButtonComponent :disabled="isSaving" @click="saveEditedComment">
             {{ staticContent.noteCards.save[sessionStore.activeLanguage] }}
-          </Button>
+          </ButtonComponent>
         </DialogFooter>
       </DialogContent>
     </Dialog>

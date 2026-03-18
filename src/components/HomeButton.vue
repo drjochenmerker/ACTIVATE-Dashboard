@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button } from '@/components/ui/button';
+import { ButtonComponent } from '@/components/ui/button';
 import { useSessionStore } from '@/stores/sessionStore';
 import { Home } from 'lucide-vue-next';
 import {
@@ -23,9 +23,9 @@ const goHome = () => {
     <TooltipProvider>
         <Tooltip>
             <TooltipTrigger as-child>
-                <Button size="icon" class="rounded-full" variant="secondary" @click="goHome">
+                <ButtonComponent size="icon" class="rounded-full" variant="secondary" @click="goHome">
                     <Home />
-                </Button>
+                </ButtonComponent>
             </TooltipTrigger>
             <TooltipContent>
                 <p>{{ staticContent.terms.home[sessionStore.activeLanguage] }}</p>
