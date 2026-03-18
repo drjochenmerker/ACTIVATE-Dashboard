@@ -15,7 +15,8 @@
         "llm": "cd feedback-parser && npm run dev",
         "setup-whisper": "cd whisper-backend && chmod +x setup_venv.sh && ./setup_venv.sh",
         "start-whisper": "cd whisper-backend && ./venv/bin/python -m uvicorn src.main:app --host 0.0.0.0 --port 8001",
-        "start-whisper:prod": "cd whisper-backend && ./venv/bin/python -m uvicorn src.main:app --host 0.0.0.0 --port 8001 --workers 2 --timeout-keep-alive 3600" 
+        "start-whisper:prod": "cd whisper-backend && ./venv/bin/python -m uvicorn src.main:app --host 0.0.0.0 --port 8001 --workers 2 --timeout-keep-alive 3600",
+        "eslint": "npx eslint"
     },
     "dependencies": {
         "@tanstack/vue-table": "^8.21.2",
@@ -47,10 +48,15 @@
         "@vitejs/plugin-vue": "^5.2.1",
         "@vue/runtime-core": "^3.5.13",
         "autoprefixer": "^10.4.20",
+        "eslint": "^9.39.4",
+        "eslint-config-prettier": "^10.1.8",
+        "eslint-plugin-vue": "^10.8.0",
+        "globals": "^17.4.0",
         "postcss": "^8.4.49",
         "prettier": "^3.4.2",
         "tailwindcss": "^3.4.16",
         "typescript": "~5.6.2",
+        "typescript-eslint": "^8.57.0",
         "vite": "^6.0.1",
         "vue-tsc": "^2.1.10"
     }

@@ -14,6 +14,8 @@ import LogoutButton from './LogoutButton.vue';
 import RecursiveSelect from './RecursiveSelect.vue';
 import SceneChangeButton from './SceneChangeButton.vue';
 import LanguageSelect from './LanguageSelect.vue';
+import OptionsButton from './OptionsButton.vue';
+import InstructorViewSelect from './InstructorViewSelect.vue';
 import HomeButton from './HomeButton.vue';
 
 const sessionStore = useSessionStore();
@@ -30,7 +32,8 @@ const sessionStore = useSessionStore();
 
             <!-- Navigation links -->
             <div class="flex items-center gap-6 whitespace-nowrap">
-                <router-link v-for="item in contentData" :key="item.id" :to="`/${item.id}`"
+                <router-link
+v-for="item in contentData" :key="item.id" :to="`/${item.id}`"
                     :class="$route.path === `/${item.id}` ? 'font-semibold' : 'text-muted-foreground hover:text-foreground'">
                     {{ activateTerms[sessionStore.activeLanguage][item.id] }}
                 </router-link>
@@ -41,7 +44,7 @@ const sessionStore = useSessionStore();
                 <div class="flex flex-row gap-2 items-center my-2 w-32">
                     <template v-if="sessionStore.instructorMode">
                         <Users class="w-1/3" />
-                        <Select v-model="sessionStore.sessionRole" id="roleSelect">
+                        <Select id="roleSelect" v-model="sessionStore.sessionRole">
                             <SelectTrigger class="w-[180px] overflow-hidden whitespace-nowrap truncate">
                                 <SelectValue placeholder="Select your role" />
                             </SelectTrigger>
@@ -52,7 +55,7 @@ const sessionStore = useSessionStore();
                     </template>
                     <template v-else>
                         <User />
-                        <Select v-model="sessionStore.sessionRole" id="roleSelect">
+                        <Select id="roleSelect" v-model="sessionStore.sessionRole">
                             <SelectTrigger class="w-[180px] overflow-hidden whitespace-nowrap truncate">
                                 <SelectValue placeholder="Select your role" />
                             </SelectTrigger>
@@ -63,10 +66,14 @@ const sessionStore = useSessionStore();
                     </template>
                 </div>
                 <SceneChangeButton />
+                <InstructorViewSelect v-if="sessionStore.instructorMode" />
                 <LanguageSelect />
+                <template  v-if="sessionStore.instructorMode">
+                    <OptionsButton />
+                </template>
                 <HomeButton />
-                <ThemeSwitchButton />
                 <LogoutButton />
+                <ThemeSwitchButton />
             </div>
         </nav>
     </header>

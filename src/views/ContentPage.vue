@@ -4,52 +4,43 @@ import { useRoute } from 'vue-router';
 import NoteCardMisc from '@/components/NoteCardMisc.vue';
 import { activateTerms, contentData, staticContent } from '@/data/contentData';
 import ContentTemplate from '@/components/ContentTemplate.vue';
-import { Comment } from '@/data/knowledge_graph/structures';
 import { useSessionStore } from '@/stores/sessionStore';
-import { getMiscComments } from '@/data/knowledge_graph/read_operations';
+import { ButtonComponent } from '@/components/ui/button';
+import { useActivityPointsStore } from "@/stores/activityPointsStore";
+import { storeToRefs } from 'pinia';
+import { PlusIcon } from 'lucide-vue-next';
+import { useMiscsStore } from "@/stores/miscsStore";
+import { Activity, Conflict } from "@/data/knowledge_graph/structures";
+import EditorComponent from '@/components/EditorComponent.vue';
+
 
 const route = useRoute();
 
 // Define props
-const props = defineProps<{ conflicts: any[], activity: any }>();
+const props = defineProps<{ conflicts: Conflict[], activity: Activity }>();
 
 // Stores
 const sessionStore = useSessionStore();
+const miscStore = useMiscsStore();
+
+const activityPointStore = useActivityPointsStore();
+const { getActivePoints } = storeToRefs(activityPointStore);
+
+const isEditorDrawerOpen = ref(false);
 
 // Define the expected structure of pageData
 type PageDataType = { id: string; number: number } | undefined;
 // Assign pageData with a proper type
 const pageData: PageDataType = contentData.find((item) => item.id === route.params.id);
 
-const graph = sessionStore.sessionActivity!.graph;
 
-// Reactive variable to hold miscellaneous comments
-const miscComments = ref<Comment[]>([]);
 
 // Fetch miscellaneous comments on mount
 onMounted(async () => {
-    fetchMiscs();
+    miscStore.fetchMiscs();
 });
 
-/**
- * Fetches miscellaneous comments from the knowledge graph when on the 'misc' page.
- * Updates the miscComments reactive reference with the retrieved comments.
- */
-const fetchMiscs = async () => {
-    if (route.params.id === 'misc') {
-        // Get miscellaneous comments from the graph
-        miscComments.value = await getMiscComments(graph);
-    }
-}
 
-/**
- * Promised function
- * Removes a specific comment from the miscellaneous comments list.
- * @param id The unique identifier of the comment to be removed.
- */
-const removeComment = (id: string) => {
-    miscComments.value = miscComments.value.filter(comment => comment.id !== id);
-};
 
 </script>
 
@@ -58,16 +49,31 @@ const removeComment = (id: string) => {
         <h1 class="text-2xl font-semibold mb-4">{{ activateTerms[sessionStore.activeLanguage][pageData!.id] }}</h1>
 
         <!-- When not on misc page, show the content -->
-        <ContentTemplate v-if="route.params.id !== 'misc' && pageData" :pageData="pageData"
+        <ContentTemplate v-if="route.params.id !== 'misc' && pageData" :page-data="pageData"
             :conflicts="props.conflicts" />
-
 
         <!-- When on misc page, show misc comments-->
         <div v-if="route.params.id === 'misc'">
-            <div v-if="miscComments.length > 0">
+            <div>
+                <ButtonComponent :title="isEditorDrawerOpen ? 'Hide Editor' : 'Show Editor'" variant="default"
+                    size="icon" :class="[
+                        'z-50 rounded-full shadow transition-all',
+                        isEditorDrawerOpen ? 'rotate-45' : ''
+                    ]" @click="isEditorDrawerOpen = !isEditorDrawerOpen">
+                    <PlusIcon class="h-6 w-6" />
+                </ButtonComponent>
+                <div class="flex flex-col py-2">
+                    <transition name="fade">
+                        <div v-if="isEditorDrawerOpen" class="transition-all duration-300 ease-in-out">
+                            <EditorComponent :active-points="getActivePoints" :is-note="true" />
+                        </div>
+                    </transition>
+                </div>
+            </div>
+            <div v-if="miscStore.miscComments.length > 0">
                 <ul>
-                    <li v-for="(comment, index) in miscComments" :key="index">
-                        <NoteCardMisc :comment="comment" @deleteComment="removeComment" @refresh="fetchMiscs" />
+                    <li v-for="(comment, index) in miscStore.miscComments" :key="index">
+                        <NoteCardMisc :comment="comment" />
                     </li>
                 </ul>
             </div>

@@ -1,5 +1,5 @@
 // src/stores/activityStore.ts
-import { Activity, LanguageCode, NestedMultiLangObject } from '@/data/knowledge_graph/structures';
+import { Activity, LanguageCode, MultiLangObject, NestedMultiLangObject } from '@/data/knowledge_graph/structures';
 import { defineStore } from 'pinia';
 import { ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
@@ -32,6 +32,7 @@ export const useSessionStore = defineStore('session', () => {
     const sessionRole = ref<string | undefined>(undefined);
     const availableRoles = ref<NestedMultiLangObject>({} as NestedMultiLangObject);
     const instructorMode = ref(false);
+    const instructorView = ref(false);
     const isSessionActive = ref(false);
     const activeLanguage = ref<LanguageCode>(LanguageCode.Deutsch); // todo: default language
     const activeScene = ref<string>('Scene 1'); // Default scene
@@ -45,14 +46,15 @@ export const useSessionStore = defineStore('session', () => {
      * Saves session state to localStorage
      */
     const saveSessionToStorage = () => {
-            const sessionState = {
-                sessionActivity: {},
-                sessionRole: sessionRole.value,
-                activeLanguage: activeLanguage.value,
-                activeScene: activeScene.value,
-                instructorMode: instructorMode.value,
-                availableRoles: availableRoles.value,
-            };
+        const sessionState = {
+            sessionActivity: {},
+            sessionRole: sessionRole.value,
+            activeLanguage: activeLanguage.value,
+            activeScene: activeScene.value,
+            instructorMode: instructorMode.value,
+            instructorView: instructorView.value,
+            availableRoles: availableRoles.value,
+        };
         if (sessionActivity.value) {
             sessionState['sessionActivity'] = sessionActivity.value;
         }
@@ -80,6 +82,7 @@ export const useSessionStore = defineStore('session', () => {
                 activeLanguage.value = sessionState.activeLanguage;
                 activeScene.value = sessionState.activeScene;
                 instructorMode.value = sessionState.instructorMode;
+                instructorView.value = sessionState.instructorView;
                 availableRoles.value = sessionState.availableRoles;
                 isSessionActive.value = true;
 
@@ -110,8 +113,45 @@ export const useSessionStore = defineStore('session', () => {
         sessionRole.value = undefined;
         sessionActivity.value = undefined;
         isSessionActive.value = false;
+        instructorMode.value = false;
+        instructorView.value = false;
         localStorage.removeItem(STORAGE_KEY);
         localStorage.removeItem(LAST_ROUTE_KEY);
+    };
+
+    /**
+     * Returns the label for a given role ID in the specified language.
+     * @param tree The nested multi-language object tree to search in. (Usually the availableRoles)
+     * @param roleId The ID of the role to find.
+     * @returns The author node or null if not found.
+     */
+    const getRoleById = (
+        tree: NestedMultiLangObject,
+        roleId: string | undefined
+    ): MultiLangObject | null => {
+
+        if(tree.values && tree.values.length > 0) {
+        // check current level
+            for (const val of tree.values) {
+                if (val.id === roleId) {
+                    return val;
+                }
+            }
+        }
+
+        if(!tree.next) {
+            return null;
+        }
+
+        // recursive check in levels below
+        for (const child of tree.next) {
+            const found = getRoleById(child, roleId);
+            if (found) {
+                return found;
+            }
+        }
+
+        return null;
     };
 
     // Watch for changes to frequently-changing session state and persist
@@ -132,6 +172,10 @@ export const useSessionStore = defineStore('session', () => {
         () => instructorMode.value,
         () => saveSessionToStorage(),
     );
+    watch(
+        () => instructorView.value,
+        () => saveSessionToStorage(),
+    );
 
     return {
         startSession,
@@ -141,11 +185,13 @@ export const useSessionStore = defineStore('session', () => {
         availableRoles,
         isSessionActive,
         instructorMode,
+        instructorView,
         outdated,
         activeLanguage,
         activeScene,
         restoreSession,
         saveLastRoute,
         lastRoute,
+        getRoleById,
     };
 });

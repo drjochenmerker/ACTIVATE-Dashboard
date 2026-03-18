@@ -7,8 +7,7 @@ INSERT DATA {
         :{{commentId}} rdf:type :Comment ;
         :WrittenBy :{{author}} ;
         :CreationDate """{{created}}""" ;
-        :CommentDescription """{{comment}}"""@{{langTag}} .
-        # TODO language tag
+        :CommentDescription """{{comment}}""" .
         :{{parentId}} :HasComment :{{commentId}}
     }
 }

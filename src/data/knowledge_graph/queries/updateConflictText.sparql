@@ -1,0 +1,27 @@
+PREFIX : <http://activate.htwk-leipzig.de/model#> 
+PREFIX graph: <http://activate.htwk-leipzig.de/graph/>
+
+DELETE {
+    GRAPH graph:{{graph}} {
+        :{{conflictId}} :ConflictTitle ?oldTitle .
+        :{{conflictId}} :ConflictDescription ?oldDescription .
+    }
+}
+INSERT {
+    GRAPH graph:{{graph}} {
+        :{{conflictId}} :ConflictTitle """{{newTitle}}"""@{{langTag}} .
+        :{{conflictId}} :ConflictDescription """{{newDescription}}"""@{{langTag}} .
+    }
+}
+WHERE {
+    GRAPH graph:{{graph}} {
+        OPTIONAL {
+            :{{conflictId}} :ConflictTitle ?oldTitle .
+            FILTER (lang(?oldTitle) = "{{langTag}}")
+        }
+        OPTIONAL {
+            :{{conflictId}} :ConflictDescription ?oldDescription .
+            FILTER (lang(?oldDescription) = "{{langTag}}")
+        }
+    }
+}

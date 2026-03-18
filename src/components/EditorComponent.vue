@@ -1,7 +1,7 @@
 <script>
 import Quill from 'quill';
 import 'quill/dist/quill.snow.css';
-import Button from '@/components/ui/button/Button.vue';
+import { ButtonComponent } from '@/components/ui/button';
 import Dropdown from './Dropdown.vue';
 
 import { useToast } from 'vue-toastification';
@@ -10,7 +10,7 @@ import 'vue-toastification/dist/index.css';
 import { useActivityPointsStore } from '@/stores/activityPointsStore';
 import { useConflictsStore } from '@/stores/conflictsStore';
 import { conflictStatus } from '@/data/knowledge_graph/structures';
-import { getActivities, getActivityDetail, getConflictDetail, getConflictIds } from '@/data/knowledge_graph/read_operations';
+import { getActivityDetail, getConflictDetail,  } from '@/data/knowledge_graph/read_operations';
 import { addComment, addConflict } from '@/data/knowledge_graph/write_operations';
 import { useSessionStore } from '@/stores/sessionStore';
 import { staticContent } from '@/data/contentData';
@@ -22,9 +22,9 @@ import { buildLanguageString } from '@/lib/utils';
  * Allows to add new conflicts and miscellaneous comments to the graph
  */
 export default {
-  name: 'Editor',
+  name: 'EditorComponent',
   components: {
-    Button,
+    ButtonComponent,
     Dropdown
   },
   props: {
@@ -36,6 +36,11 @@ export default {
     activePoints: {
       type: Array,
       default: () => []
+    },
+    // ensures that misc notes are always added as misc comments
+    isNote: {
+      type: Boolean,
+      default: false
     }
   },
   // Emit event for when the editor content changes
@@ -59,12 +64,6 @@ export default {
       toast: useToast(),
 
     };
-  },
-
-  async mounted() {
-    this.initQuill();
-    // Fetch activity details on mount
-    await this.fetchActivityDetails();
   },
   computed: {
     titlePlaceholder() {
@@ -110,6 +109,38 @@ export default {
       });
     }
   },
+
+  /**
+   * Watchers for the Editor component to handle dynamic updates
+   * - Synchronizes the Quill editor's content with the component's value
+   * - Manages session store updates and triggers activity details fetching
+   */
+  watch: {
+    value(newValue) {
+      if (this.quill && newValue !== this.quill.root.innerHTML) {
+        this.quill.root.innerHTML = newValue;
+      }
+    },
+    'sessionStore.outdated': {
+      handler: async function () {
+        if (useSessionStore().outdated) {
+          await this.fetchActivityDetails();
+          useSessionStore().outdated = false;
+        }
+      },
+    },
+    'sessionStore.activeLanguage': {
+      handler: function (newVal) {
+        this.quill.root.dataset.placeholder = this.staticContent.placeholders.title[newVal] || this.staticContent.placeholders.title.en;
+      },
+    },
+  },
+
+  async mounted() {
+    this.initQuill();
+    // Fetch activity details on mount
+    await this.fetchActivityDetails();
+  },
   methods: {
     /**
      * Initializes the Quill rich text editor with predefined configuration
@@ -120,13 +151,14 @@ export default {
       this.quill = new Quill(this.$refs.editorContainer, {
         theme: 'snow',
         placeholder: this.staticContent.placeholders.description[this.sessionStore.activeLanguage] || this.staticContent.placeholders.description.en,
+        // disabled toolbar as currently only basic text formatting is available anywhere else on the dashboard
         modules: {
           toolbar: [
-            ['bold', 'italic', 'underline'],
-            [{ list: 'ordered' }, { list: 'bullet' }]
+             [], [{}]
           ]
         },
-        formats: ['bold', 'italic', 'underline', 'list']
+        toolbarHtml: ' ',
+        formats: []     
       });
 
       this.quill.root.innerHTML = this.value;
@@ -166,29 +198,30 @@ export default {
     /**
      * Transfers text from the editor to the graph, creating either a miscellaneous comment or a conflict
      * depending on the number of active points. Handles adding comments or conflicts to the graph,
-     * updates the conflicts store, and resets the editor state.
+     * updates the conflicts store, and resets the editor state. 
+     * If the comment is added via add note button in the miscellaneous section, it will always be added as a comment and not a conflict.
      */
     async transferText() {
       // consts
       const content = this.quill.root.innerHTML;
       const title = this.title || 'New Note';
-      const author = this.isAnonymous ? 'Anonymous' : (useSessionStore().sessionRole);
+      const author = this.isAnonymous ? 'Anonymous' : (useSessionStore().sessionRole || 'Unknown');
       const participants = [];
 
-      if (this.activePoints.length === 0) {
+      if (this.activePoints.length === 0 || this.isNote) {
         // WORKAROUND: merge title and content to later separate in miscellaneous comment section
         // as the misc comments are stores without a title and only content
         const titleAndContent = title + '|' + content; // '|', the safest separator for now
 
         try {
-          const graph = useSessionStore().sessionActivity.graph;
-          // 'root' is the root node of the graph for misc comments as they are saved
+           // 'root' is the root node of the graph for misc comments as they are saved
           // just like replies without a title and status
-          const response = await addComment("root", titleAndContent);
+          const response = await addComment("root", titleAndContent, this.isAnonymous);
 
           if (response.status === "OK") {
-            // Zeige Toast-Nachricht bei erfolgreicher Speicherung
+            // Show toast notification for successful comment addition
             this.toast.success(staticContent.toastNotification.noteAdded[useSessionStore().activeLanguage]);
+            location.reload(); // reload the page to show the new comment in the misc section
           } else {
             console.warn("Error saving the comment: ", response);
             this.toast.error("Error");
@@ -272,32 +305,6 @@ export default {
         dropdownList.style.zIndex = 1001 + this.$parent.activePoints.indexOf(this.label);
       });
     }
-  },
-
-  /**
-   * Watchers for the Editor component to handle dynamic updates
-   * - Synchronizes the Quill editor's content with the component's value
-   * - Manages session store updates and triggers activity details fetching
-   */
-  watch: {
-    value(newValue) {
-      if (this.quill && newValue !== this.quill.root.innerHTML) {
-        this.quill.root.innerHTML = newValue;
-      }
-    },
-    'sessionStore.outdated': {
-      handler: async function (newVal) {
-        if (useSessionStore().outdated) {
-          await this.fetchActivityDetails();
-          useSessionStore().outdated = false;
-        }
-      },
-    },
-    'sessionStore.activeLanguage': {
-      handler: function (newVal) {
-        this.quill.root.dataset.placeholder = this.staticContent.placeholders.title[newVal] || this.staticContent.placeholders.title.en;
-      },
-    },
   }
 };
 
@@ -312,10 +319,10 @@ export default {
       <p class="font-bold justify-start">
         {{
           activePoints.length === 0
-            ? (this.staticContent.editor.headerNoSelection[this.sessionStore.activeLanguage] ||
-              this.staticContent.editor.headerNoSelection.en)
-            : (this.staticContent.editor.header[this.sessionStore.activeLanguage] ||
-              this.staticContent.editor.header.en)
+            ? (staticContent.editor.headerNoSelection[sessionStore.activeLanguage] ||
+              staticContent.editor.headerNoSelection.en)
+            : (staticContent.editor.header[sessionStore.activeLanguage] ||
+              staticContent.editor.header.en)
         }}
       </p>
 
@@ -330,19 +337,21 @@ export default {
     <div class="dropdown-container">
       <div v-for="point in activePoints" :key="point">
         <!-- Pass selectedPoints[point] as v-model to the Dropdown to manage multiple selections -->
-        <Dropdown :label="point" :options="pointData[point] || []" v-model="selectedPoints[point]" />
+        <Dropdown v-model="selectedPoints[point]" :label="point" :options="pointData[point] || []" />
       </div>
     </div>
     <!-- Second Separator TODO: Figure out why Tailwind won't render the separator when three points are selected and mt and mb are even -->
-    <hr v-if="activePoints.length > 0 && activePoints.length < 3"
+    <hr
+v-if="activePoints.length > 0 && activePoints.length < 3"
       class="mt-4 mb-4 h-px border-t-0 bg-transparent bg-gradient-to-r from-transparent via-neutral-900 to-transparent opacity-70 dark:via-neutral-700" />
-    <hr v-if="activePoints.length == 3"
+    <hr
+v-if="activePoints.length == 3"
       class="mt-4 mb-5 h-px border-t-0 bg-transparent bg-gradient-to-r from-transparent via-neutral-900 to-transparent opacity-70 dark:via-neutral-700" />
     <!-- title: -->
     <div>
       <!-- <h3>{{ this.staticContent.editor.addTitle[this.sessionStore.activeLanguage] || this.staticContent.editor.addTitle.en }}</h3> -->
       <div class="title-field">
-        <input type="text" v-model="title" :placeholder="titlePlaceholder" class="title-input" />
+        <input v-model="title" type="text" :placeholder="titlePlaceholder" class="title-input" />
       </div>
     </div>
 
@@ -353,15 +362,15 @@ export default {
 
     <!-- anonymous checkbox: -->
     <label class="anonymous-checkbox">
-      <input type="checkbox" v-model="isAnonymous" />
-      {{ this.staticContent.editor.anonymous[this.sessionStore.activeLanguage] || this.staticContent.editor.anonymous.en
+      <input v-model="isAnonymous" type="checkbox" />
+      {{ staticContent.editor.anonymous[sessionStore.activeLanguage] || staticContent.editor.anonymous.en
       }}
     </label>
 
 
-    <Button variant="primary" size="large" class="transfer-button" @click="transferText" :disabled="isDoneDisabled">
-      {{ this.staticContent.terms.done[this.sessionStore.activeLanguage] || this.staticContent.terms.done.en }}
-    </Button>
+    <ButtonComponent variant="primary" size="large" class="transfer-button" :disabled="isDoneDisabled" @click="transferText">
+      {{ staticContent.terms.done[sessionStore.activeLanguage] || staticContent.terms.done.en }}
+    </ButtonComponent>
 
   </div>
 </template>
@@ -375,8 +384,9 @@ export default {
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  width: 400px;
-  max-width: 600px;
+  /* width only needed if the editor is used in the side bar*/
+  /* width: 400px;
+  max-width: 600px; */
   margin: 0 auto;
   overflow: visible;
   position: relative;

@@ -10,7 +10,7 @@ import {
     DialogDescription,
     DialogFooter
 } from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
+import { ButtonComponent } from '@/components/ui/button'
 import { ref, computed } from 'vue';
 
 /**
@@ -20,22 +20,21 @@ import { ref, computed } from 'vue';
  * @property creator - (optional) Creator of the item to be deleted, used for permission checks
  * @property deleteFunction - Function that is called when the deletion is confirmed
  */
-const { title, description, author, deleteFunction } = defineProps<{
+const { title, description, author = '', deleteFunction } = defineProps<{
     title: string;
     description: string;
     author?: string;
     deleteFunction: () => Promise<void>;
 }>();
-const sessionStore = useSessionStore();
+const sessionStore = useSessionStore(); 
 
 const isDeleteDialogOpen = ref(false);
-const isInstructor = useSessionStore().instructorMode;
 const authorId = author?.replace(' ', '_');
 const allowDelete = computed(() => {
     return (
-        isInstructor ||
+        sessionStore.instructorView ||
         !authorId ||
-        authorId === useSessionStore().sessionRole
+        authorId === sessionStore.sessionRole
     );
 });
 </script>
@@ -56,10 +55,10 @@ const allowDelete = computed(() => {
                     </DialogDescription>
                 </DialogHeader>
                 <DialogFooter class="flex justify-between">
-                    <Button variant="secondary" @click="isDeleteDialogOpen = false">{{
-                        staticContent.terms.cancel[sessionStore.activeLanguage] }}</Button>
-                    <Button variant="destructive" @click="() => { deleteFunction(); isDeleteDialogOpen = false; }">{{
-                        staticContent.terms.delete[sessionStore.activeLanguage] }}</Button>
+                    <ButtonComponent variant="secondary" @click="isDeleteDialogOpen = false">{{
+                        staticContent.terms.cancel[sessionStore.activeLanguage] }}</ButtonComponent>
+                    <ButtonComponent variant="destructive" @click="() => { deleteFunction(); isDeleteDialogOpen = false; }">{{
+                        staticContent.terms.delete[sessionStore.activeLanguage] }}</ButtonComponent>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

@@ -215,3 +215,6 @@ export const staticContentFeedback = {
         },
     },
 };
+export type StaticContentFeedback = typeof staticContentFeedback;
+export type QuestionGroupType = keyof StaticContentFeedback;
+export type QuestionKeyType = keyof StaticContentFeedback[QuestionGroupType];

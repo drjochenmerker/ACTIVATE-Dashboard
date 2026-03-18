@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { ref, onMounted, nextTick, computed, watch } from 'vue';
-import { conflictPredicate, conflictStatus, Participant } from '@/data/knowledge_graph/structures';
+import { conflictPredicate, conflictStatus, ConflictWithId, Participant } from '@/data/knowledge_graph/structures';
 import ReplyCard from './ReplyCard.vue';
 import { addComment, deleteConflict, updateConflict } from "@/data/knowledge_graph/write_operations";
-import { Button } from '@/components/ui/button';
+import { ButtonComponent } from '@/components/ui/button';
 import { useConflictsStore } from '@/stores/conflictsStore';
 import { useSessionStore } from '@/stores/sessionStore';
 import { activateTerms, staticContent } from '@/data/contentData';
@@ -11,41 +11,17 @@ import { buildLanguageString } from '@/lib/utils';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog'
 import { LanguageCode } from '@/data/knowledge_graph/structures'
 import DeletionPopUp from './DeletionPopUp.vue';
+import ConflictEditDialog from './ui/dialog/ConflictEditDialog.vue';
 
-const props = defineProps({
-  conflict: {
-    type: Object,
-    required: true,
-  },
-  title: {
-    type: String,
-    required: true,
-  },
-  content: {
-    type: String,
-    required: true,
-  },
-  origin: {
-    type: String,
-    required: true,
-  },
-  author: {
-    type: String,
-    required: true,
-  },
-  authorId: {
-    type: String,
-    required: true,
-  },
-  status: {
-    type: String,
-    required: true,
-  },
-  isGrayedOut: {
-    type: Boolean,
-    default: false,
-  }
-});
+const props = defineProps<{
+  conflict: ConflictWithId;
+  title: string;
+  content: string;
+  origin: string;
+  author: string;
+  status: string;
+  isGrayedOut: boolean;
+}>();
 
 /** 
  * Reactive references for managing conflict details and reply input state
@@ -53,14 +29,14 @@ const props = defineProps({
  * - replyInputVisible: Tracks visibility of reply input for each conflict
  * - newReplyText: Stores temporary reply text for each conflict
  */
-const conflictDetail = ref<any>(null);
+const conflictDetail = ref<ConflictWithId | null>(null);
 // todo
 const isShowOriginOpen = ref(false);
 const replyInputVisible = ref<Record<string, boolean>>({});
 const newReplyText = ref<Record<string, string>>({});
 
 // Set status from props
-const selectedStatus = ref<any>(props.status);
+const selectedStatus = ref<string>(props.status);
 
 // Stores for the conflicts and the session
 const conflictStore = useConflictsStore();
@@ -68,6 +44,7 @@ const sessionStore = useSessionStore();
 
 
 const textareaRef = ref<HTMLTextAreaElement | null>(null);
+const editDialogRef = ref<InstanceType<typeof ConflictEditDialog> | null>(null);
 
 // Set initial conflict detail
 onMounted(() => {
@@ -81,8 +58,8 @@ watch(() => props.conflict, (newConflict) => {
 
 // Watcher for the selected status that causes the update of the conflict status
 watch(selectedStatus, async (newStatus) => {
-  await updateConflict(sessionStore.sessionActivity!.graph, props.conflict.id, conflictPredicate.status, newStatus);
-  conflictStore.updateConflict(props.conflict.id, sessionStore.sessionActivity!.graph);
+  await updateConflict(sessionStore.sessionActivity!.graph, props.conflict.id ?? '', conflictPredicate.status, newStatus);
+  conflictStore.updateConflict(props.conflict.id ?? '', sessionStore.sessionActivity!.graph);
 });
 
 // Toggle for the input field
@@ -152,13 +129,18 @@ const saveReply = async (conflictId: string) => {
 const handleEnterKey = (event: KeyboardEvent) => {
   if (event.key === 'Enter' && !event.shiftKey) {
     event.preventDefault();
-    saveReply(props.conflict.id);
+    saveReply(props.conflict.id ?? '');
   }
 };
 // TODO
 const showOrigin = async () => {
   isShowOriginOpen.value = false;
 }
+
+const openEditDialog = async () => {
+  editDialogRef.value?.openEditDialog();
+};
+
 /**
  * Deletes a specific conflict from the conflict store and updates the conflict list.
  * 
@@ -184,58 +166,18 @@ const removeReply = (id: string) => {
   }
 };
 
-// const cleanContent = computed(() => {
-//   if (!props.content) return '';
-
-//   // Remove all <span class="ql-ui" contenteditable="false"></span> from the string
-//   return props.content.replace(/<span class="ql-ui" contenteditable="false"><\/span>/g, '');
-// });
-
-// const cleanAndWrapLists = computed(() => {
-//   if (!props.content) return '';
-
-//   // 1. Remove the empty spans first
-//   let html = props.content.replace(/<span class="ql-ui" contenteditable="false"><\/span>/g, '');
-
-//   // 2. Convert li with data-list="ordered" into proper <ol><li>...</li></ol>
-//   // and li with data-list="bullet" into <ul><li>...</li></ul>
-
-//   // We do this by splitting content on li and grouping
-//   // Here is a simple regex-based approach:
-
-//   // Match all <li data-list="ordered">...</li>
-//   const orderedListItems = html.match(/<li data-list="ordered">(.*?)<\/li>/gs) || [];
-//   if (orderedListItems.length) {
-//     // Replace all these lis with just <li>content</li>
-//     const orderedLis = orderedListItems.map(item =>
-//       item.replace(/<li data-list="ordered">/, '<li>').replace('</li>', '</li>')
-//     ).join('');
-//     // Replace all ordered lis in original with empty string
-//     html = html.replace(/<li data-list="ordered">(.*?)<\/li>/gs, '');
-
-//     // Insert the <ol> wrapper before the first ordered li was, append after last
-//     // (Simple approach: prepend ol + joined lis + close ol to start of html)
-//     html = `<ol>${orderedLis}</ol>` + html;
-//   }
-
-//   // Similarly for bullet
-//   const bulletListItems = html.match(/<li data-list="bullet">(.*?)<\/li>/gs) || [];
-//   if (bulletListItems.length) {
-//     const bulletLis = bulletListItems.map(item =>
-//       item.replace(/<li data-list="bullet">/, '<li>').replace('</li>', '</li>')
-//     ).join('');
-//     html = html.replace(/<li data-list="bullet">(.*?)<\/li>/gs, '');
-//     html = `<ul>${bulletLis}</ul>` + html;
-//   }
-
-//   return html;
-// });
+const refreshReplies = async () => {
+  await conflictStore.refreshConflictList();
+};
 
 
 </script>
 
 <template>
   <div class="note-card" :class="[selectedStatus, { 'grayed-out': isGrayedOut }]">
+    <ConflictEditDialog ref="editDialogRef" :conflict="props.conflict"
+      @saved="() => conflictStore.refreshConflictList()" />
+
     <div class="note-card-header">
       <!-- Author-->
       <span class="note-card-author">
@@ -245,32 +187,40 @@ const removeReply = (id: string) => {
       <div class="status-selector">
         <select v-model="selectedStatus">
           <option :value="conflictStatus.open">{{ staticContent.terms.conflictStatus.open[sessionStore.activeLanguage]
-            }}</option>
+          }}</option>
           <option :value="conflictStatus.inDiscussion">{{
             staticContent.terms.conflictStatus.inDiscussion[sessionStore.activeLanguage] }}</option>
           <option :value="conflictStatus.resolved">{{
             staticContent.terms.conflictStatus.resolved[sessionStore.activeLanguage] }}</option>
         </select>
       </div>
-      <!-- Delete button -->
-      <DeletionPopUp :title="staticContent.startPage.deleteComment[sessionStore.activeLanguage]"
-        :description="staticContent.startPage.deleteCommentConfirm[sessionStore.activeLanguage]"
-        :author="props.authorId" :delete-function="() => handleDelete(props.conflict.id)">
-      </DeletionPopUp>
+      <div class="flex items-center gap-2">
+        <!-- Edit button -->
+        <button v-if="sessionStore.instructorView" class="icon-button" @click="openEditDialog">
+          <span class="material-symbols-outlined">edit</span>
+        </button>
+        <!-- Delete button -->
+        <DeletionPopUp :title="staticContent.startPage.deleteComment[sessionStore.activeLanguage]"
+          :description="staticContent.startPage.deleteCommentConfirm[sessionStore.activeLanguage]"
+          :author="props.author" :delete-function="() => handleDelete(props.conflict.id ?? '')">
+        </DeletionPopUp>
+      </div>
     </div>
 
     <hr class="note-divider" />
 
     <div class="note-card-content">
       <!-- Note title -->
+      <!-- // v-html is fine here because it's not a user input field -->
+      <!-- eslint-disable-next-line vue/no-v-html -->
       <div class="note-title" v-html="props.title"></div>
       <!-- Note origin -->
       <div class="note-origin">
         <Dialog v-model:open="isShowOriginOpen">
           <DialogTrigger as-child>
-            <Button>
+            <ButtonComponent>
               {{ staticContent.noteCards.showOrigin[sessionStore.activeLanguage] }}
-            </Button>
+            </ButtonComponent>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
@@ -283,7 +233,7 @@ const removeReply = (id: string) => {
             </DialogHeader>
             <DialogFooter>
               <Button @click="() => showOrigin()">{{ staticContent.noteCards.cancel[sessionStore.activeLanguage]
-                }}</Button>
+              }}</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -304,28 +254,32 @@ const removeReply = (id: string) => {
       </div>
 
       <!-- Content -->
+      <!-- // v-html is fine here because it's not a user input field -->
+      <!-- eslint-disable-next-line vue/no-v-html -->
       <div class="note-content" v-html="props.content"></div>
     </div>
 
     <!-- Note comment section starting with add comment button -->
 
-    <div v-if="!replyInputVisible[conflict.id]" class="note-comment-section">
-      <Button @click="toggleReplyInput(conflict.id)">
-        {{ staticContent.noteCards.addComment[sessionStore.activeLanguage] }} </Button>
+    <div v-if="!replyInputVisible[conflict.id ?? '']" class="note-comment-section">
+      <ButtonComponent @click="toggleReplyInput(conflict.id ?? '')">
+        {{ staticContent.noteCards.addComment[sessionStore.activeLanguage] }} </ButtonComponent>
     </div>
 
-    <div v-if="replyInputVisible[conflict.id]" class="comment-input">
-      <Button @click="toggleReplyInput(conflict.id)">
-        {{ staticContent.noteCards.cancel[sessionStore.activeLanguage] }} </Button>
-      <textarea ref="textareaRef" v-model="newReplyText[conflict.id]"
+    <div v-if="replyInputVisible[conflict.id ?? '']" class="comment-input">
+      <ButtonComponent @click="toggleReplyInput(conflict.id ?? '')">
+        {{ staticContent.noteCards.cancel[sessionStore.activeLanguage] }} </ButtonComponent>
+      <textarea ref="textareaRef" v-model="newReplyText[conflict.id ?? '']"
         :placeholder="staticContent.placeholders.answer[sessionStore.activeLanguage]"
         @keydown.enter="handleEnterKey($event)" />
-      <Button @click="saveReply(conflict.id)">{{ staticContent.noteCards.save[sessionStore.activeLanguage] }}</Button>
+      <ButtonComponent @click="saveReply(conflict.id ?? '')">{{
+        staticContent.noteCards.save[sessionStore.activeLanguage] }}</ButtonComponent>
     </div>
 
     <div v-if="conflictDetail && conflictDetail.replies && conflictDetail.replies.length > 0" class="reply-container">
-      <ReplyCard v-for="(reply) in conflictDetail.replies" :key="reply.id" :parentComment="reply"
-        :conflictId="conflict.id" @deleteComment="removeReply" />
+      <ReplyCard v-for="(reply) in conflictDetail.replies" :key="reply.id" :parent-comment="reply"
+        :conflict-id="conflict.id" :show-edit="sessionStore.instructorView" @delete-comment="removeReply"
+        @refresh="refreshReplies" />
     </div>
   </div>
 
@@ -501,21 +455,5 @@ const removeReply = (id: string) => {
 
 .note-content {
   font-weight: normal;
-  /**display: block !important;*/
-
 }
-
-/**
-
-.note-content ul,
-.note-content ol {
-  list-style-type: disc !important;
-  margin-left: 1.5em !important;
-  padding-left: 1.5em !important;
-  display: block !important;
-}
-
-.note-content li {
-  display: list-item !important;
-} */
 </style>

@@ -1,14 +1,15 @@
 <script lang="ts" setup>
 import { addComment, deleteComment } from '@/data/knowledge_graph/write_operations';
 import { nextTick, ref, watch } from 'vue';
-import Button from './ui/button/Button.vue';
+import ButtonComponent from './ui/button/ButtonComponent.vue';
 import DeletionPopUp from './DeletionPopUp.vue';
+import CommentEditDialog from './ui/dialog/CommentEditDialog.vue';
 import ReplyCard from './ReplyCard.vue';
 import { useSessionStore } from '@/stores/sessionStore';
 import { useConflictsStore } from '@/stores/conflictsStore';
 import { staticContent } from '@/data/contentData';
-
 import { useColorMode } from '@vueuse/core';
+import { useMiscsStore } from "@/stores/miscsStore";
 
 /** 
  * NoteCard for miscellaneous comments
@@ -29,8 +30,11 @@ const props = defineProps({
 const colorMode = useColorMode();
 
 
-// store for the session
+// Stores for the conflicts and the session
 const sessionStore = useSessionStore();
+const conflictStore = useConflictsStore();
+const miscStore = useMiscsStore();
+
 
 const graph = sessionStore.sessionActivity!.graph
 
@@ -42,7 +46,10 @@ const replyInputVisible = ref<Record<string, boolean>>({});
 const newReplyText = ref<Record<string, string>>({});
 const textareaRef = ref<HTMLTextAreaElement | null>(null);
 
-const emit = defineEmits(['deleteComment', 'refresh']);
+    
+const editDialogRef = ref<InstanceType<typeof CommentEditDialog> | null>(null);
+
+
 
 /** 
  * Watches for changes to the comment prop and updates the local conflictDetail reactive reference
@@ -65,8 +72,8 @@ const handleDelete = async (id: string) => {
     try {
         //comment cant be nested because its the misc card
         await deleteComment(graph, id, false);
-        useConflictsStore().refreshConflictList();
-        emit('deleteComment', id); // Event an Parent-Komponente senden
+        miscStore.removeComment(id)
+        location.reload(); // reload to reflect any potential changes in the misc section
     } catch (error) {
         console.error("Error deleting conflict: ", error);
     }
@@ -101,6 +108,11 @@ const handleEnterKey = (event: KeyboardEvent) => {
     }
 };
 
+const refreshConflicts = async () => {
+  await conflictStore.refreshConflictList();
+  miscStore.fetchMiscs()
+};
+
 /** 
  * Saves a reply to a specific comment
  * 
@@ -127,10 +139,9 @@ const saveReply = async (commentId: string) => {
                 conflictDetail.value.replies = [];
             }
         }
-
+        
         // Important to refresh the conflict list so that the UI shows the new comment immediately
-        useConflictsStore().refreshConflictList();
-        emit('refresh');
+        refreshConflicts()
 
         replyInputVisible.value[commentId] = false;
         newReplyText.value[commentId] = '';
@@ -143,46 +154,75 @@ const removeReply = (id: string) => {
     if (conflictDetail.value && conflictDetail.value.replies) {
         conflictDetail.value.replies = conflictDetail.value.replies.filter((reply: { id: string; }) => reply.id !== id);
     }
+    miscStore.removeComment(id)
+};
+
+const authorLabel = () => {
+    if (!props.comment?.author) return 'Unknown';
+    const roleId = props.comment.author.split('#').pop(); // The role ID is the last part after splitting by '#'
+    if (roleId ==='Anonymous') return roleId;
+    const roleNode = useSessionStore().getRoleById(useSessionStore().availableRoles || {}, (roleId ||  props.comment.author));
+    return roleNode ? roleNode.labels[sessionStore.activeLanguage] || roleNode.labels['default'] || roleNode.labels['en'] : 'Unknown';
+}
+
+const openEditDialog = async () => {
+  editDialogRef.value?.openEditDialog();
 };
 
 </script>
 
 <template>
     <div class="misc-note-card" :class="{ 'dark': colorMode === 'dark' }">
+            <CommentEditDialog
+                ref="editDialogRef"
+                :comment="props.comment"
+                @saved="() => conflictStore.refreshConflictList()"
+            />
+
         <div class="misc-note-header">
-            <span class="misc-note-author">Author: {{ props.comment.author || 'Unknown' }}</span>
-            <div>
+            <span class="misc-note-author"><strong>{{ staticContent.terms.author[sessionStore.activeLanguage] }}:</strong> {{
+                authorLabel() }}</span>
+            <div class="flex items-center gap-2">
+                <!-- Edit button -->
+                <button v-if="sessionStore.instructorView" class="icon-button" @click="openEditDialog">
+                    <span class="material-symbols-outlined">edit</span>
+                </button>
+
                 <!-- Delete button -->
-      <DeletionPopUp
-        :title="staticContent.startPage.deleteComment[sessionStore.activeLanguage]"
-        :description="staticContent.startPage.deleteCommentConfirm[sessionStore.activeLanguage]"
-        :author="props.comment.author.id"
-        :delete-function="() => handleDelete(props.comment.id)"
-      >
-      </DeletionPopUp>
+                <DeletionPopUp
+                    :title="staticContent.startPage.deleteComment[sessionStore.activeLanguage]"
+                    :description="staticContent.startPage.deleteCommentConfirm[sessionStore.activeLanguage]"
+                    :author="props.comment.author.id"
+                    :delete-function="() => handleDelete(props.comment.id)"
+                >
+                </DeletionPopUp>
             </div>
         </div>
 
         <hr class="misc-note-divider" />
 
         <div class="misc-note-content">
+            <!-- eslint-disable-next-line vue/no-v-html -->
             <div class="misc-note-title" v-html="extractedTitle"></div>
+             <!-- eslint-disable-next-line vue/no-v-html -->
             <div class="misc-note-description" v-html="extractedContent"></div>
         </div>
 
         <div class="note-comment-section">
-            <Button @click="toggleReplyInput(props.comment.id)"> Add comment </Button>
+            <ButtonComponent @click="toggleReplyInput(props.comment.id)"> {{ staticContent.noteCards.addComment[sessionStore.activeLanguage] }} </ButtonComponent>
         </div>
 
         <div v-if="replyInputVisible[props.comment.id]" class="comment-input">
-            <textarea ref="textareaRef" v-model="newReplyText[props.comment.id]" placeholder="Write a reply..."
+            <textarea
+ref="textareaRef" v-model="newReplyText[props.comment.id]" placeholder="Write a reply..."
                 @keydown.enter="handleEnterKey($event)" />
-            <Button @click="saveReply(props.comment.id)">Save</Button>
+            <ButtonComponent @click="saveReply(props.comment.id)">{{ staticContent.noteCards.saveComment[sessionStore.activeLanguage] }}</ButtonComponent>
         </div>
 
         <div v-if="props.comment && props.comment.replies && props.comment.replies.length > 0" class="reply-container">
-            <ReplyCard v-for="(reply) in conflictDetail.replies" :key="reply.id" :parentComment="reply"
-                :conflictId="conflictDetail.id" @deleteComment="removeReply" />
+            <ReplyCard
+v-for="(reply) in conflictDetail.replies" :key="reply.id" :parent-comment="reply"
+                :conflict-id="conflictDetail.id" :show-edit="sessionStore.instructorView" @delete-comment="removeReply" @refresh="refreshConflicts" />
         </div>
 
     </div>
@@ -243,6 +283,19 @@ const removeReply = (id: string) => {
     font-weight: normal;
 }
 
+/* icon */
+.icon-button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  font-size: 24px;
+  color: red;
+}
+
+.icon-button:hover {
+  color: darkred;
+}
 
 /* comment input */
 .comment-input {

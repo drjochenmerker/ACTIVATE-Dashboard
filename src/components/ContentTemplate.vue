@@ -48,11 +48,6 @@ const filteredConflicts = computed(() => {
     });
   }
   return conflicts;
-  // old:
-  /*return conflictStore.getConflicts.filter(conflict => {
-    return Array.isArray(conflict.participants) &&
-      conflict.participants.some(participant => participant.type === props.pageData.id);
-  });*/
 });
 
 </script>
@@ -64,13 +59,17 @@ const filteredConflicts = computed(() => {
       <div class="conflict-container">
         <div class="note-container">
           <!-- NoteCard component for displaying conflict details -->
-          <NoteCard :conflict="conflict"
+          <NoteCard
+            :conflict="conflict"
             :title="conflict.title[sessionStore.activeLanguage] || conflict.title['default']"
             :content="conflict.description[sessionStore.activeLanguage] || conflict.description['default']"
             :origin="conflict.origin"
-            :author="conflict.author.labels[sessionStore.activeLanguage] || conflict.author.labels['default']"
-            :authorId="conflict.author.id"
-            :status="conflict.status" :isGrayedOut="!!highlightedConflictId && conflict.id !== highlightedConflictId" />
+            :author="conflict.author.labels?.[sessionStore.activeLanguage] || 
+                     conflict.author.labels?.['default'] || 
+                     Object.values(conflict.author.labels || {}).find(label => typeof label === 'string' && label.trim() !== '') || 
+                     conflict.author.id || ''"
+            :author-id="conflict.author.id"
+            :status="conflict.status" :is-grayed-out="!!highlightedConflictId && conflict.id !== highlightedConflictId" />
         </div>
 
       </div>
@@ -87,7 +86,7 @@ const filteredConflicts = computed(() => {
 <style scoped>
 /* Container styling for each conflict */
 .conflict-container {
-  margin-bottom: 20px;
+  padding-bottom: 20px;
 }
 
 /* Styling for the comment section */

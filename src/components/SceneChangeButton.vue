@@ -19,7 +19,7 @@ const sceneLabels = computed(() => ({
 
 <template>
     <div class="flex flex-row gap-2 items-center w-32">
-        <Select v-model="sessionStore.activeScene" id="sceneSelect" @update:model-value="handleSceneChange">
+        <Select id="sceneSelect" v-model="sessionStore.activeScene" @update:model-value="handleSceneChange">
             <SelectTrigger class="w-[180px] overflow-hidden whitespace-nowrap truncate">
                 <SelectValue />
             </SelectTrigger>

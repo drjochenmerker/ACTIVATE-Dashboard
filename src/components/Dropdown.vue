@@ -53,6 +53,27 @@ export default {
             return this.staticContent.placeholders.search[lang]
         }
     },
+    /**
+     * Watches for changes to the modelValue prop and updates the selectedOptions accordingly
+     * Ensures the component's internal state reflects the latest prop value
+     * @param {Array} newValue - The new value of the modelValue prop
+     */
+    watch: {
+        modelValue(newValue) {
+            this.selectedOptions = newValue;
+        }
+    },
+    mounted() {
+        // global click listener
+        document.addEventListener('click', this.handleClickOutside);
+    },
+    /**
+     * Removes the global click event listener when the component is about to be unmounted
+     * Prevents memory leaks by cleaning up event listeners
+     */
+    beforeUnmount() {
+        document.removeEventListener('click', this.handleClickOutside);
+    },
     methods: {
         updateSearch(event) {
             this.search = event.target.value;
@@ -90,33 +111,12 @@ export default {
                 this.showDropdown = false;
             }
         }
-    },
-    mounted() {
-        // global click listener
-        document.addEventListener('click', this.handleClickOutside);
-    },
-    /**
-     * Removes the global click event listener when the component is about to be unmounted
-     * Prevents memory leaks by cleaning up event listeners
-     */
-    beforeUnmount() {
-        document.removeEventListener('click', this.handleClickOutside);
-    },
-    /**
-     * Watches for changes to the modelValue prop and updates the selectedOptions accordingly
-     * Ensures the component's internal state reflects the latest prop value
-     * @param {Array} newValue - The new value of the modelValue prop
-     */
-    watch: {
-        modelValue(newValue) {
-            this.selectedOptions = newValue;
-        }
     }
 };
 </script>
 
 <template>
-    <div class="dropdown" ref="dropdownContainer">
+    <div ref="dropdownContainer" class="dropdown">
         <h3>{{ activateTerms[sessionStore.activeLanguage][label] }}:</h3>
         <div class="search-container">
 
@@ -127,8 +127,9 @@ export default {
             </div>
 
             <!-- Input field for searching -->
-            <input type="text" v-model="search" @focus="showDropdown = true" @click="showDropdown = true"
-                @input="updateSearch" :placeholder="placeholderText" />
+            <input
+v-model="search" type="text" :placeholder="placeholderText" @focus="showDropdown = true"
+                @click="showDropdown = true" @input="updateSearch" />
         </div>
 
         <!-- Dropdown list -->
@@ -136,7 +137,7 @@ export default {
             <li v-if="filteredOptions.length === 0" class="no-options">
                 {{ staticContent.errors.noElements[sessionStore.activeLanguage] || staticContent.errors.noElements.en }}
             </li>
-            <li v-else v-for="option in filteredOptions" :key="option.id" @mousedown.prevent="selectOption(option)">
+            <li v-for="option in filteredOptions" v-else :key="option.id" @mousedown.prevent="selectOption(option)">
                 {{ option.label.split("/").pop() }}
             </li>
         </ul>

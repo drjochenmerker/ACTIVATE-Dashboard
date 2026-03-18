@@ -1,5 +1,7 @@
+import { LLMRequestConfig, useLLMSettingsStore } from "@/stores/llmSettingsStore";
 import { sparqlTemplate, StringAccessObject } from "./structures";
 import { fetchSparql, getSparqlTemplate } from "./utils";
+import { addRequiredEntitiesToGraph } from "./requiredEntities";
 
 /**
  * Type definition for the result of LLM parsing operations.
@@ -8,7 +10,7 @@ import { fetchSparql, getSparqlTemplate } from "./utils";
 export type LLMParsingResult = {
     success: boolean;
     message: string;
-    data?: any;
+    data?: { question: string; answer: string };
 };
 
 /**
@@ -22,9 +24,12 @@ export type LLMParsingResult = {
  */
 export async function llmSettingGeneration(
     description: string,
+    llmDetail: LLMRequestConfig,
     title?: string,
     defaultRole?: string,
 ): Promise<LLMParsingResult> {
+    const llmSettingsStore = useLLMSettingsStore();
+
     // Generate TTL using the LLM Backend
     const llmRes = await fetch(
         `${import.meta.env.VITE_LLM_URL}${!import.meta.env.VITE_LLM_PORT ? "" : ":" + import.meta.env.VITE_LLM_PORT}/api/feedback/settingGen`,
@@ -36,12 +41,15 @@ export async function llmSettingGeneration(
             },
             body: JSON.stringify({
                 description,
+                llmDetail: JSON.stringify(llmDetail),
+                knowledgeGraphGenerationPrompt: llmSettingsStore.getPrompts().knowledgeGraphGeneration ?? null,
+                entityAssignmentPrompt: llmSettingsStore.getPrompts().entityAssignment ?? null,
+                predefinedEntities: llmSettingsStore.getPrompts().predefinedEntities ?? null,
                 title: title ?? "",
                 defaultRole: defaultRole ?? "",
             }),
         },
     );
-    // console.log("llm res", llmRes);
     const data = await llmRes.json();
     if (!llmRes.ok || data.error) {
         return {
@@ -68,9 +76,11 @@ export async function llmSettingGeneration(
     }
     const rdfData = await rdfRes.json();
     if (rdfData.message === "success") {
+        await addRequiredEntitiesToGraph(rdfData.graph_id, llmSettingsStore.getPrompts().predefinedEntities);
+
         return {
             success: true,
-            message: "Setting generated and added successfully",
+            message: "Setting generated and added successfully for graph ID: " + rdfData.graph_id, // debug message with graph ID
         };
     }
     return {
@@ -90,10 +100,12 @@ export async function llmSubmit(
     graphID: string,
     role: { id: string; label: string },
     data: { question: string; answer: string }[],
+    llmDetail: LLMRequestConfig,
 ): Promise<LLMParsingResult> {
+    const llmSettingsStore = useLLMSettingsStore();
     // Fetch description and entities from the graph
-    let description: StringAccessObject = {};
-    let entities: StringAccessObject[] = [];
+    const description: StringAccessObject = {};
+    const entities: StringAccessObject[] = [];
     let query = await getSparqlTemplate(sparqlTemplate.getLLMDetail);
     const graphRes = await fetchSparql(query.replace("{{graph}}", graphID));
     graphRes.forEach((triple: StringAccessObject) => {
@@ -127,6 +139,9 @@ export async function llmSubmit(
                     role,
                     data: data,
                 },
+                llmDetail: JSON.stringify(llmDetail),
+                entityExtractionPrompt: llmSettingsStore.getPrompts().entityExtraction,
+                tensionExtractionPrompt: llmSettingsStore.getPrompts().tensionExtraction,
             }),
         },
     );
@@ -254,15 +269,15 @@ export async function llmSubmit(
  * @param graphID The ID of the graph to parse
  * @returns LLMParsingResult
  */
-export async function llmPool(graphID: string): Promise<LLMParsingResult> {
+export async function llmPool(graphID: string, llmDetail: LLMRequestConfig): Promise<LLMParsingResult> {
     const debugOn = true; // DEBUG: SET TO TRUE IF DEBUGGING IS NEEDED
     const logger = {
-        log: (...args: any[]) => {
+        log: (...args: string[]) => {
             if (debugOn) {
                 console.log(...args);
             }
         },
-        error: (...args: any[]) => {
+        error: (...args: string[]) => {
             if (debugOn) {
                 console.error(...args);
             }
@@ -320,6 +335,7 @@ export async function llmPool(graphID: string): Promise<LLMParsingResult> {
     );
 
     // Step 2: Pool submissions (LLM API)
+    const llmSettingsStore = useLLMSettingsStore();
     stepStartTime = performance.now(); // Reset timer for step 2
     logger.log("DEBUG: Sending submissions to LLM pooling API...");
     const poolRes = await fetch(
@@ -333,6 +349,9 @@ export async function llmPool(graphID: string): Promise<LLMParsingResult> {
             body: JSON.stringify({
                 entities: entitySubmissions,
                 tensions: tensionSubmissions,
+                llmDetail: JSON.stringify(llmDetail),
+                turtleFileMergePrompt: llmSettingsStore.getPrompts().turtleFileMerge,
+                tensionExtractionPrompt: llmSettingsStore.getPrompts().tensionExtraction,
             }),
         },
     );

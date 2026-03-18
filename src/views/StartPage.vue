@@ -11,7 +11,7 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { ButtonComponent } from '@/components/ui/button';
 import ActivityCard from '@/components/ActivityCard.vue';
 import {
   Dialog,
@@ -26,9 +26,12 @@ import { useActivityStore } from '@/stores/activityStore';
 import { buildTreeStructByLang } from '@/data/knowledge_graph/utils';
 import { staticContent } from '@/data/contentData';
 import LanguageSelect from '@/components/LanguageSelect.vue';
+import InstructorViewSelect from '@/components/InstructorViewSelect.vue';
 import { PlusIcon } from 'lucide-vue-next';
 import { llmSettingGeneration } from '@/data/knowledge_graph/llm_utils';
 import LoadingOverlay from '@/components/LoadingOverlay.vue';
+import { useLLMSettingsStore } from '@/stores/llmSettingsStore';
+import OptionsButton from '@/components/OptionsButton.vue';
 import ThemeSwitchButton from '@/components/ThemeSwitchButton.vue';
 import LogoutButton from '@/components/LogoutButton.vue';
 
@@ -76,7 +79,7 @@ const addNewActivity = async () => {
   showValidationErrors.value = true;
   try {
     loading.value = true;
-    await llmSettingGeneration(newDescription.value, newTitle.value, defaultRole.value);
+    await llmSettingGeneration(newDescription.value, useLLMSettingsStore().getCurrentModelRequestConfig(), newTitle.value, defaultRole.value);
     loading.value = false;
   } catch (error) {
     console.error("Error during LLM generation:", error);
@@ -94,13 +97,20 @@ const addNewActivity = async () => {
 </script>
 
 <template>
-  <div class="flex flex-col items-center justify-center py-10 px-4">
-    <div class="flex items-center gap-2 justify-end w-full">
+  <div class="flex flex-col items-center justify-center py-4 px-4">
+    <div class="flex items-center gap-2 justify-end w-full mb-4">
+      <!-- instructorview select has to stay instructorMode so the button stays clickable for the instructor lol  -->
+      <InstructorViewSelect v-if="sessionStore.instructorMode" />
       <LanguageSelect />
+      <!-- options button always visible if instructor mode is active -->
+      <template v-if="sessionStore.instructorMode">
+        <OptionsButton />
+      </template>
       <LogoutButton />
       <ThemeSwitchButton />
     </div>
     <Card class="w-full max-w-5xl">
+
 
       <!-- Card header with logo -->
       <CardHeader class="flex justify-center items-center">
@@ -114,13 +124,13 @@ const addNewActivity = async () => {
         </CardTitle>
       </CardHeader>
       <!-- "add button" in the middle -->
-      <div class="flex justify-center my-6">
+      <div v-if="sessionStore.instructorView" class="flex justify-center my-6">
         <Dialog v-model:open="dialogOpen">
           <DialogTrigger as-child>
-            <Button
+            <ButtonComponent
               class="text-3xl px-6 py-3 rounded-full text-black bg-white border border-black hover:bg-black hover:text-white transition-colors duration-300">
               <PlusIcon class="h-6 w-6" />
-            </Button>
+            </ButtonComponent>
           </DialogTrigger>
           <DialogContent class="sm:max-w-[425px]">
             <DialogHeader>
@@ -129,13 +139,15 @@ const addNewActivity = async () => {
               <!-- Optional Title -->
               <DialogDescription>{{ staticContent.startPage.enterTitle[sessionStore.activeLanguage] }}
               </DialogDescription>
-              <input type="text" v-model="newTitle"
+              <input
+v-model="newTitle" type="text"
                 class="w-full border rounded p-2 mb-2 dark:bg-gray-900 border-gray-300" />
 
               <!-- Required Description -->
               <DialogDescription>{{ staticContent.startPage.enterDescription[sessionStore.activeLanguage] }}
               </DialogDescription>
-              <textarea v-model="newDescription" class="w-full border rounded p-2 mb-1 dark:bg-gray-900" :class="[
+              <textarea
+v-model="newDescription" class="w-full border rounded p-2 mb-1 dark:bg-gray-900" :class="[
                 showValidationErrors && !newDescription.trim() ? 'border-red-500' : 'border-gray-300'
               ]" />
               <p v-if="showValidationErrors && !newDescription.trim()" class="text-red-500 text-sm mb-2">
@@ -147,14 +159,15 @@ const addNewActivity = async () => {
               </DialogDescription>
               <input v-model="defaultRole" class="w-full border rounded p-2 mb-2 dark:bg-gray-900 border-gray-300" />
 
-              <Button @click="addNewActivity">{{ staticContent.terms.done[sessionStore.activeLanguage] }}</Button>
+              <ButtonComponent @click="addNewActivity">{{ staticContent.terms.done[sessionStore.activeLanguage] }}</ButtonComponent>
 
               <!-- <div v-if="loading">
                 <Loader2 class="animate-spin h-5 w-5 ml-2 inline-block" />
                 {{ staticContent.placeholders.loading[sessionStore.activeLanguage] }}
               </div> -->
             </DialogHeader>
-            <LoadingOverlay :visible="loading"
+            <LoadingOverlay
+:visible="loading"
               :message="staticContent.placeholders.loading[sessionStore.activeLanguage]"
               class="mt-4 text-red-500 font-semibold" />
           </DialogContent>

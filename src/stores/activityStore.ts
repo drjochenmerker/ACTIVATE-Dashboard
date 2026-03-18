@@ -16,7 +16,7 @@ export const useActivityStore = defineStore('ActivityStore', () => {
      * 
      * @type {Ref<Activity[]>}
      */
-    let activityList = ref<Activity[]>([]);
+    const activityList = ref<Activity[]>([]);
     /**
      * Retrieves all activities from the data source and updates the activity list.
      * 
@@ -40,8 +40,7 @@ export const useActivityStore = defineStore('ActivityStore', () => {
     };
     const editActivity = async (activity: Activity) => {
         const updatedActivity = await updateActivity(activity);
-        if (updatedActivity.status === "OK") {
-        } else {
+        if (updatedActivity.status !== "OK") {
             console.log("Update failed.")
         }
         refreshActivityList();
@@ -52,8 +51,7 @@ export const useActivityStore = defineStore('ActivityStore', () => {
     };
     const cloneThisActivity = async (clonedActivity: Activity) => {
         const savedClone = await cloneActivity(clonedActivity);
-        if (savedClone.status === "OK") {
-        } else {
+        if (savedClone.status !== "OK") {
             console.log("Cloning failed.")
         }
         refreshActivityList();

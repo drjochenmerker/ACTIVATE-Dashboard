@@ -1,6 +1,13 @@
 @prefix : <http://activate.htwk-leipzig.de/model#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+:Absprachen a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Absprachen"@de,
+        "Agreements"@en,
+        "Överenskommelser"@sv .
 
 :AelterePatientin a :Object,
         owl:NamedIndividual ;
@@ -8,23 +15,249 @@
         "Elderly Patient"@en,
         "Äldre patient"@sv .
 
-:Arzt01 a :Subject,
-        owl:NamedIndividual ;
-    rdfs:label "Arzt 1"@de,
-        "Physician 1"@en,
-        "Läkare 1"@sv .
-
 :Arzt02 a :Subject,
         owl:NamedIndividual ;
     rdfs:label "Arzt 2"@de,
         "Physician 2"@en,
         "Läkare 2"@sv .
 
+:Besprechungen a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Besprechungen"@de,
+        "Meetings"@en,
+        "Möten"@sv .
+
 :BevorstehendeOP a :Object,
         owl:NamedIndividual ;
     rdfs:label "Bevorstehende Operation"@de,
         "Upcoming Surgery"@en,
         "Kommande operation"@sv .
+
+:Conflict_Arzt01_IrritationDreiergespraech_2 a :Conflict ;
+    :ConflictDescription "Arzt01 empfand Irritation aufgrund der Unübersichtlichkeit und mangelnden Gesprächsleitung während des Dreiergesprächs mit der Patientin."@de,
+        "Arzt01 felt irritated by the lack of clarity and leadership during the three-person conversation with the patient."@en,
+        "Arzt01 kände irritation på grund av bristen på tydlighet och samtalsledning under trepartssamtalet med patienten."@sv ;
+    :ConflictState "resolved" ;
+    :ConflictTitle "Irritation durch unübersichtliches Dreiergespräch"@de,
+        "Irritation due to unclear three-person conversation"@en,
+        "Irritation på grund av otydligt trepartssamtal"@sv ;
+    :CreationDate "2025-09-16T12:18:00.815Z" ;
+    :HasIntent :Negative ;
+    :HasParticipant :Arzt01,
+        :GespraechZuDrittMitPatientin,
+        :UnuebersichtlichkeitImGespraech ;
+    :IsAI true ;
+    :Origin "{\"question\": \"3. Denken Sie an einen Teil der Aktivität, den Sie sehr negativ, kontraproduktiv oder enttäuschend fanden. Bitte beschreiben Sie in einigen Sätzen, was in dieser Phase passiert ist.\", \"answer\": \"Ich fand nichts SEHR enttäuschend, mich hat nur irritiert als wir zu 3. mit der Patientin gesprochen haben, weil es dadurch etwas unübersichtlich wurde wer nun spricht und das Gespräch „lenkt“\"}" ;
+    :WrittenBy :Arzt01 .
+
+:Conflict_Arzt01_MarginalizationPhysiotherapy_6 a :Conflict ;
+    :ConflictDescription "Der Teilnehmer stellte fest, dass die Physiotherapie eher hintenan gestellt wurde, in der Runde nicht vorgestellt wurde und keine sinnvolle Arbeitsaufteilung vorab besprochen wurde, was als negativ empfunden wurde."@de,
+        "The participant noted that physiotherapy was marginalized, not introduced in the meeting round, and there was no meaningful division of labor discussed beforehand, which was perceived as negative."@en,
+        "Deltagaren noterade att fysioterapin marginaliserades, inte presenterades i mötesrundan, och att ingen meningsfull arbetsfördelning diskuterades i förväg, vilket upplevdes som negativt."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Marginalisierung der Physiotherapie und mangelnde Arbeitsaufteilung"@de,
+        "Marginalization of physiotherapy and lack of division of labor"@en,
+        "Marginalisering av fysioterapi och brist på arbetsfördelning"@sv ;
+    :CreationDate "2025-09-16T12:13:59.654Z" ;
+    :HasIntent :Negative ;
+    :HasParticipant :Arzt01,
+        :RolleDerPhysiotherapie,
+        :SinnvolleArbeitsaufteilung ;
+    :IsAI true ;
+    :Origin "{\"question\": \"3. Denken Sie an einen Teil der Aktivität, den Sie sehr negativ, kontraproduktiv oder enttäuschend fanden. Bitte beschreiben Sie in einigen Sätzen, was in dieser Phase passiert ist.\", \"answer\": \"Physiotherapie wurde eher hintenan gestellt, wurde in der Runde nicht vorgestellt, keine sinnvolle Arbeitsaufteilung vorab besprochen.\"}" ;
+    :WrittenBy :Arzt01 .
+
+:Conflict_Arzt01_NegativeJointDiscussion_4 a :Conflict ;
+    :ConflictDescription "Arzt01 empfand das gemeinsame Gespräch mit allen Beteiligten, der Patientin und den Angehörigen als sehr negativ, kontraproduktiv oder enttäuschend."@de,
+        "Arzt01 found the joint discussion with all involved parties, the patient, and relatives to be very negative, counterproductive, or disappointing."@en,
+        "Arzt01 fann den gemensamma diskussionen med alla inblandade parter, patienten och anhöriga mycket negativ, kontraproduktiv eller nedslående."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Negativer Eindruck vom gemeinsamen Gespräch mit allen Beteiligten"@de,
+        "Negative Impression of Joint Discussion with All Parties"@en,
+        "Negativt intryck av gemensam diskussion med alla parter"@sv ;
+    :CreationDate "2025-09-16T12:16:25.019Z" ;
+    :HasIntent :Negative ;
+    :HasParticipant :Arzt01,
+        :Enkelin01,
+        :GespraechMitAllenBeteiligtenPatientinUndAngehoerigenZusammen,
+        :Patientin01,
+        :Tochter01 ;
+    :IsAI true ;
+    :Origin "{\"question\": \"3. Denken Sie an einen Teil der Aktivität, den Sie sehr negativ, kontraproduktiv oder enttäuschend fanden. Bitte beschreiben Sie in einigen Sätzen, was in dieser Phase passiert ist.\", \"answer\": \"das Gespräch mit allen Beteiligten, der Patientin und der Angehörigen zusammen\\n\"}" ;
+    :WrittenBy :Arzt01 .
+
+:Conflict_Arzt01_PositiveClarificationResponsibility_5 a :Conflict ;
+    :ConflictDescription "Der Teilnehmer empfand die fachliche Aufklärung der Therapieoptionen und die Verteilung der Verantwortung im Team bei der Entscheidungsfindung als sehr positiv, da dies die Last von der Tochter nahm."@de,
+        "The participant found the professional clarification of therapy options and the distribution of responsibility within the team during decision-making to be very positive, as it relieved the burden on the daughter."@en,
+        "Deltagaren fann den professionella klargörandet av terapialternativ och fördelningen av ansvar inom teamet under beslutsfattandet mycket positivt, då det lättade dotterns börda."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Positive Erfahrung mit fachlicher Aufklärung und geteilter Verantwortung"@de,
+        "Positive experience with professional clarification and shared responsibility"@en,
+        "Positiv upplevelse med professionell klargörande och delat ansvar"@sv ;
+    :CreationDate "2025-09-16T12:13:59.654Z" ;
+    :HasIntent :Positive ;
+    :HasParticipant :Arzt01,
+        :LastDerTochter,
+        :Therapieoptionen ;
+    :IsAI true ;
+    :Origin "{\"question\": \"2. Denken Sie an einen Teil der Aktivität, den Sie sehr positiv, konstruktiv oder befriedigend fanden. Bitte beschreiben Sie in einigen Sätzen, was in dieser Phase passiert ist.\", \"answer\": \"Fachliche Aufklärung der Therapieoptionen. Bei der Entscheidungsfindung die Verantwortung auf das Team verteilt und damit die Last von der Tochter genommen.\\n\"}" ;
+    :WrittenBy :Arzt01 .
+
+:Conflict_Arzt01_PositiveEinzelgespraech_1 a :Conflict ;
+    :ConflictDescription "Arzt01 empfand das Arzt-Patienten-Einzelgespräch als effektiv, um direkt auf die Fragen der Patientin eingehen zu können."@de,
+        "Arzt01 found the individual doctor-patient conversation effective for directly addressing the patient's questions."@en,
+        "Arzt01 fann det enskilda läkar-patient-samtalet effektivt för att direkt kunna bemöta patientens frågor."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Positive Erfahrung mit Einzelgespräch"@de,
+        "Positive experience with individual conversation"@en,
+        "Positiv upplevelse med enskilt samtal"@sv ;
+    :CreationDate "2025-09-16T12:18:00.815Z" ;
+    :HasIntent :Positive ;
+    :HasParticipant :Arzt01,
+        :ArztPatientenEinzelgespraech,
+        :Patientenfragen,
+        :Patientin01 ;
+    :IsAI true ;
+    :Origin "{\"question\": \"2. Denken Sie an einen Teil der Aktivität, den Sie sehr positiv, konstruktiv oder befriedigend fanden. Bitte beschreiben Sie in einigen Sätzen, was in dieser Phase passiert ist.\", \"answer\": \"Ich finde dass das Arzt Patienten Einzelgespräch gut war um direkt auf die Patientin und ihre Fragen eingehen zu können\"}" ;
+    :WrittenBy :Arzt01 .
+
+:Conflict_Arzt01_PositiveInitialDiscussion_3 a :Conflict ;
+    :ConflictDescription "Arzt01 empfand das gemeinsame Gespräch am Anfang und die Formulierung eines Planes als sehr positiv, konstruktiv oder befriedigend."@de,
+        "Arzt01 found the joint initial discussion and the formulation of a plan to be very positive, constructive, or satisfying."@en,
+        "Arzt01 fann den gemensamma inledande diskussionen och formuleringen av en plan mycket positiv, konstruktiv eller tillfredsställande."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Positiver Eindruck von der anfänglichen Diskussion und der Planformulierung"@de,
+        "Positive Impression of Initial Discussion and Plan Formulation"@en,
+        "Positivt intryck av inledande diskussion och planformulering"@sv ;
+    :CreationDate "2025-09-16T12:16:25.019Z" ;
+    :HasIntent :Positive ;
+    :HasParticipant :Arzt01,
+        :FormulierungEinesPlanes,
+        :GemeinsamesGespraechAmAnfang ;
+    :IsAI true ;
+    :Origin "{\"question\": \"2. Denken Sie an einen Teil der Aktivität, den Sie sehr positiv, konstruktiv oder befriedigend fanden. Bitte beschreiben Sie in einigen Sätzen, was in dieser Phase passiert ist.\", \"answer\": \"gemeinsames Gespräch am Anfang und Formulierung eines Planes\\n\"}" ;
+    :WrittenBy :Arzt01 .
+
+:Conflict_Pflege01_NegativeDominatingAttitude_13 a :Conflict ;
+    :ConflictDescription "Die Pflegekraft empfand eine dominierende Haltung während der Aktivität als negativ und kontraproduktiv."@de,
+        "The nurse experienced a dominating attitude during the activity, which they found negative and counterproductive."@en,
+        "Sjuksköterskan upplevde en dominerande attityd under aktiviteten, vilket de fann negativt och kontraproduktivt."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Negative Erfahrung mit dominierender Haltung"@de,
+        "Negative experience with dominating attitude"@en,
+        "Negativ upplevelse med dominerande attityd"@sv ;
+    :CreationDate "2025-09-16T12:21:19.556Z" ;
+    :HasIntent :Negative ;
+    :HasParticipant :DominierendeHaltung,
+        :Pflege01 ;
+    :IsAI true ;
+    :Origin "{\"question\": \"3. Denken Sie an einen Teil der Aktivität, den Sie sehr negativ, kontraproduktiv oder enttäuschend fanden. Bitte beschreiben Sie in einigen Sätzen, was in dieser Phase passiert ist.\", \"answer\": \"... dominierende Haltung\"}" ;
+    :WrittenBy :Pflege01 .
+
+:Conflict_Pflege01_PositiveListening_12 a :Conflict ;
+    :ConflictDescription "Die Pflegekraft empfand das Zuhören und das Bestreben, andere zu verstehen, als einen sehr positiven und konstruktiven Aspekt der Aktivität."@de,
+        "The nurse found the act of listening to others and wanting to understand them to be a very positive and constructive aspect of the activity."@en,
+        "Sjuksköterskan upplevde att lyssna på andra och vilja förstå dem som en mycket positiv och konstruktiv aspekt av aktiviteten."@sv ;
+    :ConflictState "inDiscussion" ;
+    :ConflictTitle "Positive Erfahrung mit Zuhören und Verstehenwollen"@de,
+        "Positive experience with listening and wanting to understand"@en,
+        "Positiv upplevelse med att lyssna och vilja förstå"@sv ;
+    :CreationDate "2025-09-16T12:21:19.556Z" ;
+    :HasIntent :Positive ;
+    :HasParticipant :Pflege01,
+        :VerstehenWollen,
+        :Zuhören ;
+    :IsAI true ;
+    :Origin "{\"question\": \"2. Denken Sie an einen Teil der Aktivität, den Sie sehr positiv, konstruktiv oder befriedigend fanden. Bitte beschreiben Sie in einigen Sätzen, was in dieser Phase passiert ist.\", \"answer\": \"... dem Anderen zuhören und verstehen woĺlen\"}" ;
+    :WrittenBy :Pflege01 .
+
+:Conflict_Physiotherapeut01_IneffectiveJointContact_9 a :Conflict ;
+    :ConflictDescription "Der Physiotherapeut empfand es als nicht sinnvoll, zu Beginn der Interaktion gemeinsam mit Ärztin und Pflege ins Patientenzimmer zu gehen."@de,
+        "The physiotherapist found it not useful to enter the patient's room together with the doctor and nurse at the beginning of the interaction."@en,
+        "Fysioterapeuten fann det inte meningsfullt att gå in i patientrummet tillsammans med läkaren och sjuksköterskan i början av interaktionen."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Ineffektivität des gemeinsamen ersten Patientenkontakts"@de,
+        "Ineffectiveness of Joint Initial Patient Contact"@en,
+        "Ineffektivitet av gemensam första patientkontakt"@sv ;
+    :CreationDate "2025-09-16T12:15:03.917Z" ;
+    :HasIntent :Negative ;
+    :HasParticipant :Arzt01,
+        :GemeinsamerErstkontaktImPatientenzimmer01,
+        :Patientenzimmer01,
+        :Pflege01,
+        :Physiotherapeut01 ;
+    :IsAI true ;
+    :Origin "{\"question\": \"3. Denken Sie an einen Teil der Aktivität, den Sie sehr negativ, kontraproduktiv oder enttäuschend fanden. Bitte beschreiben Sie in einigen Sätzen, was in dieser Phase passiert ist.\", \"answer\": \"Nicht direkt negativ, aber ich fand es nicht sinnvoll am Anfang mit Ärztin und Pflege ins Patientenzimmer zu gehen.\"}" ;
+    :WrittenBy :Physiotherapeut01 .
+
+:Conflict_Physiotherapeut01_LackOfAnamnesisTime_8 a :Conflict ;
+    :ConflictDescription "Der Physiotherapeut äußerte den Wunsch, 10 Minuten Zeit für eine eigenständige Anamnese und Befundaufnahme zu haben, was auf einen wahrgenommenen Mangel an Autonomie oder Zeitressourcen hindeutet."@de,
+        "The physiotherapist expressed a desire to have 10 minutes to perform anamnesis and assessment independently, indicating a perceived lack of autonomy or time allocation."@en,
+        "Fysioterapeuten uttryckte en önskan om att ha 10 minuter för att självständigt utföra anamnes och bedömning, vilket indikerar en upplevd brist på autonomi eller tidsallokering."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Mangel an individueller Anamnese- und Befundzeit"@de,
+        "Lack of Individual Anamnesis and Assessment Time"@en,
+        "Brist på individuell anamnes- och bedömningstid"@sv ;
+    :CreationDate "2025-09-16T12:15:03.917Z" ;
+    :HasIntent :Negative ;
+    :HasParticipant :Anamnese01,
+        :Befund01,
+        :Physiotherapeut01,
+        :Zeitressource01 ;
+    :IsAI true ;
+    :Origin "{\"question\": \"2. Denken Sie an einen Teil der Aktivität, den Sie sehr positiv, konstruktiv oder befriedigend fanden. Bitte beschreiben Sie in einigen Sätzen, was in dieser Phase passiert ist.\", \"answer\": \"Sehr positiv fand ich, dass ich einen direkten Austausch mit der Pflege und der Ärztin hatte. Nicht so gut fand ich, dass ich als Physio keinen Anamnese und keinen Befund alleine durchgeführt habe. Dafür hätte ich mir gerne 10min Zeit für genommen.\"}" ;
+    :WrittenBy :Physiotherapeut01 .
+
+:Conflict_Physiotherapeut01_PositiveCommonIntroduction_10 a :Conflict ;
+    :ConflictDescription "Der Physiotherapeut empfand den gemeinsamen Einstieg in die Simulation als sehr positiv, konstruktiv und befriedigend."@de,
+        "The physiotherapist found the common introduction to the simulation to be very positive, constructive, and satisfying."@en,
+        "Fysioterapeuten upplevde den gemensamma introduktionen till simuleringen som mycket positiv, konstruktiv och tillfredsställande."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Positive Erfahrung mit dem gemeinsamen Einstieg"@de,
+        "Positive experience with the common introduction"@en,
+        "Positiv upplevelse med den gemensamma introduktionen"@sv ;
+    :CreationDate "2025-09-16T12:20:25.279Z" ;
+    :HasIntent :Positive ;
+    :HasParticipant :GemeinsamerEinstieg,
+        :InterprofessionellesTeam,
+        :Physiotherapeut01 ;
+    :IsAI true ;
+    :Origin "{\"question\": \"2. Denken Sie an einen Teil der Aktivität, den Sie sehr positiv, konstruktiv oder befriedigend fanden. Bitte beschreiben Sie in einigen Sätzen, was in dieser Phase passiert ist.\", \"answer\": \"Gemeinsamer Einstieg\"}" ;
+    :WrittenBy :Physiotherapeut01 .
+
+:Conflict_Physiotherapeut01_PositiveInterprofessionalExchange_7 a :Conflict ;
+    :ConflictDescription "Der Physiotherapeut empfand den direkten Austausch mit der Pflege und der Ärztin als sehr positiv."@de,
+        "The physiotherapist found the direct exchange with nursing and the doctor to be very positive."@en,
+        "Fysioterapeuten fann det direkta utbytet med sjuksköterskan och läkaren mycket positivt."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Positiver interprofessioneller Austausch"@de,
+        "Positive Interprofessional Exchange"@en,
+        "Positivt interprofessionellt utbyte"@sv ;
+    :CreationDate "2025-09-16T12:15:03.917Z" ;
+    :HasIntent :Positive ;
+    :HasParticipant :Arzt01,
+        :DirekterInterprofessionellerAustausch01,
+        :Pflege01,
+        :Physiotherapeut01 ;
+    :IsAI true ;
+    :Origin "{\"question\": \"2. Denken Sie an einen Teil der Aktivität, den Sie sehr positiv, konstruktiv oder befriedigend fanden. Bitte beschreiben Sie in einigen Sätzen, was in dieser Phase passiert ist.\", \"answer\": \"Sehr positiv fand ich, dass ich einen direkten Austausch mit der Pflege und der Ärztin hatte. Nicht so gut fand ich, dass ich als Physio keinen Anamnese und keinen Befund alleine durchgeführt habe. Dafür hätte ich mir gerne 10min Zeit für genommen.\"}" ;
+    :WrittenBy :Physiotherapeut01 .
+
+:Conflict_Physiotherapeut01_UnequalSpeakingTime_11 a :Conflict ;
+    :ConflictDescription "Der Physiotherapeut bedauert, dass die verschiedenen Professionen unterschiedliche Redeanteile hatten, was dazu führte, dass einige Berufsgruppen ihre Perspektiven weniger einbringen konnten."@de,
+        "The physiotherapist regrets that the different professions had unequal speaking times, which resulted in some professional groups being able to contribute less of their perspectives."@en,
+        "Fysioterapeuten beklagar att de olika professionerna hade ojämlik talartid, vilket ledde till att vissa yrkesgrupper fick mindre möjlighet att bidra med sina perspektiv."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Kritik am unterschiedlichen Redeanteil der Professionen"@de,
+        "Criticism of unequal speaking time among professions"@en,
+        "Kritik mot ojämlik talartid bland professionerna"@sv ;
+    :CreationDate "2025-09-16T12:20:25.279Z" ;
+    :HasIntent :Negative ;
+    :HasParticipant :Physiotherapeut01,
+        :UnterschiedlicherRedeanteil ;
+    :IsAI true ;
+    :Origin "{\"question\": \"3. Denken Sie an einen Teil der Aktivität, den Sie sehr negativ, kontraproduktiv oder enttäuschend fanden. Bitte beschreiben Sie in einigen Sätzen, was in dieser Phase passiert ist.\", \"answer\": \"Ich fand es schade dass die Professionen teilweise einen unterschiedlichen Redeanteil hatten. Dadurch kamen manchen Berufsgruppen weniger zum Zuge und konnten weniger von ihrer Perspektive einbringen.\"}" ;
+    :WrittenBy :Physiotherapeut01 .
 
 :Dozent01 a :Subject,
         owl:NamedIndividual ;
@@ -38,17 +271,23 @@
         "Performance of Surgery"@en,
         "Genomförande av operation"@sv .
 
+:EinbringenVonPerspektiven a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Einbringen von Perspektiven"@de,
+        "Contribution of perspectives"@en,
+        "Bidrag av perspektiv"@sv .
+
 :EmpfehlungZurOP a :Object,
         owl:NamedIndividual ;
     rdfs:label "Empfehlung zur Operation"@de,
         "Recommendation for Surgery"@en,
         "Rekommendation för operation"@sv .
 
-:Enkelin01 a :Subject,
+:Entscheidungsfindung a :Object,
         owl:NamedIndividual ;
-    rdfs:label "Enkelin"@de,
-        "Granddaughter"@en,
-        "Barnbarn"@sv .
+    rdfs:label "Entscheidungsfindung"@de,
+        "Decision-making"@en,
+        "Beslutsfattande"@sv .
 
 :Ergotherapeut01 a :Subject,
         owl:NamedIndividual ;
@@ -56,49 +295,49 @@
         "Occupational Therapist"@en,
         "Arbetsterapeut"@sv .
 
+:FachlicheAufklaerung a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Fachliche Aufklärung"@de,
+        "Professional clarification"@en,
+        "Professionell klargörande"@sv .
+
 :GespraecheMitAngehoerigenUndPatientin a :Object,
         owl:NamedIndividual ;
     rdfs:label "Gespräche mit Angehörigen und Patientin"@de,
         "Discussions with Relatives and Patient"@en,
         "Samtal med anhöriga och patient"@sv .
 
-:IPLPilot16092025v2Simulation a owl:NamedIndividual ;
+:Gespraechsleitung a :DivisionOfLabour,
+        owl:NamedIndividual ;
+    rdfs:label "Gesprächsleitung"@de,
+        "Conversation leadership"@en,
+        "Samtalsledning"@sv .
+
+:IPLPilot16092025v4Simulation a owl:NamedIndividual ;
     :ActivityDescription "Simulation, die sich auf die präoperative Abklärung einer älteren Patientin mit schwerer Aortenklappenstenose konzentriert. Die Tochter und Enkelin sind vor Ort und möchten mit einer Pflegekraft über die bevorstehende OP sprechen. Ziel der Simulation ist es, dass ein interprofessionelles Team bestehend aus Verteter*innen aus Pflege, Physiotherapie, Ergotherapie und Ärzt*innen nach Sichtung der Unterlagen und Gesprächen mit Angehörigen und Patientin eine Empfehlung gibt, ob die OP durchgeführt werden soll."@de,
         "Simulation focusing on the preoperative clarification of an elderly patient with severe aortic valve stenosis. The daughter and granddaughter are present and want to talk to a nurse about the upcoming surgery. The goal of the simulation is for an interprofessional team consisting of representatives from nursing, physiotherapy, occupational therapy, and doctors to provide a recommendation on whether the surgery should be performed, after reviewing documents and speaking with relatives and the patient."@en,
         "Simulering som fokuserar på preoperativ utredning av en äldre patient med svår aortastenos. Dottern och barnbarnet är på plats och vill prata med en sjuksköterska om den kommande operationen. Målet med simuleringen är att ett interprofessionellt team bestående av representanter från omvårdnad, fysioterapi, arbetsterapi och läkare ska ge en rekommendation om operationen ska utföras, efter att ha granskat dokument och pratat med anhöriga och patienten."@sv ;
     :ActivityName "IPL Pilot 16.09.2025 v2"@de,
-        "IPL Pilot 16.09.2025 v2"@en,
-        "IPL Pilot 16.09.2025 v2"@sv .
+        "IPL Pilot 16.09.2025 v4"@en,
+        "IPL Pilot 16.09.2025 v4"@sv .
 
-:InterprofessionellesTeam a :DivisionOfLabour,
+:KommunikationImTeam a :Instrument,
         owl:NamedIndividual ;
-    rdfs:label "Interprofessionelles Team"@de,
-        "Interprofessional Team"@en,
-        "Interprofessionellt team"@sv .
+    rdfs:label "Kommunikation im Team"@de,
+        "Team communication"@en,
+        "Teamkommunikation"@sv .
 
-:Patientin01 a :Subject,
+:KommunikationMitPatientinUndAngehoerigen a :Instrument,
         owl:NamedIndividual ;
-    rdfs:label "Patientin"@de,
-        "Patient"@en,
-        "Patient"@sv .
-
-:Pflege01 a :Subject,
-        owl:NamedIndividual ;
-    rdfs:label "Pflegekraft 1"@de,
-        "Care Staff 1"@en,
-        "Vårdpersonal 1"@sv .
+    rdfs:label "Kommunikation mit Patientin und Angehörigen"@de,
+        "Communication with patient and relatives"@en,
+        "Kommunikation med patient och anhöriga"@sv .
 
 :Pflege02 a :Subject,
         owl:NamedIndividual ;
     rdfs:label "Pflegekraft 2"@de,
         "Care Staff 2"@en,
         "Vårdpersonal 2"@sv .
-
-:Physiotherapeut01 a :Subject,
-        owl:NamedIndividual ;
-    rdfs:label "Physiotherapeut 1"@de,
-        "Physiotherapist 1"@en,
-        "Fysioterapeut 1"@sv .
 
 :Physiotherapeut02 a :Subject,
         owl:NamedIndividual ;
@@ -112,6 +351,12 @@
         "Preoperative Assessment"@en,
         "Preoperativ bedömning"@sv .
 
+:Runde a :Community,
+        owl:NamedIndividual ;
+    rdfs:label "Runde"@de,
+        "Meeting round"@en,
+        "Mötesrunda"@sv .
+
 :SchwereAortenklappenstenose a :Object,
         owl:NamedIndividual ;
     rdfs:label "Schwere Aortenklappenstenose"@de,
@@ -124,474 +369,189 @@
         "Review of Documents"@en,
         "Granskning av dokument"@sv .
 
-:Tochter01 a :Subject,
-        owl:NamedIndividual ;
-    rdfs:label "Tochter"@de,
-        "Daughter"@en,
-        "Dotter"@sv .
-
 :Unterlagen a :Instrument,
         owl:NamedIndividual ;
     rdfs:label "Unterlagen"@de,
         "Documents"@en,
         "Dokument"@sv .
 
-:llmSubmission :llmSubmissionEntity """@prefix : <http://activate.htwk-leipzig.de/model#> .
-@prefix owl: <http://www.w3.org/2002/07/owl#> .
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@base <http://activate.htwk-leipzig.de/model> .
-
-:Anamnese01 a :Object,
-    owl:NamedIndividual ;
-    rdfs:label "Anamnese"@de,
-        "Anamnesis"@en,
-        "Anamnes"@sv .
-
-:Befund01 a :Object,
-    owl:NamedIndividual ;
-    rdfs:label "Befund"@de,
-        "Assessment"@en,
-        "Bedömning"@sv .
-
-:Zeitressource01 a :Instrument,
-    owl:NamedIndividual ;
-    rdfs:label "Zeitressource"@de,
-        "Time Resource"@en,
-        "Tidsresurs"@sv .
-
-:Patientenzimmer01 a :Community,
-    owl:NamedIndividual ;
-    rdfs:label "Patientenzimmer"@de,
-        "Patient's Room"@en,
-        "Patientrum"@sv .
-
-:DirekterInterprofessionellerAustausch01 a :Object,
-    owl:NamedIndividual ;
-    rdfs:label "Direkter interprofessioneller Austausch"@de,
-        "Direct Interprofessional Exchange"@en,
-        "Direkt interprofessionellt utbyte"@sv .
-
-:GemeinsamerErstkontaktImPatientenzimmer01 a :Rule,
-    owl:NamedIndividual ;
-    rdfs:label "Gemeinsamer Erstkontakt im Patientenzimmer"@de,
-        "Joint Initial Contact in Patient's Room"@en,
-        "Gemensam första kontakt i patientrummet"@sv .""",
-        """@prefix : <http://activate.htwk-leipzig.de/model#> .
-@prefix owl: <http://www.w3.org/2002/07/owl#> .
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@base <http://activate.htwk-leipzig.de/model> .
-
-:ArztPatientenEinzelgespraech a :Object,
-    owl:NamedIndividual ;
-    rdfs:label "Arzt-Patienten-Einzelgespräch"@de,
-        "Doctor-patient individual conversation"@en,
-        "Enskilt läkar-patient-samtal"@sv .
-
-:Patientenfragen a :Object,
-    owl:NamedIndividual ;
-    rdfs:label "Patientenfragen"@de,
-        "Patient's questions"@en,
-        "Patientfrågor"@sv .
-
-:GespraechZuDrittMitPatientin a :Object,
-    owl:NamedIndividual ;
-    rdfs:label "Gespräch zu dritt mit Patientin"@de,
-        "Three-person conversation with patient"@en,
-        "Trepärtssamtal med patienten"@sv .
-
-:UnuebersichtlichkeitImGespraech a :Community,
-    owl:NamedIndividual ;
-    rdfs:label "Unübersichtlichkeit im Gespräch"@de,
-        "Unclarity in conversation"@en,
-        "Otydlighet i samtalet"@sv .
-
-:Gespraechsleitung a :DivisionOfLabour,
-    owl:NamedIndividual ;
-    rdfs:label "Gesprächsleitung"@de,
-        "Conversation leadership"@en,
-        "Samtalsledning"@sv .""",
-        """@prefix : <http://activate.htwk-leipzig.de/model#> .
-@prefix owl: <http://www.w3.org/2002/07/owl#> .
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@base <http://activate.htwk-leipzig.de/model> .
-
-:GemeinsamerEinstieg a :Object,
-    owl:NamedIndividual ;
-    rdfs:label "Gemeinsamer Einstieg"@de,
-        "Common Introduction"@en,
-        "Gemensam introduktion"@sv .
-
-:UnterschiedlicherRedeanteil a :DivisionOfLabour,
-    owl:NamedIndividual ;
-    rdfs:label "Unterschiedlicher Redeanteil"@de,
-        "Unequal speaking time"@en,
-        "Ojämlik talartid"@sv .
-
-:EinbringenVonPerspektiven a :Object,
-    owl:NamedIndividual ;
-    rdfs:label "Einbringen von Perspektiven"@de,
-        "Contribution of perspectives"@en,
-        "Bidrag av perspektiv"@sv .""",
-        """@prefix : <http://activate.htwk-leipzig.de/model#> .
-@prefix owl: <http://www.w3.org/2002/07/owl#> .
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@base <http://activate.htwk-leipzig.de/model> .
-
-:GemeinsamesGespraechAmAnfang a :Object,
-    owl:NamedIndividual ;
-    rdfs:label "Gemeinsames Gespräch am Anfang"@de,
-        "Joint initial discussion"@en,
-        "Gemensam inledande diskussion"@sv .
-
-:FormulierungEinesPlanes a :Object,
-    owl:NamedIndividual ;
-    rdfs:label "Formulierung eines Planes"@de,
-        "Formulation of a plan"@en,
-        "Formulering av en plan"@sv .
-
-:GespraechMitAllenBeteiligtenPatientinUndAngehoerigenZusammen a :Object,
-    owl:NamedIndividual ;
-    rdfs:label "Gespräch mit allen Beteiligten, Patientin und Angehörigen zusammen"@de,
-        "Discussion with all involved parties, patient and relatives together"@en,
-        "Diskussion med alla inblandade parter, patient och anhöriga tillsammans"@sv .""",
-        """@prefix : <http://activate.htwk-leipzig.de/model#> .
-@prefix owl: <http://www.w3.org/2002/07/owl#> .
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@base <http://activate.htwk-leipzig.de/model> .
-
-:KommunikationImTeam a :Instrument,
-    owl:NamedIndividual ;
-    rdfs:label "Kommunikation im Team"@de,
-        "Team communication"@en,
-        "Teamkommunikation"@sv .
-
-:Besprechungen a :Object,
-    owl:NamedIndividual ;
-    rdfs:label "Besprechungen"@de,
-        "Meetings"@en,
-        "Möten"@sv .
-
-:KommunikationMitPatientinUndAngehoerigen a :Instrument,
-    owl:NamedIndividual ;
-    rdfs:label "Kommunikation mit Patientin und Angehörigen"@de,
-        "Communication with patient and relatives"@en,
-        "Kommunikation med patient och anhöriga"@sv .
-
-:Absprachen a :Object,
-    owl:NamedIndividual ;
-    rdfs:label "Absprachen"@de,
-        "Agreements"@en,
-        "Överenskommelser"@sv .""",
-        """@prefix : <http://activate.htwk-leipzig.de/model#> .
-@prefix owl: <http://www.w3.org/2002/07/owl#> .
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@base <http://activate.htwk-leipzig.de/model> .
-
-:Therapieoptionen a :Object,
-    owl:NamedIndividual ;
-    rdfs:label "Therapieoptionen"@de,
-        "Therapy options"@en,
-        "Terapialternativ"@sv .
-
-:FachlicheAufklaerung a :Object,
-    owl:NamedIndividual ;
-    rdfs:label "Fachliche Aufklärung"@de,
-        "Professional clarification"@en,
-        "Professionell klargörande"@sv .
-
-:Entscheidungsfindung a :Object,
-    owl:NamedIndividual ;
-    rdfs:label "Entscheidungsfindung"@de,
-        "Decision-making"@en,
-        "Beslutsfattande"@sv .
-
 :Verantwortung a :DivisionOfLabour,
-    owl:NamedIndividual ;
+        owl:NamedIndividual ;
     rdfs:label "Verantwortung"@de,
         "Responsibility"@en,
         "Ansvar"@sv .
 
+:Anamnese01 a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Anamnese"@de,
+        "Anamnesis"@en,
+        "Anamnes"@sv .
+
+:ArztPatientenEinzelgespraech a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Arzt-Patienten-Einzelgespräch"@de,
+        "Doctor-patient individual conversation"@en,
+        "Enskilt läkar-patient-samtal"@sv .
+
+:Befund01 a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Befund"@de,
+        "Assessment"@en,
+        "Bedömning"@sv .
+
+:DirekterInterprofessionellerAustausch01 a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Direkter interprofessioneller Austausch"@de,
+        "Direct Interprofessional Exchange"@en,
+        "Direkt interprofessionellt utbyte"@sv .
+
+:DominierendeHaltung a :DivisionOfLabour,
+        owl:NamedIndividual ;
+    rdfs:label "Dominierende Haltung"@de,
+        "Dominating attitude"@en,
+        "Dominerande attityd"@sv .
+
+:Enkelin01 a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Enkelin"@de,
+        "Granddaughter"@en,
+        "Barnbarn"@sv .
+
+:FormulierungEinesPlanes a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Formulierung eines Planes"@de,
+        "Formulation of a plan"@en,
+        "Formulering av en plan"@sv .
+
+:GemeinsamerEinstieg a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Gemeinsamer Einstieg"@de,
+        "Common Introduction"@en,
+        "Gemensam introduktion"@sv .
+
+:GemeinsamerErstkontaktImPatientenzimmer01 a :Rule,
+        owl:NamedIndividual ;
+    rdfs:label "Gemeinsamer Erstkontakt im Patientenzimmer"@de,
+        "Joint Initial Contact in Patient's Room"@en,
+        "Gemensam första kontakt i patientrummet"@sv .
+
+:GemeinsamesGespraechAmAnfang a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Gemeinsames Gespräch am Anfang"@de,
+        "Joint initial discussion"@en,
+        "Gemensam inledande diskussion"@sv .
+
+:GespraechMitAllenBeteiligtenPatientinUndAngehoerigenZusammen a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Gespräch mit allen Beteiligten, Patientin und Angehörigen zusammen"@de,
+        "Discussion with all involved parties, patient and relatives together"@en,
+        "Diskussion med alla inblandade parter, patient och anhöriga tillsammans"@sv .
+
+:GespraechZuDrittMitPatientin a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Gespräch zu dritt mit Patientin"@de,
+        "Three-person conversation with patient"@en,
+        "Trepärtssamtal med patienten"@sv .
+
+:InterprofessionellesTeam a :DivisionOfLabour,
+        owl:NamedIndividual ;
+    rdfs:label "Interprofessionelles Team"@de,
+        "Interprofessional Team"@en,
+        "Interprofessionellt team"@sv .
+
 :LastDerTochter a :Object,
-    owl:NamedIndividual ;
+        owl:NamedIndividual ;
     rdfs:label "Last der Tochter"@de,
         "Daughter's burden"@en,
         "Dotterns börda"@sv .
 
-:Runde a :Community,
-    owl:NamedIndividual ;
-    rdfs:label "Runde"@de,
-        "Meeting round"@en,
-        "Mötesrunda"@sv .
+:Patientenfragen a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Patientenfragen"@de,
+        "Patient's questions"@en,
+        "Patientfrågor"@sv .
+
+:Patientenzimmer01 a :Community,
+        owl:NamedIndividual ;
+    rdfs:label "Patientenzimmer"@de,
+        "Patient's Room"@en,
+        "Patientrum"@sv .
+
+:RolleDerPhysiotherapie a :DivisionOfLabour,
+        owl:NamedIndividual ;
+    rdfs:label "Rolle der Physiotherapie"@de,
+        "Role of physiotherapy"@en,
+        "Fysioterapins roll"@sv .
 
 :SinnvolleArbeitsaufteilung a :DivisionOfLabour,
-    owl:NamedIndividual ;
+        owl:NamedIndividual ;
     rdfs:label "Sinnvolle Arbeitsaufteilung"@de,
         "Meaningful division of labor"@en,
         "Meningsfull arbetsfördelning"@sv .
 
-:RolleDerPhysiotherapie a :DivisionOfLabour,
-    owl:NamedIndividual ;
-    rdfs:label "Rolle der Physiotherapie"@de,
-        "Role of physiotherapy"@en,
-        "Fysioterapins roll"@sv .""",
-        """@prefix : <http://activate.htwk-leipzig.de/model#> .
-@prefix owl: <http://www.w3.org/2002/07/owl#> .
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@base <http://activate.htwk-leipzig.de/model> .
+:Therapieoptionen a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Therapieoptionen"@de,
+        "Therapy options"@en,
+        "Terapialternativ"@sv .
 
-:Zuhören a :Instrument,
-    owl:NamedIndividual ;
-    rdfs:label "Zuhören"@de,
-        "Listening"@en,
-        "Lyssna"@sv .
+:Tochter01 a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Tochter"@de,
+        "Daughter"@en,
+        "Dotter"@sv .
+
+:UnterschiedlicherRedeanteil a :DivisionOfLabour,
+        owl:NamedIndividual ;
+    rdfs:label "Unterschiedlicher Redeanteil"@de,
+        "Unequal speaking time"@en,
+        "Ojämlik talartid"@sv .
+
+:UnuebersichtlichkeitImGespraech a :Community,
+        owl:NamedIndividual ;
+    rdfs:label "Unübersichtlichkeit im Gespräch"@de,
+        "Unclarity in conversation"@en,
+        "Otydlighet i samtalet"@sv .
 
 :VerstehenWollen a :Instrument,
-    owl:NamedIndividual ;
+        owl:NamedIndividual ;
     rdfs:label "Verstehen wollen"@de,
         "Wanting to understand"@en,
         "Vilja förstå"@sv .
 
-:DominierendeHaltung a :DivisionOfLabour,
-    owl:NamedIndividual ;
-    rdfs:label "Dominierende Haltung"@de,
-        "Dominating attitude"@en,
-        "Dominerande attityd"@sv .""" ;
-    :llmSubmissionTension """@prefix : <http://activate.htwk-leipzig.de/model#> .
-@prefix owl: <http://www.w3.org/2002/07/owl#> .
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@base <http://activate.htwk-leipzig.de/model> .
+:Zeitressource01 a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Zeitressource"@de,
+        "Time Resource"@en,
+        "Tidsresurs"@sv .
 
+:Zuhören a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Zuhören"@de,
+        "Listening"@en,
+        "Lyssna"@sv .
 
-:Conflict01 a :Conflict ;
-    :ConflictTitle "Positive Erfahrung mit Zuhören und Verstehenwollen"@de ;
-    :ConflictTitle "Positive experience with listening and wanting to understand"@en ;
-    :ConflictTitle "Positiv upplevelse med att lyssna och vilja förstå"@sv ;
-    :ConflictDescription "Die Pflegekraft empfand das Zuhören und das Bestreben, andere zu verstehen, als einen sehr positiven und konstruktiven Aspekt der Aktivität."@de ;
-    :ConflictDescription "The nurse found the act of listening to others and wanting to understand them to be a very positive and constructive aspect of the activity."@en ;
-    :ConflictDescription "Sjuksköterskan upplevde att lyssna på andra och vilja förstå dem som en mycket positiv och konstruktiv aspekt av aktiviteten."@sv ;
-    :ConflictState "open" ;
-    :WrittenBy :Pflege01 ;
-    :HasParticipant :Pflege01, :Zuhören, :VerstehenWollen ;
-    :CreationDate "2025-09-16T12:21:19.556Z" ;
-    :IsAI true ;
-    :HasIntent :Positive ;
-    :Origin "{"question": "2. Denken Sie an einen Teil der Aktivität, den Sie sehr positiv, konstruktiv oder befriedigend fanden. Bitte beschreiben Sie in einigen Sätzen, was in dieser Phase passiert ist.", "answer": "... dem Anderen zuhören und verstehen woĺlen"}" .
+:Patientin01 a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Patientin"@de,
+        "Patient"@en,
+        "Patient"@sv .
 
-:Conflict02 a :Conflict ;
-    :ConflictTitle "Negative Erfahrung mit dominierender Haltung"@de ;
-    :ConflictTitle "Negative experience with dominating attitude"@en ;
-    :ConflictTitle "Negativ upplevelse med dominerande attityd"@sv ;
-    :ConflictDescription "Die Pflegekraft empfand eine dominierende Haltung während der Aktivität als negativ und kontraproduktiv."@de ;
-    :ConflictDescription "The nurse experienced a dominating attitude during the activity, which they found negative and counterproductive."@en ;
-    :ConflictDescription "Sjuksköterskan upplevde en dominerande attityd under aktiviteten, vilket de fann negativt och kontraproduktivt."@sv ;
-    :ConflictState "open" ;
-    :WrittenBy :Pflege01 ;
-    :HasParticipant :Pflege01, :DominierendeHaltung ;
-    :CreationDate "2025-09-16T12:21:19.556Z" ;
-    :IsAI true ;
-    :HasIntent :Negative ;
-    :Origin "{"question": "3. Denken Sie an einen Teil der Aktivität, den Sie sehr negativ, kontraproduktiv oder enttäuschend fanden. Bitte beschreiben Sie in einigen Sätzen, was in dieser Phase passiert ist.", "answer": "... dominierende Haltung"}" .""",
-        """@prefix : <http://activate.htwk-leipzig.de/model#> .
-@prefix owl: <http://www.w3.org/2002/07/owl#> .
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@base <http://activate.htwk-leipzig.de/model> .
+:Pflege01 a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Pflegekraft 1"@de,
+        "Care Staff 1"@en,
+        "Vårdpersonal 1"@sv .
 
+:Physiotherapeut01 a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Physiotherapeut 1"@de,
+        "Physiotherapist 1"@en,
+        "Fysioterapeut 1"@sv .
 
-:Conflict01 a :Conflict ;
-    :ConflictTitle "Positive Interprofessional Exchange"@en ;
-    :ConflictTitle "Positiver interprofessioneller Austausch"@de ;
-    :ConflictTitle "Positivt interprofessionellt utbyte"@sv ;
-    :ConflictDescription "The physiotherapist found the direct exchange with nursing and the doctor to be very positive."@en ;
-    :ConflictDescription "Der Physiotherapeut empfand den direkten Austausch mit der Pflege und der Ärztin als sehr positiv."@de ;
-    :ConflictDescription "Fysioterapeuten fann det direkta utbytet med sjuksköterskan och läkaren mycket positivt."@sv ;
-    :ConflictState "open" ;
-    :WrittenBy :Physiotherapeut01 ;
-    :HasParticipant :Physiotherapeut01, :Pflege01, :Arzt01, :DirekterInterprofessionellerAustausch01 ;
-    :CreationDate "2025-09-16T12:15:03.917Z" ;
-    :IsAI true ;
-    :HasIntent :Positive ;
-    :Origin "{"question": "2. Denken Sie an einen Teil der Aktivität, den Sie sehr positiv, konstruktiv oder befriedigend fanden. Bitte beschreiben Sie in einigen Sätzen, was in dieser Phase passiert ist.", "answer": "Sehr positiv fand ich, dass ich einen direkten Austausch mit der Pflege und der Ärztin hatte. Nicht so gut fand ich, dass ich als Physio keinen Anamnese und keinen Befund alleine durchgeführt habe. Dafür hätte ich mir gerne 10min Zeit für genommen."}" .
-
-:Conflict02 a :Conflict ;
-    :ConflictTitle "Lack of Individual Anamnesis and Assessment Time"@en ;
-    :ConflictTitle "Mangel an individueller Anamnese- und Befundzeit"@de ;
-    :ConflictTitle "Brist på individuell anamnes- och bedömningstid"@sv ;
-    :ConflictDescription "The physiotherapist expressed a desire to have 10 minutes to perform anamnesis and assessment independently, indicating a perceived lack of autonomy or time allocation."@en ;
-    :ConflictDescription "Der Physiotherapeut äußerte den Wunsch, 10 Minuten Zeit für eine eigenständige Anamnese und Befundaufnahme zu haben, was auf einen wahrgenommenen Mangel an Autonomie oder Zeitressourcen hindeutet."@de ;
-    :ConflictDescription "Fysioterapeuten uttryckte en önskan om att ha 10 minuter för att självständigt utföra anamnes och bedömning, vilket indikerar en upplevd brist på autonomi eller tidsallokering."@sv ;
-    :ConflictState "open" ;
-    :WrittenBy :Physiotherapeut01 ;
-    :HasParticipant :Physiotherapeut01, :Anamnese01, :Befund01, :Zeitressource01 ;
-    :CreationDate "2025-09-16T12:15:03.917Z" ;
-    :IsAI true ;
-    :HasIntent :Negative ;
-    :Origin "{"question": "2. Denken Sie an einen Teil der Aktivität, den Sie sehr positiv, konstruktiv oder befriedigend fanden. Bitte beschreiben Sie in einigen Sätzen, was in dieser Phase passiert ist.", "answer": "Sehr positiv fand ich, dass ich einen direkten Austausch mit der Pflege und der Ärztin hatte. Nicht so gut fand ich, dass ich als Physio keinen Anamnese und keinen Befund alleine durchgeführt habe. Dafür hätte ich mir gerne 10min Zeit für genommen."}" .
-
-:Conflict03 a :Conflict ;
-    :ConflictTitle "Ineffectiveness of Joint Initial Patient Contact"@en ;
-    :ConflictTitle "Ineffektivität des gemeinsamen ersten Patientenkontakts"@de ;
-    :ConflictTitle "Ineffektivitet av gemensam första patientkontakt"@sv ;
-    :ConflictDescription "The physiotherapist found it not useful to enter the patient's room together with the doctor and nurse at the beginning of the interaction."@en ;
-    :ConflictDescription "Der Physiotherapeut empfand es als nicht sinnvoll, zu Beginn der Interaktion gemeinsam mit Ärztin und Pflege ins Patientenzimmer zu gehen."@de ;
-    :ConflictDescription "Fysioterapeuten fann det inte meningsfullt att gå in i patientrummet tillsammans med läkaren och sjuksköterskan i början av interaktionen."@sv ;
-    :ConflictState "open" ;
-    :WrittenBy :Physiotherapeut01 ;
-    :HasParticipant :Physiotherapeut01, :Arzt01, :Pflege01, :Patientenzimmer01, :GemeinsamerErstkontaktImPatientenzimmer01 ;
-    :CreationDate "2025-09-16T12:15:03.917Z" ;
-    :IsAI true ;
-    :HasIntent :Negative ;
-    :Origin "{"question": "3. Denken Sie an einen Teil der Aktivität, den Sie sehr negativ, kontraproduktiv oder enttäuschend fanden. Bitte beschreiben Sie in einigen Sätzen, was in dieser Phase passiert ist.", "answer": "Nicht direkt negativ, aber ich fand es nicht sinnvoll am Anfang mit Ärztin und Pflege ins Patientenzimmer zu gehen."}" .""",
-        """@prefix : <http://activate.htwk-leipzig.de/model#> .
-@prefix owl: <http://www.w3.org/2002/07/owl#> .
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@base <http://activate.htwk-leipzig.de/model> .
-
-
-:ConflictID_1 a :Conflict ;
-    :ConflictTitle "Positive Erfahrung mit Einzelgespräch"@de ;
-    :ConflictTitle "Positive experience with individual conversation"@en ;
-    :ConflictTitle "Positiv upplevelse med enskilt samtal"@sv ;
-    :ConflictDescription "Arzt01 found the individual doctor-patient conversation effective for directly addressing the patient's questions."@en ;
-    :ConflictDescription "Arzt01 empfand das Arzt-Patienten-Einzelgespräch als effektiv, um direkt auf die Fragen der Patientin eingehen zu können."@de ;
-    :ConflictDescription "Arzt01 fann det enskilda läkar-patient-samtalet effektivt för att direkt kunna bemöta patientens frågor."@sv ;
-    :ConflictState "open" ;
-    :WrittenBy :Arzt01 ;
-    :HasParticipant :Arzt01, :ArztPatientenEinzelgespraech, :Patientin01, :Patientenfragen ;
-    :CreationDate "2025-09-16T12:18:00.815Z" ;
-    :IsAI true ;
-    :HasIntent :Positive ;
-    :Origin "{"question": "2. Denken Sie an einen Teil der Aktivität, den Sie sehr positiv, konstruktiv oder befriedigend fanden. Bitte beschreiben Sie in einigen Sätzen, was in dieser Phase passiert ist.", "answer": "Ich finde dass das Arzt Patienten Einzelgespräch gut war um direkt auf die Patientin und ihre Fragen eingehen zu können"}" .
-
-:ConflictID_2 a :Conflict ;
-    :ConflictTitle "Irritation durch unübersichtliches Dreiergespräch"@de ;
-    :ConflictTitle "Irritation due to unclear three-person conversation"@en ;
-    :ConflictTitle "Irritation på grund av otydligt trepartssamtal"@sv ;
-    :ConflictDescription "Arzt01 felt irritated by the lack of clarity and leadership during the three-person conversation with the patient."@en ;
-    :ConflictDescription "Arzt01 empfand Irritation aufgrund der Unübersichtlichkeit und mangelnden Gesprächsleitung während des Dreiergesprächs mit der Patientin."@de ;
-    :ConflictDescription "Arzt01 kände irritation på grund av bristen på tydlighet och samtalsledning under trepartssamtalet med patienten."@sv ;
-    :ConflictState "open" ;
-    :WrittenBy :Arzt01 ;
-    :HasParticipant :Arzt01, :GespraechZuDrittMitPatientin, :UnuebersichtlichkeitImGespraech ;
-    :CreationDate "2025-09-16T12:18:00.815Z" ;
-    :IsAI true ;
-    :HasIntent :Negative ;
-    :Origin "{"question": "3. Denken Sie an einen Teil der Aktivität, den Sie sehr negativ, kontraproduktiv oder enttäuschend fanden. Bitte beschreiben Sie in einigen Sätzen, was in dieser Phase passiert ist.", "answer": "Ich fand nichts SEHR enttäuschend, mich hat nur irritiert als wir zu 3. mit der Patientin gesprochen haben, weil es dadurch etwas unübersichtlich wurde wer nun spricht und das Gespräch „lenkt“"}" .""",
-        """@prefix : <http://activate.htwk-leipzig.de/model#> .
-@prefix owl: <http://www.w3.org/2002/07/owl#> .
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@base <http://activate.htwk-leipzig.de/model> .
-
-
-:ConflictID_1 a :Conflict ;
-    :ConflictTitle "Positive Erfahrung mit dem gemeinsamen Einstieg"@de ;
-    :ConflictTitle "Positive experience with the common introduction"@en ;
-    :ConflictTitle "Positiv upplevelse med den gemensamma introduktionen"@sv ;
-    :ConflictDescription "Der Physiotherapeut empfand den gemeinsamen Einstieg in die Simulation als sehr positiv, konstruktiv und befriedigend."@de ;
-    :ConflictDescription "The physiotherapist found the common introduction to the simulation to be very positive, constructive, and satisfying."@en ;
-    :ConflictDescription "Fysioterapeuten upplevde den gemensamma introduktionen till simuleringen som mycket positiv, konstruktiv och tillfredsställande."@sv ;
-    :ConflictState "open" ;
-    :WrittenBy :Physiotherapeut01 ;
-    :HasParticipant :Physiotherapeut01, :InterprofessionellesTeam, :GemeinsamerEinstieg ;
-    :CreationDate "2025-09-16T12:20:25.279Z" ;
-    :IsAI true ;
-    :HasIntent :Positive ;
-    :Origin "{"question": "2. Denken Sie an einen Teil der Aktivität, den Sie sehr positiv, konstruktiv oder befriedigend fanden. Bitte beschreiben Sie in einigen Sätzen, was in dieser Phase passiert ist.", "answer": "Gemeinsamer Einstieg"}" .
-
-:ConflictID_2 a :Conflict ;
-    :ConflictTitle "Kritik am unterschiedlichen Redeanteil der Professionen"@de ;
-    :ConflictTitle "Criticism of unequal speaking time among professions"@en ;
-    :ConflictTitle "Kritik mot ojämlik talartid bland professionerna"@sv ;
-    :ConflictDescription "Der Physiotherapeut bedauert, dass die verschiedenen Professionen unterschiedliche Redeanteile hatten, was dazu führte, dass einige Berufsgruppen ihre Perspektiven weniger einbringen konnten."@de ;
-    :ConflictDescription "The physiotherapist regrets that the different professions had unequal speaking times, which resulted in some professional groups being able to contribute less of their perspectives."@en ;
-    :ConflictDescription "Fysioterapeuten beklagar att de olika professionerna hade ojämlik talartid, vilket ledde till att vissa yrkesgrupper fick mindre möjlighet att bidra med sina perspektiv."@sv ;
-    :ConflictState "open" ;
-    :WrittenBy :Physiotherapeut01 ;
-    :HasParticipant :Physiotherapeut01, :InterprofessionellesTeam, :UnterschiedlicherRedeanteil, :EinbringenVonPerspektiven ;
-    :CreationDate "2025-09-16T12:20:25.279Z" ;
-    :IsAI true ;
-    :HasIntent :Negative ;
-    :Origin "{"question": "3. Denken Sie an einen Teil der Aktivität, den Sie sehr negativ, kontraproduktiv oder enttäuschend fanden. Bitte beschreiben Sie in einigen Sätzen, was in dieser Phase passiert ist.", "answer": "Ich fand es schade dass die Professionen teilweise einen unterschiedlichen Redeanteil hatten. Dadurch kamen manchen Berufsgruppen weniger zum Zuge und konnten weniger von ihrer Perspektive einbringen."}" .""",
-        """@prefix : <http://activate.htwk-leipzig.de/model#> .
-@prefix owl: <http://www.w3.org/2002/07/owl#> .
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@base <http://activate.htwk-leipzig.de/model> .
-
-
-:Conflict_Arzt01_1 a :Conflict ;
-    :ConflictTitle "Positive experience with professional clarification and shared responsibility"@en ;
-    :ConflictTitle "Positive Erfahrung mit fachlicher Aufklärung und geteilter Verantwortung"@de ;
-    :ConflictTitle "Positiv upplevelse med professionell klargörande och delat ansvar"@sv ;
-    :ConflictDescription "The participant found the professional clarification of therapy options and the distribution of responsibility within the team during decision-making to be very positive, as it relieved the burden on the daughter."@en ;
-    :ConflictDescription "Der Teilnehmer empfand die fachliche Aufklärung der Therapieoptionen und die Verteilung der Verantwortung im Team bei der Entscheidungsfindung als sehr positiv, da dies die Last von der Tochter nahm."@de ;
-    :ConflictDescription "Deltagaren fann den professionella klargörandet av terapialternativ och fördelningen av ansvar inom teamet under beslutsfattandet mycket positivt, då det lättade dotterns börda."@sv ;
-    :ConflictState "open" ;
-    :WrittenBy :Arzt01 ;
-    :HasParticipant :Therapieoptionen, :Entscheidungsfindung, :Verantwortung, :InterprofessionellesTeam, :Tochter01, :LastDerTochter ;
-    :CreationDate "2025-09-16T12:13:59.654Z" ;
-    :IsAI true ;
-    :HasIntent :Positive ;
-    :Origin "{"question": "2. Denken Sie an einen Teil der Aktivität, den Sie sehr positiv, konstruktiv oder befriedigend fanden. Bitte beschreiben Sie in einigen Sätzen, was in dieser Phase passiert ist.", "answer": "Fachliche Aufklärung der Therapieoptionen. Bei der Entscheidungsfindung die Verantwortung auf das Team verteilt und damit die Last von der Tochter genommen.\\n"}" .
-
-:Conflict_Arzt01_2 a :Conflict ;
-    :ConflictTitle "Marginalization of physiotherapy and lack of division of labor"@en ;
-    :ConflictTitle "Marginalisierung der Physiotherapie und mangelnde Arbeitsaufteilung"@de ;
-    :ConflictTitle "Marginalisering av fysioterapi och brist på arbetsfördelning"@sv ;
-    :ConflictDescription "The participant noted that physiotherapy was marginalized, not introduced in the meeting round, and there was no meaningful division of labor discussed beforehand, which was perceived as negative."@en ;
-    :ConflictDescription "Der Teilnehmer stellte fest, dass die Physiotherapie eher hintenan gestellt wurde, in der Runde nicht vorgestellt wurde und keine sinnvolle Arbeitsaufteilung vorab besprochen wurde, was als negativ empfunden wurde."@de ;
-    :ConflictDescription "Deltagaren noterade att fysioterapin marginaliserades, inte presenterades i mötesrundan, och att ingen meningsfull arbetsfördelning diskuterades i förväg, vilket upplevdes som negativt."@sv ;
-    :ConflictState "open" ;
-    :WrittenBy :Arzt01 ;
-    :HasParticipant :Physiotherapeut01, :Runde, :SinnvolleArbeitsaufteilung ;
-    :CreationDate "2025-09-16T12:13:59.654Z" ;
-    :IsAI true ;
-    :HasIntent :Negative ;
-    :Origin "{"question": "3. Denken Sie an einen Teil der Aktivität, den Sie sehr negativ, kontraproduktiv oder enttäuschend fanden. Bitte beschreiben Sie in einigen Sätzen, was in dieser Phase passiert ist.", "answer": "Physiotherapie wurde eher hintenan gestellt, wurde in der Runde nicht vorgestellt, keine sinnvolle Arbeitsaufteilung vorab besprochen."}" .""",
-        """@prefix : <http://activate.htwk-leipzig.de/model#> .
-@prefix owl: <http://www.w3.org/2002/07/owl#> .
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@base <http://activate.htwk-leipzig.de/model> .
-
-
-:Conflict_Arzt01_PositiveImpression_01 a :Conflict ;
-    :ConflictTitle "Positive Impression of Initial Discussion and Plan Formulation"@en ;
-    :ConflictTitle "Positiver Eindruck von der anfänglichen Diskussion und der Planformulierung"@de ;
-    :ConflictTitle "Positivt intryck av inledande diskussion och planformulering"@sv ;
-    :ConflictDescription "Arzt01 found the joint initial discussion and the formulation of a plan to be very positive, constructive, or satisfying."@en ;
-    :ConflictDescription "Arzt01 empfand das gemeinsame Gespräch am Anfang und die Formulierung eines Planes als sehr positiv, konstruktiv oder befriedigend."@de ;
-    :ConflictDescription "Arzt01 fann den gemensamma inledande diskussionen och formuleringen av en plan mycket positiv, konstruktiv eller tillfredsställande."@sv ;
-    :ConflictState "open" ;
-    :WrittenBy :Arzt01 ;
-    :HasParticipant :Arzt01, :GemeinsamesGespraechAmAnfang, :FormulierungEinesPlanes ;
-    :CreationDate "2025-09-16T12:16:25.019Z" ;
-    :IsAI true ;
-    :HasIntent :Positive ;
-    :Origin "{ "question": "2. Denken Sie an einen Teil der Aktivität, den Sie sehr positiv, konstruktiv oder befriedigend fanden. Bitte beschreiben Sie in einigen Sätzen, was in dieser Phase passiert ist.", "answer": "gemeinsames Gespräch am Anfang und Formulierung eines Planes\\n" }" .
-
-:Conflict_Arzt01_NegativeImpression_01 a :Conflict ;
-    :ConflictTitle "Negative Impression of Joint Discussion with All Parties"@en ;
-    :ConflictTitle "Negativer Eindruck vom gemeinsamen Gespräch mit allen Beteiligten"@de ;
-    :ConflictTitle "Negativt intryck av gemensam diskussion med alla parter"@sv ;
-    :ConflictDescription "Arzt01 found the joint discussion with all involved parties, the patient, and relatives to be very negative, counterproductive, or disappointing."@en ;
-    :ConflictDescription "Arzt01 empfand das gemeinsame Gespräch mit allen Beteiligten, der Patientin und den Angehörigen als sehr negativ, kontraproduktiv oder enttäuschend."@de ;
-    :ConflictDescription "Arzt01 fann den gemensamma diskussionen med alla inblandade parter, patienten och anhöriga mycket negativ, kontraproduktiv eller nedslående."@sv ;
-    :ConflictState "open" ;
-    :WrittenBy :Arzt01 ;
-    :HasParticipant :Arzt01, :GespraechMitAllenBeteiligtenPatientinUndAngehoerigenZusammen, :Patientin01, :Tochter01, :Enkelin01 ;
-    :CreationDate "2025-09-16T12:16:25.019Z" ;
-    :IsAI true ;
-    :HasIntent :Negative ;
-    :Origin "{ "question": "3. Denken Sie an einen Teil der Aktivität, den Sie sehr negativ, kontraproduktiv oder enttäuschend fanden. Bitte beschreiben Sie in einigen Sätzen, was in dieser Phase passiert ist.", "answer": "das Gespräch mit allen Beteiligten, der Patientin und der Angehörigen zusammen\\n" }" .""" .
+:Arzt01 a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Arzt 1"@de,
+        "Physician 1"@en,
+        "Läkare 1"@sv .
 

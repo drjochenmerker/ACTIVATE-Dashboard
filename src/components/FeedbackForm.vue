@@ -11,8 +11,8 @@ import { buildTreeStructByLang } from '@/data/knowledge_graph/utils';
 import { getActivityClassIds } from '@/data/knowledge_graph/read_operations';
 import { KnowledgeGraphActivityClass } from '@/data/knowledge_graph/structures';
 import { llmSubmit } from '@/data/knowledge_graph/llm_utils';
-import { staticContentFeedback } from '@/data/feedbackQuestions';
-
+import { QuestionGroupType, QuestionKeyType, StaticContentFeedback, staticContentFeedback } from '@/data/feedbackQuestions';
+import { useLLMSettingsStore } from '@/stores/llmSettingsStore';
 
 const props = defineProps<{
     graph: string,
@@ -100,28 +100,41 @@ defineExpose({
             return false;
         }
         const roleLabel = selectedRole.labels[sessionStore.activeLanguage] || selectedRole.labels['default'] || selectedRole.labels['en'];
+
+        // Build correct role object
         const roleForSubmit = { id: selectedRole.id, label: roleLabel };
+
+        // --- Build full feedback object 
         const fullData = [];
         const lang = sessionStore.activeLanguage;
+
         for (const groupKey in answers.value) {
             const groupAnswers = answers.value[groupKey];
             for (const questionKey in groupAnswers) {
                 const answer = groupAnswers[questionKey];
-                const groupStatic = (staticContentFeedback as any)[groupKey];
-                const questionText = groupStatic?.[questionKey]?.[lang] || groupStatic?.[questionKey]?.['de'];
+                // Find the question text in the original data (with fallback)
+                const groupStatic = (staticContentFeedback as StaticContentFeedback)[groupKey as QuestionGroupType];
+                const questionText = groupStatic?.[questionKey as QuestionKeyType]?.[lang] || groupStatic?.[questionKey as QuestionKeyType]?.["de"];
+                // Add only if question text exists
                 if (questionText && questionText.trim() !== '') {
-                    fullData.push({ question: questionText, answer: answer || '' });
+                    fullData.push({
+                        question: questionText,
+                        answer: answer || ''
+                    });
                 }
             }
         }
+        // console.log("Submitting feedback data:", fullData);
+
         const feedbackData = { graph: props.graph, role: roleForSubmit, data: fullData };
         try {
-            await llmSubmit(feedbackData.graph, feedbackData.role, feedbackData.data);
-            return true; // Erfolg
+            const llmSettingsStore = useLLMSettingsStore();
+            await llmSubmit(feedbackData.graph, feedbackData.role, feedbackData.data, llmSettingsStore.getCurrentModelRequestConfig());
+            return true; // success
         } catch (error) {
             console.error("Error submitting feedback:", error);
             alert('Failed to submit feedback. Please try again.');
-            return false; // Fehler
+            return false; // error
         }
     }
 });
@@ -130,11 +143,11 @@ defineExpose({
 <template>
     <div class="space-y-6">
         <div class="mb-6">
-            <Select :model-value="sessionRole ?? undefined" @update:model-value="emit('update:role', $event as string)"
-                id="roleSelect" class="my-4">
+            <Select id="roleSelect" :model-value="sessionStore.sessionRole" class="my-4"
+                @update:model-value="sessionStore.sessionRole = $event">
                 <SelectTrigger>
                     <SelectValue
-                        :placeholder="staticContent.placeholders.roleSelect[sessionStore.activeLanguage] ?? (sessionRole ?? undefined)" />
+                        :placeholder="staticContent.placeholders.roleSelect[sessionStore.activeLanguage] || sessionStore.sessionRole" />
                 </SelectTrigger>
                 <SelectContent>
                     <RecursiveSelect :node="sessionStore.availableRoles" />
@@ -151,9 +164,10 @@ defineExpose({
                     {{ question.text }}
                 </label>
                 <textarea :id="group.key + question.key" v-model="answers[group.key][question.key]"
-                    class="w-full p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
+                    class="dark:bg-gray-900 w-full p-3 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
                     rows="4" :placeholder="staticContent.placeholders.feedbackAnswer[sessionStore.activeLanguage]" />
             </div>
         </div>
+
     </div>
 </template>
