@@ -40,6 +40,7 @@ const adjustedTranscript = ref<DiarizationSuccessResult | null>(null); // transc
 const mappedTranscript = ref<DiarizationSuccessResult | null>(null);
 const mappedSpeakers = ref<Record<string, string> | null>(null); // speaker to role mapping array
 
+
 const isRecording = ref(false);
 const isMapped = ref(false);
 const mediaRecorderInstance = ref<MediaRecorder | null>(null);
@@ -331,8 +332,13 @@ const submitRoleMapping = async (): Promise<boolean> => {
                 firstUttTranscript, // for better llm performance we only send the first utterance of each speaker with corrected speaker ids
             );
 
-            // success
-            mappedSpeakers.value = result.data;
+            // success - Check if data exists, assert type, or fallback to null
+            mappedSpeakers.value = (result.data as Record<string, string>) ?? null;
+
+            // Optional: Add a safety check in case the LLM fails to return data
+            if (!mappedSpeakers.value) {
+                throw new Error("Role mapping failed: No data returned from the LLM.");
+            }
             console.log("Role-mapped Transcript:", mappedSpeakers.value);
 
             isPolling.value = false;
