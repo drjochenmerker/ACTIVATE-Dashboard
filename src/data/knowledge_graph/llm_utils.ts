@@ -566,6 +566,7 @@ export async function llmPool(graphID: string, llmDetail: LLMRequestConfig): Pro
 export async function mapRolesToTranscript(transcript: { diarized_transcription?: any }): Promise<LLMParsingResult> {
     // transcript is already cut transcript to first utterance of each speaker and the speaker id starts with 00 according to utterance
     console.log("Map Roles for already cut transcript:", transcript.diarized_transcription);
+    const llmSettingsStore = useLLMSettingsStore();
     const llmResMapping = await fetch(
         `${import.meta.env.VITE_LLM_URL}${!import.meta.env.VITE_LLM_PORT ? "" : ":" + import.meta.env.VITE_LLM_PORT}/api/audio/speaker-role-mapping`,
         {
@@ -576,6 +577,7 @@ export async function mapRolesToTranscript(transcript: { diarized_transcription?
             },
             body: JSON.stringify({
                 diarizedTranscript: transcript.diarized_transcription,
+                llm: llmSettingsStore.getCurrentModelRequestConfig(),
             }),
         },
     );
@@ -625,6 +627,7 @@ export async function transformMappedTrascriptToTtl(graphID: string, mappedTrans
                 feedback: {
                     data: mappedTranscript,
                 },
+                llm: useLLMSettingsStore().getCurrentModelRequestConfig(),
             }),
         },
     );
