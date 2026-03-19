@@ -23,7 +23,8 @@ export async function getActivities(): Promise<Activity[]> {
       grouped[graphId] = {
         graph: graphId,
         name: {},
-        description: {}  // Make sure this is initialized even if optional in type
+        description: {}, // Make sure this is initialized even if optional in type 
+        isArchived: false
       };
   }
 
@@ -34,6 +35,10 @@ export async function getActivities(): Promise<Activity[]> {
     // Assign name and description under the correct language
     grouped[graphId].name[nameLang] = triple.name.value || "Error - No Name given";
     grouped[graphId].description[descLang] = triple.description.value || "Error - No Description given";
+
+    if (triple.isArchived?.value) {
+      grouped[graphId].isArchived = String(triple.isArchived.value).toLowerCase() === "true";
+    }
   });
 
   // Convert grouped object to array

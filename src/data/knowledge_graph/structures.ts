@@ -59,6 +59,7 @@ export type Activity = {
   graph: string;
   name: Record<string, string>;
   description: Record<string, string>;
+    isArchived: boolean;
 }
 
 /**
