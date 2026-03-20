@@ -11,6 +11,7 @@ import { storeToRefs } from 'pinia';
 import { PlusIcon } from 'lucide-vue-next';
 import { useMiscsStore } from "@/stores/miscsStore";
 import { Activity, Conflict } from "@/data/knowledge_graph/structures";
+import EditorComponent from '@/components/EditorComponent.vue';
 
 
 const route = useRoute();
@@ -48,26 +49,24 @@ onMounted(async () => {
         <h1 class="text-2xl font-semibold mb-4">{{ activateTerms[sessionStore.activeLanguage][pageData!.id] }}</h1>
 
         <!-- When not on misc page, show the content -->
-        <ContentTemplate
-v-if="route.params.id !== 'misc' && pageData" :page-data="pageData"
+        <ContentTemplate v-if="route.params.id !== 'misc' && pageData" :page-data="pageData"
             :conflicts="props.conflicts" />
 
         <!-- When on misc page, show misc comments-->
         <div v-if="route.params.id === 'misc'">
             <div>
-                <ButtonComponent
-:title="isEditorDrawerOpen ? 'Hide Editor' : 'Show Editor'"
-                    variant="default" size="icon" :class="[
-                    'z-50 rounded-full shadow transition-all',
-                    isEditorDrawerOpen ? 'rotate-45' : ''
+                <ButtonComponent :title="isEditorDrawerOpen ? 'Hide Editor' : 'Show Editor'" variant="default"
+                    size="icon" :class="[
+                        'z-50 rounded-full shadow transition-all',
+                        isEditorDrawerOpen ? 'rotate-45' : ''
                     ]" @click="isEditorDrawerOpen = !isEditorDrawerOpen">
                     <PlusIcon class="h-6 w-6" />
                 </ButtonComponent>
                 <div class="flex flex-col py-2">
                     <transition name="fade">
-                    <div v-if="isEditorDrawerOpen" class="transition-all duration-300 ease-in-out">
-                        <EditorComponent :active-points="getActivePoints" :is-note="true" />
-                    </div>
+                        <div v-if="isEditorDrawerOpen" class="transition-all duration-300 ease-in-out">
+                            <EditorComponent :active-points="getActivePoints" :is-note="true" />
+                        </div>
                     </transition>
                 </div>
             </div>

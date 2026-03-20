@@ -169,6 +169,14 @@ const loadParticipants = async () => {
     }
   });
 
+  for (const activityClass of classOrder) {
+    nextAvailable[activityClass].sort((a, b) => {
+      const labelA = buildLanguageString(a, sessionStore.activeLanguage, true, false) ?? '';
+      const labelB = buildLanguageString(b, sessionStore.activeLanguage, true, false) ?? '';
+      return labelA.localeCompare(labelB, undefined, { numeric: true, sensitivity: 'base' });
+    });
+  }
+
   availableParticipantsByClass.value = nextAvailable;
 };
 
