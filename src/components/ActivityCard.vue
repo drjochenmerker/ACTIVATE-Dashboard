@@ -278,9 +278,9 @@ const showUrl = ref(false)
                                                     staticContent.startPage.copyLink[sessionStore.activeLanguage] }}
                                             </ButtonComponent>
                                             <a :href="feedbackUrl" target="_blank" rel="noopener noreferrer">
-                                                <Button variant="outline"> {{
+                                                <ButtonComponent variant="outline"> {{
                                                     staticContent.startPage.openLink[sessionStore.activeLanguage] }}
-                                                </Button>
+                                                </ButtonComponent>
                                             </a>
                                         </div>
 
