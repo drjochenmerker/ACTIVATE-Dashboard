@@ -1,21 +1,27 @@
 PREFIX : <http://activate.htwk-leipzig.de/model#> 
 PREFIX graph: <http://activate.htwk-leipzig.de/graph/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
 DELETE { 
     GRAPH graph:{{graph}} {
         ?s :ActivityName ?name .
         ?s :ActivityDescription ?desc .
+        ?s :ActivityArchived ?archived .
     }
 }
 INSERT {
     GRAPH graph:{{graph}} {
-        ?s :ActivityName """{{activityName}}""" .
-        ?s :ActivityDescription """{{activityDescription}}""" .
+        {{activityNameTriples}}
+        {{activityDescriptionTriples}}
+        ?s :ActivityArchived "{{activityArchived}}"^^xsd:boolean .
     }
 }
 WHERE {
     GRAPH graph:{{graph}} {
-        ?s :ActivityName ?name .
-        ?s :ActivityDescription ?desc .
+        ?s :ActivityName ?existingName .
+        ?s :ActivityDescription ?existingDescription .
+        OPTIONAL { ?s :ActivityName ?name . }
+        OPTIONAL { ?s :ActivityDescription ?desc . }
+        OPTIONAL { ?s :ActivityArchived ?archived . }
     }
 }

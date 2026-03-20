@@ -389,18 +389,16 @@ export async function deleteActivity(graph: string): Promise<updateResponse> {
  * @returns updateResponse Object
  */
 export async function updateActivity(activity: Activity): Promise<updateResponse> {
-    // let query = await getSparqlTemplate(sparqlTemplate.updateActivity);
-    // const mapObj = {
-    //     "{{graph}}": activity.graph,
-    //     // "{{activityName}}": EscapeSparqlStringLiteral(getStringFromRecord(activity.name)),
-    //     "{{activityName}}": EscapeSparqlStringLiteral(activity.name),
-    //     "{{activityDescription}}": activity.description ? EscapeSparqlStringLiteral(getStringFromRecord(activity.description)) : "No description given",
-    // }
-    // query = query.replaceMultiple(mapObj);
-    // const data = await fetchSparql(query, true);
-    // return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: activity.graph, action: RDFOperation.insert } as updateResponse;
-    // TODO handle updating of activities
-    return { code: 501, status: "Not Implemented", modified: activity.graph} as updateResponse;
+    let query = await getSparqlTemplate(sparqlTemplate.updateActivity);
+    const mapObj = {
+        "{{graph}}": activity.graph,
+        "{{activityNameTriples}}": buildActivityLiteralTriples("ActivityName", activity.name),
+        "{{activityDescriptionTriples}}": buildActivityLiteralTriples("ActivityDescription", activity.description),
+        "{{activityArchived}}": String(activity.isArchived)
+    };
+    query = query.replaceMultiple(mapObj);
+    const data = await fetchSparql(query, true);
+    return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: activity.graph, action: RDFOperation.insert } as updateResponse;
 }
 
 /**
@@ -506,4 +504,17 @@ export async function cloneActivity(activity: Activity, newActivityNames?: Recor
 
 function getStringFromRecord(record: Record<string, string>, lang = "en"): string {
   return record[lang] || Object.values(record)[0] || "";
+}
+
+function buildActivityLiteralTriples(predicate: "ActivityName" | "ActivityDescription", values: Record<string, string>): string {
+    return Object.entries(values)
+        .filter(([, value]) => Boolean(value))
+        .map(([lang, value]) => {
+            const escaped = EscapeSparqlStringLiteral(value);
+            if (lang === "default") {
+                return `?s :${predicate} """${escaped}""" .`;
+            }
+            return `?s :${predicate} """${escaped}"""@${lang} .`;
+        })
+        .join("\n        ");
 }
