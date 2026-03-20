@@ -16,7 +16,7 @@ import QrcodeVue from 'qrcode.vue'
 
 // ui components
 import { ButtonComponent } from '@/components/ui/button';
-import { Play } from 'lucide-vue-next';
+import { Play, Archive, ArchiveRestore } from 'lucide-vue-next';
 import { staticContent } from '@/data/contentData';
 import { llmPool } from '@/data/knowledge_graph/llm_utils';
 import LoadingOverlay from '@/components/LoadingOverlay.vue';
@@ -32,11 +32,8 @@ import { showError, useErrorDialog } from '@/composables/useErrorDialog';
 const sessionStore = useSessionStore();
 const { isOpen: errorDialogOpen } = useErrorDialog();
 
-const props = defineProps({
-    activity: {
-        type: Object,
-        required: true,
-    },
+const props = withDefaults(defineProps<{ activity: Activity; isArchivedView?: boolean }>(), {
+    isArchivedView: false,
 });
 const graph = props.activity.graph;
 const feedbackUrl = computed(() => {
@@ -54,11 +51,10 @@ const createCopyBeforePooling = ref(false);
 
 // activity store management
 const activityStore = useActivityStore();
-const activities = ref<Activity[]>([]);
 
 // load all activities on component mount
 onMounted(async () => {
-    activities.value = await activityStore.getAllActivities();
+    await activityStore.getAllActivities();
 });
 
 // Handle session start when user clicks start button
@@ -90,7 +86,8 @@ const handleStartSession = async () => {
     sessionStore.sessionActivity = {
         graph: props.activity.graph,
         name: props.activity.name,
-        description: props.activity.description
+        description: props.activity.description,
+        isArchived: props.activity.isArchived
     };
     sessionStore.startSession();
 };
@@ -131,6 +128,20 @@ const deleteThisActivity = async () => {
     activityStore.removeActivity(graph);
     activityStore.refreshActivityList();
 }
+
+const archiveThisActivity = async () => {
+    if (!sessionStore.instructorMode) {
+        return;
+    }
+    await activityStore.archiveActivity(graph);
+};
+
+const restoreThisActivity = async () => {
+    if (!sessionStore.instructorMode) {
+        return;
+    }
+    await activityStore.restoreActivity(graph);
+};
 
 /**
  * Retrieves available roles for the current activity graph.
@@ -249,9 +260,26 @@ const showUrl = ref(false)
                                 :delete-function="() => deleteThisActivity()" />
                         </div>
 
+                        <div v-if="sessionStore.instructorView">
+                            <ButtonComponent
+                                v-if="!props.isArchivedView"
+                                variant="secondary"
+                                size="icon"
+                                @click="archiveThisActivity">
+                                <Archive class="w-4 h-4" />
+                            </ButtonComponent>
+                            <ButtonComponent
+                                v-else
+                                variant="secondary"
+                                size="icon"
+                                @click="restoreThisActivity">
+                                <ArchiveRestore class="w-4 h-4" />
+                            </ButtonComponent>
+                        </div>
+
 
                         <!-- Feedback QR Code Button -->
-                        <div>
+                        <div v-if="!props.isArchivedView">
                             <Dialog v-model:open="showQrDialog">
                                 <DialogTrigger as-child>
                                     <ButtonComponent variant="secondary" size="icon">
@@ -295,7 +323,7 @@ v-if="showUrl"
                             </Dialog>
                         </div>
                         <!-- Start Session Button -->
-                        <div>
+                        <div v-if="!props.isArchivedView">
                             <Dialog>
                                 <DialogTrigger as-child>
                                     <ButtonComponent variant="default" size="icon">

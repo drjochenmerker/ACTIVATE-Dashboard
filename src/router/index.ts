@@ -8,6 +8,7 @@ import { useSessionStore } from "@/stores/sessionStore";
 import FeedbackThankyouPage from "@/views/FeedbackThankyouPage.vue";
 import LoginPage from "@/views/LoginPage.vue";
 import LlmTestPage from "@/views/LlmTestPage.vue";
+import ArchivePage from "@/views/ArchivePage.vue";
 
 const routes: Array<RouteRecordRaw> = [
     {
@@ -19,6 +20,11 @@ const routes: Array<RouteRecordRaw> = [
         path: "/start",
         name: "Start",
         component: StartPage, // dedicated start page for activity creation and selection
+    },
+    {
+        path: "/archive",
+        name: "ArchivePage",
+        component: ArchivePage,
     },
     {
         path: "/feedback/:graph",
@@ -74,9 +80,14 @@ router.beforeEach((to) => {
 
     const isPublic = to.name === "FeedbackThankYouPage";
     const isOption = to.path === "/options";
+    const isArchive = to.name === "ArchivePage";
 
     // Permit users from accessing options if they aren't instructors
     if (isOption && sessionStore.instructorMode == false) {
+        return "/start";
+    }
+
+    if (isArchive && sessionStore.instructorMode == false) {
         return "/start";
     }
 

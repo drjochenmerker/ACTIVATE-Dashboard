@@ -267,6 +267,11 @@ export const staticContent = {
             de: "Startseite",
             sv: "Hem",
         },
+        archive: {
+            en: "Archive",
+            de: "Archiv",
+            sv: "Arkiv",
+        },
         delete: {
             en: "Delete",
             de: "Löschen",
@@ -748,7 +753,17 @@ export const staticContent = {
             en: "Link copied!",
             de: "Link kopiert!",
             sv: "Länk kopierad!"
-        }
+        },
+        archivePageTitle: {
+            en: "Archived settings",
+            de: "Archivierte Situationen",
+            sv: "Arkiverade situationer",
+        },
+        noArchivedActivities: {
+            en: "No archived settings available.",
+            de: "Keine archivierten Situationen vorhanden.",
+            sv: "Inga arkiverade situationer tillgängliga.",
+        },
     },
     hoverText:{
         object: {

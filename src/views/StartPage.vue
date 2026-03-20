@@ -36,6 +36,7 @@ import ThemeSwitchButton from '@/components/ThemeSwitchButton.vue';
 import LogoutButton from '@/components/LogoutButton.vue';
 import ErrorDialog from '@/components/ErrorDialog.vue';
 import { showError, useErrorDialog } from '@/composables/useErrorDialog';
+import ArchiveButton from '@/components/ArchiveButton.vue';
 
 const { isOpen: errorDialogOpen } = useErrorDialog();
 
@@ -49,7 +50,7 @@ const loading = ref(false);
 // State management for activities
 const selectedActivity = ref<string>();
 const activityStore = useActivityStore();
-const activities = computed(() => activityStore.activityList);
+const activities = computed(() => activityStore.activeActivities);
 
 const newTitle = ref('');
 const newDescription = ref('');
@@ -125,6 +126,7 @@ const addNewActivity = async () => {
       <template v-if="sessionStore.instructorMode">
         <OptionsButton />
       </template>
+      <ArchiveButton v-if="sessionStore.instructorMode" />
       <LogoutButton />
       <ThemeSwitchButton />
     </div>
