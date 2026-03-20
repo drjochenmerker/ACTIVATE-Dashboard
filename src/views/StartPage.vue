@@ -34,7 +34,11 @@ import { useLLMSettingsStore } from '@/stores/llmSettingsStore';
 import OptionsButton from '@/components/OptionsButton.vue';
 import ThemeSwitchButton from '@/components/ThemeSwitchButton.vue';
 import LogoutButton from '@/components/LogoutButton.vue';
+import ErrorDialog from '@/components/ErrorDialog.vue';
+import { showError, useErrorDialog } from '@/composables/useErrorDialog';
 import ArchiveButton from '@/components/ArchiveButton.vue';
+
+const { isOpen: errorDialogOpen } = useErrorDialog();
 
 useColorMode();
 const sessionStore = useSessionStore();
@@ -78,20 +82,34 @@ watch(selectedActivity, async () => {
 
 const addNewActivity = async () => {
   showValidationErrors.value = true;
+  if (!newDescription.value.trim()) {
+    return;
+  }
   try {
     loading.value = true;
-    await llmSettingGeneration(newDescription.value, useLLMSettingsStore().getCurrentModelRequestConfig(), newTitle.value, defaultRole.value);
+    const result = await llmSettingGeneration(newDescription.value, useLLMSettingsStore().getCurrentModelRequestConfig(), newTitle.value, defaultRole.value);
     loading.value = false;
-  } catch (error) {
-    console.error("Error during LLM generation:", error);
-  }
 
-  dialogOpen.value = false;
-  newTitle.value = '';
-  newDescription.value = '';
-  defaultRole.value = '';
-  showValidationErrors.value = false; // Reset validation state
-  await activityStore.refreshActivityList();
+    if (!result.success) {
+      showError(
+        result.errorType || 'unexpected',
+        result.message,
+        result.llmError
+      );
+      return;
+    }
+
+    dialogOpen.value = false;
+    newTitle.value = '';
+    newDescription.value = '';
+    defaultRole.value = '';
+    showValidationErrors.value = false;
+    await activityStore.refreshActivityList();
+  } catch (error) {
+    loading.value = false;
+    console.error("Error during LLM generation:", error);
+    showError('unexpected', staticContent.errors.unexpectedActionFailed);
+  }
 };
 
 
@@ -99,6 +117,7 @@ const addNewActivity = async () => {
 
 <template>
   <div class="flex flex-col items-center justify-center py-4 px-4">
+    <ErrorDialog v-if="errorDialogOpen" />
     <div class="flex items-center gap-2 justify-end w-full mb-4">
       <!-- instructorview select has to stay instructorMode so the button stays clickable for the instructor lol  -->
       <InstructorViewSelect v-if="sessionStore.instructorMode" />
@@ -141,17 +160,18 @@ const addNewActivity = async () => {
               <!-- Optional Title -->
               <DialogDescription>{{ staticContent.startPage.enterTitle[sessionStore.activeLanguage] }}
               </DialogDescription>
-              <input
-v-model="newTitle" type="text"
+              <input v-model="newTitle" type="text"
                 class="w-full border rounded p-2 mb-2 dark:bg-gray-900 border-gray-300" />
 
               <!-- Required Description -->
-              <DialogDescription>{{ staticContent.startPage.enterDescription[sessionStore.activeLanguage] }}
+              <DialogDescription class="required">
+                {{
+                  staticContent.startPage.enterDescription[sessionStore.activeLanguage]
+                }}
               </DialogDescription>
-              <textarea
-v-model="newDescription" class="w-full border rounded p-2 mb-1 dark:bg-gray-900" :class="[
+              <textarea v-model="newDescription" class="w-full border rounded p-2 mb-1 dark:bg-gray-900" :class="[
                 showValidationErrors && !newDescription.trim() ? 'border-red-500' : 'border-gray-300'
-              ]" />
+              ]"></textarea>
               <p v-if="showValidationErrors && !newDescription.trim()" class="text-red-500 text-sm mb-2">
                 {{ staticContent.startPage.descriptionRequired[sessionStore.activeLanguage] }}
               </p>
@@ -161,15 +181,11 @@ v-model="newDescription" class="w-full border rounded p-2 mb-1 dark:bg-gray-900"
               </DialogDescription>
               <input v-model="defaultRole" class="w-full border rounded p-2 mb-2 dark:bg-gray-900 border-gray-300" />
 
-              <ButtonComponent @click="addNewActivity">{{ staticContent.terms.done[sessionStore.activeLanguage] }}</ButtonComponent>
+              <ButtonComponent @click="addNewActivity">{{ staticContent.terms.done[sessionStore.activeLanguage] }}
+              </ButtonComponent>
 
-              <!-- <div v-if="loading">
-                <Loader2 class="animate-spin h-5 w-5 ml-2 inline-block" />
-                {{ staticContent.placeholders.loading[sessionStore.activeLanguage] }}
-              </div> -->
             </DialogHeader>
-            <LoadingOverlay
-:visible="loading"
+            <LoadingOverlay :visible="loading"
               :message="staticContent.placeholders.loading[sessionStore.activeLanguage]"
               class="mt-4 text-red-500 font-semibold" />
           </DialogContent>
@@ -183,3 +199,10 @@ v-model="newDescription" class="w-full border rounded p-2 mb-1 dark:bg-gray-900"
     </Card>
   </div>
 </template>
+
+<style>
+.required:after {
+  content: " *";
+  color: red;
+}
+</style>
