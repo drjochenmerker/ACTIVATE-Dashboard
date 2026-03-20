@@ -89,7 +89,7 @@ const addNewActivity = async () => {
     loading.value = true;
     const result = await llmSettingGeneration(newDescription.value, useLLMSettingsStore().getCurrentModelRequestConfig(), newTitle.value, defaultRole.value);
     loading.value = false;
-    
+
     if (!result.success) {
       showError(
         result.errorType || 'unexpected',
@@ -103,7 +103,7 @@ const addNewActivity = async () => {
     newTitle.value = '';
     newDescription.value = '';
     defaultRole.value = '';
-    showValidationErrors.value = false; // Reset validation state
+    showValidationErrors.value = false;
     await activityStore.refreshActivityList();
   } catch (error) {
     loading.value = false;
@@ -160,17 +160,18 @@ const addNewActivity = async () => {
               <!-- Optional Title -->
               <DialogDescription>{{ staticContent.startPage.enterTitle[sessionStore.activeLanguage] }}
               </DialogDescription>
-              <input
-v-model="newTitle" type="text"
+              <input v-model="newTitle" type="text"
                 class="w-full border rounded p-2 mb-2 dark:bg-gray-900 border-gray-300" />
 
               <!-- Required Description -->
-              <DialogDescription>{{ staticContent.startPage.enterDescription[sessionStore.activeLanguage] }}
+              <DialogDescription class="required">
+                {{
+                  staticContent.startPage.enterDescription[sessionStore.activeLanguage]
+                }}
               </DialogDescription>
-              <textarea
-v-model="newDescription" class="w-full border rounded p-2 mb-1 dark:bg-gray-900" :class="[
+              <textarea v-model="newDescription" class="w-full border rounded p-2 mb-1 dark:bg-gray-900" :class="[
                 showValidationErrors && !newDescription.trim() ? 'border-red-500' : 'border-gray-300'
-              ]" />
+              ]"></textarea>
               <p v-if="showValidationErrors && !newDescription.trim()" class="text-red-500 text-sm mb-2">
                 {{ staticContent.startPage.descriptionRequired[sessionStore.activeLanguage] }}
               </p>
@@ -180,15 +181,11 @@ v-model="newDescription" class="w-full border rounded p-2 mb-1 dark:bg-gray-900"
               </DialogDescription>
               <input v-model="defaultRole" class="w-full border rounded p-2 mb-2 dark:bg-gray-900 border-gray-300" />
 
-              <ButtonComponent @click="addNewActivity">{{ staticContent.terms.done[sessionStore.activeLanguage] }}</ButtonComponent>
+              <ButtonComponent @click="addNewActivity">{{ staticContent.terms.done[sessionStore.activeLanguage] }}
+              </ButtonComponent>
 
-              <!-- <div v-if="loading">
-                <Loader2 class="animate-spin h-5 w-5 ml-2 inline-block" />
-                {{ staticContent.placeholders.loading[sessionStore.activeLanguage] }}
-              </div> -->
             </DialogHeader>
-            <LoadingOverlay
-:visible="loading"
+            <LoadingOverlay :visible="loading"
               :message="staticContent.placeholders.loading[sessionStore.activeLanguage]"
               class="mt-4 text-red-500 font-semibold" />
           </DialogContent>
@@ -202,3 +199,10 @@ v-model="newDescription" class="w-full border rounded p-2 mb-1 dark:bg-gray-900"
     </Card>
   </div>
 </template>
+
+<style>
+.required:after {
+  content: " *";
+  color: red;
+}
+</style>

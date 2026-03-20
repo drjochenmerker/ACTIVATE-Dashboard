@@ -173,7 +173,7 @@ const submitFeedback = async () => {
         const llmSettingsStore = useLLMSettingsStore();
         const result = await llmSubmit(feedbackData.graph, feedbackData.role, feedbackData.data, llmSettingsStore.getCurrentModelRequestConfig());
         loading.value = false;
-        
+
         if (!result.success) {
             showError(
                 result.errorType || 'unexpected',
@@ -213,9 +213,8 @@ const submitFeedback = async () => {
 
         <div class="space-y-6">
             <div class="mb-6">
-                <Select
-id="roleSelect" :model-value="sessionStore.sessionRole"
-                    class="my-4" @update:model-value="sessionStore.sessionRole = $event">
+                <Select id="roleSelect" :model-value="sessionStore.sessionRole" class="my-4"
+                    @update:model-value="sessionStore.sessionRole = $event">
                     <SelectTrigger>
                         <SelectValue
                             :placeholder="staticContent.placeholders.roleSelect[sessionStore.activeLanguage] || sessionStore.sessionRole" />
@@ -226,8 +225,7 @@ id="roleSelect" :model-value="sessionStore.sessionRole"
                 </Select>
             </div>
 
-            <div
-v-for="group in groupedQuestionData" :key="group.key"
+            <div v-for="group in groupedQuestionData" :key="group.key"
                 class="mb-6 p-4 border rounded-lg shadow-sm space-y-4">
 
                 <h2 class="text-xl font-semibold border-b pb-2">
@@ -235,11 +233,10 @@ v-for="group in groupedQuestionData" :key="group.key"
                 </h2>
 
                 <div v-for="question in group.questions" :key="question.key" class="space-y-2">
-                    <label :for="group.key + question.key" class="block text-lg font-medium">
+                    <label :for="group.key + question.key" class="block text-lg font-medium required">
                         {{ question.text }}
                     </label>
-                    <textarea
-:id="group.key + question.key" v-model="answers[group.key][question.key]"
+                    <textarea :id="group.key + question.key" v-model="answers[group.key][question.key]"
                         class="dark:bg-gray-900 w-full p-3 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
                         rows="4" :placeholder="staticContent.placeholders.feedbackAnswer[activeLang]" />
                 </div>
@@ -249,10 +246,19 @@ v-for="group in groupedQuestionData" :key="group.key"
         </div>
 
         <div class="mt-8">
-            <ButtonComponent class="w-full text-black bg-white border border-black hover:bg-black hover:text-white disabled:hover:bg-white disabled:hover:text-black" @click="submitFeedback">
+            <ButtonComponent
+                class="w-full text-black bg-white border border-black hover:bg-black hover:text-white disabled:hover:bg-white disabled:hover:text-black"
+                @click="submitFeedback">
                 {{ staticContent.noteCards.save[activeLang] }}
             </ButtonComponent>
         </div>
         <LoadingOverlay :visible="loading" :message="staticContent.placeholders.loading[activeLang]" />
     </div>
 </template>
+
+<style>
+.required:after {
+    content: " *";
+    color: red;
+}
+</style>
