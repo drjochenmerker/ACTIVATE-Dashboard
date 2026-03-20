@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button } from '@/components/ui/button';
+import { ButtonComponent } from '@/components/ui/button';
 import { Sun, Moon } from 'lucide-vue-next';
 import { useColorMode } from '@vueuse/core';
 import {
@@ -25,10 +25,10 @@ const toggleMode = () => {
     <TooltipProvider>
         <Tooltip>
             <TooltipTrigger as-child>
-                <Button size="icon" class="rounded-full" variant="secondary" @click="toggleMode">
+                <ButtonComponent size="icon" class="rounded-full" variant="secondary" @click="toggleMode">
                     <Sun v-if="mode === 'dark'" />
                     <Moon v-else />
-                </Button>
+                </ButtonComponent>
             </TooltipTrigger>
             <TooltipContent>
                 <p>{{staticContent.terms.changeTheme[sessionStore.activeLanguage]}}</p>

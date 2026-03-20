@@ -26,13 +26,18 @@ const mode = useColorMode();
 const popupRef = ref<HTMLElement | null>(null);
 const popupStyle = ref({ top: props.position.x + "px", left: props.position.y + 'px' });
 
+const emit = defineEmits<{
+    (e: "key-cleaned", key: string, newKey: string): void;
+}>();
+
 onMounted(() => {
   const descKey = sessionStore.activeLanguage in props.hoveredConflictPoint.description
     ? sessionStore.activeLanguage
     : 'default';
   if (props.hoveredConflictPoint.description && typeof props.hoveredConflictPoint.description[descKey] === 'string') {
-    props.hoveredConflictPoint.description[descKey] = props.hoveredConflictPoint.description[descKey].replace(/<\/?[^>]+(>|$)/g, "");
-  }
+
+        const newKey = props.hoveredConflictPoint.description[descKey].replace(/<\/?[^>]+(>|$)/g, "");
+        emit("key-cleaned", descKey, newKey);  }
   updatePopupHeight(props.position);
 });
 
@@ -43,9 +48,9 @@ watch(() => props.position, (newVal) => updatePopupHeight(newVal));
  * Updates the height of the popup box after DOM update
  * Uses nextTick to ensure accurate measurement
  */
-const updatePopupHeight = (pos: any) => {
+const updatePopupHeight = (pos: typeof props.position | Conflict) => {
   nextTick(() => {
-    if (popupRef.value) {
+    if (popupRef.value && pos.x && pos.y) {
       const rect = popupRef.value.getBoundingClientRect();
       let adjustedX = pos.x;
       let adjustedY = pos.y;
@@ -80,13 +85,14 @@ const sessionStore = useSessionStore();
  * - Measures popup height
  */
 onMounted(() => {
-  const descKey = sessionStore.activeLanguage in props.hoveredConflictPoint.description
-    ? sessionStore.activeLanguage
-    : 'default';
-  if (props.hoveredConflictPoint.description && typeof props.hoveredConflictPoint.description[descKey] === 'string') {
-    props.hoveredConflictPoint.description[descKey] = props.hoveredConflictPoint.description[descKey].replace(/<\/?[^>]+(>|$)/g, "");
-  }
-  updatePopupHeight({});
+    const descKey =
+        sessionStore.activeLanguage in props.hoveredConflictPoint.description ? sessionStore.activeLanguage : "default";
+    const description = props.hoveredConflictPoint.description;
+    if (description && typeof description[descKey] === "string") {
+        const newKey = props.hoveredConflictPoint.description[descKey].replace(/<\/?[^>]+(>|$)/g, "");
+        emit("key-cleaned", descKey, newKey);
+    }
+  updatePopupHeight(props.position);
 });
 
 /**
@@ -104,7 +110,8 @@ watch(() => props.position, updatePopupHeight);
      titel, description, participants
    -->
 
-  <div v-if="sessionStore.activeScene === 'Scene 1'" ref="popupRef" class="popup"
+  <div
+v-if="sessionStore.activeScene === 'Scene 1'" ref="popupRef" class="popup"
     :class="{ 'popup-dark': mode === 'dark' }" :style="popupStyle">
     <b>{{ hoveredConflictPoint.title[sessionStore.activeLanguage] || hoveredConflictPoint.title['default'] }}</b>
     <p v-if="hoveredConflictPoint.description">

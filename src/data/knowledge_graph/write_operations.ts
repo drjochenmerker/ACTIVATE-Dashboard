@@ -1,7 +1,36 @@
 import hash from "object-hash";
 import { CapitalizeFirstLetter, fetchSparql, getSparqlTemplate, RDFSyntaxCheck, EscapeSparqlStringLiteral } from "./utils";
-import { Activity, Conflict, conflictPredicate, conflictStatus, KnowledgeGraphActivityClass, LanguageCode, LanguageLabel, RDFOperation, RDFTriple, sparqlTemplate, updateResponse } from "./structures";
+import { Activity, Conflict, conflictPredicate, conflictStatus, KnowledgeGraphActivityClass, LanguageCode, LanguageLabel, RDFOperation, RDFTriple, sparqlTemplate, StringAccessObject, updateResponse } from "./structures";
 import { useSessionStore } from "@/stores/sessionStore";
+
+/**
+ * Internal logging function for activity changes
+ * Sends log entry to RDFLib backend
+ * @param graphId - The activity/graph ID
+ * @param operation - Type of operation: "Creation", "Deletion", or "Modification"
+ */
+async function logActivity(graphId: string, operation: "Creation" | "Deletion" | "Modification"): Promise<void> {
+    try {
+        const timestamp = new Date().toISOString();
+        const baseUrl = `${import.meta.env.VITE_KNOWLEDGE_GRAPH_URL}${!import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT ? '' : ':' + import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT}`;
+        
+        await fetch(`${baseUrl}/api/logs/activity`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                graphId,
+                operation,
+                timestamp,
+                logMessage: `[${timestamp}] - Action: ${operation}`
+            })
+        });
+    } catch (error) {
+        console.error('Error logging activity change:', error);
+        // Don't throw - logging errors shouldn't break the app
+    }
+}
 
 /**
  * Adds a new conflict to the sparql database
@@ -38,6 +67,7 @@ export async function addConflict(graph: string, conflict: Conflict): Promise<up
     query = query.replaceMultiple(mapObj);
     // Exeucte Query in update mode
     const data = await fetchSparql(query, true);
+    await logActivity(graph, 'Creation');
     return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: conflictId, action: RDFOperation.insert } as updateResponse;
 }
 
@@ -54,7 +84,7 @@ export async function deleteConflict(graph: string, conflictId: string): Promise
         "{{conflict}}": conflictId
     };
     commentQuery = commentQuery.replaceMultiple(commentMapObj);
-    const commentIds = (await fetchSparql(commentQuery, false)).map((res: any) => {
+    const commentIds = (await fetchSparql(commentQuery, false)).map((res: StringAccessObject) => {
         return res.s.value ? res.s.value.split("#").pop() : null;
     });
     // Remove Conflict
@@ -74,6 +104,7 @@ export async function deleteConflict(graph: string, conflictId: string): Promise
         const innerQuery = deleteQueryBase.replaceMultiple(innerMapObj);
         await fetchSparql(innerQuery, true);
     }
+    await logActivity(graph, 'Deletion');
     return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: conflictId, action: RDFOperation.delete } as updateResponse;
 }
 
@@ -95,6 +126,7 @@ export async function updateConflict(graph: string, conflictId: string, predicat
     };
     query = query.replaceMultiple(mapObj);
     const data = await fetchSparql(query, true);
+    await logActivity(graph, 'Modification');
     return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: conflictId, action: RDFOperation.insert } as updateResponse;
 }
 
@@ -124,6 +156,7 @@ export async function updateConflictText(
     };
     query = query.replaceMultiple(mapObj);
     const data = await fetchSparql(query, true);
+    await logActivity(graph, 'Modification');
     return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: conflictId, action: RDFOperation.insert } as updateResponse;
 }
 
@@ -136,6 +169,7 @@ export async function updateConflictParticipants(graph: string, conflictId: stri
     };
     query = query.replaceMultiple(mapObj);
     const data = await fetchSparql(query, true);
+    await logActivity(graph, 'Modification');
     return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: conflictId, action: RDFOperation.insert } as updateResponse;
 }
 
@@ -172,6 +206,7 @@ export async function addComment(parentId: string, comment: string, anonymous: b
     query = query.replaceMultiple(mapObj);
     // Exeucte Query in update mode
     const data = await fetchSparql(query, true);
+    await logActivity(graph, 'Creation');
     return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: commentId, action: RDFOperation.insert } as updateResponse;
 }
 
@@ -196,6 +231,7 @@ export async function deleteComment(graph: string, commentId: string, isNestedCo
     };
     query = query.replaceMultiple(mapObj);
     const data = await fetchSparql(query, true);
+    await logActivity(graph, 'Deletion');
     return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: commentId, action: RDFOperation.delete } as updateResponse;
 }
 
@@ -217,6 +253,7 @@ export async function updateComment(graph: string, commentId: string, comment: s
     };
     query = query.replaceMultiple(mapObj);
     const data = await fetchSparql(query, true);
+    await logActivity(graph, 'Modification');
     return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: commentId, action: RDFOperation.insert } as updateResponse;
 }
 
@@ -240,6 +277,7 @@ export async function updateTriple(graph: string, triple: RDFTriple, operation: 
     query = query.replaceMultiple(mapObj);
     // Exeucte Query in update mode
     const data = await fetchSparql(query, true);
+    await logActivity(graph, 'Creation');
     return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: Object.values(triple).join(" "), action: operation } as updateResponse;
 }
 
@@ -302,6 +340,7 @@ export async function addEntity(
     }
     query = query.replaceMultiple(mapObj);
     const data = await fetchSparql(query, true);
+    await logActivity(graph, 'Modification');
     return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: entityLabel, action: RDFOperation.insert } as updateResponse;
 }
 
@@ -339,6 +378,7 @@ export async function deleteActivity(graph: string): Promise<updateResponse> {
     let query = await getSparqlTemplate(sparqlTemplate.deleteActivity);
     query = query.replace("{{graph}}", graph);
     const data = await fetchSparql(query, true);
+    await logActivity(graph, 'Deletion');
     return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: graph, action: RDFOperation.insert } as updateResponse;
 }
 
@@ -349,18 +389,16 @@ export async function deleteActivity(graph: string): Promise<updateResponse> {
  * @returns updateResponse Object
  */
 export async function updateActivity(activity: Activity): Promise<updateResponse> {
-    // let query = await getSparqlTemplate(sparqlTemplate.updateActivity);
-    // const mapObj = {
-    //     "{{graph}}": activity.graph,
-    //     // "{{activityName}}": EscapeSparqlStringLiteral(getStringFromRecord(activity.name)),
-    //     "{{activityName}}": EscapeSparqlStringLiteral(activity.name),
-    //     "{{activityDescription}}": activity.description ? EscapeSparqlStringLiteral(getStringFromRecord(activity.description)) : "No description given",
-    // }
-    // query = query.replaceMultiple(mapObj);
-    // const data = await fetchSparql(query, true);
-    // return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: activity.graph, action: RDFOperation.insert } as updateResponse;
-    // TODO handle updating of activities
-    return { code: 501, status: "Not Implemented", modified: activity.graph} as updateResponse;
+    let query = await getSparqlTemplate(sparqlTemplate.updateActivity);
+    const mapObj = {
+        "{{graph}}": activity.graph,
+        "{{activityNameTriples}}": buildActivityLiteralTriples("ActivityName", activity.name),
+        "{{activityDescriptionTriples}}": buildActivityLiteralTriples("ActivityDescription", activity.description),
+        "{{activityArchived}}": String(activity.isArchived)
+    };
+    query = query.replaceMultiple(mapObj);
+    const data = await fetchSparql(query, true);
+    return { code: data.status, status: data.status == 204 ? "OK" : "Error", modified: activity.graph, action: RDFOperation.insert } as updateResponse;
 }
 
 /**
@@ -466,4 +504,17 @@ export async function cloneActivity(activity: Activity, newActivityNames?: Recor
 
 function getStringFromRecord(record: Record<string, string>, lang = "en"): string {
   return record[lang] || Object.values(record)[0] || "";
+}
+
+function buildActivityLiteralTriples(predicate: "ActivityName" | "ActivityDescription", values: Record<string, string>): string {
+    return Object.entries(values)
+        .filter(([, value]) => Boolean(value))
+        .map(([lang, value]) => {
+            const escaped = EscapeSparqlStringLiteral(value);
+            if (lang === "default") {
+                return `?s :${predicate} """${escaped}""" .`;
+            }
+            return `?s :${predicate} """${escaped}"""@${lang} .`;
+        })
+        .join("\n        ");
 }

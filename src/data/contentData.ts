@@ -108,6 +108,76 @@ export const staticContent = {
             en: "Please select participants from at least two and at most three different classes.",
             de: "Bitte wählen Sie Teilnehmer aus mindestens zwei und maximal drei verschiedenen Klassen aus.",
             sv: "Vänligen välj deltagare från minst två och högst tre olika klasser.",
+        },
+        validationTitle: {
+            en: "Please complete your input",
+            de: "Bitte Eingaben vervollständigen",
+            sv: "Vänligen fyll i alla fält",
+        },
+        llmTitle: {
+            en: "Generation currently unavailable",
+            de: "Generierung aktuell nicht möglich",
+            sv: "Generering är för närvarande inte möjlig",
+        },
+        unexpectedTitle: {
+            en: "Unexpected error",
+            de: "Unerwarteter Fehler",
+            sv: "Oväntat fel",
+        },
+        validationActionFailed: {
+            en: "Some required information is missing.",
+            de: "Einige Pflichtangaben fehlen.",
+            sv: "Viss obligatorisk information saknas.",
+        },
+        llmActionFailed: {
+            en: "Action failed. Please try again.",
+            de: "Aktion fehlgeschlagen. Bitte versuchen Sie es später erneut.",
+            sv: "Åtgärden misslyckades. Försök igen.",
+        },
+        unexpectedActionFailed: {
+            en: "Something went wrong. Please try again.",
+            de: "Etwas ist schiefgelaufen. Bitte versuchen Sie es später erneut.",
+            sv: "Något gick fel. Försök igen.",
+        },
+        technicalDetailsLabel: {
+            en: "LLM response",
+            de: "LLM-Rückmeldung",
+            sv: "LLM-återkoppling",
+        },
+        uploadGeneratedTTLFailed: {
+            en: "Failed to upload generated TTL",
+            de: "Fehler beim Hochladen des generierten TTL",
+            sv: "Misslyckades med att ladda upp genererad TTL",
+        },
+        uncaughtGenerationError: {
+            en: "Uncaught error while generating and adding TTL",
+            de: "Unerwarteter Fehler beim Generieren und Hinzufügen des TTL",
+            sv: "Oväntat fel vid generering och tillägg av TTL",
+        },
+        stashResultsFailed: {
+            en: "Failed to stash results",
+            de: "Fehler beim Zwischenspeichern der Ergebnisse",
+            sv: "Misslyckades med att spara resultaten",
+        },
+        uploadPooledTTLFailed: {
+            en: "Failed to upload pooled TTL",
+            de: "Fehler beim Hochladen des kombinierten TTL",
+            sv: "Misslyckades med att ladda upp poolad TTL",
+        },
+        deleteTempSubmissionsFailed: {
+            en: "Failed to delete temporary submissions",
+            de: "Fehler beim Löschen der temporären Einreichungen",
+            sv: "Misslyckades med att radera tillfälliga inlämningar",
+        },
+        roleNotSelected: {
+            en: "Please select your role before submitting.",
+            de: "Bitte wählen Sie Ihre Rolle vor dem Absenden aus.",
+            sv: "Vänligen välj din roll innan du skickar in.",
+        },
+        roleNotFound: {
+            en: "Selected role not found!",
+            de: "Ausgewählte Rolle nicht gefunden!",
+            sv: "Vald roll hittades inte!",
         }
     },
     login: {
@@ -196,6 +266,11 @@ export const staticContent = {
             en: "Home",
             de: "Startseite",
             sv: "Hem",
+        },
+        archive: {
+            en: "Archive",
+            de: "Archiv",
+            sv: "Arkiv",
         },
         delete: {
             en: "Delete",
@@ -678,7 +753,17 @@ export const staticContent = {
             en: "Link copied!",
             de: "Link kopiert!",
             sv: "Länk kopierad!"
-        }
+        },
+        archivePageTitle: {
+            en: "Archived settings",
+            de: "Archivierte Situationen",
+            sv: "Arkiverade situationer",
+        },
+        noArchivedActivities: {
+            en: "No archived settings available.",
+            de: "Keine archivierten Situationen vorhanden.",
+            sv: "Inga arkiverade situationer tillgängliga.",
+        },
     },
     hoverText:{
         object: {

@@ -11,7 +11,7 @@ export async function getSparqlTemplate(template: sparqlTemplate): Promise<strin
     try {
         return await queries[filepath]() as string;
     }
-    catch (e) {
+    catch (_e) {
         throw new Error(`Query Template ${template} not found`);
     }
 }
@@ -46,12 +46,12 @@ export async function fetchSparql(query: string, update: boolean = false): Promi
  * @returns nested Comment or undefined if nothing was found
  */
 export function findNestedComment(commentId: string, input: Conflict | Comment[]): Comment | undefined {
-    let searchArray: any;
+    let searchArray: Conflict | Comment[];
     if (Array.isArray(input)) {
         searchArray = input;
     }
     else {
-        searchArray = input.replies;
+        searchArray = input.replies || [];
     }
     for (const reply of searchArray) {
         const nestedReply = findNestedCommentR(commentId, reply);
@@ -122,32 +122,6 @@ export function EscapeSparqlStringLiteral(input: string): string {
         .replace(/\t/g, '\\t');
 }
 
-// function pushNestedValue(obj: NestedMultiLangObject, nestingPath: string[], newValue: MultiLangObject): void {
-//     // Case 1: empty nestingPath
-//     if (nestingPath.length == 0) {
-//         !obj.values ? obj.values = [newValue] : obj.values.push(newValue);
-//         return;
-//     }
-//     // Case 2 nestingPath not empty
-//     let currentObj: NestedMultiLangObject = obj;
-//     for (const levelPath of nestingPath) {
-//         !currentObj.next ? currentObj.next = [] : null;
-//         // Find next level object
-//         let nextLevelObj = currentObj.next.find((item) => item.level == levelPath);
-//         if (nextLevelObj) {
-//             currentObj = nextLevelObj;
-//         }
-//         else {
-//             const newLevelObj = { level: levelPath };
-//             currentObj.next.push(newLevelObj);
-//             currentObj = newLevelObj;
-//         }
-//     }
-//     if (!currentObj.values) {
-//         currentObj.values = [];
-//     }
-//     currentObj.values.push(newValue);
-// }
 function pushNestedValue(
     root: NestedMultiLangObject,
     path: string[],
@@ -171,22 +145,22 @@ function pushNestedValue(
     current.values.push(value);
 }
 
+function sortNestedAlphanumeric(node: NestedMultiLangObject): void {
+    if (node.next && node.next.length > 0) {
+        node.next.sort((a, b) =>
+            a.level.localeCompare(b.level, undefined, { numeric: true, sensitivity: "base" })
+        );
+        node.next.forEach(sortNestedAlphanumeric);
+    }
+    if (node.values && node.values.length > 0) {
+        node.values.sort((a, b) => {
+            const labelA = Object.values(a.labels)[0] ?? "";
+            const labelB = Object.values(b.labels)[0] ?? "";
+            return labelA.localeCompare(labelB, undefined, { numeric: true, sensitivity: "base" });
+        });
+    }
+}
 
-// export function buildTreeStructByLang(input: MultiLangObject[] | Objective[], lang: string): NestedMultiLangObject {
-//     const result: NestedMultiLangObject = { level: "root" };
-//     for (const item of input) {
-//         const label = item.labels[lang] || item.labels["default"] || Object.values(item.labels)[0];
-//         const nestingPath = label.split("/");
-//         const finalValue = nestingPath.pop();
-//         const currentObj: MultiLangObject = {
-//             id: item.id,
-//             labels: {},
-//             value: finalValue
-//         };
-//         pushNestedValue(result, nestingPath, currentObj);
-//     }
-//     return result;
-// }
 export function buildTreeStructByLang(
     input: MultiLangObject[],
     lang: string
@@ -200,7 +174,6 @@ export function buildTreeStructByLang(
             Object.values(item.labels)[0];
 
         const nestingPath = label.split("/");
-        //const finalValue = nestingPath.pop(); // e.g., "Doctor" from "Medical/Doctor"
 
         const currentObj: MultiLangObject = {
             id: item.id,
@@ -210,6 +183,8 @@ export function buildTreeStructByLang(
 
         pushNestedValue(result, nestingPath, currentObj);
     }
+
+    sortNestedAlphanumeric(result);
 
     return result;
 }

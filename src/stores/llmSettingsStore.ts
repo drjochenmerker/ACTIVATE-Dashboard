@@ -118,7 +118,7 @@ export const useLLMSettingsStore = defineStore('llmSettings', () => {
         };
       case 'cortecs':
         return {
-          modelName: 'mistral-large-2512',
+          modelName: 'kimi-k2.5',
           temperature: 0.7,
           maxTokens: 4096,
         };

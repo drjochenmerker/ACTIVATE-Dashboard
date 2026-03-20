@@ -2,8 +2,7 @@
 import { computed, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 
-// UI components
-import { Button } from '@/components/ui/button'
+import { ButtonComponent } from '@/components/ui/button'
 import { Select, SelectContent, SelectTrigger, SelectValue } from '@/components/ui/select';
 import RecursiveSelect from '@/components/RecursiveSelect.vue';
 import LoadingOverlay from '@/components/LoadingOverlay.vue'
@@ -15,14 +14,17 @@ import { buildTreeStructByLang } from '@/data/knowledge_graph/utils';
 import { getActivityClassIds } from '@/data/knowledge_graph/read_operations';
 import { KnowledgeGraphActivityClass } from '@/data/knowledge_graph/structures';
 import { llmSubmit } from '@/data/knowledge_graph/llm_utils';
-import { staticContentFeedback } from '@/data/feedbackQuestions';
+import { QuestionGroupType, QuestionKeyType, StaticContentFeedback, staticContentFeedback } from '@/data/feedbackQuestions';
 import { useLLMSettingsStore } from '@/stores/llmSettingsStore';
 import LogoutButton from '@/components/LogoutButton.vue';
 import OptionsButton from '@/components/OptionsButton.vue';
 import ThemeSwitchButton from '@/components/ThemeSwitchButton.vue';
 import HomeButton from '@/components/HomeButton.vue';
+import ErrorDialog from '@/components/ErrorDialog.vue';
+import { showError, useErrorDialog } from '@/composables/useErrorDialog';
 import { useColorMode } from '@vueuse/core';
 
+const { isOpen: errorDialogOpen } = useErrorDialog();
 useColorMode();
 
 const props = defineProps<{ graph: string }>()
@@ -114,7 +116,7 @@ const getRoles = async () => {
 
 const submitFeedback = async () => {
     if (!sessionStore.sessionRole) {
-        alert('Please select your role before submitting.')
+        showError('validation', staticContent.errors.roleNotSelected);
         return
     }
 
@@ -122,7 +124,7 @@ const submitFeedback = async () => {
     const selectedRole = roles.find(role => role.id === sessionStore.sessionRole);
 
     if (!selectedRole) {
-        alert('Selected role not found!');
+        showError('validation', staticContent.errors.roleNotFound);
         return;
     }
 
@@ -146,9 +148,8 @@ const submitFeedback = async () => {
             const answer = groupAnswers[questionKey];
 
             // Find the question text in the original data (with fallback)
-            const groupStatic = (staticContentFeedback as any)[groupKey];
-            const questionText = groupStatic?.[questionKey]?.[lang] || groupStatic?.[questionKey]?.['de'];
-
+            const groupStatic = (staticContentFeedback as StaticContentFeedback)[groupKey as QuestionGroupType];
+            const questionText = groupStatic?.[questionKey as QuestionKeyType]?.[lang] || groupStatic?.[questionKey as QuestionKeyType]?.["de"];
             // Add only if question text exists
             if (questionText && questionText.trim() !== '') {
                 fullData.push({
@@ -170,12 +171,21 @@ const submitFeedback = async () => {
     try {
         loading.value = true;
         const llmSettingsStore = useLLMSettingsStore();
-        await llmSubmit(feedbackData.graph, feedbackData.role, feedbackData.data, llmSettingsStore.getCurrentModelRequestConfig());
+        const result = await llmSubmit(feedbackData.graph, feedbackData.role, feedbackData.data, llmSettingsStore.getCurrentModelRequestConfig());
         loading.value = false;
+
+        if (!result.success) {
+            showError(
+                result.errorType || 'unexpected',
+                result.message,
+                result.llmError
+            );
+            return;
+        }
     } catch (error) {
         loading.value = false;
         console.error("Error submitting feedback:", error);
-        alert('Failed to submit feedback. Please try again.');
+        showError('unexpected', staticContent.errors.unexpectedActionFailed);
         return;
     }
     try {
@@ -189,6 +199,7 @@ const submitFeedback = async () => {
 
 <template>
     <div class="min-h-screen flex flex-col lg:w-[1024px] lg:mx-auto justify-between p-4">
+        <ErrorDialog v-if="errorDialogOpen" />
 
         <div class="flex items-center gap-2 justify-end w-full mb-4">
             <LanguageSelect />
@@ -202,8 +213,8 @@ const submitFeedback = async () => {
 
         <div class="space-y-6">
             <div class="mb-6">
-                <Select :model-value="sessionStore.sessionRole" @update:model-value="sessionStore.sessionRole = $event"
-                    id="roleSelect" class="my-4">
+                <Select id="roleSelect" :model-value="sessionStore.sessionRole" class="my-4"
+                    @update:model-value="sessionStore.sessionRole = $event">
                     <SelectTrigger>
                         <SelectValue
                             :placeholder="staticContent.placeholders.roleSelect[sessionStore.activeLanguage] || sessionStore.sessionRole" />
@@ -222,7 +233,7 @@ const submitFeedback = async () => {
                 </h2>
 
                 <div v-for="question in group.questions" :key="question.key" class="space-y-2">
-                    <label :for="group.key + question.key" class="block text-lg font-medium">
+                    <label :for="group.key + question.key" class="block text-lg font-medium required">
                         {{ question.text }}
                     </label>
                     <textarea :id="group.key + question.key" v-model="answers[group.key][question.key]"
@@ -235,10 +246,19 @@ const submitFeedback = async () => {
         </div>
 
         <div class="mt-8">
-            <Button class="w-full text-black bg-white border border-black hover:bg-black hover:text-white disabled:hover:bg-white disabled:hover:text-black" @click="submitFeedback">
+            <ButtonComponent
+                class="w-full text-black bg-white border border-black hover:bg-black hover:text-white disabled:hover:bg-white disabled:hover:text-black"
+                @click="submitFeedback">
                 {{ staticContent.noteCards.save[activeLang] }}
-            </Button>
+            </ButtonComponent>
         </div>
         <LoadingOverlay :visible="loading" :message="staticContent.placeholders.loading[activeLang]" />
     </div>
 </template>
+
+<style>
+.required:after {
+    content: " *";
+    color: red;
+}
+</style>

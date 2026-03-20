@@ -2,6 +2,20 @@ import { LLMRequestConfig, useLLMSettingsStore } from "@/stores/llmSettingsStore
 import { sparqlTemplate, StringAccessObject } from "./structures";
 import { fetchSparql, getSparqlTemplate } from "./utils";
 import { addRequiredEntitiesToGraph } from "./requiredEntities";
+import { staticContent } from "../contentData";
+import { useSessionStore } from '@/stores/sessionStore';
+
+type ErrorType = 'validation' | 'llm' | 'unexpected';
+
+function classifyBackendError(status: number, llmError?: string): ErrorType {
+    if (status === 400) {
+        return 'validation';
+    }
+    if (llmError && llmError.trim() !== '') {
+        return 'llm';
+    }
+    return 'unexpected';
+}
 
 /**
  * Type definition for the result of LLM parsing operations.
@@ -9,8 +23,10 @@ import { addRequiredEntitiesToGraph } from "./requiredEntities";
  */
 export type LLMParsingResult = {
     success: boolean;
-    message: string;
-    data?: any;
+    message: string | { en?: string; de?: string; sv?: string };
+    errorType?: ErrorType;
+    llmError?: string;
+    data?: { question: string; answer: string };
 };
 
 /**
@@ -29,6 +45,7 @@ export async function llmSettingGeneration(
     defaultRole?: string,
 ): Promise<LLMParsingResult> {
     const llmSettingsStore = useLLMSettingsStore();
+    const sessionStore = useSessionStore();
 
     // Generate TTL using the LLM Backend
     const llmRes = await fetch(
@@ -55,7 +72,9 @@ export async function llmSettingGeneration(
         return {
             success: false,
             message: data.error,
-        };
+            errorType: classifyBackendError(llmRes.status, data.llmError),
+            llmError: data.llmError,
+        }
     }
     // Add TTL to Sparql Backend
     const rdfRes = await fetch(
@@ -71,7 +90,8 @@ export async function llmSettingGeneration(
     if (!rdfRes.ok) {
         return {
             success: false,
-            message: "Failed to upload generated TTL",
+            message: staticContent.errors.uploadGeneratedTTLFailed[sessionStore.activeLanguage],
+            errorType: 'unexpected',
         };
     }
     const rdfData = await rdfRes.json();
@@ -85,7 +105,8 @@ export async function llmSettingGeneration(
     }
     return {
         success: false,
-        message: "Uncaught error while generating and adding TTL",
+        message: staticContent.errors.uncaughtGenerationError[sessionStore.activeLanguage],
+        errorType: 'unexpected',
     };
 }
 
@@ -103,9 +124,10 @@ export async function llmSubmit(
     llmDetail: LLMRequestConfig,
 ): Promise<LLMParsingResult> {
     const llmSettingsStore = useLLMSettingsStore();
+    const sessionStore = useSessionStore();
     // Fetch description and entities from the graph
-    let description: StringAccessObject = {};
-    let entities: StringAccessObject[] = [];
+    const description: StringAccessObject = {};
+    const entities: StringAccessObject[] = [];
     let query = await getSparqlTemplate(sparqlTemplate.getLLMDetail);
     const graphRes = await fetchSparql(query.replace("{{graph}}", graphID));
     graphRes.forEach((triple: StringAccessObject) => {
@@ -150,7 +172,9 @@ export async function llmSubmit(
         return {
             success: false,
             message: llmData.error,
-        };
+            errorType: classifyBackendError(llmRes.status, llmData.llmError),
+            llmError: llmData.llmError,
+        }
     }
     // Save results temporary in the graph as a literal
     // Entities
@@ -174,7 +198,8 @@ export async function llmSubmit(
     if (!EntityRes.ok || !TensionRes.ok) {
         return {
             success: false,
-            message: "Failed to stash results",
+            message: staticContent.errors.stashResultsFailed[sessionStore.activeLanguage],
+            errorType: 'unexpected',
         };
     }
     return {
@@ -270,14 +295,15 @@ export async function llmSubmit(
  * @returns LLMParsingResult
  */
 export async function llmPool(graphID: string, llmDetail: LLMRequestConfig): Promise<LLMParsingResult> {
+    const sessionStore = useSessionStore();
     const debugOn = true; // DEBUG: SET TO TRUE IF DEBUGGING IS NEEDED
     const logger = {
-        log: (...args: any[]) => {
+        log: (...args: string[]) => {
             if (debugOn) {
                 console.log(...args);
             }
         },
-        error: (...args: any[]) => {
+        error: (...args: string[]) => {
             if (debugOn) {
                 console.error(...args);
             }
@@ -302,8 +328,9 @@ export async function llmPool(graphID: string, llmDetail: LLMRequestConfig): Pro
         logger.log(`DEBUG: llmPool finished (FAILURE) in ${performance.now() - totalStartTime} ms.`);
         return {
             success: false,
-            message: "Failed to fetch submissions",
-        };
+            message: staticContent.startPage.noPoolAvailable[sessionStore.activeLanguage],
+            errorType: 'validation',
+        }
     }
     const entitySubmissions: string[] = [];
     const tensionSubmissions: string[] = [];
@@ -352,7 +379,9 @@ export async function llmPool(graphID: string, llmDetail: LLMRequestConfig): Pro
         return {
             success: false,
             message: data.error,
-        };
+            errorType: classifyBackendError(poolRes.status, data.llmError),
+            llmError: data.llmError,
+        }
     }
 
     // Step 3: Add results to knowledge graph
@@ -381,7 +410,8 @@ export async function llmPool(graphID: string, llmDetail: LLMRequestConfig): Pro
         logger.log(`DEBUG: llmPool finished (FAILURE) in ${performance.now() - totalStartTime} ms.`);
         return {
             success: false,
-            message: "Failed to upload pooled TTL",
+            message: staticContent.errors.uploadPooledTTLFailed[sessionStore.activeLanguage],
+            errorType: 'unexpected',
         };
     }
 
@@ -405,7 +435,8 @@ export async function llmPool(graphID: string, llmDetail: LLMRequestConfig): Pro
         logger.log(`DEBUG: llmPool finished (FAILURE) in ${performance.now() - totalStartTime} ms.`);
         return {
             success: false,
-            message: "Failed to delete temporary submissions",
+            message: staticContent.errors.deleteTempSubmissionsFailed[sessionStore.activeLanguage],
+            errorType: 'unexpected',
         };
     }
 

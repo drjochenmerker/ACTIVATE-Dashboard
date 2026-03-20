@@ -9,6 +9,7 @@ services:
             - activate-network
         volumes:
             - ./rdflib/data:/app/data
+            - ./rdflib/logs:/app/logs
         restart: unless-stopped
 
     frontend:

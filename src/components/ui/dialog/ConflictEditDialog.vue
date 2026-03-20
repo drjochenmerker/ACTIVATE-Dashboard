@@ -2,7 +2,7 @@
 import { ref, computed } from 'vue';
 import { KnowledgeGraphActivityClass, Participant, RDFOperation } from '@/data/knowledge_graph/structures';
 import { updateConflictText, updateConflictParticipants } from "@/data/knowledge_graph/write_operations";
-import { Button } from '@/components/ui/button';
+import { ButtonComponent } from '@/components/ui/button';
 import { useConflictsStore } from '@/stores/conflictsStore';
 import { useSessionStore } from '@/stores/sessionStore';
 import { activateTerms, staticContent } from '@/data/contentData';
@@ -169,6 +169,14 @@ const loadParticipants = async () => {
     }
   });
 
+  for (const activityClass of classOrder) {
+    nextAvailable[activityClass].sort((a, b) => {
+      const labelA = buildLanguageString(a, sessionStore.activeLanguage, true, false) ?? '';
+      const labelB = buildLanguageString(b, sessionStore.activeLanguage, true, false) ?? '';
+      return labelA.localeCompare(labelB, undefined, { numeric: true, sensitivity: 'base' });
+    });
+  }
+
   availableParticipantsByClass.value = nextAvailable;
 };
 
@@ -313,14 +321,16 @@ defineExpose({
               <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 {{ staticContent.noteCards.title[sessionStore.activeLanguage] }}
               </label>
-              <input v-model="editedTitle" class="w-full border rounded p-2 dark:bg-gray-900 dark:border-gray-700 focus-visible:outline-none focus-visible:ring-0 focus:border-gray-300 dark:focus:border-white"
+              <input
+v-model="editedTitle" class="w-full border rounded p-2 dark:bg-gray-900 dark:border-gray-700 focus-visible:outline-none focus-visible:ring-0 focus:border-gray-300 dark:focus:border-white"
                 :placeholder="staticContent.placeholders.title[sessionStore.activeLanguage]" />
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 {{ staticContent.noteCards.description[sessionStore.activeLanguage] }}
               </label>
-              <textarea v-model="editedDescription" class="w-full border rounded p-2 dark:bg-gray-900 dark:border-gray-700 min-h-[100px] focus-visible:outline-none focus-visible:ring-0 focus:border-gray-300 dark:focus:border-white"
+              <textarea
+v-model="editedDescription" class="w-full border rounded p-2 dark:bg-gray-900 dark:border-gray-700 min-h-[100px] focus-visible:outline-none focus-visible:ring-0 focus:border-gray-300 dark:focus:border-white"
                 :placeholder="staticContent.placeholders.description[sessionStore.activeLanguage]" />
             </div>
           </div>
@@ -331,10 +341,10 @@ defineExpose({
               </label>
               <DropdownMenu>
                 <DropdownMenuTrigger as-child>
-                  <Button variant="outline" class="w-full justify-between mt-2 h-auto min-h-[40px] py-2">
+                  <ButtonComponent variant="outline" class="w-full justify-between mt-2 h-auto min-h-[40px] py-2">
                     <span class="text-left flex-1 whitespace-normal break-words">{{ getSelectedParticipantsText(activityClass) }}</span>
                     <span class="text-xs ml-2 flex-shrink-0">▼</span>
-                  </Button>
+                  </ButtonComponent>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent class="max-h-64 w-[--radix-dropdown-menu-trigger-width] overflow-y-auto">
                   <DropdownMenuLabel>
@@ -356,12 +366,12 @@ defineExpose({
           </div>
         </div>
         <DialogFooter class="flex justify-between mt-4">
-          <Button variant="secondary" @click="cancelEdit" :disabled="isSaving">
+          <ButtonComponent variant="secondary" :disabled="isSaving" @click="cancelEdit">
             {{ staticContent.noteCards.cancel[sessionStore.activeLanguage] }}
-          </Button>
-          <Button @click="saveEditedConflict" :disabled="isSaving">
+          </ButtonComponent>
+          <ButtonComponent :disabled="isSaving" @click="saveEditedConflict">
             {{ staticContent.noteCards.save[sessionStore.activeLanguage] }}
-          </Button>
+          </ButtonComponent>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -380,9 +390,9 @@ defineExpose({
           </DialogTitle>
         </DialogHeader>
         <DialogFooter class="flex justify-end">
-          <Button variant="destructive" @click="isParticipantRequiredOpen = false">
+          <ButtonComponent variant="destructive" @click="isParticipantRequiredOpen = false">
             {{ staticContent.noteCards.ok[sessionStore.activeLanguage] }}
-          </Button>
+          </ButtonComponent>
         </DialogFooter>
       </DialogContent>
     </Dialog>
