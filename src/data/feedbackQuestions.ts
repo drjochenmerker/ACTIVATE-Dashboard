@@ -56,9 +56,9 @@ export const staticContentFeedback = {
         // }
         // final verison:
         question1: {
-            en: "How did you understand the team's common goal, and were there different perspectives among the professional groups involved?",
-            de: "Wie haben Sie das gemeinsame Ziel des Teams verstanden und gab es unterschiedliche Perspektiven der beteiligten Berufsgruppen?",
-            sv: "Hur uppfattade ni teamets gemensamma mål och fanns det olika perspektiv bland de olika yrkesgrupperna som deltog?",
+            en: "How would you describe your own goal and the common goal of the interprofessional collaboration in patient care?",
+            de: "Wie würden Sie Ihr eigenes Ziel sowie das gemeinsame Ziel der interprofessionellen Zusammenarbeit in der Patientenversorgung beschreiben?",
+            sv: "Hur skulle ni beskriva ert eget mål samt det gemensamma målet för det tvärprofessionella samarbetet inom patientvården?",
         },
     },
     subjectQuestion: {
@@ -96,9 +96,9 @@ export const staticContentFeedback = {
 
         // final version:
         question1: {
-            en: "To what extent were you able to use your social skills – agency skills (assertive, confident, decisive and energetic behaviour), communion skills (warm, friendly and compassionate behaviour) or interpersonal resilience (calm, relaxed and emotionally balanced behaviour) – when the interpersonal situation required it?",
-            de: "Inwieweit konnten Sie Ihre sozialen Kompetenzen einsetzen – Agency Skill (durchsetzungsstarkes, selbstsicheres, entschlossenes und energisches Verhalten), Communion Skill (warmherziges, freundliches und mitfühlendes Verhalten) oder Interpersonelle Resilienz (gelassenes, entspanntes und emotional ausgeglichenes Verhalten), wenn die zwischenmenschliche Situation es verlangte?",
-            sv: "I vilken utsträckning kunde du använda dina sociala färdigheter – agency skill (genomdrivande, självsäker, beslutsam och energisk attityd), communion skill (varm, vänlig och empatisk attityd) eller interpersonell resiliens (lugn, avslappnad och emotionellt balanserad attityd) när den mellanmänskliga situationen krävde det?",
+            en: "In which situations were you (not) able to contribute your professional perspective and your social skills?",
+            de: "In welchen Situationen konnten Sie Ihre professionelle Perspektive und Ihre sozialen Kompetenzen (nicht) einbringen?",
+            sv: "I vilka situationer kunde ni (inte) tillämpa era yrkesmässiga perspektiv och sociala färdigheter?",
         },
     },
     communityQuestion: {
@@ -120,9 +120,9 @@ export const staticContentFeedback = {
         // },
         // final version:
         question1: {
-            en: "What expectations, conditions and values have shaped teamwork (e.g. organisation, professional groups, patients, relatives)?",
-            de: "Welche Erwartungen, Rahmenbedingungen und Werte haben die Zusammenarbeit im Team geprägt (z. B. Organisation, Berufsgruppen, Patient*innen, Zugehörige)?",
-            sv: "Vilka förväntningar, ramvillkor och värderingar har präglat samarbetet i teamet (t.ex. organisation, yrkesgrupper, patienter, anhöriga)?",
+            en: "Which external structures influenced the collaboration (e.g., organizational policies, lack of time, rooms, patients' or relatives' expectations…)?",
+            de: "Welche externen Strukturen prägten die Zusammenarbeit (z.B. organisatorische Vorgaben, Zeitmangel, Räume, Erwartungen von Patient*innen oder Zugehörigen…)?",
+            sv: "Vilka yttre faktorer präglade samarbetet (t.ex. organisatoriska riktlinjer, tidsbrist, lokaler, förväntningar från patienter eller anhöriga…)?",
         },
     },
     instrumentsQuestion: {
@@ -154,9 +154,9 @@ export const staticContentFeedback = {
         // },
         // final version:
         question1: {
-            en: "What technical, communication or organisational tools helped you to understand the situation and work well with others?",
-            de: "Welche fachlichen, kommunikativen oder organisatorischen Tools haben Ihnen geholfen, die Situation zu verstehen und gut mit anderen zusammenzuarbeiten?",
-            sv: "Vilka fackliga, kommunikativa eller organisatoriska verktyg har hjälpt dig att förstå situationen och samarbeta bra med andra?",
+            en: "Which professional or organizational tools supported collaboration (e.g. phone, post-its, electronic Health Record, apps…)?",
+            de: "Welche fachlichen oder organisatorischen Werkzeuge unterstützten die Zusammenarbeit (z.B. Telefon, Post-Its, elektronische Patientenakte, Apps…)?",
+            sv: "Vilka tekniska eller organisatoriska verktyg underlättar samarbetet (t.ex. telefon, post-it-lappar, elektroniska patientjournaler, appar…)?",
         },
     },
     rulesQuestion: {
@@ -184,9 +184,9 @@ export const staticContentFeedback = {
 
         // final version:
         question1: {
-            en: "What explicit or implicit rules influenced actions in this situation (e.g. guidelines, legal requirements, gold standards, team culture)?",
-            de: "Welche expliziten oder impliziten Regeln haben das Handeln in dieser Situation beeinflusst (z. B. Leitlinien, gesetzliche Vorgaben, Goldstandards, Teamkultur)?",
-            sv: "Vilka explicita eller implicita regler har påverkat agerandet i denna situation (t.ex. riktlinjer, lagstadgade krav, guldstandarder, teamkultur)?",
+            en: "Which explicit or implicit rules influenced actions (e.g., guidelines, delegable tasks, team culture, routines, hierarchy…)?",
+            de: "Welche formellen oder informellen Regeln beeinflussten Ihr Handeln (z.B. Vorgaben, delegierbare Aufgaben, Teamkultur, Routinen, Hierarchie…)?",
+            sv: "Vilka formella eller informella regler påverkade ditt handlande (t.ex. riktlinjer, delegerbara uppgifter, teamkultur, rutiner, hierarki…)?",
         },
     },
     divisionOfLabourQuestion: {
@@ -209,9 +209,9 @@ export const staticContentFeedback = {
 
         // final version:
         question1: {
-            en: "How was the division of labour organised within the team, and how were responsibilities and decision-making powers distributed?",
-            de: "Wie war die Arbeitsteilung im Team gestaltet, und wie wurden Verantwortung und Entscheidungsmacht verteilt?",
-            sv: "Hur var arbetsfördelningen i teamet utformad, och hur fördelades ansvar och beslutsbefogenheter?",
+            en: "How were tasks and responsibilities distributed within the team? How did this influence collaboration and decision-making?",
+            de: "Wie waren Aufgaben bzw. Zuständigkeiten im Team verteilt? Welche Auswirkungen hatte dies auf die Zusammenarbeit und Entscheidungsfindung?",
+            sv: "Hur fördelades uppgifterna respektive ansvarsområdena inom teamet? Vilka effekter hade detta på samarbetet och beslutsfattandet?",
         },
     },
 };
