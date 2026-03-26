@@ -59,6 +59,7 @@ export type Activity = {
   graph: string;
   name: Record<string, string>;
   description: Record<string, string>;
+    isArchived: boolean;
 }
 
 /**
@@ -127,7 +128,7 @@ export type Conflict = {
 }
 
 export interface ConflictWithId extends Conflict {
-    id: string;
+    id?: string;
 }
 
 

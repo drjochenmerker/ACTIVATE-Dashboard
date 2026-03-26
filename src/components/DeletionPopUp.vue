@@ -10,7 +10,7 @@ import {
     DialogDescription,
     DialogFooter
 } from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
+import { ButtonComponent } from '@/components/ui/button'
 import { ref, computed } from 'vue';
 
 /**
@@ -55,10 +55,10 @@ const allowDelete = computed(() => {
                     </DialogDescription>
                 </DialogHeader>
                 <DialogFooter class="flex justify-between">
-                    <Button variant="secondary" @click="isDeleteDialogOpen = false">{{
-                        staticContent.terms.cancel[sessionStore.activeLanguage] }}</Button>
-                    <Button variant="destructive" @click="() => { deleteFunction(); isDeleteDialogOpen = false; }">{{
-                        staticContent.terms.delete[sessionStore.activeLanguage] }}</Button>
+                    <ButtonComponent variant="secondary" @click="isDeleteDialogOpen = false">{{
+                        staticContent.terms.cancel[sessionStore.activeLanguage] }}</ButtonComponent>
+                    <ButtonComponent variant="destructive" @click="() => { deleteFunction(); isDeleteDialogOpen = false; }">{{
+                        staticContent.terms.delete[sessionStore.activeLanguage] }}</ButtonComponent>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

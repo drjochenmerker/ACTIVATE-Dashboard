@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { staticContent } from '@/data/contentData';
 import { useSessionStore } from '@/stores/sessionStore';
-import { Button } from '@/components/ui/button';
+import { ButtonComponent } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 const props = defineProps<{ open: boolean }>();
@@ -31,12 +31,12 @@ const handleConfirm = () => {
         </DialogTitle>
       </DialogHeader>
       <DialogFooter class="flex justify-between">
-        <Button variant="secondary" @click="handleCancel">
+        <ButtonComponent variant="secondary" @click="handleCancel">
           {{ staticContent.noteCards.cancel[sessionStore.activeLanguage] }}
-        </Button>
-        <Button variant="destructive" @click="handleConfirm">
+        </ButtonComponent>
+        <ButtonComponent variant="destructive" @click="handleConfirm">
           {{ staticContent.noteCards.discardChanges[sessionStore.activeLanguage] }}
-        </Button>
+        </ButtonComponent>
       </DialogFooter>
     </DialogContent>
   </Dialog>

@@ -145,6 +145,22 @@ function pushNestedValue(
     current.values.push(value);
 }
 
+function sortNestedAlphanumeric(node: NestedMultiLangObject): void {
+    if (node.next && node.next.length > 0) {
+        node.next.sort((a, b) =>
+            a.level.localeCompare(b.level, undefined, { numeric: true, sensitivity: "base" })
+        );
+        node.next.forEach(sortNestedAlphanumeric);
+    }
+    if (node.values && node.values.length > 0) {
+        node.values.sort((a, b) => {
+            const labelA = Object.values(a.labels)[0] ?? "";
+            const labelB = Object.values(b.labels)[0] ?? "";
+            return labelA.localeCompare(labelB, undefined, { numeric: true, sensitivity: "base" });
+        });
+    }
+}
+
 export function buildTreeStructByLang(
     input: MultiLangObject[],
     lang: string
@@ -167,6 +183,8 @@ export function buildTreeStructByLang(
 
         pushNestedValue(result, nestingPath, currentObj);
     }
+
+    sortNestedAlphanumeric(result);
 
     return result;
 }

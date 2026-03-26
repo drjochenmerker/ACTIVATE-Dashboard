@@ -2,7 +2,7 @@
 import { addComment, deleteComment } from '@/data/knowledge_graph/write_operations';
 import { nextTick, ref, watch, computed } from 'vue';
 import DOMPurify from 'dompurify';
-import Button from './ui/button/Button.vue';
+import ButtonComponent from './ui/button/ButtonComponent.vue';
 import DeletionPopUp from './DeletionPopUp.vue';
 import CommentEditDialog from './ui/dialog/CommentEditDialog.vue';
 import ReplyCard from './ReplyCard.vue';
@@ -214,14 +214,14 @@ const openEditDialog = async () => {
         </div>
 
         <div class="note-comment-section">
-            <Button @click="toggleReplyInput(props.comment.id)"> {{ staticContent.noteCards.addComment[sessionStore.activeLanguage] }} </Button>
+            <ButtonComponent @click="toggleReplyInput(props.comment.id)"> {{ staticContent.noteCards.addComment[sessionStore.activeLanguage] }} </ButtonComponent>
         </div>
 
         <div v-if="replyInputVisible[props.comment.id]" class="comment-input">
             <textarea
 ref="textareaRef" v-model="newReplyText[props.comment.id]" placeholder="Write a reply..."
                 @keydown.enter="handleEnterKey($event)" />
-            <Button @click="saveReply(props.comment.id)">{{ staticContent.noteCards.saveComment[sessionStore.activeLanguage] }}</Button>
+            <ButtonComponent @click="saveReply(props.comment.id)">{{ staticContent.noteCards.saveComment[sessionStore.activeLanguage] }}</ButtonComponent>
         </div>
 
         <div v-if="props.comment && props.comment.replies && props.comment.replies.length > 0" class="reply-container">

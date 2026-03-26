@@ -15,8 +15,8 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogD
 import QrcodeVue from 'qrcode.vue'
 
 // ui components
-import { Button } from '@/components/ui/button';
-import { Play } from 'lucide-vue-next';
+import { ButtonComponent } from '@/components/ui/button';
+import { Play, Archive, ArchiveRestore } from 'lucide-vue-next';
 import { staticContent } from '@/data/contentData';
 import { llmPool } from '@/data/knowledge_graph/llm_utils';
 import LoadingOverlay from '@/components/LoadingOverlay.vue';
@@ -25,14 +25,15 @@ import { Select, SelectTrigger, SelectContent, SelectValue } from '@/components/
 import { Checkbox } from '@/components/ui/checkbox';
 import { useLLMSettingsStore } from '@/stores/llmSettingsStore';
 import DeletionPopUp from './DeletionPopUp.vue';
+import ErrorDialog from '@/components/ErrorDialog.vue';
+import { showError, useErrorDialog } from '@/composables/useErrorDialog';
 
 // consts and props defintion
 const sessionStore = useSessionStore();
-const props = defineProps({
-    activity: {
-        type: Object,
-        required: true,
-    },
+const { isOpen: errorDialogOpen } = useErrorDialog();
+
+const props = withDefaults(defineProps<{ activity: Activity; isArchivedView?: boolean }>(), {
+    isArchivedView: false,
 });
 const graph = props.activity.graph;
 const feedbackUrl = computed(() => {
@@ -43,7 +44,6 @@ const feedbackUrl = computed(() => {
 sessionStore.availableRoles = {} as NestedMultiLangObject;
 
 const showPoolingDialog = ref(false)
-const nothingToPool = ref(false);
 const loading = ref(false);
 const copied = ref(false);
 const createCopyBeforePooling = ref(false);
@@ -51,11 +51,10 @@ const createCopyBeforePooling = ref(false);
 
 // activity store management
 const activityStore = useActivityStore();
-const activities = ref<Activity[]>([]);
 
 // load all activities on component mount
 onMounted(async () => {
-    activities.value = await activityStore.getAllActivities();
+    await activityStore.getAllActivities();
 });
 
 // Handle session start when user clicks start button
@@ -87,7 +86,8 @@ const handleStartSession = async () => {
     sessionStore.sessionActivity = {
         graph: props.activity.graph,
         name: props.activity.name,
-        description: props.activity.description
+        description: props.activity.description,
+        isArchived: props.activity.isArchived
     };
     sessionStore.startSession();
 };
@@ -129,6 +129,20 @@ const deleteThisActivity = async () => {
     activityStore.refreshActivityList();
 }
 
+const archiveThisActivity = async () => {
+    if (!sessionStore.instructorMode) {
+        return;
+    }
+    await activityStore.archiveActivity(graph);
+};
+
+const restoreThisActivity = async () => {
+    if (!sessionStore.instructorMode) {
+        return;
+    }
+    await activityStore.restoreActivity(graph);
+};
+
 /**
  * Retrieves available roles for the current activity graph.
  * Fetches subject class IDs from the knowledge graph and populates the session store's available roles.
@@ -148,7 +162,6 @@ const handlePoolingStart = async () => {
     const llmSettingsStore = useLLMSettingsStore();
     try {
         loading.value = true;
-        nothingToPool.value = false;
 
         let snapshotGraphId: string | null = null;
         if (createCopyBeforePooling.value) {
@@ -175,6 +188,8 @@ const handlePoolingStart = async () => {
         
         // Pool the feedback on the original activity
         const res = await llmPool(props.activity.graph, llmSettingsStore.getCurrentModelRequestConfig());
+        loading.value = false;
+        
         if (res.success === false) {
             // If pooling fails, delete the snapshot we just created
             if (snapshotGraphId) {
@@ -182,8 +197,12 @@ const handlePoolingStart = async () => {
                 await activityStore.removeActivity(snapshotGraphId);
                 console.log("Snapshot deleted after pooling failure");
             }
-            nothingToPool.value = true;
-            loading.value = false;
+            
+            showError(
+                res.errorType || 'unexpected',
+                res.message,
+                res.llmError
+            );
             return;
         }
 
@@ -197,9 +216,9 @@ const handlePoolingStart = async () => {
         
         showPoolingDialog.value = false;
     } catch (error) {
-        console.error("Error during pooling:", error);
-    } finally {
         loading.value = false;
+        console.error("Error during pooling:", error);
+        showError('unexpected', staticContent.errors.unexpectedActionFailed);
     }
 }
 
@@ -211,6 +230,7 @@ const showUrl = ref(false)
 </script>
 
 <template>
+    <ErrorDialog v-if="errorDialogOpen" />
     <div class="rounded-xl shadow-md bg-white dark:bg-gray-900 p-4 transition-all hover:shadow-lg">
 
         <Accordion type="single" class="w-full" collapsible>
@@ -240,14 +260,31 @@ const showUrl = ref(false)
                                 :delete-function="() => deleteThisActivity()" />
                         </div>
 
+                        <div v-if="sessionStore.instructorView">
+                            <ButtonComponent
+                                v-if="!props.isArchivedView"
+                                variant="secondary"
+                                size="icon"
+                                @click="archiveThisActivity">
+                                <Archive class="w-4 h-4" />
+                            </ButtonComponent>
+                            <ButtonComponent
+                                v-else
+                                variant="secondary"
+                                size="icon"
+                                @click="restoreThisActivity">
+                                <ArchiveRestore class="w-4 h-4" />
+                            </ButtonComponent>
+                        </div>
+
 
                         <!-- Feedback QR Code Button -->
-                        <div>
+                        <div v-if="!props.isArchivedView">
                             <Dialog v-model:open="showQrDialog">
                                 <DialogTrigger as-child>
-                                    <Button variant="secondary" size="icon">
+                                    <ButtonComponent variant="secondary" size="icon">
                                         <span class="material-symbols-outlined">qr_code</span>
-                                    </Button>
+                                    </ButtonComponent>
                                 </DialogTrigger>
                                 <DialogContent>
                                     <DialogHeader>
@@ -264,20 +301,20 @@ const showUrl = ref(false)
 
                                     <!-- Button to show/copy URL -->
                                     <div class="flex flex-col items-center gap-2">
-                                        <Button variant="outline" @click="showUrl = !showUrl">
+                                        <ButtonComponent variant="outline" @click="showUrl = !showUrl">
                                             {{ showUrl ? staticContent.startPage.hideQr[sessionStore.activeLanguage] :
                                                 staticContent.startPage.showQr[sessionStore.activeLanguage] }}
-                                        </Button>
+                                        </ButtonComponent>
 
                                         <div
 v-if="showUrl"
                                             class="w-full max-w-md break-words text-center flex flex-col items-center gap-3 p-4 border rounded bg-gray-50 dark:bg-gray-900 border-gray-300">
                                             <div id="feedback-url-text">{{ feedbackUrl }}</div>
-                                            <Button variant="outline" @click="copyUrlToClipboard">
+                                            <ButtonComponent variant="outline" @click="copyUrlToClipboard">
                                                 {{ copied ?
                                                     staticContent.startPage.copiedLink[sessionStore.activeLanguage] :
                                                     staticContent.startPage.copyLink[sessionStore.activeLanguage] }}
-                                            </Button>
+                                            </ButtonComponent>
                                         </div>
 
                                     </div>
@@ -286,12 +323,12 @@ v-if="showUrl"
                             </Dialog>
                         </div>
                         <!-- Start Session Button -->
-                        <div>
+                        <div v-if="!props.isArchivedView">
                             <Dialog>
                                 <DialogTrigger as-child>
-                                    <Button variant="default" size="icon">
+                                    <ButtonComponent variant="default" size="icon">
                                         <Play class="w-4 h-4" />
-                                    </Button>
+                                    </ButtonComponent>
                                 </DialogTrigger>
                                 <DialogContent>
                                     <DialogHeader>
@@ -320,11 +357,11 @@ v-if="showUrl"
                                     <DialogFooter class="flex justify-between">
                                         <Dialog v-if="sessionStore.instructorView" v-model:open="showPoolingDialog">
                                             <DialogTrigger as-child>
-                                                <Button class="mr-auto" type="button">
+                                                <ButtonComponent class="mr-auto" type="button">
                                                     {{
                                                         staticContent.startPage.poolingButton[sessionStore.activeLanguage]
                                                     }}
-                                                </Button>
+                                                </ButtonComponent>
                                             </DialogTrigger>
 
                                             <DialogContent>
@@ -352,29 +389,24 @@ for="create-copy-before-pooling"
                                                         </label>
                                                     </div>
                                                     <div class="flex justify-between items-center mt-4">
-                                                        <Button variant="secondary" @click="showPoolingDialog = false">
+                                                        <ButtonComponent variant="secondary" @click="showPoolingDialog = false">
                                                             Cancel
-                                                        </Button>
-                                                        <Button variant="destructive" @click="handlePoolingStart()">
+                                                        </ButtonComponent>
+                                                        <ButtonComponent variant="destructive" @click="handlePoolingStart()">
                                                             {{ staticContent.startPage.pool[sessionStore.activeLanguage]
                                                             }}
-                                                        </Button>
+                                                        </ButtonComponent>
                                                     </div>
 
                                                     <LoadingOverlay
 :visible="loading"
                                                         :message="staticContent.placeholders.loading[sessionStore.activeLanguage]" />
-                                                    <p v-if="nothingToPool" class="mt-4 text-red-500 font-semibold">
-                                                        {{
-                                                            staticContent.startPage.noPoolAvailable[sessionStore.activeLanguage]
-                                                        }}
-                                                    </p>
                                                 </DialogHeader>
                                             </DialogContent>
                                         </Dialog>
 
                                         <!-- Start Session Button -->
-                                        <Button type="submit" @click="() => handleStartSession()">
+                                        <ButtonComponent type="submit" @click="() => handleStartSession()">
                                             <template v-if="sessionStartAllowed()">
                                                 {{
                                                     staticContent.startPage.startDebriefing[sessionStore.activeLanguage]
@@ -385,7 +417,7 @@ for="create-copy-before-pooling"
                                                 {{ staticContent.startPage.startDebriefing[sessionStore.activeLanguage]
                                                 }}
                                             </template>
-                                        </Button>
+                                        </ButtonComponent>
                                     </DialogFooter>
                                 </DialogContent>
                             </Dialog>

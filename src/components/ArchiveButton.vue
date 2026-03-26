@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ButtonComponent } from '@/components/ui/button';
 import { useSessionStore } from '@/stores/sessionStore';
-import { Home } from 'lucide-vue-next';
+import { Archive } from 'lucide-vue-next';
 import {
     Tooltip,
     TooltipContent,
@@ -14,8 +14,8 @@ import { useRouter } from 'vue-router';
 const sessionStore = useSessionStore();
 const router = useRouter();
 
-const goHome = () => {
-    router.push('/start');
+const goArchive = () => {
+    router.push('/archive');
 };
 </script>
 
@@ -23,12 +23,12 @@ const goHome = () => {
     <TooltipProvider>
         <Tooltip>
             <TooltipTrigger as-child>
-                <ButtonComponent size="icon" class="rounded-full" variant="secondary" @click="goHome">
-                    <Home />
+                <ButtonComponent size="icon" class="rounded-full" variant="secondary" @click="goArchive">
+                    <Archive />
                 </ButtonComponent>
             </TooltipTrigger>
             <TooltipContent>
-                <p>{{ staticContent.terms.home[sessionStore.activeLanguage] }}</p>
+                <p>{{ staticContent.terms.archive[sessionStore.activeLanguage] }}</p>
             </TooltipContent>
         </Tooltip>
     </TooltipProvider>

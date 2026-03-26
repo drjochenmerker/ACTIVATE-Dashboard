@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { computed, nextTick, ref } from 'vue';
-import { Button } from '@/components/ui/button';
+import { ButtonComponent } from '@/components/ui/button';
 import DeletionPopUp from '@/components/DeletionPopUp.vue';
 import { addComment, deleteComment, updateComment } from '@/data/knowledge_graph/write_operations';
 import { useConflictsStore } from '@/stores/conflictsStore';
@@ -230,12 +230,12 @@ const refreshReplies = async () => {
                 </DialogHeader>
                 <textarea v-model="editedCommentText" class="w-full border rounded p-2 my-2 dark:bg-gray-900" />
                 <DialogFooter class="flex justify-between">
-                    <Button variant="secondary" @click="cancelEdit">
+                    <ButtonComponent variant="secondary" @click="cancelEdit">
                         {{ staticContent.noteCards.cancel[sessionStore.activeLanguage] }}
-                    </Button>
-                    <Button @click="saveEditedComment">
+                    </ButtonComponent>
+                    <ButtonComponent @click="saveEditedComment">
                         {{ staticContent.noteCards.save[sessionStore.activeLanguage] }}
-                    </Button>
+                    </ButtonComponent>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
@@ -276,10 +276,10 @@ const refreshReplies = async () => {
         </div>
 
         <!-- Reply Button to hide input field -->
-        <Button @click="toggleReplyInput()">
+        <ButtonComponent @click="toggleReplyInput()">
             {{ replyInputVisible ? staticContent.noteCards.cancel[sessionStore.activeLanguage] :
                 staticContent.noteCards.answer[sessionStore.activeLanguage] }}
-        </Button>
+        </ButtonComponent>
 
         <!-- Reply input field -->
         <div v-if="replyInputVisible" class="reply-input">
@@ -287,8 +287,8 @@ const refreshReplies = async () => {
 ref="textareaRef" v-model="newReplyText"
                 :placeholder="staticContent.placeholders.answer[sessionStore.activeLanguage]"
                 @keydown.enter="handleEnterKey($event)"></textarea>
-            <Button @click="saveReply(props.parentComment.id)">{{
-                staticContent.noteCards.saveComment[sessionStore.activeLanguage] }}</Button>
+            <ButtonComponent @click="saveReply(props.parentComment.id)">{{
+                staticContent.noteCards.saveComment[sessionStore.activeLanguage] }}</ButtonComponent>
         </div>
 
         <div
