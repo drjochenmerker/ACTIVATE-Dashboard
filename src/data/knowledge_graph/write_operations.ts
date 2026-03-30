@@ -1,5 +1,5 @@
 import hash from "object-hash";
-import { CapitalizeFirstLetter, fetchSparql, getSparqlTemplate, RDFSyntaxCheck, EscapeSparqlStringLiteral } from "./utils";
+import { CapitalizeFirstLetter, fetchSparql, getKnowledgeGraphAuthHeaders, getSparqlTemplate, RDFSyntaxCheck, EscapeSparqlStringLiteral } from "./utils";
 import { Activity, Conflict, conflictPredicate, conflictStatus, KnowledgeGraphActivityClass, LanguageCode, LanguageLabel, RDFOperation, RDFTriple, sparqlTemplate, StringAccessObject, updateResponse } from "./structures";
 import { useSessionStore } from "@/stores/sessionStore";
 
@@ -16,9 +16,9 @@ async function logActivity(graphId: string, operation: "Creation" | "Deletion" |
         
         await fetch(`${baseUrl}/api/logs/activity`, {
             method: 'POST',
-            headers: {
+            headers: getKnowledgeGraphAuthHeaders({
                 'Content-Type': 'application/json',
-            },
+            }),
             body: JSON.stringify({
                 graphId,
                 operation,
@@ -470,9 +470,9 @@ export async function cloneActivity(activity: Activity, newActivityNames?: Recor
             // Upload the TTL to save it to file
             const persistRes = await fetch(`${import.meta.env.VITE_KNOWLEDGE_GRAPH_URL}${!import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT ? '' : ':' + import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT}/upload-ttl/?graph_id=${newGraphID}`, {
                 method: 'POST',
-                headers: {
+                headers: getKnowledgeGraphAuthHeaders({
                     'Content-Type': 'application/json',
-                },
+                }),
                 body: exportData.ttl,
             });
             

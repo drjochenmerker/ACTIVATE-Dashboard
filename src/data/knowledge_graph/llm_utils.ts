@@ -1,6 +1,6 @@
 import { LLMRequestConfig, useLLMSettingsStore } from "@/stores/llmSettingsStore";
 import { sparqlTemplate, StringAccessObject } from "./structures";
-import { fetchSparql, getSparqlTemplate } from "./utils";
+import { fetchSparql, getKnowledgeGraphAuthHeaders, getSparqlTemplate } from "./utils";
 import { addRequiredEntitiesToGraph } from "./requiredEntities";
 import { staticContent } from "../contentData";
 import { useSessionStore } from '@/stores/sessionStore';
@@ -15,6 +15,21 @@ function classifyBackendError(status: number, llmError?: string): ErrorType {
         return 'llm';
     }
     return 'unexpected';
+}
+/**
+ * Returns headers for protected requests (including the JWT Token if available)
+ */
+function getProtectedRequestHeaders(token?: string): HeadersInit {
+    const headers: HeadersInit = {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+    };
+
+    if (token) {
+        headers.Authorization = `Bearer ${token}`;
+    }
+
+    return headers;
 }
 
 /**
@@ -52,10 +67,7 @@ export async function llmSettingGeneration(
         `${import.meta.env.VITE_LLM_URL}${!import.meta.env.VITE_LLM_PORT ? "" : ":" + import.meta.env.VITE_LLM_PORT}/api/feedback/settingGen`,
         {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Accept: "application/json",
-            },
+            headers: getProtectedRequestHeaders(sessionStore.authToken),
             body: JSON.stringify({
                 description,
                 llmDetail: JSON.stringify(llmDetail),
@@ -81,9 +93,9 @@ export async function llmSettingGeneration(
         `${import.meta.env.VITE_KNOWLEDGE_GRAPH_URL}${!import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT ? "" : ":" + import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT}/upload-ttl/`,
         {
             method: "POST",
-            headers: {
+            headers: getKnowledgeGraphAuthHeaders({
                 "Content-Type": "application/json",
-            },
+            }),
             body: data.ttl,
         },
     );
@@ -150,10 +162,7 @@ export async function llmSubmit(
         `${import.meta.env.VITE_LLM_URL}${!import.meta.env.VITE_LLM_PORT ? "" : ":" + import.meta.env.VITE_LLM_PORT}/api/feedback/submit`,
         {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Accept: "application/json",
-            },
+            headers: getProtectedRequestHeaders(sessionStore.authToken),
             body: JSON.stringify({
                 setting: description.en,
                 entities,
@@ -354,10 +363,7 @@ export async function llmPool(graphID: string, llmDetail: LLMRequestConfig): Pro
         `${import.meta.env.VITE_LLM_URL}${!import.meta.env.VITE_LLM_PORT ? "" : ":" + import.meta.env.VITE_LLM_PORT}/api/feedback/pool`,
         {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Accept: "application/json",
-            },
+            headers: getProtectedRequestHeaders(sessionStore.authToken),
             body: JSON.stringify({
                 entities: entitySubmissions,
                 tensions: tensionSubmissions,
@@ -391,9 +397,9 @@ export async function llmPool(graphID: string, llmDetail: LLMRequestConfig): Pro
         `${import.meta.env.VITE_KNOWLEDGE_GRAPH_URL}${!import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT ? "" : ":" + import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT}/parse-pool/`,
         {
             method: "POST",
-            headers: {
+            headers: getKnowledgeGraphAuthHeaders({
                 "Content-Type": "application/json",
-            },
+            }),
             body: JSON.stringify({
                 graph_id: graphID,
                 ttl: data.ttl,

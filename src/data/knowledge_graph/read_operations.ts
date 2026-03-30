@@ -191,7 +191,6 @@ export async function getConflictDetail(graph: string, conflictId: string): Prom
   };
   query = query.replaceMultiple(mapObj);
   const data = await fetchSparql(query);
-  // Start with a ConflictWithId so TS knows `id` is present
   const parsedConflict = { id: conflictId, replies: [] as Comment[] } as ConflictWithId;
   const lookupMap = new Map();
   const rootReplyIds = [] as string[];
