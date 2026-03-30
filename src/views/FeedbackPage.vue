@@ -68,7 +68,9 @@ const handleUnifiedSubmit = async () => {
 
         // If successful, navigate to thank you page
         if (success) {
-            await router.push('/feedback-thank-you');
+            console.log('Submission successful, navigating to thank you page...');
+            // todo 
+            // await router.push('/feedback-thank-you');
         }
 
     } catch (error) {

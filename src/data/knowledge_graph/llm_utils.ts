@@ -591,7 +591,7 @@ export async function mapRolesToTranscript(transcript: { diarized_transcription?
     };
 }
 
-export async function transformMappedTrascriptToTtl(graphID: string, mappedTranscript: any): Promise<LLMParsingResult> {
+export async function mappedTranscriptToTtl(graphID: string, mappedTranscript: any): Promise<LLMParsingResult> {
     // Fetch description and entities from the graph
     let description: StringAccessObject = {};
     let entities: StringAccessObject[] = [];

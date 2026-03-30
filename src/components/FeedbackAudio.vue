@@ -17,7 +17,7 @@ import { useSessionStore } from '@/stores/sessionStore'
 import { getActivityClassIds } from '@/data/knowledge_graph/read_operations';
 import { KnowledgeGraphActivityClass } from '@/data/knowledge_graph/structures';
 import { buildTreeStructByLang } from '@/data/knowledge_graph/utils';
-import { mapRolesToTranscript, transformMappedTrascriptToTtl } from '@/data/knowledge_graph/llm_utils';
+import { mapRolesToTranscript, mappedTranscriptToTtl } from '@/data/knowledge_graph/llm_utils';
 
 
 interface RoleLabel { de?: string; en?: string; sv?: string; }
@@ -433,7 +433,7 @@ const transformMappedTranscriptToTtl = async (): Promise<boolean> => {
         isPolling.value = true;
         pollingMessage.value = "Transforming to ttl...";
         try {
-            const result = await transformMappedTrascriptToTtl(
+            const result = await mappedTranscriptToTtl(
                 props.graph,
                 mappedTranscript.value
             );
@@ -469,6 +469,36 @@ const processAudioToTtl = async (): Promise<boolean> => {
     // Step 4: Convert to TTL
     const step4 = await transformMappedTranscriptToTtl();
     return step4;
+};
+// Funktion zum Herunterladen des Transkripts als .txt Datei
+const downloadTranscriptAsTxt = (type: 'original' | 'mapped') => {
+    // Wähle das richtige Transkript basierend auf dem Parameter
+    const transcriptToUse = type === 'mapped' ? mappedTranscript.value : diarizationResult.value;
+
+    if (!transcriptToUse || !transcriptToUse.diarized_transcription) {
+        alert('Kein Transkript zum Herunterladen verfügbar.');
+        return;
+    }
+
+    // Formatiere die Array-Daten in einen durchgehenden, lesbaren Text
+    const textContent = transcriptToUse.diarized_transcription.map(segment => {
+        return `[${segment.start.toFixed(2)}s - ${segment.end.toFixed(2)}s] ${segment.speaker}:\n${segment.text}\n`;
+    }).join('\n');
+
+    // Erstelle ein Blob-Objekt für den Text
+    const blob = new Blob([textContent], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+
+    // Erstelle einen unsichtbaren Link und löse den Download aus
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = type === 'mapped' ? 'transcript_mapped.txt' : 'transcript_original.txt';
+    document.body.appendChild(link);
+    link.click();
+
+    // Aufräumen
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
 };
 defineExpose({
     hasFile,
@@ -564,6 +594,10 @@ defineExpose({
                 class="p-4 bg-green-100 border border-green-400 text-green-800 rounded-lg space-y-3">
                 <h3 class="text-lg font-semibold text-gray-900">Result of Diarization & Transcription:
                 </h3>
+                <button @click="downloadTranscriptAsTxt('original')"
+                    class="px-3 py-1.5 bg-green-600 text-white text-sm rounded hover:bg-green-700 shadow-sm transition-colors">
+                    Als TXT exportieren
+                </button>
                 <p class="text-sm text-gray-700">Detected Language: {{ diarizationResult.detected_language }}
                 </p>
                 <div
