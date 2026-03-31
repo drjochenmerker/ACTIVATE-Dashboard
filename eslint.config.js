@@ -36,5 +36,11 @@ export default typescriptEslint.config(
             ],
         },
     },
+    {
+        files: ["src/components/Dropdown.vue", "src/components/ui/**/*.vue"],
+        rules: {
+            "vue/multi-word-component-names": "off",
+        },
+    },
     eslintConfigPrettier,
 );

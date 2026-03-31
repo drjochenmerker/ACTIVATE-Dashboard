@@ -61,7 +61,7 @@ const dialogMessage = computed(() => {
                 </DialogDescription>
             </DialogHeader>
             <DialogFooter class="mt-4">
-                <ButtonComponent @click="closeError" class="w-full">
+                <ButtonComponent class="w-full" @click="closeError">
                     {{ staticContent.noteCards.ok[sessionStore.activeLanguage] }}
                 </ButtonComponent>
             </DialogFooter>

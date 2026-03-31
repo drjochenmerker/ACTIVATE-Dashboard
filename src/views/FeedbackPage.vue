@@ -213,7 +213,8 @@ const submitFeedback = async () => {
 
         <div class="space-y-6">
             <div class="mb-6">
-                <Select id="roleSelect" :model-value="sessionStore.sessionRole" class="my-4"
+                <Select
+id="roleSelect" :model-value="sessionStore.sessionRole" class="my-4"
                     @update:model-value="sessionStore.sessionRole = $event">
                     <SelectTrigger>
                         <SelectValue
@@ -225,7 +226,8 @@ const submitFeedback = async () => {
                 </Select>
             </div>
 
-            <div v-for="group in groupedQuestionData" :key="group.key"
+            <div
+v-for="group in groupedQuestionData" :key="group.key"
                 class="mb-6 p-4 border rounded-lg shadow-sm space-y-4">
 
                 <h2 class="text-xl font-semibold border-b pb-2">
@@ -236,7 +238,8 @@ const submitFeedback = async () => {
                     <label :for="group.key + question.key" class="block text-lg font-medium required">
                         {{ question.text }}
                     </label>
-                    <textarea :id="group.key + question.key" v-model="answers[group.key][question.key]"
+                    <textarea
+:id="group.key + question.key" v-model="answers[group.key][question.key]"
                         class="dark:bg-gray-900 w-full p-3 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
                         rows="4" :placeholder="staticContent.placeholders.feedbackAnswer[activeLang]" />
                 </div>
