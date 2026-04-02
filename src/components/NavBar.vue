@@ -22,26 +22,28 @@ const sessionStore = useSessionStore();
 </script>
 
 <template>
-    <header class="flex h-16 border-b bg-background px-6">
-        <nav class="flex justify-between items-center w-full">
+    <header class="border-b bg-background px-6 py-3">
+        <nav class="flex w-full flex-wrap items-center gap-x-4 gap-y-3">
             <!-- Homepage link -->
-            <router-link to="/" class="flex items-center gap-2 font-semibold">
+            <router-link to="/" class="flex shrink-0 items-center gap-2 font-semibold">
                 <img src="@/assets/images/activate-logo-small.png" class="w-10 h-10 rounded-xl" alt="Logo" />
-                <span>Debriefing-Dashboard</span>
+                <span class="whitespace-nowrap">Debriefing-Dashboard</span>
             </router-link>
 
             <!-- Navigation links -->
-            <div class="flex items-center gap-6 whitespace-nowrap">
+            <div class="flex min-w-[14rem] flex-1 flex-wrap items-center gap-x-6 gap-y-2">
                 <router-link
-v-for="item in contentData" :key="item.id" :to="`/${item.id}`"
-                    :class="$route.path === `/${item.id}` ? 'font-semibold' : 'text-muted-foreground hover:text-foreground'">
+                    v-for="item in contentData"
+                    :key="item.id"
+                    :to="`/${item.id}`"
+                    :class="$route.path === `/${item.id}` ? 'font-semibold' : 'text-muted-foreground hover:text-foreground font-semibold'">
                     {{ activateTerms[sessionStore.activeLanguage][item.id] }}
                 </router-link>
             </div>
 
             <!-- Right-side user controls -->
-            <div class="flex items-center gap-2 justify-end">
-                <div class="flex flex-row gap-2 items-center my-2 w-32">
+            <div class="ml-auto flex flex-wrap items-center justify-end gap-2">
+                <div class="my-2 flex flex-row items-center gap-2 w-32">
                     <template v-if="sessionStore.instructorMode">
                         <Users class="w-1/3" />
                         <Select id="roleSelect" v-model="sessionStore.sessionRole">
