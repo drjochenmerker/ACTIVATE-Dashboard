@@ -33,6 +33,8 @@ test-docker:
         - git config --global url."https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.dit.htwk-leipzig.de/".insteadOf "git@gitlab.dit.htwk-leipzig.de:"
         - git submodule sync
         - git submodule update --init --recursive
+        - test -n "$FEEDBACK_PARSER_ENV" || (echo "FEEDBACK_PARSER_ENV CI variable is missing" && exit 1)
+        - cp "$FEEDBACK_PARSER_ENV" feedback-parser/.env
         - docker network create activate-network || true
         - echo "=== TTL files found ===" && find rdflib/data/backup -name "*.ttl" -type f 2>/dev/null | wc -l
     script:

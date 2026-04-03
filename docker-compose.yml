@@ -3,6 +3,8 @@ services:
     backend:
         build:
             context: ./rdflib
+        env_file:
+            - ./feedback-parser/.env
         ports:
             - '8002:8000'
         networks:
@@ -26,6 +28,8 @@ services:
     llm-backend:
         build:
             context: ./feedback-parser
+        env_file:
+            - ./feedback-parser/.env
         ports:
             - '8003:8005'
         networks:

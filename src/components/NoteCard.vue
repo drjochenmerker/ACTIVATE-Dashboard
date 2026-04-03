@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { ref, onMounted, nextTick, computed, watch } from 'vue';
+import DOMPurify from 'dompurify';
 import { conflictPredicate, conflictStatus, ConflictWithId, Participant } from '@/data/knowledge_graph/structures';
 import ReplyCard from './ReplyCard.vue';
 import { addComment, deleteConflict, updateConflict } from "@/data/knowledge_graph/write_operations";
@@ -18,6 +19,7 @@ const props = defineProps<{
     content: string;
     origin: string;
     author: string;
+    authorId: string;
     status: string;
     isGrayedOut: boolean;
 }>();
@@ -44,6 +46,10 @@ const sessionStore = useSessionStore();
 
 const textareaRef = ref<HTMLTextAreaElement | null>(null);
 const editDialogRef = ref<InstanceType<typeof ConflictEditDialog> | null>(null);
+
+// Sanitize HTML content to prevent XSS attacks
+const sanitizedTitle = computed(() => DOMPurify.sanitize(props.title || ''));
+const sanitizedContent = computed(() => DOMPurify.sanitize(props.content || ''));
 
 // Set initial conflict detail
 onMounted(() => {
@@ -214,7 +220,7 @@ const refreshReplies = async () => {
       <!-- Note title -->
       <!-- // v-html is fine here because it's not a user input field -->
       <!-- eslint-disable-next-line vue/no-v-html -->
-      <div class="note-title" v-html="props.title"></div>
+      <div class="note-title" v-html="sanitizedTitle"></div>
 
       <!-- Participants grouped by type -->
       <div class="note-participants">
@@ -233,7 +239,7 @@ const refreshReplies = async () => {
       <!-- Content -->
        <!-- // v-html is fine here because it's not a user input field -->
        <!-- eslint-disable-next-line vue/no-v-html -->
-      <div class="note-content" v-html="props.content"></div>
+      <div class="note-content" v-html="sanitizedContent"></div>
     </div>
 
     <!-- Note comment section starting with add comment button -->

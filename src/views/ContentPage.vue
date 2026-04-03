@@ -49,17 +49,23 @@ onMounted(async () => {
         <h1 class="text-2xl font-semibold mb-4">{{ activateTerms[sessionStore.activeLanguage][pageData!.id] }}</h1>
 
         <!-- When not on misc page, show the content -->
-        <ContentTemplate v-if="route.params.id !== 'misc' && pageData" :page-data="pageData"
-            :conflicts="props.conflicts" />
+        <ContentTemplate
+            v-if="route.params.id !== 'misc' && pageData" 
+            :page-data="pageData"
+            :conflicts="props.conflicts" 
+        />
 
         <!-- When on misc page, show misc comments-->
         <div v-if="route.params.id === 'misc'">
             <div>
-                <ButtonComponent :title="isEditorDrawerOpen ? 'Hide Editor' : 'Show Editor'" variant="default"
+                <ButtonComponent
+                    :title="isEditorDrawerOpen ? 'Hide Editor' : 'Show Editor'" 
+                    variant="default"
                     size="icon" :class="[
                         'z-50 rounded-full shadow transition-all',
                         isEditorDrawerOpen ? 'rotate-45' : ''
-                    ]" @click="isEditorDrawerOpen = !isEditorDrawerOpen">
+                    ]" 
+                    @click="isEditorDrawerOpen = !isEditorDrawerOpen">
                     <PlusIcon class="h-6 w-6" />
                 </ButtonComponent>
                 <div class="flex flex-col py-2">

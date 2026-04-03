@@ -160,7 +160,9 @@ const addNewActivity = async () => {
               <!-- Optional Title -->
               <DialogDescription>{{ staticContent.startPage.enterTitle[sessionStore.activeLanguage] }}
               </DialogDescription>
-              <input v-model="newTitle" type="text"
+              <input
+                v-model="newTitle" 
+                type="text"
                 class="w-full border rounded p-2 mb-2 dark:bg-gray-900 border-gray-300" />
 
               <!-- Required Description -->
@@ -169,9 +171,10 @@ const addNewActivity = async () => {
                   staticContent.startPage.enterDescription[sessionStore.activeLanguage]
                 }}
               </DialogDescription>
-              <textarea v-model="newDescription" class="w-full border rounded p-2 mb-1 dark:bg-gray-900" :class="[
-                showValidationErrors && !newDescription.trim() ? 'border-red-500' : 'border-gray-300'
-              ]"></textarea>
+              <textarea
+                v-model="newDescription" 
+                class="w-full border rounded p-2 mb-1 dark:bg-gray-900" 
+                :class="[showValidationErrors && !newDescription.trim() ? 'border-red-500' : 'border-gray-300']"></textarea>
               <p v-if="showValidationErrors && !newDescription.trim()" class="text-red-500 text-sm mb-2">
                 {{ staticContent.startPage.descriptionRequired[sessionStore.activeLanguage] }}
               </p>
@@ -185,7 +188,8 @@ const addNewActivity = async () => {
               </ButtonComponent>
 
             </DialogHeader>
-            <LoadingOverlay :visible="loading"
+            <LoadingOverlay
+              :visible="loading"
               :message="staticContent.placeholders.loading[sessionStore.activeLanguage]"
               class="mt-4 text-red-500 font-semibold" />
           </DialogContent>

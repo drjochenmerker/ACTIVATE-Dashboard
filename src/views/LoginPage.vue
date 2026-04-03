@@ -30,13 +30,14 @@ const login = async () => {
     showValidationErrors.value = false;
     loading.value = true;
 
-    // Returns the role based on the entered password
-    const role = await checkPassword(passwordInput.value);
+    // Returns the role and JWT for the current login.
+    const loginResult = await checkPassword(passwordInput.value);
+    const role = loginResult.role;
 
     loading.value = false;
 
     if (role == ACCOUNT_ROLE.STUDENT || role == ACCOUNT_ROLE.ROOT) {
-      sessionStore.startSession();
+      sessionStore.startSession(loginResult.token);
 
       // Set instructor mode as true if the root password has been entered
       sessionStore.instructorMode = role == ACCOUNT_ROLE.ROOT;

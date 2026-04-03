@@ -1,4 +1,16 @@
+import { useSessionStore } from "@/stores/sessionStore";
 import type { Comment, Conflict, MultiLangObject, NestedMultiLangObject, RDFTriple, sparqlTemplate, StringAccessObject } from "./structures";
+
+export function getKnowledgeGraphAuthHeaders(headers: HeadersInit = {}): HeadersInit {
+    const sessionStore = useSessionStore();
+    const finalHeaders = { ...headers } as Record<string, string>;
+
+    if (sessionStore.authToken) {
+        finalHeaders.Authorization = `Bearer ${sessionStore.authToken}`;
+    }
+
+    return finalHeaders;
+}
 
 /**
  * Internal function that allows to load a SPARQL query template from the filesystem
@@ -23,14 +35,16 @@ export async function getSparqlTemplate(template: sparqlTemplate): Promise<strin
  * @returns Response from the server (update == true) or the data (update == false)
  */
 export async function fetchSparql(query: string, update: boolean = false): Promise<StringAccessObject> {
+    const headers = getKnowledgeGraphAuthHeaders({
+        "Content-Type": update ? "application/x-www-form-urlencoded" : "application/sparql-query",
+        "Accept": "application/json",
+    });
+
     const res = await fetch(`${import.meta.env.VITE_KNOWLEDGE_GRAPH_URL}${!import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT ? '' : ':' + import.meta.env.VITE_KNOWLEDGE_GRAPH_PORT}`, {
 
         method: "POST",
 
-        headers: {
-            "Content-Type": update ? "application/x-www-form-urlencoded" : "application/sparql-query",
-            "Accept": "application/json",
-        },
+        headers,
         body: update ? new URLSearchParams({
             "update": query
         }) : query

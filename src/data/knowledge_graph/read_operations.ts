@@ -1,4 +1,4 @@
-import { Action, Activity, ActivityDetail, Conflict, Comment, StringAccessObject, sparqlTemplate, Participant, PredicateDict, KnowledgeGraphActivityClass, Objective, MultiLangObject } from "./structures";
+import { Action, Activity, ActivityDetail, Comment, StringAccessObject, sparqlTemplate, Participant, PredicateDict, KnowledgeGraphActivityClass, Objective, MultiLangObject, ConflictWithId } from "./structures";
 import { fetchSparql, findNestedComment, getSparqlTemplate, camelToSnakeCase } from "./utils";
 
 /**
@@ -183,7 +183,7 @@ export async function getConflictIds(graph: string): Promise<{ title: Record<str
  * @param conflictId Id of the conflict
  * @returns Conflict
  */
-export async function getConflictDetail(graph: string, conflictId: string): Promise<Conflict> {
+export async function getConflictDetail(graph: string, conflictId: string): Promise<ConflictWithId> {
   let query = await getSparqlTemplate(sparqlTemplate.getConflictDetail);
   const mapObj = {
     "{{graph}}": graph,
@@ -191,7 +191,7 @@ export async function getConflictDetail(graph: string, conflictId: string): Prom
   };
   query = query.replaceMultiple(mapObj);
   const data = await fetchSparql(query);
-  const parsedConflict = { id: conflictId, replies: [] as Comment[] } as Conflict;
+  const parsedConflict = { id: conflictId, replies: [] as Comment[] } as ConflictWithId;
   const lookupMap = new Map();
   const rootReplyIds = [] as string[];
   // Round 1: Build isolated data items
@@ -439,13 +439,13 @@ export async function getConflictDetail(graph: string, conflictId: string): Prom
  * @param graph activity graph
  * @returns List of Conflicts
  */
-export async function getAllConflictsWithDetail(graph: string): Promise<Conflict[]> {
+export async function getAllConflictsWithDetail(graph: string): Promise<ConflictWithId[]> {
   const conflicts = await getConflictIds(graph);
-  const detailedConflicts = [] as Conflict[];
+  const detailedConflicts = [] as ConflictWithId[];
   for (const conflict of conflicts) {
     const detail = await getConflictDetail(graph, conflict.id);
     
-    detailedConflicts.push(detail);
+    detailedConflicts.push(detail as ConflictWithId);
   }
   return detailedConflicts;
 }

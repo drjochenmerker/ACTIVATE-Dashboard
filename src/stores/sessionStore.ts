@@ -30,6 +30,7 @@ export const useSessionStore = defineStore('session', () => {
 
     const sessionActivity = ref<Activity | undefined>(undefined);
     const sessionRole = ref<string | undefined>(undefined);
+    const authToken = ref<string | undefined>(undefined);
     const availableRoles = ref<NestedMultiLangObject>({} as NestedMultiLangObject);
     const instructorMode = ref(false);
     const instructorView = ref(false);
@@ -49,6 +50,7 @@ export const useSessionStore = defineStore('session', () => {
         const sessionState = {
             sessionActivity: {},
             sessionRole: sessionRole.value,
+            authToken: authToken.value,
             activeLanguage: activeLanguage.value,
             activeScene: activeScene.value,
             instructorMode: instructorMode.value,
@@ -77,8 +79,14 @@ export const useSessionStore = defineStore('session', () => {
             const saved = localStorage.getItem(STORAGE_KEY);
             if (saved) {
                 const sessionState = JSON.parse(saved);
+                if (!sessionState.authToken) {
+                    localStorage.removeItem(STORAGE_KEY);
+                    localStorage.removeItem(LAST_ROUTE_KEY);
+                    return false;
+                }
                 sessionActivity.value = sessionState.sessionActivity;
                 sessionRole.value = sessionState.sessionRole;
+                authToken.value = sessionState.authToken;
                 activeLanguage.value = sessionState.activeLanguage;
                 activeScene.value = sessionState.activeScene;
                 instructorMode.value = sessionState.instructorMode;
@@ -100,18 +108,22 @@ export const useSessionStore = defineStore('session', () => {
         return false;
     };
 
-    const startSession = () => {
+    // Starts new session with JWT Token and activates the session for a specific activity/scenario (when called without the token)
+    const startSession = (token?: string) => {
         router.push('/');
         isSessionActive.value = true;
+        if (token !== undefined) {
+            authToken.value = token;
+        }
         saveSessionToStorage();
         saveLastRoute('/');
-        // TODO: Later this should communicate with the backend to actually implement session behavior
     };
 
     const endSession = () => {
         router.push('/start');
         sessionRole.value = undefined;
         sessionActivity.value = undefined;
+        authToken.value = undefined;
         isSessionActive.value = false;
         instructorMode.value = false;
         instructorView.value = false;
@@ -161,6 +173,10 @@ export const useSessionStore = defineStore('session', () => {
         () => saveSessionToStorage(),
     );
     watch(
+        () => authToken.value,
+        () => saveSessionToStorage(),
+    );
+    watch(
         () => activeLanguage.value,
         () => saveSessionToStorage(),
     );
@@ -182,6 +198,7 @@ export const useSessionStore = defineStore('session', () => {
         endSession,
         sessionActivity,
         sessionRole,
+        authToken,
         availableRoles,
         isSessionActive,
         instructorMode,
