@@ -249,6 +249,9 @@ v-for="group in groupedQuestionData" :key="group.key"
         </div>
 
         <div class="mt-8">
+            <p class="mb-4 rounded-lg border bg-muted/40 px-4 py-3 text-sm text-muted-foreground">
+                {{ staticContent.feedbackpage.disclaimer[activeLang] }}
+            </p>
             <ButtonComponent
                 class="w-full text-black bg-white border border-black hover:bg-black hover:text-white disabled:hover:bg-white disabled:hover:text-black"
                 @click="submitFeedback">

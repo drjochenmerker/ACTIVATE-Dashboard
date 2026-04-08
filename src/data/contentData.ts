@@ -824,6 +824,11 @@ export const staticContent = {
             de: "Scannen, um Feedback zu dieser Aktivität zu geben.",
             sv: "Skanna för att ge feedback på denna aktivitet."
         },
+        disclaimer: {
+            en: "Your feedback data will be processed within this system, but it will not be forwarded to third parties.",
+            de: "Ihre Feedbackdaten werden innerhalb dieses Systems verarbeitet, aber nicht an Dritte weitergegeben.",
+            sv: "Dina feedbackdata behandlas inom detta system, men vidarebefordras inte till tredje part."
+        },
         thankYou: {
             en: "Thanks for your feedback!",
             de: "Danke für Ihr Feedback!",
