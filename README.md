@@ -7,7 +7,7 @@ This project is a Vue 3 web application created using Vite. We want to use it to
 1. Clone the repository
 
 ```
-git clone https://gitlab.dit.htwk-leipzig.de/iosse/activate/activate-dashboard.git
+git clone https://github.com/drjochenmerker/ACTIVATE-Dashboard.git
 cd activate-dashboard
 ```
 
