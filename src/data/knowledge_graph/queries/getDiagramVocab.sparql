@@ -1,0 +1,16 @@
+PREFIX : <http://activate.htwk-leipzig.de/model#> 
+PREFIX graph: <http://activate.htwk-leipzig.de/graph/>
+PREFIX owl: <http://www.w3.org/2002/07/owl#> 
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> 
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> 
+
+SELECT * WHERE {
+    VALUES ?type { :Subject :Community :Instrument :Rule :Object :DivisionOfLabour } {
+        GRAPH graph:Vocabulary {
+            ?type rdf:type owl:Class .
+            ?type rdfs:comment ?description .
+            ?type rdfs:label ?label .
+            FILTER (LANG(?description) = LANG(?label)) .
+        }
+    }
+}

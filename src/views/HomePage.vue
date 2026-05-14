@@ -1,38 +1,43 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import { storeToRefs } from 'pinia';
 import ActivityDiagram from '@/components/ActivityDiagram.vue';
-import TripleAdditionDialog from '@/components/TripleAdditionDialog.vue';
-import Editor from '@/components/Editor.vue';
-import { useActivityPointsStore } from "@/stores/activityPointsStore";
+import { useSessionStore } from '@/stores/sessionStore';
+import { staticContent } from '@/data/contentData';
+import { Activity, Conflict } from '@/data/knowledge_graph/structures';
 
-defineProps<{ conflicts: any[], activity: any, activityGraph: string }>();
 
-const activityPointStore = useActivityPointsStore();
-const { getActivePoints } = storeToRefs(activityPointStore);
+defineProps<{ conflicts: Conflict[]; activity: Activity }>();
 
-const hasActivePoints = computed(() => activityPointStore.getActivePoints.length > 0);
-
-const isTripleAdditionDialogOpen = ref(false);
-
+const sessionStore = useSessionStore();
 </script>
-
 <template>
-  <div class="flex justify-between w-1/2 items-center mb-4">
-    <h1 class="text-2xl font-semibold mb-4">Dashboard ({{ activityGraph ? activityGraph : "Can't Load Activity Name" }})</h1>
-    <TripleAdditionDialog v-model:isOpen="isTripleAdditionDialogOpen" />
-    <!--<Button @click="() => isTripleAdditionDialogOpen = true">Add RDF-Triple</Button>-->
-  </div>
+  <div class="flex flex-col h-full">
+    <div>
 
-  <div class="flex w-full h-2/3 relative mx-auto gap-4">
-    <div class="flex-1 min-w-[900px]">
-      <!-- ActivityDiagram nur rendern, wenn activity geladen ist -->
-      <ActivityDiagram v-if="activity" :activity="activity" />
+      <h1 class="text-2xl font-semibold mb-1 text-center">
+        {{ staticContent.terms.setting[sessionStore.activeLanguage] }}:
+        {{
+          activity.name && activity.name[sessionStore.activeLanguage] || activity.name['default']
+            ? activity.name[sessionStore.activeLanguage] || activity.name['default']
+            : `${staticContent.errors.activityNameLoad[sessionStore.activeLanguage]} - Graph-ID: ${activity.graph}`
+        }}
+      </h1>
+      <hr
+        class="mt-4 h-0.5 border-t-0 bg-transparent bg-gradient-to-r from-transparent via-neutral-900 to-transparent opacity-70 dark:via-neutral-400" />
     </div>
-
-    <!-- Editor oder Platzhalter anzeigen -->
-    <div class="flex-1">
-      <Editor v-if="hasActivePoints" :activePoints="getActivePoints" />
+    <div class="flex mx-auto gap-4 justify-center w-full">
+      <ActivityDiagram />
     </div>
   </div>
 </template>
+
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>

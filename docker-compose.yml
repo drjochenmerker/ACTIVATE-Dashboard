@@ -1,23 +1,37 @@
-version: "3"
+version: '3'
 services:
-  backend:
-    build:
-      context: ./rdflib
-    ports:
-      - "8000:8000"
-    networks:
-      - activate-network
+    backend:
+        build:
+            context: ./rdflib
+        ports:
+            - '8002:8000'
+        networks:
+            - activate-network
+        volumes:
+            - ./rdflib/data:/app/data
+            - ./rdflib/logs:/app/logs
+        restart: unless-stopped
 
-  frontend:
-    build:
-      context: .
-    ports:
-      - "5173:80"
-    depends_on:
-      - backend
-    networks:
-      - activate-network
+    frontend:
+        build:
+            context: .
+        ports:
+            - '8001:80'
+        depends_on:
+            - backend
+        networks:
+            - activate-network
+        restart: unless-stopped
+
+    llm-backend:
+        build:
+            context: ./feedback-parser
+        ports:
+            - '8003:8005'
+        networks:
+            - activate-network
+        restart: unless-stopped
 
 networks:
-  activate-network:
-    driver: bridge
+    activate-network:
+        external: true

@@ -13,7 +13,7 @@ const delegatedProps = computed(() => {
 </script>
 
 <template>
-  <SelectGroup :class="cn('p-1 w-full', props.class)" v-bind="delegatedProps">
+  <SelectGroup :class="cn('pl-2 w-full', props.class)" v-bind="delegatedProps">
     <slot />
   </SelectGroup>
 </template>

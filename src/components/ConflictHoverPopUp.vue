@@ -1,103 +1,174 @@
 <script setup lang="ts">
+import { activateTerms, staticContent } from '@/data/contentData';
+import { Conflict } from '@/data/knowledge_graph/structures';
+import { buildLanguageString } from '@/lib/utils';
+import { useSessionStore } from '@/stores/sessionStore';
 import { useColorMode } from '@vueuse/core';
-import { computed, nextTick, onMounted, ref, watch } from 'vue';
+import { nextTick, onMounted, ref, watch } from 'vue';
 
-// Data Structure for the participants of a conflict
-interface Participant {
-  id: string;
-  type: string;
-}
-
-// Data Structure for a conflict
-interface Conflict {
-  title: string;
-  description?: string;
-  author: string;
-  timestamp?: Date;
-  status: string;
-  participants: Participant[];
-  replies?: any[];
-}
-
-// Props of the popup
+/**
+ * Props of the ConflictHoverPopUp component
+ * @property hoveredConflictPoint - Data of the conflict that is currently hovered
+ * @property position - Position of the cursor to position the popup
+ */
 const props = defineProps<{
   hoveredConflictPoint: Conflict;
   position: { x: number; y: number };
 }>();
 
+// Current color mode (Light- or Dark-Mode)
 const mode = useColorMode();
 
-// Everything that follows is nescessary to prevent overlapping and placement outside the viewport:
-
-// Ref for the Popup-Element
+/**
+ * Ref to the popup element
+ * Used to measure the height dynamically
+ */
 const popupRef = ref<HTMLElement | null>(null);
+const popupStyle = ref({ top: props.position.x + "px", left: props.position.y + 'px' });
 
-// Height of the popup
-const popupHeight = ref(0);
+const emit = defineEmits<{
+    (e: "key-cleaned", key: string, newKey: string): void;
+}>();
 
-// Height gets measured again on mount and when the popup changes
-const updatePopupHeight = () => {
+onMounted(() => {
+  const descKey = sessionStore.activeLanguage in props.hoveredConflictPoint.description
+    ? sessionStore.activeLanguage
+    : 'default';
+  if (props.hoveredConflictPoint.description && typeof props.hoveredConflictPoint.description[descKey] === 'string') {
+
+        const newKey = props.hoveredConflictPoint.description[descKey].replace(/<\/?[^>]+(>|$)/g, "");
+        emit("key-cleaned", descKey, newKey);  }
+  updatePopupHeight(props.position);
+});
+
+watch(() => props.hoveredConflictPoint, () => updatePopupHeight(props.position));
+watch(() => props.position, (newVal) => updatePopupHeight(newVal));
+
+/**
+ * Updates the height of the popup box after DOM update
+ * Uses nextTick to ensure accurate measurement
+ */
+const updatePopupHeight = (pos: typeof props.position | Conflict) => {
   nextTick(() => {
-    if (popupRef.value) {
-      popupHeight.value = popupRef.value.offsetHeight;
+    if (popupRef.value && pos.x && pos.y) {
+      const rect = popupRef.value.getBoundingClientRect();
+      let adjustedX = pos.x;
+      let adjustedY = pos.y;
+
+      // Prevent bottom overflow
+      if (adjustedY + rect.height > window.innerHeight - 10) {
+        adjustedY = window.innerHeight - rect.height - 10;
+      }
+
+      // Prefer showing the popup to the left of the cursor
+      adjustedX = adjustedX - rect.width - 10;
+
+      // If it overflows to the left, move it to the right side of the cursor
+      if (adjustedX < 10) {
+        adjustedX = pos.x + 10;
+      }
+
+      popupStyle.value = {
+        top: `${adjustedY}px`,
+        left: `${adjustedX}px`
+      };
     }
   });
 };
 
+
+const sessionStore = useSessionStore();
+
+/**
+ * On mount:
+ * - Strips HTML tags from description to avoid rendering
+ * - Measures popup height
+ */
 onMounted(() => {
-  props.hoveredConflictPoint.description = props.hoveredConflictPoint.description?.replace(/<\/?[^>]+(>|$)/g, "");
-  updatePopupHeight();
+    const descKey =
+        sessionStore.activeLanguage in props.hoveredConflictPoint.description ? sessionStore.activeLanguage : "default";
+    const description = props.hoveredConflictPoint.description;
+    if (description && typeof description[descKey] === "string") {
+        const newKey = props.hoveredConflictPoint.description[descKey].replace(/<\/?[^>]+(>|$)/g, "");
+        emit("key-cleaned", descKey, newKey);
+    }
+  updatePopupHeight(props.position);
 });
 
-// Measure new Height
+/**
+ * Watchers:
+ * - Recalculate height on conflict change or position change
+ */
 watch(() => props.hoveredConflictPoint, updatePopupHeight);
 watch(() => props.position, updatePopupHeight);
-
-// Adjusts the position of the popup to prevent palcement outside the current viewport
-// TODO: The +120 in the if-statement is because of the height of the navbar (currently the viewportHeigth is only the height of the canvas), it would be great when there is a better dynamic solution for this
-const adjustedPosition = computed(() => {
-  let top = props.position.y;
-  const left = props.position.x;
-  const viewportHeight = window.innerHeight;
-
-  if (top + 120 + popupHeight.value > viewportHeight) {
-    top = props.position.y - popupHeight.value - 10;
-  }
-
-  return { x: left, y: top };
-});
 
 </script>
 
 <template>
+  <!-- SCENE 1 -->
+  <!--
+     titel, description, participants
+   -->
+
   <div
-    ref="popupRef"
-    class="popup"
-    :class="{'popup-dark' : mode === 'dark'}"
-    :style="{ top: `${adjustedPosition.y}px`, left: `${adjustedPosition.x}px`}"
-  >
-    <b>{{ hoveredConflictPoint.title }}</b>
+v-if="sessionStore.activeScene === 'Scene 1'" ref="popupRef" class="popup"
+    :class="{ 'popup-dark': mode === 'dark' }" :style="popupStyle">
+    <b>{{ hoveredConflictPoint.title[sessionStore.activeLanguage] || hoveredConflictPoint.title['default'] }}</b>
     <p v-if="hoveredConflictPoint.description">
-      {{ hoveredConflictPoint.description }}
+      {{ hoveredConflictPoint.description[sessionStore.activeLanguage] || hoveredConflictPoint.description['default'] }}
     </p>
-    <p><strong>Author:</strong> {{ hoveredConflictPoint.author }}</p>
-    <p>
-      <strong>Timestamp:</strong>
-      {{ hoveredConflictPoint.timestamp ? new Date(hoveredConflictPoint.timestamp).toLocaleString() : 'No timestamp available' }}
-    </p>
-    <p><strong>Status:</strong> {{ hoveredConflictPoint.status }}</p>
     <div v-if="hoveredConflictPoint.participants.length">
-      <p><strong>Participants:</strong></p>
+      <p><strong>{{ staticContent.terms.participants[sessionStore.activeLanguage] }}:</strong></p>
       <ul class="custom-list">
-        <li
-          v-for="(participant, index) in hoveredConflictPoint.participants"
-          :key="index"
-        >
-          {{ participant.id }} - {{ participant.type }}
+        <li v-for="(participant, index) in hoveredConflictPoint.participants" :key="index">
+          {{ buildLanguageString(participant, sessionStore.activeLanguage, true) }} - {{
+            activateTerms[sessionStore.activeLanguage][participant.type] }}
         </li>
       </ul>
     </div>
-    <p v-if="hoveredConflictPoint.replies"><strong>Replies:</strong> {{ hoveredConflictPoint.replies.length }}</p>
+  </div>
+
+  <!-- SCENE 2 -->
+  <!--
+     titel, description, author, timestamp, status, participants, replies
+   -->
+  <div v-if="sessionStore.activeScene === 'Scene 2'" class="popup-header">
+    <div ref="popupRef" class="popup" :class="{ 'popup-dark': mode === 'dark' }" :style="popupStyle">
+      <b>{{ hoveredConflictPoint.title[sessionStore.activeLanguage] || hoveredConflictPoint.title['default'] }}</b>
+
+      <p v-if="hoveredConflictPoint.description">
+        {{ hoveredConflictPoint.description[sessionStore.activeLanguage] || hoveredConflictPoint.description['default']
+        }}
+      </p>
+      <p><strong>{{ staticContent.terms.author[sessionStore.activeLanguage] }}:</strong> {{
+        hoveredConflictPoint.author.labels?.[sessionStore.activeLanguage] ||
+        hoveredConflictPoint.author.labels?.['default'] ||
+        Object.values(hoveredConflictPoint.author.labels || {}).find(label => typeof label === 'string' && label.trim() !== '') ||
+        hoveredConflictPoint.author.id ||
+        ''
+        }}
+      </p>
+      <p>
+        <strong>{{ staticContent.terms.timestamp[sessionStore.activeLanguage] }}:</strong>
+        {{ hoveredConflictPoint.timestamp ? new Date(hoveredConflictPoint.timestamp).toLocaleString() :
+          staticContent.errors.timestampLoad[sessionStore.activeLanguage] }}
+      </p>
+      <p><strong>{{ staticContent.terms.status[sessionStore.activeLanguage] }}:</strong> {{
+        staticContent.terms.conflictStatus[hoveredConflictPoint.status][sessionStore.activeLanguage] }}</p>
+      <div v-if="hoveredConflictPoint.participants.length">
+        <p><strong>{{ staticContent.terms.participants[sessionStore.activeLanguage] }}:</strong></p>
+        <ul class="custom-list">
+          <li v-for="(participant, index) in hoveredConflictPoint.participants" :key="index">
+            {{ buildLanguageString(participant, sessionStore.activeLanguage, true) }} - {{
+              activateTerms[sessionStore.activeLanguage][participant.type] }}
+          </li>
+        </ul>
+      </div>
+      <p v-if="hoveredConflictPoint.replies">
+        <strong>{{ staticContent.terms.replies[sessionStore.activeLanguage] }}:</strong> {{
+          hoveredConflictPoint.replies.length }}
+      </p>
+    </div>
   </div>
 </template>
 
@@ -109,10 +180,15 @@ const adjustedPosition = computed(() => {
   padding: 8px;
   border-radius: 4px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-  pointer-events: none; /* Verhindert unerwünschte Hover-Events */
+  pointer-events: none;
   z-index: 10;
   opacity: 0.9;
+  max-width: 350px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
 }
+
 
 .popup-dark {
   color: #fff;

@@ -31,9 +31,9 @@ export function calculateConflictPositions(
     conflictData: Conflict[],
     points: Point[],
     spacing: number = 20,
-): ComputedRef<any[]> {
+): ComputedRef<Conflict[]> {
     return computed(() => {
-        const result: Array<any> = [];
+        const result: Array<Conflict> = [];
 
         // Define possible groups
         const singlePointGroups: Map<string, Conflict[]> = new Map();
@@ -58,7 +58,7 @@ export function calculateConflictPositions(
                 if (!triangleGroups.has(key)) triangleGroups.set(key, []);
                 triangleGroups.get(key)?.push(conflict);
             } else {
-                console.warn('Conflict with more than 3 participant types:', conflict);
+                // console.warn('Conflict with more than 3 participant types:', conflict);
             }
         });
 

@@ -1,0 +1,28 @@
+PREFIX : <http://activate.htwk-leipzig.de/model#> 
+PREFIX graph: <http://activate.htwk-leipzig.de/graph/>
+PREFIX owl: <http://www.w3.org/2002/07/owl#> 
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> 
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT *
+WHERE {
+  GRAPH graph:{{graph}} {
+    {
+      SELECT ?description
+      WHERE {
+        [] :ActivityDescription ?description .
+      }
+    }
+    UNION
+    {
+      SELECT ?entity ?property ?target
+      WHERE {
+        ?entity rdf:type ?type .
+        VALUES ?type { :Subject :Community :Instrument :Rule :Object :DivisionOfLabour }
+        ?entity ?property ?target .
+        FILTER(?target != owl:NamedIndividual) .
+      } 
+      ORDER BY ?entity
+    }
+  }
+}

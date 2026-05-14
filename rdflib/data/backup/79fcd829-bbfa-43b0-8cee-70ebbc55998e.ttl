@@ -1,0 +1,299 @@
+@prefix : <http://activate.htwk-leipzig.de/model#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+:AbbruchDesGespraechs a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Abbruch des Gesprächs"@de,
+        "Conversation abortion"@en,
+        "Avbrutet samtal"@sv .
+
+:AngehoerigenGespraech a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Angehörigengespräch"@de,
+        "Gespräche mit Angehörigen"@de,
+        "Discussions with relatives"@en,
+        "Family conversation"@en,
+        "Anhörigsamtal"@sv,
+        "Samtal med anhöriga"@sv .
+
+:Aortenklappenstenose a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Schwere Aortenklappenstenose"@de,
+        "Severe Aortic Valve Stenosis"@en,
+        "Svår aortastenos"@sv .
+
+:Arzt02 a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Arzt 02"@de,
+        "Physician 02"@en,
+        "Läkare 02"@sv .
+
+:BedenkenDerEnkelin a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Bedenken der Enkelin"@de,
+        "Granddaughter's concerns"@en,
+        "Barnbarnets oro"@sv .
+
+:Conflict005 a :Conflict ;
+    :ConflictDescription "Der Physiotherapeut konnte die physiotherapeutischen Unterlagen der Patientin schnell erfassen und diese Informationen nutzen, um Atemprobleme während des Patientengesprächs einzubringen, auch wenn die Patientin dem zunächst widersprach."@de,
+        "The physiotherapist was able to quickly understand the patient's physiotherapy documents and use this information to identify breathing problems during the patient conversation, even when the patient initially contradicted it."@en,
+        "Fysioterapeuten kunde snabbt förstå patientens fysioterapidokument och använda denna information för att identifiera andningsproblem under patientsamtalet, även när patienten initialt motsade sig det."@sv ;
+    :ConflictState "open" ;
+    :ConflictTitle "Effektiver Einsatz von Patientenunterlagen durch den Physiotherapeuten"@de,
+        "Physiotherapist's effective use of patient documents"@en,
+        "Fysioterapeutens effektiva användning av patientdokument"@sv ;
+    :CreationDate "2025-09-16T08:16:56.964Z" ;
+    :HasIntent :Positive ;
+    :HasParticipant :Atemprobleme,
+        :Patientin,
+        :Physiotherapeut01,
+        :PhysiotherapieUnterlagen ;
+    :IsAI true ;
+    :Origin "{\"question\": \"2. Denken Sie an einen Teil der Aktivität, den Sie sehr positiv, konstruktiv oder befriedigend fanden. Bitte beschreiben Sie in einigen Sätzen, was in dieser Phase passiert ist.\", \"answer\": \"Ich kenne solche Fälle aus der Praxis und konnte daher die Unterlagen, die sich auf die Physiotherapie der Patientin bezogen, der schnell erfassen. Dadurch konnte ich dann beim Gespräch mit der Patientin die Information einbringen, dass die Patientin offensichtlich Atemprobleme hat, auch wenn sie dem widersprochen hat.\"}" ;
+    :WrittenBy :Physiotherapeut01 .
+
+:Conflict006 a :Conflict ;
+    :ConflictDescription "Der Physiotherapeut empfand, dass seine Einwände und Ergänzungen zu Beginn der Aktivität nicht ernst genommen wurden, insbesondere da eine Ärztin die Verlässlichkeit seiner Informationen anzweifelte."@de,
+        "The physiotherapist felt that his objections and additions were not taken seriously at the beginning of the activity, specifically noting that a doctor doubted the reliability of his information."@en,
+        "Fysioterapeuten upplevde att hans invändningar och tillägg inte togs på allvar i början av aktiviteten, och noterade specifikt att en läkare tvivlade på tillförlitligheten i hans information."@sv ;
+    :ConflictState "inDiscussion" ;
+    :ConflictTitle "Anfängliche Zweifel an der Informationsverlässlichkeit des Physiotherapeuten"@de,
+        "Initial doubt in physiotherapist's information reliability"@en,
+        "Initial tvekan om fysioterapeutens informationspålitlighet"@sv ;
+    :CreationDate "2025-09-16T08:16:56.964Z" ;
+    :HasIntent :Negative ;
+    :HasParticipant :Arzt01,
+        :EinwaendeUndErgaenzungen,
+        :InformationsVerlaesslichkeit,
+        :Physiotherapeut01 ;
+    :IsAI true ;
+    :Origin "{\"question\": \"3. Denken Sie an einen Teil der Aktivität, den Sie sehr negativ, kontraproduktiv oder enttäuschend fanden. Bitte beschreiben Sie in einigen Sätzen, was in dieser Phase passiert ist.\", \"answer\": \"Zu Beginn wurden meine Einwände bzw. Ergänzungen nicht wirklich ernst genommen. Vor allem die Ärztin hat erstmal an der Verlässlichkeit meiner Informationen gezweifelt. Aber nach einer kurzen „Warm-Up“-Phase im Team hat die Kommunikation gut funktioniert und wir haben auf Augenhöhe miteinander geredet.\"}" ;
+    :WrittenBy :Physiotherapeut01 .
+
+:Conflict007 a :Conflict ;
+    :ConflictDescription "Nach einer anfänglichen „Warm-Up“-Phase stellte der Physiotherapeut fest, dass die Teamkommunikation sich deutlich verbesserte und zu einer Zusammenarbeit auf Augenhöhe führte."@de,
+        "After an initial warm-up phase, the physiotherapist observed that team communication improved significantly, leading to a collaborative discussion at eye level."@en,
+        "Efter en inledande uppvärmningsfas observerade fysioterapeuten att teamkommunikationen förbättrades avsevärt, vilket ledde till en samarbetsdiskussion på lika villkor."@sv ;
+    :ConflictState "resolved" ;
+    :ConflictTitle "Verbesserte Teamkommunikation und Zusammenarbeit"@de,
+        "Improved team communication and collaboration"@en,
+        "Förbättrad teamkommunikation och samarbete"@sv ;
+    :CreationDate "2025-09-16T08:16:56.964Z" ;
+    :HasIntent :Positive ;
+    :HasParticipant :KommunikationAufAugenhoehe,
+        :Physiotherapeut01 ;
+    :IsAI true ;
+    :Origin "{\"question\": \"3. Denken Sie an einen Teil der Aktivität, den Sie sehr negativ, kontraproduktiv oder enttäuschend fanden. Bitte beschreiben Sie in einigen Sätzen, was in dieser Phase passiert ist.\", \"answer\": \"Zu Beginn wurden meine Einwände bzw. Ergänzungen nicht wirklich ernst genommen. Vor allem die Ärztin hat erstmal an der Verlässlichkeit meiner Informationen gezweifelt. Aber nach einer kurzen „Warm-Up“-Phase im Team hat die Kommunikation gut funktioniert und wir haben auf Augenhöhe miteinander geredet.\"}" ;
+    :WrittenBy :Physiotherapeut01 .
+
+:Dozentin a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Dozentin"@de,
+        "Lecturer"@en,
+        "Föreläsare"@sv .
+
+:Enkelin a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Enkelin"@de,
+        "Granddaughter"@en,
+        "Barnbarn"@sv .
+
+:Entscheidungsfindung a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Entscheidungsfindung"@de,
+        "Decision-making"@en,
+        "Beslutsfattande"@sv .
+
+:Ergotherapeut01 a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Ergotherapeut 01"@de,
+        "Occupational Therapist 01"@en,
+        "Arbetsterapeut 01"@sv .
+
+:FeedbackGeben a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Feedback geben"@de,
+        "Giving feedback"@en,
+        "Ge feedback"@sv .
+
+:GemeinsameSprache a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Gemeinsame Sprache"@de,
+        "Common language"@en,
+        "Gemensamt språk"@sv .
+
+:IPL_Pilot_16_09_2025_Simulation a owl:NamedIndividual ;
+    :ActivityDescription "Simulation, die sich auf die präoperative Abklärung einer älteren Patientin mit schwerer Aortenklappenstenose konzentriert. Die Tochter und Enkelin sind vor Ort und möchten mit einer Pflegekraft über die bevorstehende OP sprechen. Ziel der Simulation ist es, dass ein interprofessionelles Team bestehend aus Verteter*innen aus Pflege, Physiotherapie, Ergotherapie und Ärzt*innen nach Sichtung der Unterlagen und Gesprächen mit Angehörigen und Patientin eine Empfehlung gibt, ob die OP durchgeführt werden soll."@de,
+        "Simulation focusing on the preoperative clarification of an elderly patient with severe aortic valve stenosis. The daughter and granddaughter are present and want to talk to a nurse about the upcoming surgery. The goal of the simulation is for an interprofessional team consisting of representatives from nursing, physiotherapy, occupational therapy, and doctors to provide a recommendation on whether the surgery should be performed, after reviewing documents and speaking with relatives and the patient."@en,
+        "Simulering som fokuserar på preoperativ utredning av en äldre patient med svår aortastenos. Dottern och barnbarnet är på plats och vill prata med en sjuksköterska om den kommande operationen. Målet med simuleringen är att ett interprofessionellt team bestående av representanter från omvårdnad, fysioterapi, arbetsterapi och läkare, efter att ha granskat dokument och pratat med anhöriga och patienten, ska ge en rekommendation om operationen ska utföras."@sv ;
+    :ActivityName "IPL Pilot 16.09.2025"@de,
+        "IPL Pilot 16.09.2025"@en,
+        "IPL Pilot 16.09.2025"@sv .
+
+:InterprofessionellesTeam a :Community,
+        :DivisionOfLabour,
+        owl:NamedIndividual ;
+    rdfs:label "Interprofessionelles Team"@de,
+        "Interprofessional Team"@en,
+        "Interprofessional team"@en,
+        "Interprofessionellt team"@sv .
+
+:MangelndeErnsthaftigkeit a :DivisionOfLabour,
+        owl:NamedIndividual ;
+    rdfs:label "Mangelnde Ernsthaftigkeit"@de,
+        "Lack of seriousness/credibility"@en,
+        "Bristande allvar/trovärdighet"@sv .
+
+:OPEmpfehlung a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Empfehlung zur OP-Durchführung"@de,
+        "Recommendation for surgery"@en,
+        "Rekommendation för operation"@sv .
+
+:OPGespräch a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Gespräch über bevorstehende OP"@de,
+        "Discussion about upcoming surgery"@en,
+        "Samtal om förestående operation"@sv .
+
+:Patientenunterlagen a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Patientenunterlagen"@de,
+        "Patient records"@en,
+        "Patientjournaler"@sv .
+
+:PatientinGespraech a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Gespräch mit Patientin"@de,
+        "Discussion with patient"@en,
+        "Samtal med patient"@sv .
+
+:Pflege01 a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Pflege 01"@de,
+        "Pflegekraft 01"@de,
+        "Care Staff 01"@en,
+        "Nurse 01"@en,
+        "Sjuksköterska 01"@sv,
+        "Vårdpersonal 01"@sv .
+
+:Pflege02 a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Pflegekraft 02"@de,
+        "Care Staff 02"@en,
+        "Vårdpersonal 02"@sv .
+
+:Physiotherapeut02 a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Physiotherapeut 02"@de,
+        "Physiotherapist 02"@en,
+        "Fysioterapeut 02"@sv .
+
+:PraeoperativeAbklaerung a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Präoperative Abklärung"@de,
+        "Preoperative Clarification"@en,
+        "Preoperativ utredning"@sv .
+
+:Praxis a :Community,
+        owl:NamedIndividual ;
+    rdfs:label "Praxis"@de,
+        "Clinical practice"@en,
+        "Klinisk praktik"@sv .
+
+:SchwierigkeitDesGespraechs a :Community,
+        owl:NamedIndividual ;
+    rdfs:label "Schwierigkeit des Gesprächs"@de,
+        "Difficulty of the conversation"@en,
+        "Svårighet i samtalet"@sv .
+
+:TeamKommunikation a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Teamkommunikation"@de,
+        "Team communication"@en,
+        "Teamkommunikation"@sv .
+
+:Teamraum a :Community,
+        owl:NamedIndividual ;
+    rdfs:label "Teamraum"@de,
+        "Team room"@en,
+        "Teamrum"@sv .
+
+:Tochter a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Tochter"@de,
+        "Daughter"@en,
+        "Dotter"@sv .
+
+:UnterlagenSichtung a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Sichtung der Unterlagen"@de,
+        "Review of documents"@en,
+        "Granskning av handlingar"@sv .
+
+:WarmUpPhase a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Warm-Up-Phase"@de,
+        "Warm-up phase"@en,
+        "Uppvärmningsfas"@sv .
+
+:Zweifel a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Zweifel"@de,
+        "Doubt"@en,
+        "Tvivel"@sv .
+
+:Arzt01 a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Arzt 01"@de,
+        "Doctor 01"@en,
+        "Physician 01"@en,
+        "Läkare 01"@sv .
+
+:Atemprobleme a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Atemprobleme"@de,
+        "Breathing problems"@en,
+        "Andningsproblem"@sv .
+
+:EinwaendeUndErgaenzungen a :Object,
+        owl:NamedIndividual ;
+    rdfs:label "Einwände und Ergänzungen"@de,
+        "Objections and additions"@en,
+        "Invändningar och tillägg"@sv .
+
+:InformationsVerlaesslichkeit a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Informationsverlässlichkeit"@de,
+        "Information reliability"@en,
+        "Informationstillförlitlighet"@sv .
+
+:KommunikationAufAugenhoehe a :DivisionOfLabour,
+        owl:NamedIndividual ;
+    rdfs:label "Kommunikation auf Augenhöhe"@de,
+        "Communication at eye level"@en,
+        "Kommunikation på lika villkor"@sv .
+
+:Patientin a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Patientin"@de,
+        "Ältere Patientin"@de,
+        "Elderly Patient"@en,
+        "Patient"@en,
+        "Patienten"@sv,
+        "Äldre patient"@sv .
+
+:PhysiotherapieUnterlagen a :Instrument,
+        owl:NamedIndividual ;
+    rdfs:label "Physiotherapie-Unterlagen"@de,
+        "Physiotherapy documents"@en,
+        "Fysioterapidokument"@sv .
+
+:Physiotherapeut01 a :Subject,
+        owl:NamedIndividual ;
+    rdfs:label "Physiotherapeut 01"@de,
+        "Physiotherapist 01"@en,
+        "Fysioterapeut 01"@sv .
+

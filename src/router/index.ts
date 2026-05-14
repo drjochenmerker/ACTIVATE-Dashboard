@@ -1,23 +1,56 @@
-import ContentPage from '@/views/ContentPage.vue';
-import HomePage from '@/views/HomePage.vue';
-import StartPage from '@/views/StartPage.vue';
-import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
-import MainLayout from '@/components/MainLayout.vue';
-import { useSession } from '@/stores/useSession';
+import ContentPage from "@/views/ContentPage.vue";
+import HomePage from "@/views/HomePage.vue";
+import StartPage from "@/views/StartPage.vue";
+import FeedbackPage from "@/views/FeedbackPage.vue";
+import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
+import MainLayout from "@/components/MainLayout.vue";
+import { useSessionStore } from "@/stores/sessionStore";
+import FeedbackThankyouPage from "@/views/FeedbackThankyouPage.vue";
+import LoginPage from "@/views/LoginPage.vue";
+import LlmTestPage from "@/views/LlmTestPage.vue";
+import ArchivePage from "@/views/ArchivePage.vue";
 
 const routes: Array<RouteRecordRaw> = [
     {
-        path: '/start',
-        name: 'Start',
-        component: StartPage
+        path: "/login",
+        name: "Login",
+        component: LoginPage,
     },
     {
-        path: '/',
+        path: "/start",
+        name: "Start",
+        component: StartPage, // dedicated start page for activity creation and selection
+    },
+    {
+        path: "/archive",
+        name: "ArchivePage",
+        component: ArchivePage,
+    },
+    {
+        path: "/feedback/:graph",
+        name: "FeedbackPage",
+        component: FeedbackPage,
+        props: true,
+    },
+    {
+        path: "/feedback-thank-you",
+        name: "FeedbackThankYouPage",
+        component: FeedbackThankyouPage,
+    },
+    {
+        path: "/", // Main dashboard route with dynamic content pages as children
         component: MainLayout,
         children: [
-            { path: '', name: 'HomePage', component: HomePage, props: true }, // Standard-Dashboard
-            { path: ':id', name: 'Content', component: ContentPage, props: true }, // Dynamische Inhalte
+            { path: "", name: "HomePage", component: HomePage, props: true }, // Standard dashboard
+            { path: ":id", name: "Content", component: ContentPage, props: true }, // Dynamic content pages
         ],
+    },
+
+    // debug route for llm testing, must be removed later
+    {
+        path: "/llm-test",
+        name: "LlmTestPage",
+        component: LlmTestPage,
     },
 ];
 
@@ -26,12 +59,60 @@ const router = createRouter({
     routes,
 });
 
-router.beforeEach((to) => {
-    const { isSessionActive } = useSession();
-  
-    if (!isSessionActive.value && to.path !== '/start') {
-      return '/start';
-    }
-  });
+let isInitialLoad = true;
 
+router.beforeEach((to) => {
+    const sessionStore = useSessionStore();
+
+    // On initial page load, attempt to restore session
+    if (isInitialLoad) {
+        isInitialLoad = false;
+
+        // Try to restore session from localStorage
+        const sessionRestored = sessionStore.restoreSession();
+
+        // If session was restored and we're trying to go to login, redirect to last route instead
+        if (sessionRestored && to.path === "/login") {
+            const lastRoute = sessionStore.lastRoute;
+            return lastRoute && lastRoute !== "/" ? lastRoute : "/";
+        }
+    }
+
+    const isPublic = to.name === "FeedbackThankYouPage";
+    const isOption = to.path === "/options";
+    const isArchive = to.name === "ArchivePage";
+
+    // Permit users from accessing options if they aren't instructors
+    if (isOption && sessionStore.instructorMode == false) {
+        return "/start";
+    }
+
+    if (isArchive && sessionStore.instructorMode == false) {
+        return "/start";
+    }
+
+    // Allow access to options and public pages without active session
+    if (isPublic) {
+        return;
+    }
+    const isFeedbackPage = to.path.startsWith("/feedback/");
+
+    // Workaround: only if it is not feedback page, direct route to start page
+    if (!isFeedbackPage && to.name === "HomePage" && !sessionStore.sessionActivity) {
+        return "/start";
+    }
+    // If not logged in and trying to access a non-public page, redirect to login
+    if (!sessionStore.isSessionActive && to.path !== "/login") {
+        // to.fullPath beinhaltet auch Parameter wie /feedback/123
+        return {
+            path: "/login",
+            query: { redirect: to.fullPath },
+        };
+    }
+
+    // Save the current route as the last visited route (for session persistence), except for the start page
+    if (sessionStore.isSessionActive && !isPublic && to.path !== "/start") {
+        sessionStore.saveLastRoute(to.path);
+    }
+});
 export default router;

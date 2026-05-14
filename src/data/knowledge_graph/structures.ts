@@ -2,16 +2,15 @@
  * TS Workaround for SPARQL responses
  * This is a dirty fix which prevent TS form comlaining about dynamic keys
  */
-/**
- * Type for data returned by the knowledge graph
- * in order to prevent VSCode from complaining about dynamic keys
- */
+
 export type KnowledgeGraphData = {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     [key: string]: any;
 };
 
 
 export type StringAccessObject = {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     [key: string]: any;
 }
 
@@ -35,21 +34,32 @@ export enum sparqlTemplate {
     deleteTriple = "deleteTriple",
     deleteTriples = "deleteTriples",
     updateConflict = "updateConflict",
+    updateConflictText = "updateConflictText",
+    updateComment = "updateComment",
     deleteConflictParticipant = "deleteConflictParticipant",
     addConflictParticipant = "addConflictParticipant",
     getMiscComments = "getMiscComments",
     addEntity = "addEntity",
     getActivityClassIds = "getActivityClassIds",
     addActivity = "addActivity",
-    deleteActivity = "deleteActivity"
+    deleteActivity = "deleteActivity",
+    getDiagramVocab = "getDiagramVocab",
+    updateActivity = "updateActivity",
+    cloneActivity = "cloneActivity",
+    cloneActivityWithNameUpdate = "cloneActivityWithNameUpdate",
+    getLLMDetail = "getLLMDetail",
+    addLLMSubmission = "addLLMSubmission",
+    getLLMSubmissions = "getLLMSubmissions",
 }
 
 /**
  * Activity in the knowledge graph
  */
 export type Activity = {
-    graph: string;
-    name: string;
+  graph: string;
+  name: Record<string, string>;
+  description: Record<string, string>;
+    isArchived: boolean;
 }
 
 /**
@@ -61,10 +71,11 @@ export type Action = {
 }
 
 /**
- * Object in the knowledge graph
+ * Objective in the knowledge graph
  */
-export type Object = {
-    label: string;
+export type Objective = {
+    id: string,
+    labels: Record<string, string>;
     type: string;
     properties: Action[];
 }
@@ -73,7 +84,7 @@ export type Object = {
  * Detail of an activity in the knowledge graph
  */
 export class ActivityDetail {
-    [key: string]: Object[];
+    [key: string]: Objective[];
 }
 
 /**
@@ -91,6 +102,7 @@ export interface updateResponse {
  */
 export interface Participant {
     id: string,
+    labels: Record<string, string>,
     type: string
 }
 
@@ -98,23 +110,35 @@ export interface Participant {
  * Conflict in the knowledge graph
  */
 export type Conflict = {
-    title: string,
-    participants: Participant[],
-    author: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    origin?: any; // TODO: add correct types and remove disable lint
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    isAI?: any; // TODO
+    hasIntent?: string;
+    title: Record<string, string>;
+    participants: Participant[];
+    author: Participant;
     status: conflictStatus,
-    description?: string,
-    timestamp?: Date,
-    replies?: Comment[],
-    id?: string
+    description: Record<string, string>;
+    timestamp?: Date;
+    replies?: Comment[];
+    id?: string;
+    x?: number;
+    y?: number;
 }
+
+export interface ConflictWithId extends Conflict {
+    id?: string;
+}
+
 
 /**
  * Comment in the knowledge graph
  */
 export type Comment = {
     id: string,
-    author?: string,
-    comment?: string,
+    author?: Participant | string | MultiLangObject;
+    comment?: Record<string, string>,
     timestamp?: Date,
     replies?: Comment[]
 }
@@ -123,9 +147,9 @@ export type Comment = {
  * Enum for conflict status management
  */
 export enum conflictStatus {
-    open = "offen",
-    inDiscussion = "in Besprechung",
-    resolved = "gelöst"
+    open = "open",
+    inDiscussion = "inDiscussion",
+    resolved = "resolved"
 }
 
 /**
@@ -159,8 +183,8 @@ export enum RDFOperation {
  * Predicate type that holds all relevant information
  */
 export type Predicate = {
-    predicate: string,
-    label: StringAccessObject,
+    id: string,
+    labels: StringAccessObject,
     lang?: string
 }
 
@@ -169,9 +193,16 @@ export type Predicate = {
  * WARNING: Should be replaced with a better solution later on
  */
 export enum LanguageCode {
-    german = "de",
-    english = "en",
-    swedish = "sv"
+    Deutsch = "de",
+    English = "en",
+    Svenska = "sv"
+}
+/**
+ * Scene Change Enum to allow easy switching between scenes
+ */
+export enum SceneChange {
+    Scene1 = "Scene 1",
+    Scene2 = "Scene 2"
 }
 
 /**
@@ -192,10 +223,36 @@ export enum KnowledgeGraphActivityClass {
     object = "Object",
     rules = "Rule",
     instruments = "Instrument",
-    divison_of_labour = "DivisonOfLabour",
+    divison_of_labour = "DivisionOfLabour",
     community = "Community"
 }
 
+/**
+ * MultiLangObject that allows the usage of multiple languages
+ */
+export type MultiLangObject = {
+    id: string,
+    labels: Record<string, string>,
+    value?: string
+}
+
+/**
+ * NestedMultiLangObject that allows the usage of multiple languages
+ */
+export type NestedMultiLangObject = {
+    level: string,
+    values?: MultiLangObject[],
+    next?: NestedMultiLangObject[]
+}
+/**
+ * NestedMultiLangObject that allows the usage of multiple languages
+ */
+export type NestedMultiLangObjectWithId = {
+  id: string;
+  labels: Record<string, string>;
+  value?: string;
+  children?: NestedMultiLangObjectWithId[];
+}
 /**
  * Predicate Dictionary that allows fetching all predicates
  * for a given tuple of activity diagram classes
@@ -207,27 +264,27 @@ export class PredicateDict {
         if (this.dict[tuple.join("#")] === undefined) {
             this.dict[tuple.join("#")] = [];
         }
-        const existingInnerObj = this.dict[tuple.join("#")].find(innerObj => innerObj.predicate == obj.predicate);
+        const existingInnerObj = this.dict[tuple.join("#")].find(innerObj => innerObj.id == obj.id);
         const langString = obj.lang || "default";
         if (existingInnerObj == undefined) {
             this.dict[tuple.join("#")].push({
-                predicate: obj.predicate,
-                label: { [langString]: obj.label }
+                id: obj.id,
+                labels: { [langString]: obj.labels }
             });
         }
         else {
-            existingInnerObj.label[langString] = obj.label;
+            existingInnerObj.labels[langString] = obj.labels;
         }
     }
 
-    get(tuple: [string, string]): {}[] {
-        return this.dict[tuple.join("#")].sort((a, b) => a.predicate.localeCompare(b.predicate)) || [];
+    get(tuple: [string, string]): Predicate[] {
+        return this.dict[tuple.join("#")].sort((a, b) => a.id.localeCompare(b.id)) || [];
     }
 
-    getBidirectional(tuple: [string, string]): {} {
+    getBidirectional(tuple: [string, string]): {given: Predicate[]; reversed: Predicate[]} {
         return {
-            given: this.dict[tuple.join("#")].sort((a, b) => a.predicate.localeCompare(b.predicate)) || [],
-            reversed: this.dict[tuple.reverse().join("#")].sort((a, b) => a.predicate.localeCompare(b.predicate)) || []
+            given: this.dict[tuple.join("#")].sort((a, b) => a.id.localeCompare(b.id)) || [],
+            reversed: this.dict[tuple.reverse().join("#")].sort((a, b) => a.id.localeCompare(b.id)) || []
         }
     }
 }

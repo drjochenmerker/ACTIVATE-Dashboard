@@ -1,7 +1,6 @@
 {
-    "opal_issuer": "https://bildungsportal.sachsen.de/opal",
-    "client_id": "bb665500-8908-4ed3-aa42-3a544bad9efa",
-    "jwks_url": "https://bildungsportal.sachsen.de/opal/restapi/lti/keys",
-    "redirect_uri": "https://ea39-95-90-208-66.ngrok-free.app/lti/launch",
-    "auth_url": "https://bildungsportal.sachsen.de/opal/ltiauth/"
+    "client_id": "<client_id, provided by the LMS>",
+    "jwks_url": "<keys, provided by the LMS, e.g. https://bildungsportal.sachsen.de/opal/restapi/lti/keys>",
+    "redirect_uri": "<uri, where user gets redirected after verification https://activate.app.org/lti/launch>",
+    "auth_url": "<auth_uri, provided by the LMS: https://bildungsportal.sachsen.de/opal/ltiauth/"
 }

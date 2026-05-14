@@ -1,8 +1,10 @@
-PREFIX : <http://activate.htwk-leipzig.de/model#> 
+PREFIX : <http://activate.htwk-leipzig.de/model#>
 PREFIX graph: <http://activate.htwk-leipzig.de/graph/>
 
-SELECT ?graph ?name WHERE { 
-    GRAPH ?graph { 
-        ?s :ActivityName ?name 
+SELECT ?graph ?name ?description ?isArchived WHERE {
+    GRAPH ?graph {
+        ?s :ActivityName ?name .
+        ?s :ActivityDescription ?description .
+        OPTIONAL { ?s :ActivityArchived ?isArchived . }
     }
 }

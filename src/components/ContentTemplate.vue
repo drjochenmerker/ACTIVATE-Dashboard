@@ -1,6 +1,10 @@
 <script lang="ts" setup>
-import { computed, toRaw } from 'vue';
+import { computed } from 'vue';
+import { useRoute } from 'vue-router';
 import NoteCard from './NoteCard.vue';
+import { useConflictsStore } from '@/stores/conflictsStore';
+import { staticContent } from '@/data/contentData';
+import { useSessionStore } from '@/stores/sessionStore';
 
 const props = defineProps({
   pageData: {
@@ -8,42 +12,84 @@ const props = defineProps({
     required: true,
   },
   conflicts: {
-    type: Object,
+    type: Array,
     required: true,
   },
 });
 
-//filtered conflicts based on id of "pageData"
+// Store for conflicts
+const conflictStore = useConflictsStore();
+const sessionStore = useSessionStore();
+
+// for highlights
+const route = useRoute()
+const highlightedConflictId = route.query.conflictId
+
+/**
+ * Computes a filtered list of conflicts specific to the current page.
+ * Filters conflicts based on whether their participants include the current page's ID
+ * which leads to the fitting conflicts being displayed.
+ * 
+ * @returns {Array} An array of conflicts relevant to the current page context
+ */
 const filteredConflicts = computed(() => {
-  return toRaw(props.conflicts).filter((conflict: { participants: any[] }) => {
+  // with the higlighted conflict on top
+  const conflicts = conflictStore.getConflicts.filter(conflict => {
     return Array.isArray(conflict.participants) &&
       conflict.participants.some(participant => participant.type === props.pageData.id);
   });
+
+  // If there is a highlightedConflictId, sort so it comes first
+  if (highlightedConflictId) {
+    return conflicts.slice().sort((a, b) => {
+      if (a.id === highlightedConflictId) return -1;
+      if (b.id === highlightedConflictId) return 1;
+      return 0;
+    });
+  }
+  return conflicts;
 });
+
 </script>
 
 <template>
+  <!-- Check if there are any filtered conflicts to display -->
   <div v-if="filteredConflicts.length > 0">
-    <div v-for="(conflict) in filteredConflicts" :key="conflict.id">
+    <div v-for="conflict in filteredConflicts" :key="conflict.id">
       <div class="conflict-container">
         <div class="note-container">
-          <NoteCard :conflict="conflict" :title="conflict.title" :content="conflict.description"
-            :author="conflict.author" :status="conflict.status" />
+          <!-- NoteCard component for displaying conflict details -->
+          <NoteCard
+            :conflict="conflict"
+            :title="conflict.title[sessionStore.activeLanguage] || conflict.title['default']"
+            :content="conflict.description[sessionStore.activeLanguage] || conflict.description['default']"
+            :origin="conflict.origin"
+            :author="conflict.author.labels?.[sessionStore.activeLanguage] || 
+                     conflict.author.labels?.['default'] || 
+                     Object.values(conflict.author.labels || {}).find(label => typeof label === 'string' && label.trim() !== '') || 
+                     conflict.author.id || ''"
+            :author-id="conflict.author.id"
+            :status="conflict.status" :is-grayed-out="!!highlightedConflictId && conflict.id !== highlightedConflictId" />
         </div>
+
       </div>
     </div>
   </div>
 
+  <!-- Display a message if there are no conflicts -->
   <div v-else>
-    <p>There are no conflicts.</p>
+    <p>{{ staticContent.errors.noConflicts[sessionStore.activeLanguage] }}</p>
   </div>
 </template>
 
+
 <style scoped>
+/* Container styling for each conflict */
 .conflict-container {
-  margin-bottom: 20px;
+  padding-bottom: 20px;
 }
 
+/* Styling for the comment section */
 .note-comment-section {
   display: flex;
   justify-content: flex-end;

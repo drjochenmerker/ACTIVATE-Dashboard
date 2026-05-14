@@ -2,25 +2,41 @@ PREFIX : <http://activate.htwk-leipzig.de/model#>
 PREFIX graph: <http://activate.htwk-leipzig.de/graph/>
 PREFIX owl: <http://www.w3.org/2002/07/owl#> 
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> 
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
 SELECT * WHERE {
   GRAPH graph:{{graph}} {
     {
-      SELECT ?conflict_p ?conflict_o ?object_type
+      SELECT ?conflict_p ?conflict_o ?object_type ?participant_p ?participant_o ?authorLabel
       WHERE {
           :{{conflict}} ?conflict_p ?conflict_o .
           FILTER (?conflict_p != rdf:type) .
           OPTIONAL {?conflict_o rdf:type ?object_type . FILTER (?object_type != owl:NamedIndividual)}
+          OPTIONAL {
+            FILTER(?conflict_p = :HasParticipant)
+            ?conflict_o ?participant_p ?participant_o .
+            FILTER(?participant_p = rdfs:label)
+          }
+          OPTIONAL {
+            FILTER(?conflict_p = :WrittenBy)
+            ?conflict_o ?participant_p ?participant_o .
+            FILTER(?participant_p = rdfs:label)
+          }
       }
     }
     UNION
     {
-      SELECT ?s ?p ?o
+      SELECT ?s ?p ?o ?q
       WHERE {
         :{{conflict}} (<>|!<>)* ?s .
         ?s rdf:type :Comment .
         ?s ?p ?o .
         FILTER (?p != rdf:type) .
+        OPTIONAL {
+            FILTER(?p = :WrittenBy)
+            ?o ?r ?q .
+            FILTER(?r = rdfs:label)
+          }
       }
       ORDER BY ?s
     }
